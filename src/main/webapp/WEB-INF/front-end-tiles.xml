@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+		"-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+		"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+    <!-- SMART PAIE  LOGIN PAGE TEMPLATE -->
+    <definition name="logintemplate" template="/WEB-INF/views/jsp/loginTemplate.jsp">
+		<put-attribute name="title" value="Default page title" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/defaultContent.jsp" />
+		
+		<put-list-attribute name="stylefilesList">
+			<add-attribute value="/static/back-office/css/theme-default.css" />
+
+
+		</put-list-attribute>
+
+		<put-list-attribute name="scriptfilesList">
+
+		</put-list-attribute>
+	</definition>
+	
+    <!-- SMART PAIE  SERVER PAGE TEMPLATE -->
+	<definition name="fetemplate" template="/WEB-INF/views/jsp/feTemplate.jsp">
+		<put-attribute name="title" value="Default page title" />
+		<put-attribute name="header" value="/WEB-INF/views/jsp/header.jsp" />
+		<put-attribute name="menu" value="/WEB-INF/views/jsp/menu.jsp" />
+		<put-attribute name="contentHeader" value="/WEB-INF/views/jsp/contentHeader.jsp" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/defaultContent.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/views/jsp/footer.jsp" />
+		
+		<put-list-attribute name="stylefilesList">
+			<add-attribute value="/static/back-office/css/theme-default.css" />	
+		  <add-attribute value="/static/front-end/css/rhp-style.css" />
+			<add-attribute value="/static/back-office/css/mcustomscrollbar/jquery.mCustomScrollbar.css"/>
+			<!--<add-attribute value="/static/back-office/css/site.css" />-->
+			<add-attribute value="/static/back-office/assets/select2/select2.css"/>
+			<add-attribute value="/static/back-office/css/bootstrap/bootstrap-glyphicons.css"/>
+			<add-attribute value="/static/front-end/css/jquery.datetimepicker.min.css" />
+			<add-attribute value="/static/back-office/assets/bootstrap-table/dist/bootstrap-table.css"/>
+
+		</put-list-attribute>
+
+		<put-list-attribute name="scriptfilesList">
+
+
+			<add-attribute value="/static/back-office/js/plugins/jquery/jquery.min.js"/>
+			<add-attribute value="/static/back-office/js/plugins/jquery/jquery-ui.min.js"/>
+			<add-attribute value="/static/back-office/js/plugins/bootstrap/bootstrap.min.js"/>
+			<add-attribute value="/static/back-office/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js"/>
+			<add-attribute value="/static/back-office/js/plugins/scrolltotop/scrolltopcontrol.js"/>
+
+			<add-attribute value="/static/back-office/assets/select2/select2.min.js"/>
+			<add-attribute value="/static/back-office/assets/bootstrap-table/dist/bootstrap-table.js"/>
+			<add-attribute value="/static/back-office/js/plugins/bootstrap/bootstrap-select.js"/>
+			<add-attribute value="/static/back-office/js/plugins/bootstrap/bootstrap-select.js"/>
+			<add-attribute value="/static/back-office/js/plugins/bootstrap/bootstrap-datepicker.js" />
+			<add-attribute value="/static/back-office/assets/bootstrap-table/tableExport.min.js" />
+			<add-attribute value="/static/back-office/assets/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js" />
+			<add-attribute value="/static/back-office/js/plugins/morris/raphael-min.js" />
+			<add-attribute value="/static/back-office/js/plugins/morris/morris-min.js" />
+			<!--<add-attribute value="/static/back-office/js/demo_charts_morris.js"/>-->
+			<add-attribute value="/static/back-office/js/plugins/icheck/icheck.min.js"/>
+			<add-attribute value="/static/back-office/js/Chart.js"/>
+			<!--<add-attribute value="/static/front-end/js/tableExport.js"/>-->
+			<!--<add-attribute value="/static/front-end/js/datepicker-fr.js" />-->
+			<!--<add-attribute value="/static/front-end/js/datepicker-fr.js" />-->
+			<add-attribute value="/static/front-end/js/jquery.datetimepicker.full.min.js" />
+
+			<add-attribute value="/static/front-end/js/underscore-min.js" />
+
+			<add-attribute value="/static/back-office/js/plugins.js"/>
+			<add-attribute value="/static/back-office/js/actions.js"/>
+			<add-attribute value="/static/front-end/js/angular.js"/>
+			
+		</put-list-attribute>
+	</definition>
+	
+	<definition name="login" extends="logintemplate">
+		<put-attribute name="title" value="HYBAN  | Authentification" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/login.jsp" />
+	</definition>
+	
+	<definition name="welcome" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Accueil" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/welcome.jsp" />
+	</definition>
+	
+	<definition name="utilisateurs" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Utilisateur" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/utilisateur.jsp" />
+	</definition>
+	
+	<definition name="planningconges" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Planning Congés" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/planningconges.jsp" />
+	</definition>
+	
+	<!-- Debut willy -->
+	<definition name="cptevirement" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Categorie" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/cptevirement.jsp" />
+	</definition>
+	
+	<definition name="fonctions" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Fonctions" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/personnels/fonction.jsp" />
+	</definition>
+	
+	<definition name="services" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Services" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/personnels/services.jsp" />
+	</definition>
+	
+	<definition name="personnels" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Personnel" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/personnels/personnel.jsp" />
+	</definition>
+	
+	<definition name="enfants" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Enfants" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/personnels/enfants.jsp" />
+	</definition>
+	
+	<definition name="periode" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Periode" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/periode.jsp" />
+	</definition>
+	
+	<definition name="contrat" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Contrat" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/personnels/contrat.jsp" />
+	</definition>
+	
+	<definition name="categories" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Categorie" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/categorie.jsp" />
+	</definition>
+	
+	<definition name="banques" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Banque" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/banques.jsp" />
+	</definition>
+	
+	<definition name="exercices" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Exercice" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/exercice.jsp" />
+	</definition>
+	<definition name="rubriques" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Rubrique" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/rubrique.jsp" />
+	</definition>
+	<definition name="livrepaie" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Livre de paie" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/livrepaie.jsp" />
+	</definition>
+	
+	<definition name="livrepaiegratification" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Livre de paie" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/livrepaiegratification.jsp" />
+	</definition>
+	
+	<definition name="livrepaieconge" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Livre de paie" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/livrepaieconge.jsp" />
+	</definition>
+	
+	<definition name="pretpersonnels" extends="fetemplate">
+	<put-attribute name="title" value="HYBAN  | Pret" />
+	<put-attribute name="content" value="/WEB-INF/views/jsp/paies/pretpersonnel.jsp" />
+    </definition>
+	<definition name="primespersonnel" extends="fetemplate">
+	<put-attribute name="title" value="HYBAN  | Pret" />
+	<put-attribute name="content" value="/WEB-INF/views/jsp/paies/primespersonnel.jsp" />
+	</definition>
+
+	<definition name="simulPaie" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Pret" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/simulPaie.jsp" />
+	</definition>
+	<!--<definition name="primepersonnel" extends="fetemplate">-->
+		<!--<put-attribute name="title" value="HYBAN  | Pret" />-->
+		<!--<put-attribute name="content" value="/WEB-INF/views/paies/primepersonnel.jsp" />-->
+	<!--</definition>-->
+	
+	<definition name="societes" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Info" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/societe.jsp" />
+	</definition>
+		<definition name="societesp" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Info" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/societe1.jsp" />
+	</definition>
+	
+	
+	<definition name="pretdupersonnel" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Pret" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/pretdupersonnel.jsp" />
+	</definition>
+	<definition name="histobull" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN | Livre de paie" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/histobull.jsp" />
+	</definition>
+	<definition name="promotions" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Promotion" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/carriere/promotion.jsp" />
+	</definition>
+	
+	<definition name="pointages" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Pointage" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/personnels/pointage.jsp" />
+	</definition>
+	
+	<definition name="postes" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Poste" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/carriere/poste.jsp" />
+	</definition>
+	
+	<definition name="typeSanctions" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Type de sanction" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/carriere/typesanction.jsp" />
+	</definition>
+	
+	<definition name="sanctions" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Sanction" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/carriere/sanction.jsp" />
+	</definition>
+	
+	<definition name="demandeformation" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Demande de formation" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/formation/demandeformation.jsp" />
+	</definition>
+	
+	<definition name="themes" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Theme de formation" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/formation/theme.jsp" />
+	</definition>
+	
+	<definition name="cabinetformations" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Cabinet de formation" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/formation/cabinetformation.jsp" />
+	</definition>
+	
+	<definition name="formateurs" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Formateur" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/formation/formateur.jsp" />
+	</definition>
+	
+	<definition name="formations" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Formation" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/formation/formation.jsp" />
+	</definition>
+	
+	<definition name="absences" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Absence" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/absence/absence.jsp" />
+	</definition>
+	<!-- Fin willy -->
+		<!-- Debut tie -->
+	<definition name="echelonnements" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Pret" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/echelonnement.jsp" />
+	</definition>
+	
+	<definition name="etats" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Etats" />
+		<put-attribute name="content" value="/WEB-INF/jsp/views/paies/etat.jsp" />
+	</definition>
+	
+	<definition name="etatimp" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Etats" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/etatimp.jsp" />
+	</definition>
+	<definition name="etatimptab" extends="fetemplate">
+		<put-attribute name="title" value="HYBAN  | Etats" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/etatimptab.jsp" />
+	</definition>
+	<!-- Fin willy -->
+</tiles-definitions>

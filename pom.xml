@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.5</version> <!-- Spring Boot 2.7.x -->
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.nectux.mizan</groupId>
+	<artifactId>hyban</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<name>hyban</name>
+	<description>Gestion Paie &amp; RH</description>
+
+	<properties>
+		<java.version>17</java.version> <!-- Compatible avec Java 17 -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+	<dependencies>
+		<!-- Spring Boot dependencies -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- PostgreSQL Dependency -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Tomcat with JSP support -->
+
+
+
+		<!-- Jakarta Servlet for JSP -->
+
+
+		<!-- JasperReports -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>6.18.1</version>
+		</dependency>
+
+		<!-- JSON Web Token (JWT) -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.2</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.2</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Validation starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tiles</groupId>
+			<artifactId>tiles-jsp</artifactId>
+			<version>3.0.8</version>
+		</dependency>
+
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-thymeleaf</artifactId>-->
+<!--		</dependency>-->
+
+		<!-- Tiles dependencies for JSP -->
+
+
+		<!-- Servlet API for WAR deployment -->
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-core</artifactId>
+    <version>2.17.1</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-slf4j-impl</artifactId>
+    <version>2.17.1</version>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-logging</artifactId>
+    <scope>provided</scope>
+</dependency>
+		<!-- Spring Boot Test dependencies -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Spring Boot Maven Plugin -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+
+			</plugin>
+
+		</plugins>
+
+	</build>
+</project>
+
+
+
+
+		<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+<!--	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">-->
+<!--	<modelVersion>4.0.0</modelVersion>-->
+<!--	<parent>-->
+<!--		<groupId>org.springframework.boot</groupId>-->
+<!--		<artifactId>spring-boot-starter-parent</artifactId>-->
+<!--		<version>2.5.6</version>-->
+<!--		<relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
+<!--	</parent>-->
+<!--	<groupId>com.nectux.mizan</groupId>-->
+<!--	<artifactId>hyban</artifactId>-->
+<!--	<version>0.0.1-SNAPSHOT</version>-->
+<!--	<packaging>war</packaging>-->
+<!--	<name>hyban</name>-->
+<!--	<description>Gestion Paie &amp; RH </description>-->
+<!--	<url/>-->
+<!--	<licenses>-->
+<!--		<license/>-->
+<!--	</licenses>-->
+<!--	<developers>-->
+<!--		<developer/>-->
+<!--	</developers>-->
+<!--	<scm>-->
+<!--		<connection/>-->
+<!--		<developerConnection/>-->
+<!--		<tag/>-->
+<!--		<url/>-->
+<!--	</scm>-->
+<!--	<properties>-->
+<!--		<java.version>17</java.version>-->
+<!--	</properties>-->
+<!--	<dependencies>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-data-jpa</artifactId>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-web</artifactId>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-security</artifactId>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>org.postgresql</groupId>-->
+<!--			<artifactId>postgresql</artifactId>-->
+<!--			<scope>runtime</scope>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-tomcat</artifactId>-->
+<!--			<scope>provided</scope>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.apache.tomcat.embed</groupId>-->
+<!--			<artifactId>tomcat-embed-jasper</artifactId>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>javax.servlet.jsp.jstl</groupId>-->
+<!--			<artifactId>javax.servlet.jsp.jstl-api</artifactId>-->
+<!--		</dependency>-->
+<!--&lt;!&ndash;		<dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;			<groupId>org.glassfish.web</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;			<artifactId>javax.servlet.jsp.jstl</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;		</dependency>&ndash;&gt;-->
+
+<!--		&lt;!&ndash; JasperReports &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>net.sf.jasperreports</groupId>-->
+<!--			<artifactId>jasperreports</artifactId>-->
+<!--			<version>6.18.1</version>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-security</artifactId>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-mail</artifactId>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>io.jsonwebtoken</groupId>-->
+<!--			<artifactId>jjwt-api</artifactId>-->
+<!--			<version>0.11.2</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>io.jsonwebtoken</groupId>-->
+<!--			<artifactId>jjwt-impl</artifactId>-->
+<!--			<version>0.11.2</version>-->
+<!--			<scope>runtime</scope>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>io.jsonwebtoken</groupId>-->
+<!--			<artifactId>jjwt-jackson</artifactId>-->
+<!--			<version>0.11.2</version>-->
+<!--			<scope>runtime</scope>-->
+<!--		</dependency>-->
+
+
+
+
+
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-validation</artifactId>-->
+<!--		</dependency>-->
+
+
+
+
+<!--<dependency>-->
+<!--    <groupId>org.apache.tiles</groupId>-->
+<!--    <artifactId>tiles-api</artifactId>-->
+<!--    <version>3.0.8</version>-->
+<!--</dependency>-->
+
+<!--<dependency>-->
+<!--    <groupId>org.apache.tiles</groupId>-->
+<!--    <artifactId>tiles-core</artifactId>-->
+<!--    <version>3.0.8</version>-->
+<!--</dependency>-->
+
+<!--<dependency>-->
+<!--    <groupId>org.apache.tiles</groupId>-->
+<!--    <artifactId>tiles-servlet</artifactId>-->
+<!--    <version>3.0.8</version>-->
+<!--</dependency>-->
+
+<!--<dependency>-->
+<!--    <groupId>org.apache.tiles</groupId>-->
+<!--    <artifactId>tiles-jsp</artifactId>-->
+<!--    <version>3.0.8</version>-->
+<!--</dependency>-->
+
+<!--<dependency>-->
+<!--    <groupId>org.springframework</groupId>-->
+<!--    <artifactId>spring-webmvc</artifactId>-->
+<!--</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>javax.servlet</groupId>-->
+<!--			<artifactId>javax.servlet-api</artifactId>-->
+<!--			<version>4.0.1</version>  &lt;!&ndash; À adapter selon votre besoin &ndash;&gt;-->
+<!--			<scope>provided</scope>    &lt;!&ndash; Si vous déployez sur un serveur comme Tomcat &ndash;&gt;-->
+<!--		</dependency>-->
+
+
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-test</artifactId>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+<!--	</dependencies>-->
+
+<!--	<build>-->
+<!--		<plugins>-->
+<!--			<plugin>-->
+<!--				<groupId>org.springframework.boot</groupId>-->
+<!--				<artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--			</plugin>-->
+<!--		</plugins>-->
+<!--	</build>-->
+
+<!--</project>-->

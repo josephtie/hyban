@@ -1,0 +1,92 @@
+@CHARSET "ISO-8859-1";
+
+.required{
+    color: #ff0033;
+}
+.modal-header{
+    background-color: #e34724;
+
+}
+.modal-title{
+    color: white;
+}
+
+div .modal-body{
+    padding-bottom: 0px;
+}
+
+div .alert{
+    padding-bottom: 0px;
+}
+
+.loader{
+    padding: 12px 16px 16px 16px;
+    background-image: url("../images/loaders/loader.gif");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.head-calendar { background-image: url(../images/icons/icon-event.png); }
+
+.label-white{
+    color: #FFFFFF;
+}
+
+#ui-datepicker-div{
+    z-index: 1000000!important;
+}
+
+@media (min-width: 768px){
+    .bs-glyphicons {
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    .bs-glyphicons li {
+        width: 12.5%;
+        font-size: 12px;
+    }
+}
+
+.bs-glyphicons {
+    margin: 0 -10px 20px;
+    overflow: hidden;
+}
+
+.bs-glyphicons-list {
+    padding-left: 0;
+    list-style: none;
+}
+
+.bs-glyphicons li {
+    float: left;
+    width: 25%;
+    height: 115px;
+    padding: 10px;
+    font-size: 10px;
+    line-height: 1.4;
+    text-align: center;
+    background-color: #f9f9f9;
+    border: 1px solid #fff;
+}
+
+.bs-glyphicons .glyphicon, .bs-glyphicons .f-logo {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 50px;
+}
+
+.bs-glyphicons .glyphicon-class {
+    display: block;
+    text-align: center;
+    word-wrap: break-word;
+    font-size: 16px;
+}
+
+.bs-glyphicons li a:hover{
+    text-decoration: none;
+}
+
+.main-popup{
+    z-index: 1100 !important;
+}
