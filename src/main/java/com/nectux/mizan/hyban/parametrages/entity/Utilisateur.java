@@ -1,6 +1,8 @@
 package com.nectux.mizan.hyban.parametrages.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,6 +35,7 @@ public class Utilisateur implements UserDetails {
         private String password;
 
         @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+        @JsonIgnore
         private List<UtilisateurRole> utilisateurRoles = new ArrayList<>();
 
         @Column(unique = true, nullable = false)
