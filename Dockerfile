@@ -1,5 +1,5 @@
 # 1️⃣ Utiliser une image contenant Maven + JDK 17 pour compiler le projet
-FROM maven:3.8.5 AS builder
+FROM maven:3.8.1-openjdk-17-slim AS builder
 
 # 2️⃣ Définir le répertoire de travail
 WORKDIR /app
