@@ -16,21 +16,23 @@ services:
     networks:
       - hyban-network
 
-
   db:
     image: postgres:14
     container_name: hyban-db
     restart: always
     environment:
       POSTGRES_DB: hyban_db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     networks:
       - hyban-network
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    command: >
+      postgres -c listen_addresses='*' -c hba_file=/var/lib/postgresql/data/pg_hba.conf
 
 networks:
   hyban-network:
