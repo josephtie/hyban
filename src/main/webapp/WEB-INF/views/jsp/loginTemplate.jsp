@@ -13,7 +13,7 @@
 
     <link rel="icon" type="image/x-icon" href="<c:url value='/static/back-office/favicon.ico'/>">
 
-   <link rel="stylesheet" href="<%=request.getContextPath()%>/hyban/static/back-office/css/theme-default.css" rel="stylesheet" type="text/css" media="screen" />
+   <link rel="stylesheet" href="<%=request.getContextPath()%>/static/back-office/css/theme-default.css" rel="stylesheet" type="text/css" media="screen" />
 
     <script>
         var baseUrl = "<c:url value='/'/>";
