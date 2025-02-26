@@ -10,21 +10,26 @@ services:
       - db
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/hyban_db
-      SPRING_DATASOURCE_USERNAME: user_hyban
-      SPRING_DATASOURCE_PASSWORD: marwan
+      SPRING_DATASOURCE_USERNAME: directus
+      SPRING_DATASOURCE_PASSWORD: directus
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     networks:
       - hyban-network
 
   db:
-    image: postgres:14
+    image: postgis/postgis:13-master
     container_name: hyban-db
     restart: always
     environment:
       POSTGRES_DB: hyban_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_HOST_AUTH_METHOD: trust # Permet l'authentification sans mot de passe pendant l'initialisation
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: directus
+    healthcheck:
+      test: [ "CMD", "pg_isready", "--host=localhost", "--username=directus" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     ports:
       - "5432:5432"
     networks:
