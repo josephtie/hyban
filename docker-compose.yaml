@@ -24,6 +24,7 @@ services:
       POSTGRES_DB: hyban_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust # Permet l'authentification sans mot de passe pendant l'initialisation
     ports:
       - "5432:5432"
     networks:
