@@ -1,30 +1,29 @@
-# 1️⃣ Utiliser une image contenant Maven + JDK 17 pour compiler le projet
-FROM maven:3.8.1-openjdk-17-slim AS builder
+# 1️⃣ Étape de compilation avec Maven et JDK 17
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
 
 # 2️⃣ Définir le répertoire de travail
 WORKDIR /app
 
-
 # 3️⃣ Copier les fichiers du projet dans l'image
 COPY . .
 
+# 4️⃣ Télécharger les dépendances Maven en avance pour optimiser la build
 RUN mvn dependency:go-offline -B
-# 4️⃣ Compiler l’application avec Maven
-RUN mvn clean package spring-boot:repackage -DskipTests
 
-FROM openjdk:17-jdk-slim
+# 5️⃣ Compiler l’application et générer le fichier WAR
+RUN mvn clean package -DskipTests
 
-# 5️⃣ Utiliser une image Tomcat allégée pour exécuter l’application
+# 6️⃣ Utiliser une image Tomcat avec JDK 17 pour l’exécution
 FROM tomcat:9.0.82-jdk17
 
-# 6️⃣ Définir le répertoire de travail dans Tomcat
+# 7️⃣ Définir le répertoire de travail dans Tomcat
 WORKDIR /usr/local/tomcat/webapps/
 
-# 7️⃣ Copier le fichier WAR généré dans Tomcat
-COPY --from=builder /app/target/hyban.war hyban.war
+# 8️⃣ Copier le fichier WAR généré dans Tomcat
+COPY --from=builder /app/target/*.war hyban.war
 
-# 8️⃣ Exposer le port 8080
+# 9️⃣ Exposer le port 8080
 EXPOSE 8080
 
-# 9️⃣ Démarrer Tomcat
+# 🔟 Démarrer Tomcat
 CMD ["catalina.sh", "run"]

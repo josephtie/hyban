@@ -16,12 +16,14 @@
 	<packaging>war</packaging>
 
 	<name>hyban</name>
-	<description>Gestion Paie-RH</description>
+	<description>Gestion Paie RH</description>
 
 	<properties>
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 
 	<dependencies>
@@ -113,8 +115,10 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
+					<release>17</release>
 					<source>17</source>
 					<target>17</target>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 
