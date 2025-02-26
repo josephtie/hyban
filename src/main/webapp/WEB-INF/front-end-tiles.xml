@@ -30,7 +30,7 @@
 		<put-attribute name="footer" value="/WEB-INF/views/jsp/footer.jsp" />
 		
 		<put-list-attribute name="stylefilesList">
-			<add-attribute value="/static/back-office/css/theme-default.css" />	
+			<add-attribute value="/static/back-office/css/theme-default.css" />
 		  <add-attribute value="/static/front-end/css/rhp-style.css" />
 			<add-attribute value="/static/back-office/css/mcustomscrollbar/jquery.mCustomScrollbar.css"/>
 			<!--<add-attribute value="/static/back-office/css/site.css" />-->

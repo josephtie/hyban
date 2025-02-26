@@ -115,9 +115,22 @@
 					<source>17</source>
 					<target>17</target>
 					<encoding>UTF-8</encoding>
+
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.3.2</version> <!-- Utilise la dernière version stable -->
+				<configuration>
+					<webResources>
+						<resource>
+							<directory>src/main/resources/static</directory>
+							<targetPath>/</targetPath> <!-- Ceci est important -->
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
 			<!-- Spring Boot Plugin pour créer le JAR/WAR -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
