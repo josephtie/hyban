@@ -3,7 +3,7 @@
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<form id='login' class="form-horizontal" action="<c:url value='../j_spring_security_check' />" method='POST'>
+<form id='login' class="form-horizontal" action="<c:url value='../hyban/j_spring_security_check' />" method='POST'>
 
     <div class="form-group">
         <div class="col-md-12">
