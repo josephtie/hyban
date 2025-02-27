@@ -38,7 +38,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .loginProcessingUrl("/j_spring_security_check")  // URL pour traiter la soumission du formulaire
+                        .loginProcessingUrl("hyban/j_spring_security_check")  // URL pour traiter la soumission du formulaire
                         .usernameParameter("j_username")  // Nom de paramètre pour le nom d'utilisateur
                         .passwordParameter("j_password")  // Nom de paramètre pour le mot de passe
                         .defaultSuccessUrl("/welcome", true) //  Assure la redirection vers /welcome après connexion
