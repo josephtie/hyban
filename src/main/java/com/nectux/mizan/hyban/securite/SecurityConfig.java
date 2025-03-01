@@ -32,22 +32,22 @@ public class SecurityConfig {
                 .authorizeRequests(auth -> auth
                         .antMatchers("/hyban/api/auth/**", "/hyban/", "/hyban/home").permitAll()
                         .antMatchers("/hyban/resources/**", "/hyban/static/**", "/hyban/js/**", "/hyban/css/**", "/hyban/images/**", "/hyban/img/**").permitAll()
-                        .antMatchers("/hyban/login", "/hyban/register", "/hyban/static/**", "/hyban/logo/**", "/hyban/js/**", "/hyban/images/**", "/hyban/WEB-INF/**").permitAll()
-                        .antMatchers("/hyban/views/**").permitAll()
+                        .antMatchers("/login", "/register", "/hyban/static/**", "/hyban/logo/**", "/hyban/js/**", "/hyban/images/**", "/hyban/WEB-INF/**").permitAll()
+                        .antMatchers("/views/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/hyban/login")  // Mise à jour avec le préfixe /hyban
+                        .loginPage("/login")  // Mise à jour avec le préfixe /hyban
                         .loginProcessingUrl("/hyban/j_spring_security_check")  // URL de traitement du login
                         .usernameParameter("j_username")
                         .passwordParameter("j_password")
-                        .defaultSuccessUrl("/hyban/welcome", true)  // Redirection après succès
-                        .failureUrl("/hyban/login?error")
+                        .defaultSuccessUrl("/welcome", true)  // Redirection après succès
+                        .failureUrl("/login?error")
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/hyban/logout")  // Mise à jour avec /hyban
-                        .logoutSuccessUrl("/hyban/login?logout")
+                        .logoutUrl("/logout")  // Mise à jour avec /hyban
+                        .logoutSuccessUrl("/login?logout")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
