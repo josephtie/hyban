@@ -16,7 +16,7 @@
    <link rel="stylesheet" href="<%=request.getContextPath()%>/static/back-office/css/theme-default.css" rel="stylesheet" type="text/css" media="screen" />
 
     <script>
-        var baseUrl = "<c:url value='/'/>";
+        var baseUrl = "<c:url value='/hyban/'/>";
         jQuery(document).ready(function () {
             jQuery('#login').submit(function () {
                 var u = jQuery('#username').val();
