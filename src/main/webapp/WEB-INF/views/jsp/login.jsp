@@ -1,7 +1,6 @@
 <%@page contentType="text/html"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <form id='login' class="form-horizontal" action="<c:url value='../hyban/j_spring_security_check' />" method='POST'>
