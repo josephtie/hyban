@@ -22,17 +22,17 @@ jobs:
       - name: Compiler le projet avec Maven
         run: mvn clean package -DskipTests
 
-      - name: Connexion à Docker Hub
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASS: ${{ secrets.DOCKER_PASSWORD }}
-        run: echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
-
-      - name: Builder et pousser l’image Docker
-        run: |
-          docker build -t josephtie/hyban:latest .
-          docker push josephtie/hyban:latest
+#      - name: Connexion à Docker Hub
+#        env:
+#          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+#          DOCKER_PASS: ${{ secrets.DOCKER_PASSWORD }}
+#        run: echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+#
+#
+#      - name: Builder et pousser l’image Docker
+#        run: |
+#          docker build -t josephtie/hyban:latest .
+#          docker push josephtie/hyban:latest
 
       - name: Déclencher le Webhook Portainer
         run: curl -X POST ${{ secrets.PORTAINER_WEBHOOK }}
