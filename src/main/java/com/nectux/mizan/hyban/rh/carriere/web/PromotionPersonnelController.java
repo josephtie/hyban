@@ -3,6 +3,7 @@ package com.nectux.mizan.hyban.rh.carriere.web;
 import java.io.IOException;
 import java.security.Principal;
 
+import com.nectux.mizan.hyban.parametrages.entity.Utilisateur;
 import com.nectux.mizan.hyban.rh.carriere.dto.PromotionPersonnelDTO;
 import com.nectux.mizan.hyban.rh.carriere.service.PromotionPersonnelService;
 import org.apache.logging.log4j.LogManager;
@@ -33,8 +34,14 @@ public class PromotionPersonnelController {
 	@RequestMapping("/promotionpersonnel")
 	public String viewPromotionPersonnel(ModelMap modelMap, Principal principal) throws IOException {
 		logger.info(">>>>> PromotionPersonnel");
-		
+
 		modelMap.addAttribute("user", utilisateurService.findByUsername(principal.getName()));
+		Utilisateur utilisateur=utilisateurService.findByUsername(principal.getName());
+		System.out.println("utilisateur    " +utilisateur.toString());
+
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
 		modelMap.addAttribute("icon", "iconfa-wrench");
 		modelMap.addAttribute("littleTitle", "Carri&egrave;re");
 		modelMap.addAttribute("bigTitle", "Promotion Personnel");

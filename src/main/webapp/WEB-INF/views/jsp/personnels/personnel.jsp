@@ -128,7 +128,7 @@
  </div>
 
 <div class="modal main-popup fade" id="rhpModal" role="dialog" aria-labelledby="rhpModalLabel" data-backdrop="static">
-    <div class="modal-dialog" style="width:75%;">
+    <div class="modal-dialog" style="width:80%;">
         <div class="modal-content">
             <form id="formAjout" class="form-horizontal panel-wizard" role="form" novalidate="novalidate" ng-controller="formAjoutCtrl">
                 <input type="text" name="statut" ng-show="false" value="true" ng-model="personnel.statut" />
@@ -250,22 +250,7 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                            <%--<div class="col-md-4">--%>
-                                                <%--<label for="sexe">Sexe <span class="required">*</span></label>--%>
-                                                <%--<div>--%>
-                                                    <%--<select id=sexe name="sexe" class="form-control select2">--%>
-                                                        <%--<option>-- Choix du sexe --</option>--%>
-                                                        <%--<option value="Masculin"  selected="selected"> Masculin </option>--%>
-                                                        <%--<option value="Feminin" > Feminin </option>--%>
-                                                    <%--</select>--%>
-                                                    <%--&lt;%&ndash;<label id="sexeMasculin" class="radio-inline">&ndash;%&gt;--%>
-                                                        <%--&lt;%&ndash;<input name="sexe" type="radio" value="Masculin"> Masculin&ndash;%&gt;--%>
-                                                    <%--&lt;%&ndash;</label>&ndash;%&gt;--%>
-                                                    <%--&lt;%&ndash;<label id="sexeFeminin" class="radio-inline">&ndash;%&gt;--%>
-                                                        <%--&lt;%&ndash;<input name="sexe" type="radio" value="Feminin"> Feminin&ndash;%&gt;--%>
-                                                    <%--&lt;%&ndash;</label>&ndash;%&gt;--%>
-                                                <%--</div>--%>
-                                            <%--</div>--%>
+
                                         </div>
                                     </div>
                                 </div>
@@ -366,16 +351,7 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                            <%--<div class="col-md-3">--%>
-                                                <%--<label>Contractuel</label>--%>
-                                                <%--<div>--%>
-                                                    <%--<select id=carec name="carec" class="form-control select2">--%>
-                                                        <%--<option>-- Choix  --</option>--%>
-                                                        <%--<option value="True"  selected="selected"> Contactuel </option>--%>
-                                                        <%--<option value="False" selected="selected"> Autre </option>--%>
-                                                    <%--</select>--%>
-                                                <%--</div>--%>
-                                            <%--</div>--%>
+
                                         </div>
                                     </div>
                                 </div>
@@ -1783,57 +1759,7 @@
                                         <span class="glyphicon-class">Sanctions</span>
                                     </a>
                                 </li>
-                                <%--<li>--%>
-                                    <%--<a onclick="javascript:listMouvementConge({{personnel.id}})"  data-toggle="modal" data-target="#listMouvementCongeModal" href="#" title="Stock cong� [NOM : {{personnel.nom}} {{personnel.prenom}}]">--%>
-                                        <%--<span class="fa fa-bookmark fa-5x"  aria-hidden="true" ></span>--%>
-                                        <%--<span class="">Cong&eacute;s</span>--%>
 
-                                    <%--</a>--%>
-                                <%--</li>--%>
-                                <%--<li>--%>
-                                    <%--<a onclick="listContrat({{personnel.id}})"  data-toggle="modal" data-target="#listContratModal" href="#" data-action="lister" title="Contrat du personnel {{personnel.nom}} {{personnel.prenom}}">--%>
-                                        <%--&lt;%&ndash;<i class="fa fa-th-large-circle fa-4" aria-hidden="true"></i>&ndash;%&gt;--%>
-                                        <%--<span class="fa fa-bookmark-circle"   aria-hidden="true"></span>--%>
-                                        <%--<span class="glyphicon-class">Contrats</span>--%>
-
-                                    <%--</a>--%>
-                                <%--</li>--%>
-                                <%--<li>--%>
-                                    <%--<a onclick="listPersonnePrevenir({{personnel.id}})"  data-toggle="modal" data-target="#listPersonnePrevenirModal" href="#" title="Personne � prevenir">--%>
-                                       <%--<span class="fa fa-bookmark-circle fa-5x"   aria-hidden="true"></span>--%>
-                                        <%--<span class="">Personnes a contacter</span>--%>
-                                    <%--</a>--%>
-                                <%--</li>--%>
-                                <%--<li>--%>
-                                    <%--<a onclick="listEnfant({{personnel.id}})"  data-toggle="modal" data-target="#listEnfantModal" href="#" title="Enfant">--%>
-                                        <%--<span class="fa fa-bookmark-circle fa-5x"  aria-hidden="true"></span>--%>
-                                        <%--<span class="">Enfants</span>--%>
-                                    <%--</a>--%>
-                                <%--</li>--%>
-                                <%--<li>--%>
-                                    <%--<a onclick="listConjoint({{personnel.id}})" data-toggle="modal" data-target="#listConjointModal" href="#" title="Conjoint">--%>
-                                      <%--<span  class="fa fa-bookmark-circle" style="font-size: large" aria-hidden="true" ></span>--%>
-                                    <%--<span class="">Conjoint(e)</span>--%>
-                                    <%--</a>--%>
-                                <%--</li>--%>
-                                <%--<li>--%>
-                                    <%--<a onclick="listAffectations({{personnel.id}})"   data-toggle="modal" data-target="#listAffectationModal" href="#" title="Affectations">--%>
-                                         <%--<span  class="fa fa-bookmark fa-5x" aria-hidden="true"></span>--%>
-                                        <%--<span class="">Affectations</span>--%>
-                                    <%--</a>--%>
-                                <%--</li>--%>
-                                <%--<li>--%>
-                                    <%--<a onclick="listPromotions({{personnel.id}})" data-toggle="modal" data-target="#listPromotionModal" href="#" title="Promotions">--%>
-                                       <%--<span  class="fa fa-bookmark fa-5x"   aria-hidden="true"></span>--%>
-                                        <%--<span class="">Promotions</span>--%>
-                                    <%--</a>--%>
-                                <%--</li>--%>
-                                <%--<li>--%>
-                                    <%--<a onclick="listSanctions({{personnel.id}})" data-toggle="modal" data-target="#listSanctionModal" href="#" title="Sanctions">--%>
-                                         <%--<span  class="fa fa-bookmark-th-large"   aria-hidden="true"></span>--%>
-                                        <%--<span class="">Sanctions</span>--%>
-                                    <%--</a>--%>
-                                <%--</li>--%>
                             </ul>
                         </div>
                     </div>
@@ -2563,7 +2489,7 @@ jQuery(document).ready(function ($) {
 function isValidContrat() {
     //La dur�e du contrat doit etre inferieur � 2 ans
     var dateDebut = new Date(jQuery("#datedebut").datepicker('getDate'));
-    var dateProbableFin = new Date(dateDebut.getUTCFullYear() + 2, dateDebut.getUTCMonth(), dateDebut.getDate());
+    var dateProbableFin = new Date(dateDebut.getUTCFullYear() + 1, dateDebut.getUTCMonth(), dateDebut.getDate());
     var dateFin = new Date(jQuery("#datefin").datepicker('getDate'));
     if (dateFin > dateProbableFin) {
         alert("La duree du contrat est invalide.\nLa duree doit etre comprise entre 0 et 2 ans");

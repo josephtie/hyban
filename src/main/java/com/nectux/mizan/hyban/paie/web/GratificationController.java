@@ -16,10 +16,7 @@ import com.nectux.mizan.hyban.paie.dto.BulletinPaieDTO;
 import com.nectux.mizan.hyban.paie.dto.GratificationDTO;
 import com.nectux.mizan.hyban.paie.entity.Gratification;
 import com.nectux.mizan.hyban.paie.entity.ImprimBulletinPaie;
-import com.nectux.mizan.hyban.parametrages.entity.Banque;
-import com.nectux.mizan.hyban.parametrages.entity.CpteVirmtBanque;
-import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
-import com.nectux.mizan.hyban.parametrages.entity.Societe;
+import com.nectux.mizan.hyban.parametrages.entity.*;
 import com.nectux.mizan.hyban.parametrages.service.BanqueService;
 import com.nectux.mizan.hyban.parametrages.service.CpteVirmtBanqueService;
 import com.nectux.mizan.hyban.parametrages.service.PeriodePaieService;
@@ -70,8 +67,13 @@ public class GratificationController {
 	@RequestMapping("/livrepaiegratification")
 	public String viewLivrePaie(ModelMap modelMap, Principal principal) throws IOException {
 		logger.info(">>>>> Utilisateurs");
-		modelMap.addAttribute("profil", utilisateurRoleService.findByUtilisateur(utilisateurService.findByEmail(principal.getName())).get(0).getRole());
-		modelMap.addAttribute("user", userService.findByEmail(principal.getName()));
+		modelMap.addAttribute("user", utilisateurService.findByUsername(principal.getName()));
+		Utilisateur utilisateur=utilisateurService.findByUsername(principal.getName());
+		System.out.println("utilisateur    " +utilisateur.toString());
+
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
 		modelMap.addAttribute("activePayroll", "active");
 		modelMap.addAttribute("blockPayroll", "block");
 		modelMap.addAttribute("activeGratificationBook", "active");

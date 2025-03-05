@@ -6,7 +6,7 @@
 
 <div class="page-sidebar page-sidebar-fixed scroll mCustomScrollbar _mCS_1 mCS-autoHide" style="height: 359px;">
 <% String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort(); %>
-        <%--<div id="mCSB_1_container" class="mCSB_container"  style="position: relative; top: -375px; left: 0px;" dir="ltr"></div>--%>
+        <%--<div id="mCSB_1_container" class="mCSB_container"  style="position: relative; top: -350px; left: 0px;" dir="ltr"></div>--%>
     <!-- START X-NAVIGATION -->
     <ul class="x-navigation">
         <li class="xn-logo">
@@ -61,41 +61,8 @@
 
                 </ul>
             </li>
-            <li class="xn-openable ${activeCareer}"><a href=""><span class="fa fa-sitemap"></span> Carri&egrave;re</a>
-                <ul style="display: ${blockCareer}">
-                    <li class="xn-openable">
-                        <a href="#"><span class="fa fa-tasks"></span> Gestion des missions</a>
-                        <ul>
-
-                            <li class="${activeMission}"><a href="${contextPath}absence/mission "><span class="fa fa-align-justify"></span>mission</a></li>
-                            <li class="${activeordreMission}"><a href="${contextPath}absence/equipeMission "><span class="fa fa-align-justify"></span>Equipe de Mission</a></li>
-                            <li class="${activeordreMission}"><a href="${contextPath}absence/ordremission "><span class="fa fa-align-justify"></span>Ordre de mission(new)</a></li>
-
-                            <li class="${activeordreMission}"><a href="${contextPath}absence/listordremission "><span class="fa fa-th-large"></span>Liste des Ordres de mission</a></li>
-                            <li class="${activeordreMission}"><a href="${contextPath}absence/fichedeplacement ">Feuilles de deplacements (new)</a></li>
-                            <li class="${activeordreMission}"><a href="${contextPath}absence/listfeuilleDeplacement "><span class="fa fa-th-large"></span>Liste de Feuilles de deplacements</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="${activePromotion}"><a href="${contextPath}carriere/promotions">Promotion</a></li>
-                    <li class="${activePosition}"><a href="${contextPath}carriere/postes">Poste</a></li>
-                    <li class="${activeSanctionType}"><a href="${contextPath}carriere/typesanction">Type Sanction</a></li>
-                    <li class="${activeSantion}"><a href="${contextPath}carriere/sanctions">Sanction</a></li>
-                </ul>
-            </li>
-            <li class="xn-openable ${activeTraining}"><a href="#"><span class="fa fa-book"></span> Formation</a>
-                <ul style="display: ${blockTraining}">
-                    <li class="${activeTrainingRequest}"><a href="${contextPath}formation/demandeformation">Demande de Formation</a></li>
-                    <li class="${activeTrainingResponse}"><a href="${contextPath}formation/demandeformValide">Demande de Formation( Valid&eacute;)</a></li>
-                    <li class="${activeTrainingTraining}"><a href="${contextPath}formation/formations">Formation/Participants</a></li>
-                    <li class="${activeFirmTraning}"><a href="${contextPath}formation/cabinetformation">Cabinet de Formation</a></li>
-                    <li class="${activeTeacher}"><a href="${contextPath}formation/formateurs">Formateur</a></li>
 
 
-
-                        <%--<li class="${activeTopic}"><a href="${contextPath}formation/themes">Theme</a></li>--%>
-                </ul>
-            </li>
             <li class="xn-openable ${activePayroll}">
                 <a href="#"><span class="fa fa-th-list"></span> <span class="xn-text">Gestion de la Paie</span></a>
                 <ul>

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.Principal;
 
 import com.nectux.mizan.hyban.parametrages.entity.Societe;
+import com.nectux.mizan.hyban.parametrages.entity.Utilisateur;
 import com.nectux.mizan.hyban.parametrages.service.UtilisateurRoleService;
 import com.nectux.mizan.hyban.rh.absences.dto.AbsencesDTO;
 import com.nectux.mizan.hyban.parametrages.service.SocieteService;
@@ -43,8 +44,13 @@ public class AbsencesController {
 		modelMap.addAttribute("activeSetting", "active");
 		modelMap.addAttribute("blockSetting", "block");
 		modelMap.addAttribute("activeAbsence", "active");
-		modelMap.addAttribute("user", utilisateurService.findByEmail(principal.getName()));
-		modelMap.addAttribute("profil", utilisateurRoleService.findByUtilisateur(utilisateurService.findByEmail(principal.getName())).get(0).getRole());
+		modelMap.addAttribute("user", utilisateurService.findByUsername(principal.getName()));
+		Utilisateur utilisateur=utilisateurService.findByUsername(principal.getName());
+		System.out.println("utilisateur    " +utilisateur.toString());
+
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
 		modelMap.addAttribute("icon", "iconfa-sitemap");
 		modelMap.addAttribute("littleTitle", "Absence");
 		modelMap.addAttribute("bigTitle", "Absence");

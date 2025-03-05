@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.Principal;
 
 import com.nectux.mizan.hyban.parametrages.entity.Societe;
+import com.nectux.mizan.hyban.parametrages.entity.Utilisateur;
 import com.nectux.mizan.hyban.parametrages.service.UtilisateurRoleService;
 import com.nectux.mizan.hyban.rh.carriere.service.TypeSanctionService;
 import org.apache.logging.log4j.LogManager;
@@ -42,8 +43,13 @@ public class TypeSanctionController {
 		modelMap.addAttribute("blockCareer", "block");
 		modelMap.addAttribute("activeSanctionType", "active");
 		modelMap.addAttribute("user", utilisateurService.findByUsername(principal.getName()));
+		Utilisateur utilisateur=utilisateurService.findByUsername(principal.getName());
+		System.out.println("utilisateur    " +utilisateur.toString());
+
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
 		modelMap.addAttribute("icon", "iconfa-sitemap");
-		modelMap.addAttribute("profil", utilisateurRoleService.findByUtilisateur(utilisateurService.findByEmail(principal.getName())).get(0).getRole());
 		modelMap.addAttribute("littleTitle", "Carri&egrave;re");
 		modelMap.addAttribute("bigTitle", "Type Sanction");
 		

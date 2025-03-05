@@ -6,6 +6,7 @@ import java.security.Principal;
 import com.nectux.mizan.hyban.paie.dto.StockCongeDTO;
 import com.nectux.mizan.hyban.paie.service.StockCongeService;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
+import com.nectux.mizan.hyban.parametrages.entity.Utilisateur;
 import com.nectux.mizan.hyban.parametrages.service.PeriodePaieService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,8 +37,14 @@ public class StockCongeController {
 	@RequestMapping("/stockconges")
 	public String viewEnfant(ModelMap modelMap, Principal principal) throws IOException {
 		logger.info(">>>>> StockConges");
-		
-		modelMap.addAttribute("user", utilisateurService.findByEmail(principal.getName()));
+
+		modelMap.addAttribute("user", utilisateurService.findByUsername(principal.getName()));
+		Utilisateur utilisateur=utilisateurService.findByUsername(principal.getName());
+		System.out.println("utilisateur    " +utilisateur.toString());
+
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
 		modelMap.addAttribute("icon", "iconfa-wrench");
 		modelMap.addAttribute("littleTitle", "Parametrages");
 		modelMap.addAttribute("bigTitle", "Stock Conge");

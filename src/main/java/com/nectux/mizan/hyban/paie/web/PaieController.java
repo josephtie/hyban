@@ -3,6 +3,7 @@ package com.nectux.mizan.hyban.paie.web;
 import java.io.IOException;
 import java.security.Principal;
 
+import com.nectux.mizan.hyban.parametrages.entity.Utilisateur;
 import com.nectux.mizan.hyban.parametrages.service.UtilisateurService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +30,13 @@ private static final Logger logger = LogManager.getLogger(PaieController.class);
 		modelMap.addAttribute("blockPayroll", "block");
 		modelMap.addAttribute("activePayrollBook", "active");*/
 		modelMap.addAttribute("user", userService.findByEmail(principal.getName()));
+		modelMap.addAttribute("user", userService.findByUsername(principal.getName()));
+		Utilisateur utilisateur=userService.findByUsername(principal.getName());
+		System.out.println("utilisateur    " +utilisateur.toString());
+
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
 		modelMap.addAttribute("icon", "iconfa-home");
 		modelMap.addAttribute("littleTitle", "Acceuil");
 		modelMap.addAttribute("bigTitle", "RH PAIE - CGECI");

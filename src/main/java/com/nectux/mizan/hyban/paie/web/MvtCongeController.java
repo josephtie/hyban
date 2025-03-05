@@ -7,6 +7,7 @@ import com.nectux.mizan.hyban.paie.dto.MvtCongeDTO;
 import com.nectux.mizan.hyban.paie.service.MvtCongeService;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.parametrages.entity.Societe;
+import com.nectux.mizan.hyban.parametrages.entity.Utilisateur;
 import com.nectux.mizan.hyban.parametrages.service.PeriodePaieService;
 import com.nectux.mizan.hyban.parametrages.service.SocieteService;
 import org.apache.logging.log4j.LogManager;
@@ -38,8 +39,14 @@ public class MvtCongeController {
 	@RequestMapping("/mvtconges")
 	public String viewEnfantmvt(ModelMap modelMap, Principal principal) throws IOException {
 		logger.info(">>>>> StockConges");
-		
-		modelMap.addAttribute("user", utilisateurService.findByEmail(principal.getName()));
+
+		modelMap.addAttribute("user", utilisateurService.findByUsername(principal.getName()));
+		Utilisateur utilisateur=utilisateurService.findByUsername(principal.getName());
+		System.out.println("utilisateur    " +utilisateur.toString());
+
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
 		modelMap.addAttribute("icon", "iconfa-wrench");
 		modelMap.addAttribute("littleTitle", "Parametrages");
 		modelMap.addAttribute("bigTitle", "Stock Conge");

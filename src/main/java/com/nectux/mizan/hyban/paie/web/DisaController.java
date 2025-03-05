@@ -19,6 +19,7 @@ import com.nectux.mizan.hyban.paie.service.BulletinPaieService;
 import com.nectux.mizan.hyban.parametrages.entity.Exercice;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.parametrages.entity.Societe;
+import com.nectux.mizan.hyban.parametrages.entity.Utilisateur;
 import com.nectux.mizan.hyban.parametrages.repository.SocieteRepository;
 import com.nectux.mizan.hyban.parametrages.service.PeriodePaieService;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
@@ -67,8 +68,14 @@ private static final Logger logger = LogManager.getLogger(DisaController.class);
     public String viewLivrepaie(ModelMap modelMap, Principal principal) throws IOException {
 		logger.info(">>>>> Utilisateurs");
 		
-		modelMap.addAttribute("user", userService.findByEmail(principal.getName()));
-		modelMap.addAttribute("profil", utilisateurRoleService.findByUtilisateur(utilisateurService.findByEmail(principal.getName())).get(0).getRole());
+		//modelMap.addAttribute("user", userService.findByEmail(principal.getName()));
+		modelMap.addAttribute("user", utilisateurService.findByUsername(principal.getName()));
+		Utilisateur utilisateur=utilisateurService.findByUsername(principal.getName());
+		System.out.println("utilisateur    " +utilisateur.toString());
+
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
 		modelMap.addAttribute("activePayroll", "active");
 		modelMap.addAttribute("blockPayroll", "block");
 		modelMap.addAttribute("activeSocialPayrool", "active");

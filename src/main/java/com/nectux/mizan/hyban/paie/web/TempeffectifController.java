@@ -10,6 +10,7 @@ import com.nectux.mizan.hyban.paie.entity.TempEffectif;
 import com.nectux.mizan.hyban.paie.repository.TempEffectifRepository;
 import com.nectux.mizan.hyban.paie.service.TempEffectifService;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
+import com.nectux.mizan.hyban.parametrages.entity.Utilisateur;
 import com.nectux.mizan.hyban.parametrages.repository.PeriodePaieRepository;
 import com.nectux.mizan.hyban.parametrages.service.PeriodePaieService;
 import com.nectux.mizan.hyban.parametrages.service.UtilisateurService;
@@ -54,7 +55,13 @@ private static final Logger logger = LogManager.getLogger(TempeffectifController
 		/*modelMap.addAttribute("activePayroll", "active");
 		modelMap.addAttribute("blockPayroll", "block");
 		modelMap.addAttribute("activePayrollBook", "active");*/
-		modelMap.addAttribute("user", userService.findByEmail(principal.getName()));
+		modelMap.addAttribute("user", userService.findByUsername(principal.getName()));
+		Utilisateur utilisateur=userService.findByUsername(principal.getName());
+		System.out.println("utilisateur    " +utilisateur.toString());
+
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
 		modelMap.addAttribute("icon", "iconfa-home");
 		modelMap.addAttribute("littleTitle", "Acceuil");
 		modelMap.addAttribute("bigTitle", "RH PAIE - CGECI");

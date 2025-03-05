@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.nectux.mizan.hyban.paie.entity.ImprimBulletinPaie;
 import com.nectux.mizan.hyban.paie.service.BulletinPaieService;
+import com.nectux.mizan.hyban.paie.service.JasperReportService;
 import com.nectux.mizan.hyban.parametrages.entity.*;
 import com.nectux.mizan.hyban.parametrages.repository.PlanningCongeRepository;
 import com.nectux.mizan.hyban.parametrages.service.PeriodePaieService;
@@ -81,6 +82,7 @@ private static final Logger logger = LogManager.getLogger(BulletinPaieController
 	@Autowired private PlanningCongeRepository planningCongeRepository;
 	@Autowired private UtilisateurService utilisateurService;
 	@Autowired private UtilisateurRoleService utilisateurRoleService;
+	@Autowired private JasperReportService jasperReportService;
 	MethodsShared methodsShared = new MethodsShared();
 	List<LivreDePaie> livredepaieList=null;
 	private PeriodePaie maperiode;
@@ -88,7 +90,13 @@ private static final Logger logger = LogManager.getLogger(BulletinPaieController
 	@RequestMapping("/livrepaie")
     public String viewAccountType(ModelMap modelMap, Principal principal) throws IOException {
 		logger.info(">>>>> Utilisateurs");
-		modelMap.addAttribute("profil", utilisateurRoleService.findByUtilisateur(utilisateurService.findByEmail(principal.getName())).get(0).getRole());
+		Utilisateur utilisateur=userService.findByUsername(principal.getName());
+		System.out.println("utilisateur    " +utilisateur.toString());
+
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
+		//modelMap.addAttribute("profil", utilisateurRoleService.findByUtilisateur(utilisateurService.findByEmail(principal.getName())).get(0).getRole());
 		modelMap.addAttribute("activePayroll", "active");
 		modelMap.addAttribute("blockPayroll", "block");
 		modelMap.addAttribute("activePayrollBook", "active");
@@ -720,7 +728,7 @@ private static final Logger logger = LogManager.getLogger(BulletinPaieController
 	//		dateRetourDernierConge = oldCongeList.get(0).getDateRetour();
 			
 		
-		  String url = request.getSession().getServletContext().getRealPath(DeploimentUtils.ChemRech());
+		  String url = request.getSession().getServletContext().getRealPath(DeploimentUtils.RecupSubReportChem("../reports"));
 		  System.out.println("----------- url url url "+url);
 		  String url1 = DeploimentUtils.RecupSubReportChem(url);
 		  System.out.println("----------- url1 url1 url1 "+url1);
@@ -2059,7 +2067,7 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 		
 		
 		tab[1] = (double) partieEntiere;
-		tab[2] = new Double(partieApresVirg);
+		tab[2] = (double)partieApresVirg;
 		
 	
 		

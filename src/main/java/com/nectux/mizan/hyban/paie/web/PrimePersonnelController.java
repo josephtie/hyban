@@ -14,6 +14,7 @@ import com.nectux.mizan.hyban.paie.service.PretService;
 import com.nectux.mizan.hyban.paie.service.PrimePersonnelService;
 import com.nectux.mizan.hyban.parametrages.dto.PeriodePaieDTO;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
+import com.nectux.mizan.hyban.parametrages.entity.Utilisateur;
 import com.nectux.mizan.hyban.parametrages.service.PeriodePaieService;
 import com.nectux.mizan.hyban.parametrages.service.RubriqueService;
 import com.nectux.mizan.hyban.parametrages.service.SocieteService;
@@ -59,8 +60,13 @@ private static final Logger logger = LogManager.getLogger(PrimePersonnelControll
 		modelMap.addAttribute("activePayroll", "active");
 		modelMap.addAttribute("blockPayroll", "block");
 		modelMap.addAttribute("activeLend", "active");
-		modelMap.addAttribute("profil", utilisateurRoleService.findByUtilisateur(utilisateurService.findByEmail(principal.getName())).get(0).getRole());
-		modelMap.addAttribute("user", userService.findByEmail(principal.getName()));
+		modelMap.addAttribute("user", utilisateurService.findByUsername(principal.getName()));
+		Utilisateur utilisateur=utilisateurService.findByUsername(principal.getName());
+		System.out.println("utilisateur    " +utilisateur.toString());
+
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
 		modelMap.addAttribute("icon", "iconfa-home");
 		modelMap.addAttribute("littleTitle", "Paie");
 		modelMap.addAttribute("bigTitle", "Primes personnels");

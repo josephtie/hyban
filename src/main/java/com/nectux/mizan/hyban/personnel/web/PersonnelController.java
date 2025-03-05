@@ -311,8 +311,9 @@ public class PersonnelController {
 															@RequestParam(value="typeEmp", required=false) String typemp,
 															@RequestParam(value="telephone", required=false) String telephone,
 															@RequestParam(value="situationMedaille", required=false) int situationMedaille,
-															@RequestParam(value="situationEmploie", required=false) int situationEmploie,@RequestParam(value="dateRetourcg", required=false) String dateRetourcg) throws Exception { 
-				String sdate;
+															@RequestParam(value="situationEmploie", required=false) int situationEmploie,
+													       @RequestParam(value="dateRetourcg", required=false) String dateRetourcg) throws Exception {
+		String sdate;
 		if(dateRetourcg!=null){			
 		     sdate=dateRetourcg;
 		}else{		  

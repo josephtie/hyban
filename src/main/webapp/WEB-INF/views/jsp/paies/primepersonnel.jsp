@@ -152,34 +152,7 @@
 </div>
 
 
-<%--<div class="modal deleteModal  fade bs-delete-modal-static" id="rhpModalPretDel" role="dialog" data-backdrop="static">--%>
-    <%--<div class="modal-dialog ">--%>
-        <%--<div class="modal-content">--%>
-	        <%--<form id="formDelete"  action="#" method="post">--%>
-	            <%--<div class="modal-header ">--%>
-	                <%--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>--%>
-	                <%--<span class="circle bg-danger">--%>
-	                    <%--<i class="fa fa-question-circle"></i>--%>
-	                   <%----%>
-	                <%--</span>--%>
-	            <%--</div>--%>
-	            <%--<div class="modal-body">--%>
-	             <%--Etes vous sur de vouloir supprimer cet pret ?--%>
-	            	<%--<h4 id="labelPret"></h4>--%>
-	            <%--</div>--%>
-	            <%--<div class="modal-footer">--%>
-                	<%--<input type="hidden"  id="idPretperso"  value="" name="idPretperso" >--%>
-                	<%--<span></span>&nbsp;--%>
-                    <%--<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>--%>
-                    <%--<button type="submit" class="btn btn-success">Valider</button>--%>
-                <%--</div>--%>
-                <%--</form>--%>
-        	<%--</div>--%>
-        	<%----%>
-        	<%----%>
-        <%----%>
-    <%--</div>--%>
-<%--</div>--%>
+
 <script type="text/javascript">
 //AngularJS
 

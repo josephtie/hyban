@@ -77,201 +77,201 @@
 	</definition>
 	
 	<definition name="login" extends="logintemplate">
-		<put-attribute name="title" value=" HYBAN  Authentification" />
+		<put-attribute name="title" value=" HYBAN -Authentification" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/login.jsp" />
 	</definition>
 	
 	<definition name="welcome" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Accueil" />
+		<put-attribute name="title" value=" HYBAN -Accueil" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/welcome.jsp" />
 	</definition>
 	
 	<definition name="utilisateurs" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Utilisateur" />
+		<put-attribute name="title" value=" HYBAN -Utilisateur" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/utilisateur.jsp" />
 	</definition>
 	
 	<definition name="planningconges" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Planning Congés" />
+		<put-attribute name="title" value=" HYBAN -Planning Congés" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/planningconges.jsp" />
 	</definition>
 	
 
 	<definition name="cptevirement" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Categorie" />
+		<put-attribute name="title" value=" HYBAN -Categorie" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/cptevirement.jsp" />
 	</definition>
 	
 	<definition name="fonctions" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Fonctions" />
+		<put-attribute name="title" value=" HYBAN -Fonctions" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/personnels/fonction.jsp" />
 	</definition>
 	
 	<definition name="services" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Services" />
+		<put-attribute name="title" value=" HYBAN -Services" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/personnels/services.jsp" />
 	</definition>
 	
 	<definition name="personnels" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Personnel" />
+		<put-attribute name="title" value=" HYBAN -Personnel" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/personnels/personnel.jsp" />
 	</definition>
 	
 	<definition name="enfants" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Enfants" />
+		<put-attribute name="title" value=" HYBAN -Enfants" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/personnels/enfants.jsp" />
 	</definition>
 	
 	<definition name="periode" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Periode" />
+		<put-attribute name="title" value=" HYBAN -Periode" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/periode.jsp" />
 	</definition>
 	
 	<definition name="contrat" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Contrat" />
+		<put-attribute name="title" value=" HYBAN -Contrat" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/personnels/contrat.jsp" />
 	</definition>
 	
 	<definition name="categories" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Categorie" />
+		<put-attribute name="title" value=" HYBAN -Categorie" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/categorie.jsp" />
 	</definition>
 	
 	<definition name="banques" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Banque" />
+		<put-attribute name="title" value=" HYBAN -Banque" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/banques.jsp" />
 	</definition>
 	
 	<definition name="exercices" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Exercice" />
+		<put-attribute name="title" value=" HYBAN -Exercice" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/exercice.jsp" />
 	</definition>
 	<definition name="rubriques" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Rubrique" />
+		<put-attribute name="title" value=" HYBAN -Rubrique" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/rubrique.jsp" />
 	</definition>
 	<definition name="livrepaie" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Livre de paie" />
+		<put-attribute name="title" value=" HYBAN -Livre de paie" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/livrepaie.jsp" />
 	</definition>
 	
 	<definition name="livrepaiegratification" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Livre de paie" />
+		<put-attribute name="title" value=" HYBAN -Livre de paie" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/livrepaiegratification.jsp" />
 	</definition>
 	
 	<definition name="livrepaieconge" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Livre de paie" />
+		<put-attribute name="title" value=" HYBAN -Livre de paie" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/livrepaieconge.jsp" />
 	</definition>
 	
 	<definition name="pretpersonnels" extends="fetemplate">
-	<put-attribute name="title" value=" HYBAN  Pret" />
+	<put-attribute name="title" value=" HYBAN -Pret" />
 	<put-attribute name="content" value="/WEB-INF/views/jsp/paies/pretpersonnel.jsp" />
     </definition>
 	<definition name="primespersonnel" extends="fetemplate">
-	<put-attribute name="title" value=" HYBAN  Pret" />
+	<put-attribute name="title" value=" HYBAN -Pret" />
 	<put-attribute name="content" value="/WEB-INF/views/jsp/paies/primespersonnel.jsp" />
 	</definition>
 
 	<definition name="simulPaie" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Pret" />
+		<put-attribute name="title" value=" HYBAN -Pret" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/simulPaie.jsp" />
 	</definition>
 	<!--<definition name="primepersonnel" extends="fetemplate">-->
-		<!--<put-attribute name="title" value=" HYBAN  Pret" />-->
+		<!--<put-attribute name="title" value=" HYBAN -Pret" />-->
 		<!--<put-attribute name="content" value="/WEB-INF/views/paies/primepersonnel.jsp" />-->
 	<!--</definition>-->
 	
 	<definition name="societes" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Info" />
+		<put-attribute name="title" value=" HYBAN -Info" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/societe.jsp" />
 	</definition>
 		<definition name="societesp" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Info" />
+		<put-attribute name="title" value=" HYBAN -Info" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/societe1.jsp" />
 	</definition>
 	
 	
 	<definition name="pretdupersonnel" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Pret" />
+		<put-attribute name="title" value=" HYBAN -Pret" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/pretdupersonnel.jsp" />
 	</definition>
 	<definition name="histobull" extends="fetemplate">
-		<put-attribute name="title" value="HYBAN   Livre de paie" />
+		<put-attribute name="title" value="HYBAN - Livre de paie" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/histobull.jsp" />
 	</definition>
 	<definition name="promotions" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Promotion" />
+		<put-attribute name="title" value=" HYBAN -Promotion" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/carriere/promotion.jsp" />
 	</definition>
 	
 	<definition name="pointages" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Pointage" />
+		<put-attribute name="title" value=" HYBAN -Pointage" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/personnels/pointage.jsp" />
 	</definition>
 	
 	<definition name="postes" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Poste" />
+		<put-attribute name="title" value=" HYBAN -Poste" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/carriere/poste.jsp" />
 	</definition>
 	
 	<definition name="typeSanctions" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Type de sanction" />
+		<put-attribute name="title" value=" HYBAN -Type de sanction" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/carriere/typesanction.jsp" />
 	</definition>
 	
 	<definition name="sanctions" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Sanction" />
+		<put-attribute name="title" value=" HYBAN -Sanction" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/carriere/sanction.jsp" />
 	</definition>
 	
 	<definition name="demandeformation" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Demande de formation" />
+		<put-attribute name="title" value=" HYBAN -Demande de formation" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/formation/demandeformation.jsp" />
 	</definition>
 	
 	<definition name="themes" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Theme de formation" />
+		<put-attribute name="title" value=" HYBAN -Theme de formation" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/formation/theme.jsp" />
 	</definition>
 	
 	<definition name="cabinetformations" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Cabinet de formation" />
+		<put-attribute name="title" value=" HYBAN -Cabinet de formation" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/formation/cabinetformation.jsp" />
 	</definition>
 	
 	<definition name="formateurs" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Formateur" />
+		<put-attribute name="title" value=" HYBAN -Formateur" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/formation/formateur.jsp" />
 	</definition>
 	
 	<definition name="formations" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Formation" />
+		<put-attribute name="title" value=" HYBAN -Formation" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/formation/formation.jsp" />
 	</definition>
 	
 	<definition name="absences" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Absence" />
+		<put-attribute name="title" value=" HYBAN -Absence" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/rh/absence/absence.jsp" />
 	</definition>
 
 	<definition name="echelonnements" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Pret" />
+		<put-attribute name="title" value=" HYBAN -Pret" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/echelonnement.jsp" />
 	</definition>
 	
 	<definition name="etats" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Etats" />
+		<put-attribute name="title" value=" HYBAN -Etats" />
 		<put-attribute name="content" value="/WEB-INF/jsp/views/paies/etat.jsp" />
 	</definition>
 	
 	<definition name="etatimp" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Etats" />
+		<put-attribute name="title" value=" HYBAN -Etats" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/etatimp.jsp" />
 	</definition>
 	<definition name="etatimptab" extends="fetemplate">
-		<put-attribute name="title" value=" HYBAN  Etats" />
+		<put-attribute name="title" value=" HYBAN -Etats" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/etatimptab.jsp" />
 	</definition>
 </tiles-definitions>

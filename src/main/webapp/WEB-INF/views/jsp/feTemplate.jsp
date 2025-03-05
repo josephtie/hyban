@@ -58,6 +58,19 @@
         .panel-custom > .panel-body {
             background-color: #f8f9fa; /* Couleur de fond du contenu */
         }
+        .page-container {
+            display: flex;
+        }
+
+        .page-sidebar {
+            width: 250px; /* Ajustez selon vos besoins */
+            background-color: #f8f9fa; /* Couleur de fond pour le menu */
+        }
+
+        .page-content {
+            flex: 1; /* Prend le reste de l'espace */
+            padding: 20px; /* Ajoutez un padding pour éviter le chevauchement */
+        }
     </style>
 </head>
 
@@ -69,11 +82,13 @@
     </script>
 
     <div class="page-container">
+
         <tiles:insertAttribute name="menu" />
+
          <div class="page-content">
              <tiles:insertAttribute name="header" />
              <tiles:insertAttribute name="contentHeader" />
-             <div class="page-content-wrap">
+             <div class="page-content-wrap" >
                  <tiles:insertAttribute name="content" />
                  <tiles:insertAttribute name="footer" />
              </div>

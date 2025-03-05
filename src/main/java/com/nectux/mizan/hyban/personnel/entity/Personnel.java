@@ -646,17 +646,17 @@ public class Personnel {
 
 			if (stage == null)
 				statfonct = " ";
-			if (stage == true)
+			if (Boolean.TRUE.equals(stage))
 				statfonct = "Stage";
 
 			  if( fonctionnaire == null )
 				  statfonct = " ";
-			  if( fonctionnaire == true )
+			  if(Boolean.TRUE.equals(fonctionnaire) )
 				statfonct = "Fonctionnaire ";
 
 			if( consultant == null )
 				statfonct = " ";
-			if( consultant == true )
+			if(Boolean.TRUE.equals(consultant))
 				statfonct = "Consultant ";
 
 		}
