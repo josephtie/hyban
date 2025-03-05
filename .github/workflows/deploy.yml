@@ -22,6 +22,10 @@ jobs:
       - name: Compiler le projet avec Maven
         run: mvn clean package -DskipTests
 
+      - name: Unclenched le Webhook Portainer (ignorer SSL)
+        run:
+          curl -k -X POST -H "Content-Type: application/json" -d '{}' "https://62.72.32.187:9443/api/stacks/webhooks/0394d252-8a19-48d0-8ac3-1b5b070dacdc"
+
 #      - name: Connexion à Docker Hub
 #        env:
 #          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
@@ -34,5 +38,4 @@ jobs:
 #          docker build -t josephtie/hyban:latest .
 #          docker push josephtie/hyban:latest
 
-      - name: Déclencher le Webhook Portainer
-        run: curl -X POST ${{ secrets.PORTAINER_WEBHOOK }}
+
