@@ -8,10 +8,10 @@ END
 $$;
 
 -- Donner tous les privilèges à l'utilisateur "user_hyban" sur la base de données
-GRANT ALL PRIVILEGES ON DATABASE hyban_db TO user_hyban;
+GRANT ALL PRIVILEGES ON DATABASE hybanBD TO user_hyban;
 
 -- Appliquer les privilèges sur les futurs schémas et tables
-ALTER DATABASE hyban_db OWNER TO user_hyban;
+ALTER DATABASE hybanBD OWNER TO user_hyban;
 
 -- Autoriser l'utilisateur "user_hyban" à être SUPERUSER
 ALTER ROLE user_hyban SUPERUSER;
