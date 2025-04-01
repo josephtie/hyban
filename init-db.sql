@@ -1,20 +1,20 @@
 -- Créer un utilisateur "user_hyban" avec mot de passe
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'directus') THEN
-    CREATE USER user_hyban WITH PASSWORD 'directus';
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'user_hyban') THEN
+    CREATE USER user_hyban WITH PASSWORD 'user_hyban';
   END IF;
 END
 $$;
 
 -- Donner tous les privilèges à l'utilisateur "user_hyban" sur la base de données
-GRANT ALL PRIVILEGES ON DATABASE hyban_db TO directus;
+GRANT ALL PRIVILEGES ON DATABASE hyban_db TO user_hyban;
 
 -- Appliquer les privilèges sur les futurs schémas et tables
-ALTER DATABASE hyban_db OWNER TO directus;
+ALTER DATABASE hyban_db OWNER TO user_hyban;
 
 -- Autoriser l'utilisateur "user_hyban" à être SUPERUSER
-ALTER ROLE directus SUPERUSER;
+ALTER ROLE user_hyban SUPERUSER;
 
 -- Assurer que l'utilisateur "postgres" est SUPERUSER et a accès à tout
 ALTER ROLE postgres SUPERUSER;
