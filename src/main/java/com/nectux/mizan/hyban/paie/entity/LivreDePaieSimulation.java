@@ -1510,7 +1510,7 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 		
 		
 		tab[1] = (double) partieEntiere;
-		tab[2] = new Double(partieApresVirg);
+		tab[2] = (double) partieApresVirg;
 		
 	
 		

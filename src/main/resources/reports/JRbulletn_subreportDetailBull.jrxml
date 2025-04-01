@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="JRbulletn_subreportDetailBull" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="49fa7a55-b4e6-4973-b2f1-87e636b6a6ae">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="listBulletinDetailpasse" class="com.nectux.mizan.hyban.paie.entity.ImprimBulletinPaie"/>
+	<field name="libelle" class="java.lang.String"/>
+	<field name="gain" class="java.lang.Double"/>
+	<field name="retenue" class="java.lang.Float"/>
+	<field name="taux" class="java.lang.Double"/>
+	<field name="gainPatron" class="java.lang.Double"/>
+	<field name="retenuePatron" class="java.lang.Double"/>
+	<field name="tauxPatron" class="java.lang.Double"/>
+	<field name="base" class="java.lang.Double"/>
+	<field name="mtgain" class="java.lang.String"/>
+	<field name="mtretenue" class="java.lang.String"/>
+	<field name="mtretenuePatron" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="50" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="7" width="555" height="42" backcolor="#E6E6E6" uuid="e9a3afce-03dd-4d4f-bbd6-653c2b46393d"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="1" width="246" height="40" backcolor="#99CCFF" uuid="d73faab7-ec8c-4f19-a5d6-88a940572d40"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5" lineColor="#000000"/>
+						<leftPen lineWidth="0.5" lineColor="#000000"/>
+						<bottomPen lineWidth="0.5" lineColor="#000000"/>
+						<rightPen lineWidth="0.5" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Désignation]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="246" y="1" width="53" height="40" backcolor="#99CCFF" uuid="27347393-e0fd-4567-9be1-b5f399b79aca"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Base]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="299" y="21" width="37" height="20" backcolor="#99CCFF" uuid="ae891702-cf63-42d0-9b24-ea05c4aca0d1"/>
+					<box>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Taux]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="336" y="21" width="60" height="20" backcolor="#99CCFF" uuid="2f56a740-339a-4a8d-8c41-2471b93c0742"/>
+					<box>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Gain]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="396" y="21" width="53" height="20" backcolor="#99CCFF" uuid="6a94007c-ebe7-4508-bbd4-fca14b2a680a"/>
+					<box>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Retenue]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="449" y="21" width="36" height="20" backcolor="#99CCFF" uuid="60911413-0dd5-47d9-875b-939edeba4ba6"/>
+					<box>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Taux]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="485" y="21" width="70" height="20" backcolor="#99CCFF" uuid="5c6f4f8c-07fa-482c-896c-b7a1bfedc9c0"/>
+					<box>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Retenue]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="299" y="1" width="150" height="20" backcolor="#99CCFF" uuid="9c100b47-bdf1-4ac6-b556-2770da1e604c"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Part salariale]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="449" y="1" width="106" height="20" backcolor="#99CCFF" uuid="ca97a16d-8a96-43c1-80ed-76eea3442d89"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Part patronale]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="246" height="17" isPrintWhenDetailOverflows="true" uuid="c7b5c50f-031c-4980-aace-14ef5100d4f3"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{libelle}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
+				<reportElement x="246" y="0" width="53" height="17" isPrintWhenDetailOverflows="true" uuid="a87ad08d-ef43-4a26-bc02-df2d7f6e7ae8"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="###0.0" isBlankWhenNull="true">
+				<reportElement x="299" y="0" width="37" height="17" isPrintWhenDetailOverflows="true" uuid="4590b364-f1f2-4d68-9b05-98f5bbb2ff8f"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{taux}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="336" y="0" width="60" height="17" isPrintWhenDetailOverflows="true" uuid="cb7e89c6-3bad-408f-8d12-0ad56f5326f6"/>
+				<box rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mtgain}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="396" y="0" width="53" height="17" isPrintWhenDetailOverflows="true" uuid="685ca569-b175-4e27-90ca-4ccaaa5f61d4"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mtretenue}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="485" y="0" width="70" height="17" isPrintWhenDetailOverflows="true" uuid="b6ad4bd1-6eb2-4105-9dad-e12bc6a00bb0"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mtretenuePatron}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="###0.0" isBlankWhenNull="true">
+				<reportElement x="449" y="0" width="36" height="17" isPrintWhenDetailOverflows="true" uuid="42e4c555-0272-4f2f-a7b2-5d55cad96684"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tauxPatron}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="7" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="555" height="1" uuid="5d0e7b62-be90-417a-abd5-afeedaf0a6c5"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

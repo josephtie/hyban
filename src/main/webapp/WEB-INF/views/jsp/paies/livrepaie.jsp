@@ -59,7 +59,8 @@
 					data-url="${pageContext.request.contextPath}/personnels/listcontratpersonneljson"
 					data-side-pagination="server" 
 					data-pagination="true"
-			
+			        data-show-export="true"
+                    data-export-dataType="all"
 					data-search="true">
 					<thead>
 						<tr>
@@ -135,8 +136,8 @@
 
 							<th data-field="mtbrutNonImpo" data-align="right">Brut Non Imp.</th>
 							<th data-field="montantIts" data-align="right">ITS</th>							
-							<th data-field="montantCn"  data-align="left" data-sortable="true">CN</th>
-							<th data-field="montantIgr"  data-align="left" data-sortable="true">IGR</th>
+						<%--	<th data-field="montantCn"  data-align="left" data-sortable="true">CN</th>--%>
+						<%--	<th data-field="montantIgr"  data-align="left" data-sortable="true">IGR</th>--%>
 							<th data-field="montanttotalretenuefiscal"  data-align="left">Retenue fiscale</th>
 							<th data-field="montantbaseCnps"  data-align="left">Base cnps</th>
 							<th data-field="montantCnps"  data-align="center">CNPS</th>
@@ -325,8 +326,8 @@
 							<th data-field="mtbrutNonImposable" data-align="right">Brut Non Imp.</th>
 
 							<th data-field="mtits" data-align="right">ITS</th>							
-							<th data-field="mtcn"  data-align="left" data-sortable="true">CN</th>
-							<th data-field="mtigr"  data-align="left" data-sortable="true">IGR</th>
+							<%--<th data-field="mtcn"  data-align="left" data-sortable="true">CN</th>--%>
+							<%--<th data-field="mtigr"  data-align="left" data-sortable="true">IGR</th>--%>
 
 							<th data-field="mttotalRetenueFiscale"  data-align="left">Retenue fiscale</th>
 							<th data-field="mtbasecnps"  data-align="left">base Cnps</th>
@@ -533,7 +534,8 @@
     <div class="modal-dialog" role="document" style="width:80%;" >
         <div class="modal-content">
             <form id="formImrimBull" class="form-horizontal" >
-                <div class="modal-header">                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> 
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">Imprimer les bulletins de paie de  ${periode}</h4>
 				</div>
                 <div class="modal-body">
@@ -589,8 +591,8 @@
 								</c:forEach>
 							<th data-field="brutNonImposable" data-align="right">Brut Non Imp.</th>
 							<th data-field="its" data-align="right">ITS</th>
-							<th data-field="cn"  data-align="left" data-sortable="true">CN</th>
-							<th data-field="igr"  data-align="left" data-sortable="true">IGR</th>
+							<%--<th data-field="cn"  data-align="left" data-sortable="true">CN</th>--%>
+							<%--<th data-field="igr"  data-align="left" data-sortable="true">IGR</th>--%>
 							<th data-field="totalretenuefiscal"  data-align="left">Retenue fiscale</th>
 							<th data-field="basecnps"  data-align="left">Base cnps</th>
 							<th data-field="cnps"  data-align="center">CNPS</th>

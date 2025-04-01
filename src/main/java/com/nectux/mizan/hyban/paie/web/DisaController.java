@@ -99,8 +99,12 @@ private static final Logger logger = LogManager.getLogger(DisaController.class);
 		modelMap.addAttribute("activePayroll", "active");
 		modelMap.addAttribute("blockPayroll", "block");
 		modelMap.addAttribute("activeITSFDFP", "active");
-		modelMap.addAttribute("profil", utilisateurRoleService.findByUtilisateur(utilisateurService.findByEmail(principal.getName())).get(0).getRole());
-		modelMap.addAttribute("user", userService.findByEmail(principal.getName()));
+		//modelMap.addAttribute("profil", utilisateurRoleService.findByUtilisateur(utilisateurService.findByEmail(principal.getName())).get(0).getRole());
+		modelMap.addAttribute("user",utilisateurService.findByUsername(principal.getName()));
+		Utilisateur utilisateur=utilisateurService.findByUsername(principal.getName());
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
 		modelMap.addAttribute("icon", "iconfa-home");
 		modelMap.addAttribute("littleTitle", "Paie");
 		modelMap.addAttribute("bigTitle", "Cotisation fiscales" );
@@ -119,8 +123,11 @@ private static final Logger logger = LogManager.getLogger(DisaController.class);
 		modelMap.addAttribute("activePayroll", "active");
 		modelMap.addAttribute("blockPayroll", "block");
 		modelMap.addAttribute("activeState301", "active");
-		modelMap.addAttribute("user", userService.findByEmail(principal.getName()));
-		modelMap.addAttribute("profil", utilisateurRoleService.findByUtilisateur(utilisateurService.findByEmail(principal.getName())).get(0).getRole());
+		modelMap.addAttribute("user",utilisateurService.findByUsername(principal.getName()));
+		Utilisateur utilisateur=utilisateurService.findByUsername(principal.getName());
+		modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+				.map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+				.findFirst().orElse(""));
 		modelMap.addAttribute("icon", "iconfa-home");
 		modelMap.addAttribute("littleTitle", "Paie");
 		modelMap.addAttribute("bigTitle", "Etat 301");
@@ -3747,7 +3754,7 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 				disaDTO.setCotisationEntreprisePfAtCnps(cumulRetenuePatronal);
 				
 				if(typSalarie.equals("M"))
-					disaDTO.setNbJourMoisTravail(new Double(nbMois));
+					disaDTO.setNbJourMoisTravail(Double.valueOf((nbMois)));
 				
 				if(typSalarie.equals("J"))
 					disaDTO.setNbJourMoisTravail(nbJour);
@@ -3758,7 +3765,7 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 				Double salaireBrutAnNonPlaf = somNetImposable + somPrimeTransport;
 				
 				disaDTO.setSalaireBrutAnnuelNonPlafon(salaireBrutAnNonPlaf);
-				disaDTO.setNbMoisTravailAvecConge(new Double(nbMoisBulletin));
+				disaDTO.setNbMoisTravailAvecConge(Double.valueOf((nbMoisBulletin)));
 				disaDTO.setSalaireAnnuelSoumisAuPfAt(cumulSalaireAnnuelSoumisAuPfAt);
 				disaDTO.setSalaireAnnuelSoumisCnps(cumulSalaireAnnuelSoumisCnps);
 				

@@ -12,11 +12,16 @@ import com.nectux.mizan.hyban.paie.repository.PrimePersonnelRepository;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.parametrages.repository.RubriqueRepository;
 import com.nectux.mizan.hyban.parametrages.entity.Rubrique;
+import com.nectux.mizan.hyban.utils.CalculRICF;
 import com.nectux.mizan.hyban.utils.DifferenceDate;
 import com.nectux.mizan.hyban.utils.Utils;
 import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 import com.nectux.mizan.hyban.utils.ProvisionConge;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static com.nectux.mizan.hyban.utils.CNPSCalculator.calculerCNPS;
+import static com.nectux.mizan.hyban.utils.CalculRICF.getRICF;
+import static com.nectux.mizan.hyban.utils.ITSCalculator.calculerITS;
 
 
 public class LivreDePaie {
@@ -94,8 +99,14 @@ public class LivreDePaie {
 	private String mtbrutNonImposable;
 	
 	private Double its;
+
+
 	@Transient
 	private String mtits;
+
+	private Double CMU;
+	@Transient
+	private String mtCMU ;
 	
 	private Double cn;
 	@Transient
@@ -244,32 +255,33 @@ public class LivreDePaie {
 		this.listGainsNet=listGains;
 		if(ctratperso.getPersonnel().getCarec()==true){
 			if(tempeffect==null){
-		       this.salaireBase = Math.rint(salBase);
+		       this.salaireBase = Math.ceil(salBase);
 		        if(sursal==null)
-		          this.sursalaire = Math.rint(0d);
+		          this.sursalaire = Math.ceil(0d);
 		        else
-		    	 this.sursalaire = Math.rint(sursal);
+		    	 this.sursalaire = Math.ceil(sursal);
 		     
 		        if(ancien>= 2)
-		  		    this.primeAnciennete = Math.rint((salaireBase) * ancien / 100);
+		  		    this.primeAnciennete = Math.ceil((salaireBase) * ancien / 100);
 		    	else
-		    	 this.primeAnciennete = Math.rint(0); 
+		    	 this.primeAnciennete = Math.ceil(0);
+
 		     	if(indemLog==null)
-		     		this.indemniteLogement = Math.rint(0);
+		     		this.indemniteLogement = Math.ceil(0);
 		     	else
-		    	 this.indemniteLogement = Math.rint(indemLog);
+		    	 this.indemniteLogement = Math.ceil(indemLog);
 		     
 		     
 		     	 if(ctratperso.getIndemniteTransport()==null)
-		     	 {  this.indemniteTransportImp=Math.rint(0);
-		           this.indemniteTransport=Math.rint(0);
+		     	 {  this.indemniteTransportImp=Math.ceil(0);
+		           this.indemniteTransport=Math.ceil(0);
 		        
 		     	 }else{
 		        	if(ctratperso.getIndemniteTransport() > 30000){
 		        	     this.indemniteTransportImp=ctratperso.getIndemniteTransport()-30000;
 				        this.indemniteTransport=30000d;
 				     }else{
-				    	  this.indemniteTransportImp=Math.rint(0);
+				    	  this.indemniteTransportImp=Math.ceil(0);
 					        this.indemniteTransport=ctratperso.getIndemniteTransport();
 				     }
 				 }
@@ -356,8 +368,6 @@ public class LivreDePaie {
 					        autreImposable=autreImposable+(primeImpos.getMontant()-primeImpos.getPrime().getMtExedent())*tempeffect.getJourspresence()/30;
                              else
                     	   autreImposable=autreImposable+primeImpos.getMontant()*tempeffect.getJourspresence()/30;
-  					
-  					//autreImposable=autreImposable+primeImpos.getMontant();
   				      }
   			       }
   			     }
@@ -366,15 +376,16 @@ public class LivreDePaie {
 		}
 		
 			this.brutImposable = Math.rint(salaireBase + sursalaire + primeAnciennete + indemniteLogement+indemniteTransportImp+autreIndemImposable+autreImposable);
-
-			this.its = Math.rint(brutImposable * 1.2 / 100);
-		    this.cn =  Math.rint(calculerCN());
-		    this.igr = Math.rint(calculerIGR());
-		    this.totalRetenueFiscale = Math.rint(its + cn + igr);
+			Double ricf = getRICF(nombrePart);
+			double itsbrut =Math.ceil(calculerITS(brutImposable));
+			this.its = Math.max(0, itsbrut - ricf / 12);
+		 //   this.cn =  Math.ceil(calculerCN());
+		  //  this.igr = Math.ceil(calculerIGR());
+		    this.totalRetenueFiscale = Math.ceil(its );//+ cn + igr);
 	     	if(ctratperso.getIndemniteRepresent()==null)
-			this.indemniteRepresentation = Math.rint(0);
+			this.indemniteRepresentation = Math.ceil(0);
 			else
-			this.indemniteRepresentation = Math.rint(ctratperso.getIndemniteRepresent());
+			this.indemniteRepresentation = Math.ceil(ctratperso.getIndemniteRepresent());
 
 
 //		if(ctratperso.getIndemniteResp()==null)
@@ -408,11 +419,12 @@ public class LivreDePaie {
 				this.brutNonImposable=indemniteRepresentation+indemniteTransport+autreNonImposable;
 		//this.indemniteRepresentation = Math.rint(calculerIndemniterRepresentation());
 				this.basecnps=brutImposable + indemniteRepresentation+autreNonImposable-autreIndemImposable;
-				this.cnps = Math.rint(calculCNPS(basecnps));
-				this.avceAcpte = Math.rint(avanceEtAccompte);
-				this.pretAlios = Math.rint(pretALIOS);
+				//double cnpsBrut[]=calculerCNPS(basecnps,2);
+				this.cnps = Math.ceil(calculCNPS(basecnps));//Math.rint(cnpsBrut[2]);
+				this.avceAcpte = Math.ceil(avanceEtAccompte);
+				this.pretAlios = Math.ceil(pretALIOS);
 		//this.indemniteTransport = Math.rint(calculerIndemniteTransport());
-			this.totalBrut = Math.rint(brutImposable + indemniteRepresentation+ indemniteTransport+autreNonImposable);
+			this.totalBrut = Math.ceil(brutImposable + indemniteRepresentation+ indemniteTransport+autreNonImposable);
 			autrePrelevment=0d;
 			if(listMutuelle.size()>0 || listMutuelle!=null){
 				for(PrimePersonnel mutuell : listMutuelle){
@@ -420,22 +432,22 @@ public class LivreDePaie {
 				}
 			}
 
-				this.totalRetenue = Math.rint(totalRetenueFiscale + cnps + avceAcpte + pretAlios+autrePrelevment );
+				this.totalRetenue = Math.ceil(totalRetenueFiscale + cnps + avceAcpte + pretAlios+autrePrelevment );
 				regularisation=0d;
 			if(listGains.size()>0 || listGains!=null){
 				for(PrimePersonnel primeGains : listGains){
 					regularisation=regularisation+primeGains.getMontant();
 				}
 			}
-				this.netPayer = Math.rint((brutImposable + indemniteRepresentation + indemniteTransport+autreNonImposable)+ regularisation -autreIndemImposable- totalRetenue);
-				this.is = Math.rint(brutImposable * 1.2 / 100);
-				this.ta = Math.rint(brutImposable * 0.4 / 100);
-				this.fpc = Math.rint(brutImposable * 0.6 / 100);
-				this.prestationFamiliale = Math.rint(calcalerPrestationFamilial());
-				this.accidentTravail = Math.rint(calculerAccidentTravail());
-				this.retraite = Math.rint((brutImposable + indemniteRepresentation+autreNonImposable) * 7.7 / 100);
-				this.totalPatronal = Math.rint(is + ta + fpc + prestationFamiliale + accidentTravail + retraite);
-				this.totalMasseSalariale = Math.rint(brutImposable + indemniteRepresentation+ indemniteTransport +autreNonImposable+regularisation+ totalPatronal);
+				this.netPayer = Math.ceil((brutImposable + indemniteRepresentation + indemniteTransport+autreNonImposable)+ regularisation -autreIndemImposable- totalRetenue);
+				//this.is = Math.rint(brutImposable * 1.2 / 100);
+				this.ta = 0d;//Math.rint(brutImposable * 0.4 / 100);
+				this.fpc =0d ;//Math.rint(brutImposable * 0.6 / 100);
+				this.prestationFamiliale = Math.ceil(calcalerPrestationFamilial());
+				this.accidentTravail = Math.ceil(calculerAccidentTravail());
+				this.retraite = Math.ceil((brutImposable + indemniteRepresentation+autreNonImposable) * 7.7 / 100);
+				this.totalPatronal =Math.ceil(prestationFamiliale + accidentTravail + retraite); ///Math.ceil( ta + fpc + prestationFamiliale + accidentTravail + retraite);
+				this.totalMasseSalariale = Math.ceil(brutImposable + indemniteRepresentation+ indemniteTransport +autreNonImposable+regularisation+ totalPatronal);
 				this.tempspresence= countnbreJrdu(ctratperso.getPersonnel().getDateRetourcge(), plconge.getDatefin(), ctratperso);
 				this.moisdepresence= ProvisionConge.calculerTempsPresence(ctratperso.getPersonnel().getDateRetourcge(), plconge.getDatefin());
 	    }
@@ -515,16 +527,16 @@ public class LivreDePaie {
 							//}
 						}
 					}
-				this.totalRetenue = Math.rint(totalRetenueFiscale + cnps + avceAcpte + pretAlios +autrePrelevment);
-				this.netPayer = Math.rint(brutImposable +regularisation+ brutNonImposable-totalRetenue);
-				//this.is = Math.rint(brutImposable * 1.2 / 100);
-				//this.ta = Math.rint(brutImposable * 0.4 / 100);
+				this.totalRetenue = Math.ceil(totalRetenueFiscale + cnps + avceAcpte + pretAlios +autrePrelevment);
+				this.netPayer = Math.ceil(brutImposable +regularisation+ brutNonImposable-totalRetenue);
+				//this.is = Math.ceil(brutImposable * 1.2 / 100);
+				//this.ta = Math.ceil(brutImposable * 0.4 / 100);
 				//this.fpc = Math.rint(brutImposable * 1.2 / 100);
 				//this.prestationFamiliale = Math.rint(calcalerPrestationFamilial());
 				//this.accidentTravail = Math.rint(calculerAccidentTravail());
 				//this.retraite = Math.rint((brutImposable + indemniteRepresentation+indemniteResponsabilte+autreNonImposable) * 7.7 / 100);
-				this.totalPatronal = Math.rint(is + ta + fpc + prestationFamiliale + accidentTravail + retraite);
-				this.totalMasseSalariale = Math.rint(brutImposable + brutNonImposable+regularisation+ totalPatronal);
+				this.totalPatronal = Math.ceil(is + ta + fpc + prestationFamiliale + accidentTravail + retraite);
+				this.totalMasseSalariale = Math.ceil(brutImposable + brutNonImposable+regularisation+ totalPatronal);
 				this.tempspresence= countnbreJrdu(ctratperso.getPersonnel().getDateRetourcge(), plconge.getDatefin(), ctratperso);
 				this.moisdepresence= ProvisionConge.calculerTempsPresence(ctratperso.getPersonnel().getDateRetourcge(), plconge.getDatefin());
 			//}
@@ -535,9 +547,9 @@ public class LivreDePaie {
 	
 	public Double calculerAccidentTravail(){
 		Double pf = brutImposable + autreNonImposable;
-		if(pf > 70000)
-			pf = 70000 * 2.0 / 100;
-		else if(pf > 0)
+		if(pf == 75000)
+			pf = 75000 * 2.0 / 100;
+		else if(pf > 75000)
 			pf = brutImposable * 2 / 100;
 		else 
 			pf = 0.0;
@@ -546,9 +558,9 @@ public class LivreDePaie {
 	
 	public Double calcalerPrestationFamilial(){
 		Double pf = brutImposable + autreNonImposable;
-		if(pf > 70000)
-			pf = 70000 * 5.75 / 100;
-		else if(pf > 0)
+		if(pf == 75000)
+			pf = 75000 * 5.75 / 100;
+		else if(pf > 75000)
 			pf = brutImposable * 5.75 / 100;
 		else 
 			pf = 0.0;
@@ -573,39 +585,39 @@ public class LivreDePaie {
 		return ir;
 	}
 	
-	public Double calculerCN(){
-		Double cn;
-		if(brutImposable > 250000.0)
-			cn = (brutImposable - 250000.0) * 8 / 100 + 4700;
-		else if(brutImposable > 162500.0)
-			cn = (brutImposable - 162500.0) * 4 / 100 + 1200;
-		else if(brutImposable > 62500.0)
-			cn = brutImposable * 1.2 / 100 - 750;
-		else
-			cn = 0.0;
-		return cn;
-	}
+//	public Double calculerCN(){
+//		Double cn;
+//		if(brutImposable > 250000.0)
+//			cn = (brutImposable - 250000.0) * 8 / 100 + 4700;
+//		else if(brutImposable > 162500.0)
+//			cn = (brutImposable - 162500.0) * 4 / 100 + 1200;
+//		else if(brutImposable > 62500.0)
+//			cn = brutImposable * 1.2 / 100 - 750;
+//		else
+//			cn = 0.0;
+//		return cn;
+//	}
 	
-	public Double calculerIGR(){
-		Double igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100;
-		if(igr > 842167.0)
-			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 60 / 160 - 98633.0 * nombrePart;
-		else if(igr > 389084.0)
-			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 45 / 145 - 44181.0 * nombrePart;
-		else if(igr > 220334.0)
-			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 35 / 135 - 24306.0 * nombrePart;
-		else if(igr > 126584.0)
-			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 25 / 125 - 11250.0 * nombrePart;
-		else if(igr > 81584.0)
-			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 20 / 120 - 7031.0 * nombrePart;
-		else if(igr > 45584.0)
-			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 15 / 115 - 4076.0 * nombrePart;
-		else if(igr > 25000.0)
-			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 15 / 110 - 2273.0 * nombrePart;
-		else 
-			igr = 0.0;
-		return igr;
-	}
+//	public Double calculerIGR(){
+//		Double igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100;
+//		if(igr > 842167.0)
+//			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 60 / 160 - 98633.0 * nombrePart;
+//		else if(igr > 389084.0)
+//			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 45 / 145 - 44181.0 * nombrePart;
+//		else if(igr > 220334.0)
+//			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 35 / 135 - 24306.0 * nombrePart;
+//		else if(igr > 126584.0)
+//			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 25 / 125 - 11250.0 * nombrePart;
+//		else if(igr > 81584.0)
+//			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 20 / 120 - 7031.0 * nombrePart;
+//		else if(igr > 45584.0)
+//			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 15 / 115 - 4076.0 * nombrePart;
+//		else if(igr > 25000.0)
+//			igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100 * nombrePart * 15 / 110 - 2273.0 * nombrePart;
+//		else
+//			igr = 0.0;
+//		return igr;
+//	}
 	
 	public Double calculCNPS(Double basecnps){
 		Double cnps = (basecnps );

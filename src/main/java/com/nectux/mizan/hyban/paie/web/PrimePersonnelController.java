@@ -119,11 +119,11 @@ private static final Logger logger = LogManager.getLogger(PrimePersonnelControll
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/saveprimepersonnel", method = RequestMethod.POST)
-	public @ResponseBody PrimePersonnelDTO savePretpersonnel(@RequestParam(value="id", required=true) Long id,
-															@RequestParam(value="montantop", required=true) Double montant,
-															@RequestParam(value="valeurop", required=true) Integer valeur,
+	public @ResponseBody PrimePersonnelDTO savePretpersonnel(@RequestParam(value="id", required=false) Long id,
+															@RequestParam(value="montantop", required=false) Double montant,
+															@RequestParam(value="valeurop", required=false) Long valeur,
 															@RequestParam(value="idAbsence", required=true) Long idPrime,
-															@RequestParam(value="idPersonnel", required=true) Long idCtrat,
+															@RequestParam(value="idPersonnel", required=false) Long idCtrat,
 															 @RequestParam(value="idCtrat", required=true) Long ctrat,
 															Principal principal) {
 		

@@ -159,8 +159,13 @@ public class ImprimBulletinPaie implements Serializable {
 		this.mtretenuePatron = mtretenuePatron;
 	}
 
-	
 
-	
+	public ImprimBulletinPaie(String libelle, Double base, Double gain, Double taux) {
+		this.libelle = libelle;
+		this.base = base;
+		this.gain = gain;
+		this.taux = taux;
+	}
+
 
 }

@@ -10,7 +10,7 @@ public interface PrimePersonnelService {
 	public PrimePersonnel save(PrimePersonnel pretPersonnel);
 	
 	public PrimePersonnel findprimepersonnel(Long idPret);
-	public PrimePersonnelDTO saver(Long id, Double montant, Integer valeur, Long idPret, Long idCtrat, Long idPeriodDep);
+	public PrimePersonnelDTO saver(Long id, Double montant, Long valeur, Long idPret, Long idCtrat, Long idPeriodDep);
 	
 	
 //	public PrimePersonnelDTO update(Long idPretpers,Double montant,Long echelonage,Long idPret,Long idPers,String dEmprunt,Long idPeriodDep);

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="JRbulletn_subreportDetailBull1" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="49fa7a55-b4e6-4973-b2f1-87e636b6a6ae">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="listBulletinDetailpasse" class="net.iconseils.erpholding.rhpaie.paie.entity.ImprimBulletinPaie"/>
+	<field name="libelle" class="java.lang.String"/>
+	<field name="gain" class="java.lang.Double"/>
+	<field name="retenue" class="java.lang.Double"/>
+	<field name="taux" class="java.lang.Double"/>
+	<field name="gainPatron" class="java.lang.Double"/>
+	<field name="retenuePatron" class="java.lang.Double"/>
+	<field name="tauxPatron" class="java.lang.Double"/>
+	<field name="base" class="java.lang.Double"/>
+	<field name="code" class="java.lang.String"/>
+	<field name="mtgain" class="java.lang.String"/>
+	<field name="mtretenue" class="java.lang.String"/>
+	<field name="mtbase" class="java.lang.String"/>
+	<field name="mtgainPatron" class="java.lang.String"/>
+	<field name="mtretenuePatron" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="478" y="-1" width="77" height="23" isPrintWhenDetailOverflows="true" uuid="685ca569-b175-4e27-90ca-4ccaaa5f61d4"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{mtretenue}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="246" y="-1" width="62" height="23" isPrintWhenDetailOverflows="true" uuid="a87ad08d-ef43-4a26-bc02-df2d7f6e7ae8"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{mtbase}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="308" y="-1" width="74" height="23" isPrintWhenDetailOverflows="true" uuid="4590b364-f1f2-4d68-9b05-98f5bbb2ff8f"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{taux}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="-1" width="245" height="23" isPrintWhenDetailOverflows="true" uuid="c7b5c50f-031c-4980-aace-14ef5100d4f3"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{libelle}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="382" y="-1" width="96" height="23" isPrintWhenDetailOverflows="true" uuid="cb7e89c6-3bad-408f-8d12-0ad56f5326f6"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{mtgain}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="1" splitType="Stretch"/>
+	</summary>
+</jasperReport>

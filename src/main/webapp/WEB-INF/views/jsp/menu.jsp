@@ -15,7 +15,7 @@
         </li>
         <li class="xn-profile">
             <a href="#" class="profile-mini">
-               <img src="<%= baseUrl %>/static/logo/logodefis1.png" alt="John Doe" />
+               <img src="<%= baseUrl %>static/logo/logodefis1.png" alt="John Doe" />
             </a>
             <div class="profile">
                 <div class="profile-image">

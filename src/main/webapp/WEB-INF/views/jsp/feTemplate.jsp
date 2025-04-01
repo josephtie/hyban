@@ -30,11 +30,12 @@
                    <script src="${pageContext.request.contextPath}/static/back-office/assets/select2/select2.min.js"></script>
 
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/bootstrap/bootstrap-select.js"></script>
+                   <script src="${pageContext.request.contextPath}/static/back-office/assets/bootstrap-table/dist/bootstrap-table.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/bootstrap/bootstrap-datepicker.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/assets/bootstrap-table/tableExport.min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/assets/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/morris/raphael-min.js"></script>
-                   <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/morris/morris-min.js"></script>
+                   <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/morris/morris.min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/icheck/icheck.min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/Chart.js"></script>
                    <script src="${pageContext.request.contextPath}/static/front-end/js/jquery.datetimepicker.full.min.js"></script>

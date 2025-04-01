@@ -399,7 +399,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 								System.out.println("cumulCN cumulCN cumulCN::::"+ detailsbull.getCn());
 								System.out.println("cumulIGR cumulIGR cumulIGR::::"+ detailsbull.getIgr());
 								System.out.println("cumulCNPS cumulCNPS cumulCNPS::::"+ detailsbull.getCnps());
-								   Double totretenue=detailsbull.getCumulIts()+detailsbull.getCumulIgr()+detailsbull.getCumulCnpsSal()+detailsbull.getCumulCn();
+								   Double totretenue=detailsbull.getCumulIts()+detailsbull.getCumulCnpsSal();
 								detailsbull.setCumulRetenueNet(totretenue);
 							}
 

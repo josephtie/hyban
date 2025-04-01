@@ -52,6 +52,12 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addResourceHandler("/static/logo/**")
                 .addResourceLocations("classpath:/static/logo/");
+
+        registry.addResourceHandler("/reports/**")
+                .addResourceLocations("classpath:/resources/reports/");
+
+        registry.addResourceHandler("/front-end/**")
+                .addResourceLocations("classpath:/static/front-end/");
     }
 
     @Override

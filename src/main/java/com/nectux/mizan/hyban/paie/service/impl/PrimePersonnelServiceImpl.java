@@ -26,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 
+import static com.nectux.mizan.hyban.utils.HeuresSupplementaires.calculerTauxHoraire;
+
 @Transactional
 @Service("primePersonnelService")
 public class PrimePersonnelServiceImpl implements PrimePersonnelService {
@@ -56,7 +58,7 @@ public class PrimePersonnelServiceImpl implements PrimePersonnelService {
 	}
 	@Override
 	@Transactional
-	public PrimePersonnelDTO saver(Long id, Double montant, Integer valeur,
+	public PrimePersonnelDTO saver(Long id, Double montant, Long valeur,
                                    Long idPrime, Long idCtrat, Long idPeriodDep) {
 		// TODO Auto-generated method stub
 		PrimePersonnelDTO primepersonnelDTO = new PrimePersonnelDTO();
@@ -82,16 +84,22 @@ public class PrimePersonnelServiceImpl implements PrimePersonnelService {
 //			else
 			primeperso.setContratPersonnel(contratPersonnelRepository.findByIdAndStatut(idCtrat, true));
 
-			primeperso.setValeur(valeur);
+			primeperso.setValeur(Math.toIntExact(valeur));
 
-			if(montant==null)
-				primeperso.setMontant(0d);
-			else {
-				if (primeperso.getPrime().getTaux() != null && primeperso.getValeur() > 0) {
-					primeperso.setMontant(primeperso.getValeur() * (montant + (montant * primeperso.getPrime().getTaux() / 100)));
-				}else{
-					primeperso.setMontant(montant);
+			if (primeperso.getPrime().getTaux() != null && primeperso.getValeur() > 0) {
+				// Calculate the montant based on the value and the salary or hourly rate
+				if (primeperso.getContratPersonnel() != null && primeperso.getContratPersonnel().getCategorie().getSalaireDeBase()!= null) {
+					double salaireHoraire = calculerTauxHoraire(primeperso.getContratPersonnel().getCategorie().getSalaireDeBase());
+					primeperso.setMontant(Math.rint(primeperso.getValeur() * (salaireHoraire + (salaireHoraire * primeperso.getPrime().getTaux() / 100))));
+					// For example, if "valeur" is multiplied by the hourly rate:
+					// primeperso.setMontant(primeperso.getValeur() * salaireHoraire);
+				} else {
+					// If there's no hourly rate, you can calculate based on the salary
+					//double salaireBase = primeperso.getContratPersonnel().getSalaireBase(); // Assuming 'SalaireBase' is available in the contract
+					primeperso.setMontant(primeperso.getValeur() * montant);
 				}
+			} else {
+				primeperso.setMontant(montant);
 			}
 			primeperso.setDateSaisie(new Date());		
 			
@@ -103,16 +111,7 @@ public class PrimePersonnelServiceImpl implements PrimePersonnelService {
 				erreur.setMessage(sb.toString());
 				listErreur.add(erreur);
 			}
-//			if(primeperso.getPrime() != null ){
-//				List<PrimePersonnel> listverif=primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieIdAndPrimeId(idCtrat,primeperso.getPeriode().getId(),primeperso.getPrime().getId());
-//				if(listverif.size()>0){
-//				sb = new StringBuilder();
-//				erreur.setCode(10);
-//				erreur.setDescription("prime dupliquee");
-//				sb.append("le champ prime est obligatoire");
-//				erreur.setMessage(sb.toString());
-//				listErreur.add(erreur);}
-//			}
+
 			
 			if(primeperso.getPeriode() == null ){
 				sb = new StringBuilder();

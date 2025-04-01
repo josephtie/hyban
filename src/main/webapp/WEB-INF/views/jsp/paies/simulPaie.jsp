@@ -3,6 +3,24 @@
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
+<style type="text/css">
+.form-group {
+    margin-bottom: 10px; /* Réduit l'espacement entre les groupes */
+}
+
+.form-control {
+    height: 30px; /* Diminue la hauteur des champs */
+    padding: 5px; /* Réduit l'espacement intérieur */
+    font-size: 14px; /* Ajuste la taille du texte */
+}
+
+label {
+    font-size: 13px; /* Réduit la taille des labels */
+    margin-bottom: 2px; /* Diminue l'espacement sous le label */
+}
+
+
+</style>
 <div class="row" >
 	<div class="col-md-12">
 
@@ -24,15 +42,16 @@
 					</li>
 				</ul>
 			</div>
-			<div class="panel-body panel-body-table">
+			<div class="panel-body panel-body">
          
                 <form id="formMouvementConge" >
                     <h3 style="margin-top: 30px;">Saisie des valeurs</h3>
                      <input type="text"class="hidden"  id="lpom" name="lpom" value=""/>
                     <br>
+                    <div class="row">
                     <div class="form-group">
-					<div class="row">
-						<div class="col-md-4">
+
+						<div class="col-md-3">
 							<label>Salaire Categoriel</label>
 							<select class="form-control input-small select2" id="categorie" name="categorie" required="required">
 								<c:forEach items="${listeCategorie}" var="prime">
@@ -40,19 +59,20 @@
 								</c:forEach>
 							</select>
 						</div>
-						<div class="col-md-4">
+						<div class="col-md-3">
 							<label>Indemnit&eacute; Transport<span class="required">*</span></label>
 							<input type="number" class="form-control " id="montantTransp" name="montantTransp" placeholder="Indemnite Transport"   required="required" ><!-- //ng-model="mouvementConge.montant" -->
 						</div>
-						<div class="col-md-4">
+						<div class="col-md-3">
 							<%--<label>Indemnit&eacute; Logement</label>--%>
 							<%--<input type="text" class="form-control montant" id="montantLogmt" name="montantLogmt" placeholder="Indemnite Logement"  ><!-- ng-model="mouvementConge.montantVerse -->--%>
 						</div>
 					</div>
 				</div>
+				<div class="row">
 					<div class="form-group">
-						<div class="row">
-							<div class="col-md-4">
+
+							<div class="col-md-3">
 								<label for="situationmatrimoniale">Situation matrimoniale <span class="required">*</span></label>
 								<select id="situationmatrimoniale" name="situationmatrimoniale" class="form-control select2" required="required">
 									<option>-- Choix de la situation --</option>
@@ -62,7 +82,7 @@
 									<option value="4" > VEUF(VE) </option>
 								</select>
 							</div>
-							<div class="col-md-4">
+							<div class="col-md-3">
 								<label for="nombreenfant">Nombre d'enfant <span class="required">*</span></label>
 								<select id="nombreenfant" name="nombreenfant" class="form-control select2" required="required">
 									<option>-- Nombre d'enfant --</option>
@@ -79,17 +99,20 @@
 									<option value="10"> 10 </option>
 								</select>
 							</div>
-							<div class="col-md-4">
-								<label>Salaire Net</label>
-								<input type="number" class="form-control " id="salaireNet" name="salaireNet" placeholder="salaire Net"   required="required" ><!-- //ng-model="mouvementConge.montant" -->
-							</div>
+							<div class="col-md-3"></div>
+
 
 						</div>
 					</div>
+                    <div class="row">
                     <div class="form-group">
-                        <div class="row">
-                            <div id="actionMouvementConge" class="col-md-12 text-right">
-                                <span></span>&nbsp;
+                    	<div class="col-md-3">
+                    				<label>Salaire Net</label>
+                    								<input type="number" class="form-control " id="salaireNet" name="salaireNet" placeholder="salaire Net"   required="required" ><!-- //ng-model="mouvementConge.montant" -->
+                    		</div>
+                           <div id="actionMouvementConge" class="col-md-3">
+                                <span>Confirmer</span>&nbsp;
+
                                 <%--<input type="text"class="hidden" ng-hide="true"  name="idPersonnelp" ng-model="primePersonnel.personnel.id" value=""/>--%>
                                 <%----%>
                                  <%--<input type="text" class="hidden"  value="" id="idP" name="idP" >--%>
@@ -97,7 +120,10 @@
                                 <button type="submit" class="btn btn-success">Valider</button>
                             </div>
                         </div>
-                    </div>					
+                             <div id="conge" class="col-md-3 "> </div>
+
+                    </div>
+
                 </form>
                 <p>&nbsp;</p>
                 <div id="toolbarMouvementConge" >
@@ -199,34 +225,6 @@
 </div>
 
 
-<%--<div class="modal deleteModal  fade bs-delete-modal-static" id="rhpModalPretDel" role="dialog" data-backdrop="static">--%>
-    <%--<div class="modal-dialog ">--%>
-        <%--<div class="modal-content">--%>
-	        <%--<form id="formDelete"  action="#" method="post">--%>
-	            <%--<div class="modal-header ">--%>
-	                <%--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>--%>
-	                <%--<span class="circle bg-danger">--%>
-	                    <%--<i class="fa fa-question-circle"></i>--%>
-	                   <%----%>
-	                <%--</span>--%>
-	            <%--</div>--%>
-	            <%--<div class="modal-body">--%>
-	             <%--Etes vous sur de vouloir supprimer cet pret ?--%>
-	            	<%--<h4 id="labelPret"></h4>--%>
-	            <%--</div>--%>
-	            <%--<div class="modal-footer">--%>
-                	<%--<input type="hidden"  id="idPretperso"  value="" name="idPretperso" >--%>
-                	<%--<span></span>&nbsp;--%>
-                    <%--<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>--%>
-                    <%--<button type="submit" class="btn btn-success">Valider</button>--%>
-                <%--</div>--%>
-                <%--</form>--%>
-        	<%--</div>--%>
-        	<%----%>
-        	<%----%>
-        <%----%>
-    <%--</div>--%>
-<%--</div>--%>
 <script type="text/javascript">
 //AngularJS
 
@@ -275,118 +273,7 @@ jQuery(document).ready(function($) {
 
         });
     }
-	// //Envoi des donnees
-	// 	$("#formDelete").submit(function(e){
-	// 	e.preventDefault();
-     //    var formData = $(this).serialize();
-     //
-     //
-     //    $.ajax({
-     //        type: "POST",
-     //        url: baseUrl + actionDeleteUrl,
-     //        cache: false,
-     //        data: formData,
-     //        success: function (reponse) {
-     //            if (reponse.result == true) {
-     //
-     //            	jQuery(".deleteModal").modal('hide');
-     //            }
-     //            else if(reponse.result == "erreur_champ_obligatoire"){
-     //            	alert("Saisie invalide");
-     //            }
-     //        },
-     //        error: function (err) {
-     //        	jQuery(".deleteModal .modal-body div.alert").alert();
-     //        	jQuery(".deleteModal .modal-body .alert h4").html("Erreur survenue");
-     //        	jQuery(".deleteModal .modal-body .alert p").html("Verifier que vous �tes connect�s au serveur.");
-     //        	jQuery(".deleteModal .modal-footer span").removeClass('loader');
-     //        },
-     //        beforeSend: function () {
-     //        	jQuery("#formDelete").attr("disabled", true);
-     //            jQuery(".deleteModal .modal-footer span").addClass('loader');
-     //        },
-     //        complete: function () {
-     //        	jQuery("#formDelete").removeAttr("disabled");
-     //            jQuery(".deleteModal .modal-footer span").removeClass('loader');
-     //            jQuery('#tablef'). bootstrapTable ('refresh', {  url: baseUrl +'/paie/pretPersonneljson' });
-     //        }
-     //    });
-	// });
-	
-	// $("#formPretmodif").submit(function(e){
-	// 	e.preventDefault();
-     //    var formData = $(this).serialize();
-     //    console.log("form", formData);
-     //    jQuery.ajax({
-     //        type: "GET",
-     //        url: baseUrl + "/paie/updatepretPersonnel",
-     //        cache: false,
-     //        data: formData,
-     //        success: function (reponse) {
-     //            if (reponse.result == "success") {
-     //            	$table.bootstrapTable('refresh');
-     //            	jQuery("#formPretmodif")[0].reset(); //Initialisation du formulaire
-     //            	jQuery("#rhpModalPretModif").modal('hide');
-     //            	alert(reponse.result);
-     //            }
-     //            else if(reponse.result == "erreur_champ_obligatoire"){
-     //            	alert("Saisie invalide");
-     //            }
-     //        },
-     //        error: function () {
-     //        	jQuery("#rhpModalPret div.alert").alert();
-     //        	jQuery("#rhpModalPret .alert h4").html("Erreur survenue");
-     //        	jQuery("#rhpModalPret .alert p").html("Verifier que vous �tes connect�s au serveur.");
-     //        	//$("#formPret span.load").removeClass('loader');
-     //        },
-     //        beforeSend: function () {
-     //        	jQuery("#formPret").attr("disabled", true);
-     //            jQuery("#formPret span.load").addClass('loader');
-     //        },
-     //        complete: function () {
-     //        	jQuery("#formPretmodif").removeAttr("disabled");
-     //            //$("#formPret span.load").removeClass('loader');
-     //            jQuery('#tablef'). bootstrapTable ('refresh', {  url: baseUrl +'/paie/pretPersonneljson' });
-     //        }
-     //    });
-	// });
-	// $("#formPret").submit(function(e){
-	// 	e.preventDefault();
-     //    var formData = $(this).serialize();
-     //    console.log("form", formData);
-     //    jQuery.ajax({
-     //        type: "POST",
-     //        url: baseUrl + "/paie/savepretPersonnel",
-     //        cache: false,
-     //        data: formData,
-     //        success: function (reponse) {
-     //            if (reponse.result == "success") {
-     //            	$table.bootstrapTable('refresh');
-     //            	jQuery("#formPret")[0].reset(); //Initialisation du formulaire
-     //             //   $("#rhpModal").modal('hide');
-     //        		alert('Operation effexctu�e avec succes');
-     //            }
-     //            else if(reponse.result == "erreur_champ_obligatoire"){
-     //            	alert("Saisie invalide");
-     //            }
-     //        },
-     //        error: function () {
-     //        	jQuery("#rhpModalPret div.alert").alert();
-     //        	jQuery("#rhpModalPret .alert h4").html("Erreur survenue");
-     //        	jQuery("#rhpModalPret .alert p").html("Verifier que vous �tes connect�s au serveur.");
-     //        	//$("#formPret span.load").removeClass('loader');
-     //        },
-     //        beforeSend: function () {
-     //        	jQuery("#formPret").attr("disabled", true);
-     //            jQuery("#formPret span.load").addClass('loader');
-     //        },
-     //        complete: function () {
-     //        	jQuery("#formPret").removeAttr("disabled");
-     //            //$("#formPret span.load").removeClass('loader');
-     //            jQuery('#tablef'). bootstrapTable ('refresh', {  url: baseUrl +'/paie/pretPersonneljson' });
-     //        }
-     //    });
-	// });
+
 });
 
 function optionFormatter(id, row, index) {

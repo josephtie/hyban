@@ -123,6 +123,7 @@
                         <form id="formAbsence" class="form-absence">
                             <h3 style="margin-top: 30px;">Primes individuelles</h3>
                             <input type="text" class="hidden" name="idCtrat" id="idCtrat" ng-model="idCtrat"/>
+
                             <br>
                             <div class="form-group">
                                 <div class="row">
@@ -139,12 +140,12 @@
 
                                     <div class="col-md-3">
                                         <label >Montants <span class="required">*</span></label>
-                                        <input type="text" id="montantop" class="form-control input-default"  ng-model="primePersonnel.montant" required="required" name="montantop" placeholder="valeur" maxlength="8">
+                                        <input type="text" id="montantop" class="form-control input-default"  ng-model="primePersonnel.montant"  name="montantop" placeholder="valeur" maxlength="8">
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label >Nombre d'heure Supp<span class="required">*</span></label>
-                                        <input type="text" id= "valeurop" class="form-control input-default"  ng-model="primePersonnel.valeur" name="valeurop"  required="required" placeholder="Heure supp." maxlength="2">
+                                        <label >Nombre d'heure Supp<span class="required"></span></label>
+                                        <input type="text" id= "valeurop" class="form-control input-default"  ng-model="primePersonnel.valeur" name="valeurop"   placeholder="Heure supp." maxlength="2">
                                     </div>
                                 </div>
                             </div>
@@ -236,16 +237,13 @@
 
             $("#btnAddAbsence").click(function (e) {
                 $(".form-absence").show(500);
-                var $scope = angular.element(document.getElementById("listAbsenceModal")).scope();
-                $scope.$apply(function () {
-                    // $scope.initForm();
-                });
-                //  jQuery("#formAbsence")[0].reset();
+
+
                 $("#actionAbsence button:submit").data("action", "add");
             });
             $("#btnCancelAbsence, #listAbsenceModal button.close").click(function (e) {
                 $(".form-absence").hide(500);
-                // jQuery("#formAbsence")[0].reset();
+                 jQuery("#formAbsence")[0].reset();
                 var $scope = angular.element(document.getElementById("listAbsenceModal")).scope();
                 $scope.$apply(function () {
                     $scope.initForm();
@@ -299,7 +297,7 @@
 
             $("#formAbsence").submit(function (e) {
                 //alert('hhhh');/
-                //$("idPersonnel").val($("idCtrat").val());
+                $("#idPersonnel").val($("#idCtrat").val());
                 e.preventDefault();
                 var formData = $(this).serialize();
                 $.ajax({
@@ -337,24 +335,46 @@
                 return false;
             });
 
-            function listAbsence(idctrat,idPersonnel) {
-                // alert(idctrat);
-                var $scope = angular.element(document.getElementById("listAbsenceModal")).scope();
-                // loadAbsenceByPersonnel(idctrat);
-                var rows = $table.bootstrapTable('getData');
-                var contrat = _.findWhere(rows, {id: idctrat});
-                $scope.$apply(function () {
-                    $scope.populateForm(contrat, null);
-                    $scope.personnel=contrat.personnel;
-                    $scope.idPersonnel=contrat.id;
-                    loadAbsenceByPersonnel(contrat.id);
-                    $scope.idCtrat=contrat.id;
-                    // $("idCtrat").val(contrat.id);
+          function listAbsence(idctrat, idPersonnel) {
+              var $scope = angular.element(document.getElementById("listAbsenceModal")).scope();
 
-                });
+              var rows = $table.bootstrapTable('getData');
+              var contrat = _.findWhere(rows, { id: idctrat });
 
-                // alert(jQuery("idPersonnel").val());
-            }
+              console.log("Contrat trouvé :", contrat);
+
+              if (!contrat) {
+                  console.error("Aucun contrat trouvé avec id:", idctrat);
+                  return;
+              }
+
+              try {
+                  if (!$scope.$$phase) { // Vérifie si un digest est en cours
+                      $scope.$apply(function () {
+                          $scope.populateForm(contrat, null);
+                          $scope.personnel = contrat.personnel;
+                          $scope.idPersonnel = contrat.id;
+                          loadAbsenceByPersonnel(contrat.id);
+                          $scope.idCtrat = contrat.id;
+                          $("#idCtrat").val(contrat.id);
+                          $("#idPersonnel").val(contrat.id);
+                      });
+                  } else {
+                      console.warn("Digest déjà en cours, mise à jour directe du scope.");
+                      $scope.populateForm(contrat, null);
+                      $scope.personnel = contrat.personnel;
+                      $scope.idPersonnel = contrat.id;
+                       $("#idPersonnel").val(contrat.id);
+                      loadAbsenceByPersonnel(contrat.id);
+                      $scope.idCtrat = contrat.id;
+                      $("#idCtrat").val(contrat.id);
+                  }
+              } catch (e) {
+                  console.error("Erreur lors de l'exécution de $scope.$apply():", e);
+              }
+
+              alert($("#idCtrat").val());
+          }
             function loadAbsenceByPersonnel(idPersonnel) {
                 //alert(idPersonnel);
                 jQuery.ajax({
@@ -365,8 +385,8 @@
                     success: function (reponse) {
                         $tableAbsence.bootstrapTable('load', reponse.rows);
 
-                        jQuery("idPersonnel").val(reponse.rows[0].contratPersonnel.id);
-                        //  alert(jQuery("idPersonnel").val());
+                        jQuery("#idPersonnel").val(reponse.rows[0].contratPersonnel.id);
+                        //  alert(jQuery("#idPersonnel").val());
                     },
                     beforeSend: function () {
                         $tableAbsence.bootstrapTable('load', []);
@@ -409,7 +429,7 @@
 
                         $tableConge.bootstrapTable('load', reponse.rows);
                         //	alert(reponse.rows[0].contratPersonnel.id);
-                        jQuery("idPersonnel").val(reponse.rows[0].contratPersonnel.id);
+                        jQuery("#idPersonnel").val(reponse.rows[0].contratPersonnel.id);
                         //   }
                     },
                     beforeSend: function () {
@@ -577,13 +597,9 @@
                 jQuery('#tablef'). bootstrapTable ('refresh', {  url: baseUrl +'/paie/pretPersonneljson' });
             }
 
-
-
             function cherchprime(idFonction){
                 jQuery('#lpom').val(idFonction);
-//	jQuery('#infoPersonnelmo1').html(idFonction);
-//	jQuery('#idPersonnel').val(idFonction);
-//	jQuery('#idpersc').val(idFonction);
+
                 jQuery.ajax({
                     type: "POST",
                     url: baseUrl+"/paie/searchprimeIndividuel1",
@@ -663,6 +679,4 @@
                 //alert(jQuery('#montant').val());
             }
 
-
-
-        </script>
+               </script>

@@ -41,7 +41,7 @@
 							<br><br><br>
 	    <div id="tableWidget" class="widgetcontent">
 	    	<div class="form-group">
-                    <div class="col-md-12">
+                    <div class="col-md-4">
                         <div class="row">
                             <div class="col-md-4">			
                 		<select id="periodePaieImpression" name="periodePaieImpression" class="form-control select2" required="required"></select>
@@ -68,6 +68,8 @@
                    data-pagination="true"
                    data-side-pagination="server"
                    data-page-list="[10, 25, 100, 150, 200, 500]"
+                   data-show-export="true"
+                   data-export-dataType="all"
                    data-search="true"
 					>
 					<thead>

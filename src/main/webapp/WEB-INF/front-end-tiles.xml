@@ -169,19 +169,20 @@
 	<put-attribute name="title" value=" HYBAN -Pret" />
 	<put-attribute name="content" value="/WEB-INF/views/jsp/paies/pretpersonnel.jsp" />
     </definition>
+
 	<definition name="primespersonnel" extends="fetemplate">
 	<put-attribute name="title" value=" HYBAN -Pret" />
 	<put-attribute name="content" value="/WEB-INF/views/jsp/paies/primespersonnel.jsp" />
-	</definition>
+    </definition>
 
 	<definition name="simulPaie" extends="fetemplate">
 		<put-attribute name="title" value=" HYBAN -Pret" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/simulPaie.jsp" />
 	</definition>
-	<!--<definition name="primepersonnel" extends="fetemplate">-->
-		<!--<put-attribute name="title" value=" HYBAN -Pret" />-->
-		<!--<put-attribute name="content" value="/WEB-INF/views/paies/primepersonnel.jsp" />-->
-	<!--</definition>-->
+<!--	<definition name="primepersonnel" extends="fetemplate">-->
+<!--		<put-attribute name="title" value=" HYBAN -Prime personnel" />-->
+<!--		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/primepersonnel.jsp" />-->
+<!--	</definition>-->
 	
 	<definition name="societes" extends="fetemplate">
 		<put-attribute name="title" value=" HYBAN -Info" />
@@ -263,7 +264,7 @@
 	
 	<definition name="etats" extends="fetemplate">
 		<put-attribute name="title" value=" HYBAN -Etats" />
-		<put-attribute name="content" value="/WEB-INF/jsp/views/paies/etat.jsp" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/etat.jsp" />
 	</definition>
 	
 	<definition name="etatimp" extends="fetemplate">

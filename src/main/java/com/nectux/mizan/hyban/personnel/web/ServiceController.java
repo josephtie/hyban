@@ -57,7 +57,7 @@ public class ServiceController {
     .findFirst().orElse(""));
 		modelMap.addAttribute("icon", "fa fa-users");
 		modelMap.addAttribute("littleTitle", "Personnel");
-		modelMap.addAttribute("bigTitle", "Servicess");
+		modelMap.addAttribute("bigTitle", "Services");
 		 PeriodePaie periodePaie = periodePaieService.findPeriodeactive();
  	    if(periodePaie != null){
  	    	modelMap.addAttribute("activeMois", periodePaie.getMois().getMois()+" "+ periodePaie.getAnnee().getAnnee());

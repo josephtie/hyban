@@ -98,9 +98,9 @@
                        data-url="${pageContext.request.contextPath}/personnels/listpersonneljson"
                        data-side-pagination="server" 
                        data-pagination="true"
-                          data-show-export="true"			
-					data-export-dataType="all"
-					data-show-columns="true"
+                       data-show-export="true"
+					   data-export-dataType="all"
+				     	data-show-columns="true"
                        data-page-list="[10, 20, 50, 100, 200]" 
                        data-search="true">
                     <thead>
@@ -114,7 +114,7 @@
                             <th data-field="telephone" data-align="center">T&eacute;l&eacute;phone</th>
                             <th data-field="situationMatri" data-align="center">Sit. Matri</th>
                             <th data-field="situationMed" data-align="center">Medaille</th>
-                             <th data-field="carec"  data-formatter="carecFormatter"data-align="center">Statut</th>
+                            <th data-field="carec"  data-formatter="carecFormatter"data-align="center">Statut</th>
                              <th data-field="service"  data-formatter="serviceFormatter"data-align="center">Service</th>
                             <th data-field="id" data-formatter="optionFormatter">Options</th>
                         </tr>
