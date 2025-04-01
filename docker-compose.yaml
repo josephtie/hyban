@@ -18,7 +18,7 @@ services:
       - hyban-network
 
   db:
-    image: postgis/postgis:13-master
+    image: postgis/postgis:14-master
     container_name: hyban-db
     restart: always
     environment:
