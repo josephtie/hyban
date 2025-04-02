@@ -1,6 +1,9 @@
 package com.nectux.mizan.hyban.paie.web;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.*;
 import java.util.logging.LogManager;
@@ -491,74 +494,142 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 //		}
 //	}
 
+//	public byte[] generatePayslipPdf(BulletinPaie bulletinData) throws Exception {
+//	System.out.println("Début de la génération du PDF du bulletin de paie");
+//
+//
+//		String reportsPath;
+//		if (new File("src/main/resources/reports").exists()) {
+//			reportsPath = "src/main/resources/reports/";
+//		} else {
+//			reportsPath = "/webapps/hyban/reports/";
+//		}
+//		// Vérification et compilation du rapport principal
+//		File mainReportFile = new File(reportsPath + "JRbulletin.jrxml");
+//		File subReportFile = new File(reportsPath + "JRbulletn_subreportDetailBull.jrxml");
+//
+//		if (!mainReportFile.exists() || !subReportFile.exists()) {
+//			throw new FileNotFoundException("Fichiers de rapport introuvables.");
+//		}
+//		if (!mainReportFile.exists()) {
+//			logger.error("Le fichier JasperReport principal est introuvable : {}" ,  mainReportFile.getAbsolutePath());
+//			throw new FileNotFoundException("Le fichier JasperReport principal est introuvable !");
+//		}
+//		logger.info("Fichier principal trouvé : {}", mainReportFile.getAbsolutePath());
+//
+//		// Vérification et compilation du sous-rapport
+//		//File subReportFile = new File("src/main/resources/reports/JRbulletn_subreportDetailBull.jrxml");
+//		if (!subReportFile.exists()) {
+//			logger.error("Le fichier JasperReport du sous-rapport est introuvable : {} ", subReportFile.getAbsolutePath());
+//			throw new FileNotFoundException("Le fichier JasperReport du sous-rapport est introuvable !");
+//		}
+//		logger.info("Fichier sous-rapport trouvé : {} " ,subReportFile.getAbsolutePath());
+//
+//		// Compilation des fichiers .jrxml en .jasper
+//		String mainReportPath = mainReportFile.getAbsolutePath().replace(".jrxml", ".jasper");
+//		String subReportPath = subReportFile.getAbsolutePath().replace(".jrxml", ".jasper");
+//
+//		logger.info("Compilation du sous-rapport : {} ",  subReportPath);
+//		JasperCompileManager.compileReportToFile(subReportFile.getAbsolutePath(), subReportPath);
+//
+//		logger.info("Compilation du rapport principal : {}" , mainReportPath);
+//		JasperCompileManager.compileReportToFile(mainReportFile.getAbsolutePath(), mainReportPath);
+//
+//		// Compilation du rapport principal
+//		try (InputStream reportStream = new FileInputStream(mainReportPath)) {
+//			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportStream);
+//			logger.info("Rapport principal chargé avec succès");
+//
+//			// Paramètres du rapport
+//			Map<String, Object> parameters = new HashMap<>();
+//			parameters.put("SUBREPORT_DIR", subReportFile.getParent() + "/");
+//
+//			parameters.put("logo", "/webapps/hyban/static/logo/logodefis1.png");
+//
+//			logger.info("Paramètres du rapport définis : {}", parameters);
+//
+//			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(Collections.singletonList(bulletinData));
+//			logger.info("Source de données créée avec succès");
+//
+//			// Remplissage du rapport Jasper avec les données
+//			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+//			logger.info("Rapport rempli avec succès");
+//
+//			// Génération du PDF
+//			byte[] pdfData = JasperExportManager.exportReportToPdf(jasperPrint);
+//			logger.info("PDF généré avec succès (taille : {} octets) ", pdfData.length);
+//
+//			return pdfData;
+//		} catch (JRException | IOException e) {
+//			System.out.println("Erreur lors de la génération du rapport Jasper"+ e);
+//			throw new RuntimeException("Erreur lors de la génération du rapport Jasper: " + e.getMessage(), e);
+//		}
+//	}
+
 	public byte[] generatePayslipPdf(BulletinPaie bulletinData) throws Exception {
-	System.out.println("Début de la génération du PDF du bulletin de paie");
+		logger.info("Début de la génération du PDF du bulletin de paie");
 
-
+		// Détection de l'environnement (local vs Linux)
 		String reportsPath;
-		if (new File("src/main/resources/reports").exists()) {
+		if (Files.exists(Paths.get("src/main/resources/reports"))) {
 			reportsPath = "src/main/resources/reports/";
 		} else {
 			reportsPath = "/webapps/hyban/reports/";
 		}
-		// Vérification et compilation du rapport principal
-		File mainReportFile = new File(reportsPath + "JRbulletin.jrxml");
-		File subReportFile = new File(reportsPath + "JRbulletn_subreportDetailBull.jrxml");
 
-		if (!mainReportFile.exists() || !subReportFile.exists()) {
-			throw new FileNotFoundException("Fichiers de rapport introuvables.");
+		Path reportsDir = Paths.get(reportsPath).toAbsolutePath();
+		logger.info("Chemin des rapports utilisé : {}", reportsDir);
+
+		// Détection des fichiers
+		Path mainReportFile = reportsDir.resolve("JRbulletin.jrxml");
+		Path subReportFile = reportsDir.resolve("JRbulletn_subreportDetailBull.jrxml");
+
+		if (!Files.exists(mainReportFile) || !Files.exists(subReportFile)) {
+			throw new FileNotFoundException("Fichiers de rapport introuvables : " + mainReportFile + ", " + subReportFile);
 		}
-		if (!mainReportFile.exists()) {
-			logger.error("Le fichier JasperReport principal est introuvable : {}" ,  mainReportFile.getAbsolutePath());
-			throw new FileNotFoundException("Le fichier JasperReport principal est introuvable !");
-		}
-		logger.info("Fichier principal trouvé : {}", mainReportFile.getAbsolutePath());
+		logger.info("Fichier principal trouvé : {}", mainReportFile);
+		logger.info("Fichier sous-rapport trouvé : {}", subReportFile);
 
-		// Vérification et compilation du sous-rapport
-		//File subReportFile = new File("src/main/resources/reports/JRbulletn_subreportDetailBull.jrxml");
-		if (!subReportFile.exists()) {
-			logger.error("Le fichier JasperReport du sous-rapport est introuvable : {} ", subReportFile.getAbsolutePath());
-			throw new FileNotFoundException("Le fichier JasperReport du sous-rapport est introuvable !");
-		}
-		logger.info("Fichier sous-rapport trouvé : {} " ,subReportFile.getAbsolutePath());
+		// Compilation
+		Path mainReportPath = Paths.get(mainReportFile.toString().replace(".jrxml", ".jasper"));
+		Path subReportPath = Paths.get(subReportFile.toString().replace(".jrxml", ".jasper"));
 
-		// Compilation des fichiers .jrxml en .jasper
-		String mainReportPath = mainReportFile.getAbsolutePath().replace(".jrxml", ".jasper");
-		String subReportPath = subReportFile.getAbsolutePath().replace(".jrxml", ".jasper");
+		logger.info("Compilation du sous-rapport : {}", subReportPath);
+		JasperCompileManager.compileReportToFile(subReportFile.toString(), subReportPath.toString());
 
-		logger.info("Compilation du sous-rapport : {} ",  subReportPath);
-		JasperCompileManager.compileReportToFile(subReportFile.getAbsolutePath(), subReportPath);
+		logger.info("Compilation du rapport principal : {}", mainReportPath);
+		JasperCompileManager.compileReportToFile(mainReportFile.toString(), mainReportPath.toString());
 
-		logger.info("Compilation du rapport principal : {}" , mainReportPath);
-		JasperCompileManager.compileReportToFile(mainReportFile.getAbsolutePath(), mainReportPath);
-
-		// Compilation du rapport principal
-		try (InputStream reportStream = new FileInputStream(mainReportPath)) {
+		try (InputStream reportStream = Files.newInputStream(mainReportPath)) {
 			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportStream);
 			logger.info("Rapport principal chargé avec succès");
 
 			// Paramètres du rapport
+			Path logoPath = Paths.get("/webapps/hyban/static/logo/logodefis1.png").toAbsolutePath();
+			if (!Files.exists(logoPath)) {
+				throw new FileNotFoundException("Le logo est introuvable : " + logoPath);
+			}
+
 			Map<String, Object> parameters = new HashMap<>();
 			parameters.put("SUBREPORT_DIR", subReportFile.getParent() + "/");
-
-			parameters.put("logo", "/webapps/hyban/static/logo/logodefis1.png");
+			parameters.put("logo", logoPath.toString());
 
 			logger.info("Paramètres du rapport définis : {}", parameters);
 
 			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(Collections.singletonList(bulletinData));
 			logger.info("Source de données créée avec succès");
 
-			// Remplissage du rapport Jasper avec les données
+			// Génération du rapport
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 			logger.info("Rapport rempli avec succès");
 
 			// Génération du PDF
 			byte[] pdfData = JasperExportManager.exportReportToPdf(jasperPrint);
-			logger.info("PDF généré avec succès (taille : {} octets) ", pdfData.length);
+			logger.info("PDF généré avec succès (taille : {} octets)", pdfData.length);
 
 			return pdfData;
 		} catch (JRException | IOException e) {
-			System.out.println("Erreur lors de la génération du rapport Jasper"+ e);
+			logger.error("Erreur lors de la génération du rapport Jasper", e);
 			throw new RuntimeException("Erreur lors de la génération du rapport Jasper: " + e.getMessage(), e);
 		}
 	}
