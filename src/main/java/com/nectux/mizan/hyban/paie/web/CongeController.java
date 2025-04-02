@@ -367,9 +367,9 @@ public class CongeController {
 	  	modelMap.addAttribute("logo", request.getSession().getServletContext().getRealPath(malist.get(0).getUrlLogo()));
 
 		
-	modelMap.addAttribute("SUBREPORT_DIR", DeploimentUtils.RecupSubReportChem(request.getSession().getServletContext().getRealPath(DeploimentUtils.ChemRech())));
-		modelMap.addAttribute("SUBREPORT_DIR1", DeploimentUtils.RecupSubReportChem(request.getSession().getServletContext().getRealPath(DeploimentUtils.ChemRech())));
-		modelMap.addAttribute("SUBREPORT_DIR2", DeploimentUtils.RecupSubReportChem(request.getSession().getServletContext().getRealPath(DeploimentUtils.ChemRech())));
+	    //modelMap.addAttribute("SUBREPORT_DIR", DeploimentUtils.RecupSubReportChem(request.getSession().getServletContext().getRealPath(DeploimentUtils.ChemRech())));
+		//modelMap.addAttribute("SUBREPORT_DIR1", DeploimentUtils.RecupSubReportChem(request.getSession().getServletContext().getRealPath(DeploimentUtils.ChemRech())));
+		//modelMap.addAttribute("SUBREPORT_DIR2", DeploimentUtils.RecupSubReportChem(request.getSession().getServletContext().getRealPath(DeploimentUtils.ChemRech())));
 		modelMap.addAttribute("datasource", jrDatasource);
 		modelMap.addAttribute("format", "pdf");
 		}
