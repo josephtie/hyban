@@ -447,13 +447,13 @@ private static final Logger logger = LogManager.getLogger(BulletinPaieController
 	 */
 	public byte[] generatePayslipPdf(BulletinPaie bulletinData) throws Exception {
 		// Vérification et compilation du rapport principal
-		File mainReportFile = new File("src/main/resources/reports/JRbulletin.jrxml");
+		File mainReportFile = new File(DeploimentUtils.ChemRechProd()+ "JRbulletin.jrxml");
 		if (!mainReportFile.exists()) {
 			throw new FileNotFoundException("Le fichier JasperReport principal est introuvable !");
 		}
 
 		// Vérification et compilation du sous-rapport
-		File subReportFile = new File("src/main/resources/reports/JRbulletn_subreportDetailBull.jrxml");
+		File subReportFile = new File(DeploimentUtils.ChemRechProd()+ "JRbulletn_subreportDetailBull.jrxml");
 		if (!subReportFile.exists()) {
 			throw new FileNotFoundException("Le fichier JasperReport du sous-rapport est introuvable !");
 		}
