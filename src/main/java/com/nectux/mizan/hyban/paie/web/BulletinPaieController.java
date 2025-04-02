@@ -42,6 +42,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.PageRequest;
@@ -87,6 +88,7 @@ private static final Logger logger = LogManager.getLogger(BulletinPaieController
 	public BulletinPaieController(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
 	}
+
 
 
 	@RequestMapping("/livrepaie")
@@ -489,8 +491,20 @@ private static final Logger logger = LogManager.getLogger(BulletinPaieController
 	public byte[] generatePayslipPdf(BulletinPaie bulletinData) throws Exception {
 	System.out.println("Début de la génération du PDF du bulletin de paie");
 
+
+		String reportsPath;
+		if (new File("src/main/resources/reports").exists()) {
+			reportsPath = "src/main/resources/reports/";
+		} else {
+			reportsPath = "/webapps/hyban/reports/";
+		}
 		// Vérification et compilation du rapport principal
-		File mainReportFile = new File("/reports/JRbulletin.jrxml");
+		File mainReportFile = new File(reportsPath + "JRbulletin.jrxml");
+		File subReportFile = new File(reportsPath + "JRbulletn_subreportDetailBull.jrxml");
+
+		if (!mainReportFile.exists() || !subReportFile.exists()) {
+			throw new FileNotFoundException("Fichiers de rapport introuvables.");
+		}
 		if (!mainReportFile.exists()) {
 			System.out.println("Le fichier JasperReport principal est introuvable : {}" +  mainReportFile.getAbsolutePath());
 			throw new FileNotFoundException("Le fichier JasperReport principal est introuvable !");
@@ -498,7 +512,7 @@ private static final Logger logger = LogManager.getLogger(BulletinPaieController
 		System.out.println("Fichier principal trouvé : {}"+ mainReportFile.getAbsolutePath());
 
 		// Vérification et compilation du sous-rapport
-		File subReportFile = new File("/reports/JRbulletn_subreportDetailBull.jrxml");
+		//File subReportFile = new File("src/main/resources/reports/JRbulletn_subreportDetailBull.jrxml");
 		if (!subReportFile.exists()) {
 			System.out.println("Le fichier JasperReport du sous-rapport est introuvable : {} "+  subReportFile.getAbsolutePath());
 			throw new FileNotFoundException("Le fichier JasperReport du sous-rapport est introuvable !");
@@ -523,7 +537,7 @@ private static final Logger logger = LogManager.getLogger(BulletinPaieController
 			// Paramètres du rapport
 			Map<String, Object> parameters = new HashMap<>();
 			parameters.put("SUBREPORT_DIR", subReportFile.getParent() + "/");
-			parameters.put("logo", "static/logo/logodefis1.png");
+			parameters.put("logo", "/webapps/hyban/static/logo/logodefis1.png");
 
 			System.out.println("Paramètres du rapport définis : {}"+  parameters);
 
