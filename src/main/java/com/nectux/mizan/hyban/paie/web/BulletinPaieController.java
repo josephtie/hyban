@@ -487,60 +487,60 @@ private static final Logger logger = LogManager.getLogger(BulletinPaieController
 //	}
 
 	public byte[] generatePayslipPdf(BulletinPaie bulletinData) throws Exception {
-		logger.info("Début de la génération du PDF du bulletin de paie");
+	System.out.println("Début de la génération du PDF du bulletin de paie");
 
 		// Vérification et compilation du rapport principal
 		File mainReportFile = new File("/reports/JRbulletin.jrxml");
 		if (!mainReportFile.exists()) {
-			logger.error("Le fichier JasperReport principal est introuvable : {}", mainReportFile.getAbsolutePath());
+			System.out.println("Le fichier JasperReport principal est introuvable : {}" +  mainReportFile.getAbsolutePath());
 			throw new FileNotFoundException("Le fichier JasperReport principal est introuvable !");
 		}
-		logger.info("Fichier principal trouvé : {}", mainReportFile.getAbsolutePath());
+		System.out.println("Fichier principal trouvé : {}"+ mainReportFile.getAbsolutePath());
 
 		// Vérification et compilation du sous-rapport
 		File subReportFile = new File("/reports/JRbulletn_subreportDetailBull.jrxml");
 		if (!subReportFile.exists()) {
-			logger.error("Le fichier JasperReport du sous-rapport est introuvable : {}", subReportFile.getAbsolutePath());
+			System.out.println("Le fichier JasperReport du sous-rapport est introuvable : {} "+  subReportFile.getAbsolutePath());
 			throw new FileNotFoundException("Le fichier JasperReport du sous-rapport est introuvable !");
 		}
-		logger.info("Fichier sous-rapport trouvé : {}", subReportFile.getAbsolutePath());
+		System.out.println("Fichier sous-rapport trouvé : {} "+ subReportFile.getAbsolutePath());
 
 		// Compilation des fichiers .jrxml en .jasper
 		String mainReportPath = mainReportFile.getAbsolutePath().replace(".jrxml", ".jasper");
 		String subReportPath = subReportFile.getAbsolutePath().replace(".jrxml", ".jasper");
 
-		logger.info("Compilation du sous-rapport : {}", subReportPath);
+		System.out.println("Compilation du sous-rapport : {} "+  subReportPath);
 		JasperCompileManager.compileReportToFile(subReportFile.getAbsolutePath(), subReportPath);
 
-		logger.info("Compilation du rapport principal : {}", mainReportPath);
+		System.out.println("Compilation du rapport principal : {}" + mainReportPath);
 		JasperCompileManager.compileReportToFile(mainReportFile.getAbsolutePath(), mainReportPath);
 
 		// Compilation du rapport principal
 		try (InputStream reportStream = new FileInputStream(mainReportPath)) {
 			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportStream);
-			logger.info("Rapport principal chargé avec succès");
+			System.out.println("Rapport principal chargé avec succès");
 
 			// Paramètres du rapport
 			Map<String, Object> parameters = new HashMap<>();
 			parameters.put("SUBREPORT_DIR", subReportFile.getParent() + "/");
 			parameters.put("logo", "static/logo/logodefis1.png");
 
-			logger.info("Paramètres du rapport définis : {}", parameters);
+			System.out.println("Paramètres du rapport définis : {}"+  parameters);
 
 			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(Collections.singletonList(bulletinData));
-			logger.info("Source de données créée avec succès");
+			System.out.println("Source de données créée avec succès");
 
 			// Remplissage du rapport Jasper avec les données
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-			logger.info("Rapport rempli avec succès");
+			System.out.println("Rapport rempli avec succès");
 
 			// Génération du PDF
 			byte[] pdfData = JasperExportManager.exportReportToPdf(jasperPrint);
-			logger.info("PDF généré avec succès (taille : {} octets)", pdfData.length);
+			System.out.println("PDF généré avec succès (taille : {} octets) "+ pdfData.length);
 
 			return pdfData;
 		} catch (JRException | IOException e) {
-			logger.error("Erreur lors de la génération du rapport Jasper", e);
+			System.out.println("Erreur lors de la génération du rapport Jasper"+ e);
 			throw new RuntimeException("Erreur lors de la génération du rapport Jasper: " + e.getMessage(), e);
 		}
 	}
