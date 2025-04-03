@@ -572,9 +572,9 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		// Détection de l'environnement (local vs Linux)
 		String reportsPath;
 		if (Files.exists(Paths.get("src/main/resources/reports"))) {
-			reportsPath = request.getSession().getServletContext().getRealPath("src/main/resources/reports/");
+			reportsPath = request.getSession().getServletContext().getRealPath("/");
 		} else {
-			reportsPath =request.getSession().getServletContext().getRealPath( "/webapps/hyban/reports/");
+			reportsPath = request.getSession().getServletContext().getRealPath( "/reports");
 		}
 
 		Path reportsDir = Paths.get(reportsPath).toAbsolutePath();
