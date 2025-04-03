@@ -607,7 +607,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			// Paramètres du rapport
 			//String reportsPathlogo = request.getSession().getServletContext().getRealPath( "/static/logo/");
 			List<Societe> malist=societeService.findtsmois();
-			Path logoPath = Paths.get(request.getSession().getServletContext().getRealPath(malist.get(0).getUrlLogo())).toAbsolutePath();
+			Path logoPath = Paths.get(request.getSession().getServletContext().getRealPath("/static/logo/logodefis1.png")).toAbsolutePath();
 			if (!Files.exists(logoPath)) {
 				throw new FileNotFoundException("Le logo est introuvable : " + logoPath);
 			}
