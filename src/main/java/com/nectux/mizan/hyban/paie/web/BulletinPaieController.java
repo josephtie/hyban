@@ -686,7 +686,12 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
 			// Génération du PDF
-			return JasperExportManager.exportReportToPdf(jasperPrint);
+			// Génération du PDF
+			byte[] pdfData = JasperExportManager.exportReportToPdf(jasperPrint);
+			logger.info("PDF généré avec succès (taille : {} octets)", pdfData.length);
+
+			return pdfData;
+			//return JasperExportManager.exportReportToPdf(jasperPrint);
 		} catch (JRException | IOException e) {
 			throw new RuntimeException("Erreur lors de la génération du rapport Jasper: " + e.getMessage(), e);
 		}
