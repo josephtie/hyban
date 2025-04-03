@@ -607,9 +607,9 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			// Paramètres du rapport
 			//String reportsPathlogo = request.getSession().getServletContext().getRealPath( "/static/logo/");
 			List<Societe> malist=societeService.findtsmois();
-			String cheminComplet=request.getSession().getServletContext().getRealPath(malist.get(0).getUrlLogo());
+			String cheminComplet=malist.get(0).getUrlLogo();
 			String cheminRelatif = cheminComplet.startsWith("hyban/") ? cheminComplet.substring(5) : cheminComplet;
-			Path logoPath = Paths.get(cheminRelatif).toAbsolutePath();
+			Path logoPath = Paths.get(request.getSession().getServletContext().getRealPath(cheminRelatif)).toAbsolutePath();
 			if (!Files.exists(logoPath)) {
 				throw new FileNotFoundException("Le logo est introuvable : " + logoPath);
 			}
