@@ -638,28 +638,41 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		}
 	}
 
-	public byte[] generateMoisBulllipPdf(List<BulletinPaie> bulletinData) throws Exception {
+	public byte[] generateMoisBulllipPdf(List<BulletinPaie> bulletinData,HttpServletRequest request) throws Exception {
 		// Vérification et compilation du rapport principal
-		File mainReportFile = new File("/reports/JRbulletin.jrxml");
-		if (!mainReportFile.exists()) {
-			throw new FileNotFoundException("Le fichier JasperReport principal est introuvable !");
+		String reportsPath;
+		if (Files.exists(Paths.get("src/main/resources/reports"))) {
+			reportsPath = request.getSession().getServletContext().getRealPath("/");
+		} else {
+			reportsPath = request.getSession().getServletContext().getRealPath( "/reports");
 		}
 
-		// Vérification et compilation du sous-rapport
-		File subReportFile = new File("/reports/JRbulletn_subreportDetailBull.jrxml");
-		if (!subReportFile.exists()) {
-			throw new FileNotFoundException("Le fichier JasperReport du sous-rapport est introuvable !");
+		Path reportsDir = Paths.get(reportsPath).toAbsolutePath();
+		logger.info("Chemin des rapports utilisé : {}", reportsDir);
+
+		// Détection des fichiers
+		Path mainReportFile = reportsDir.resolve("JRbulletin.jrxml");
+		Path subReportFile = reportsDir.resolve("JRbulletn_subreportDetailBull.jrxml");
+
+		if (!Files.exists(mainReportFile) || !Files.exists(subReportFile)) {
+			throw new FileNotFoundException("Fichiers de rapport introuvables : " + mainReportFile + ", " + subReportFile);
 		}
+		logger.info("Fichier principal trouvé : {}", mainReportFile);
+		logger.info("Fichier sous-rapport trouvé : {}", subReportFile);
 
-		// Compilation des fichiers .jrxml en .jasper
-		String mainReportPath = mainReportFile.getAbsolutePath().replace(".jrxml", ".jasper");
-		String subReportPath = subReportFile.getAbsolutePath().replace(".jrxml", ".jasper");
 
-		JasperCompileManager.compileReportToFile(subReportFile.getAbsolutePath(), subReportPath);
-		JasperCompileManager.compileReportToFile(mainReportFile.getAbsolutePath(), mainReportPath);
+		// Compilation
+		Path mainReportPath = Paths.get(mainReportFile.toString().replace(".jrxml", ".jasper"));
+		Path subReportPath = Paths.get(subReportFile.toString().replace(".jrxml", ".jasper"));
+
+		logger.info("Compilation du sous-rapport : {}", subReportPath);
+		JasperCompileManager.compileReportToFile(subReportFile.toString(), subReportPath.toString());
+
+		logger.info("Compilation du rapport principal : {}", mainReportPath);
+		JasperCompileManager.compileReportToFile(mainReportFile.toString(), mainReportPath.toString());
 
 		// Compilation du rapport principal
-		try (InputStream reportStream = new FileInputStream(mainReportPath)) {
+		try (InputStream reportStream = new FileInputStream(String.valueOf(mainReportPath))) {
 			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportStream);
 
 			// Paramètres du rapport
@@ -1457,7 +1470,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			listImprimebulletin.add(bulletin);
 			}
 
-			byte[] pdfBytes = generateMoisBulllipPdf(listImprimebulletin);
+			byte[] pdfBytes = generateMoisBulllipPdf(listImprimebulletin,request);
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_PDF);
