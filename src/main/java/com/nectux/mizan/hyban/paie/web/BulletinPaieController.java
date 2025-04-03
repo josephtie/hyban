@@ -605,7 +605,9 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			logger.info("Rapport principal chargé avec succès");
 
 			// Paramètres du rapport
-			Path logoPath = Paths.get("/webapps/hyban/static/logo/logodefis1.png").toAbsolutePath();
+			//String reportsPathlogo = request.getSession().getServletContext().getRealPath( "/static/logo/");
+			List<Societe> malist=societeService.findtsmois();
+			Path logoPath = Paths.get(request.getSession().getServletContext().getRealPath(malist.get(0).getUrlLogo())).toAbsolutePath();
 			if (!Files.exists(logoPath)) {
 				throw new FileNotFoundException("Le logo est introuvable : " + logoPath);
 			}
