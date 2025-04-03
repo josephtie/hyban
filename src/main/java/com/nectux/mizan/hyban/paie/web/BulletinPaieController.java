@@ -566,15 +566,15 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 //		}
 //	}
 
-	public byte[] generatePayslipPdf(BulletinPaie bulletinData) throws Exception {
+	public byte[] generatePayslipPdf(BulletinPaie bulletinData,HttpServletRequest request) throws Exception {
 		logger.info("Début de la génération du PDF du bulletin de paie");
 
 		// Détection de l'environnement (local vs Linux)
 		String reportsPath;
 		if (Files.exists(Paths.get("src/main/resources/reports"))) {
-			reportsPath = "src/main/resources/reports/";
+			reportsPath = request.getSession().getServletContext().getRealPath("src/main/resources/reports/");
 		} else {
-			reportsPath = "/webapps/hyban/reports/";
+			reportsPath =request.getSession().getServletContext().getRealPath( "/webapps/hyban/reports/");
 		}
 
 		Path reportsDir = Paths.get(reportsPath).toAbsolutePath();
@@ -692,7 +692,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 	}
 
 	@GetMapping("/generate-payslip")
-	public ResponseEntity<byte[]> generatePayslip(@RequestParam("idbul") Long employeeId) {
+	public ResponseEntity<byte[]> generatePayslip(@RequestParam("idbul") Long employeeId,HttpServletRequest request) {
 		try {
 			BulletinPaie bulletin = new BulletinPaie();
 
@@ -703,7 +703,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			}
 
 			BulletinPaie bulletinData = getPayslipData(employeeId,bulletin);
-			byte[] pdfBytes = generatePayslipPdf(bulletinData);
+			byte[] pdfBytes = generatePayslipPdf(bulletinData,request);
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_PDF);
@@ -1104,7 +1104,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 
 			//BulletinPaie bulletinData = getPayslipData(bulletin.getId(),bulletin);
-			byte[] pdfBytes = generatePayslipPdf(bulletin);
+			byte[] pdfBytes = generatePayslipPdf(bulletin,request);
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_PDF);

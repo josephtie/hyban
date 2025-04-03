@@ -22,7 +22,7 @@ import com.nectux.mizan.hyban.parametrages.service.CpteVirmtBanqueService;
 import com.nectux.mizan.hyban.parametrages.service.PeriodePaieService;
 import com.nectux.mizan.hyban.parametrages.service.SocieteService;
 import com.nectux.mizan.hyban.parametrages.service.UtilisateurRoleService;
-import com.nectux.mizan.hyban.utils.DeploimentUtils;
+//import com.nectux.mizan.hyban.utils.DeploimentUtils;
 import com.nectux.mizan.hyban.utils.GenericDataSource;
 import com.nectux.mizan.hyban.utils.MethodsShared;
 import com.nectux.mizan.hyban.utils.Utils;

@@ -7,26 +7,48 @@ import org.springframework.stereotype.Component;
 
 
 
-public class DeploimentUtils {
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import javax.servlet.ServletContext;
+import java.nio.file.Paths;
 
-	public static final String SUBREPORT_DIR = "developpement";
-	public static final String chemRechDeveloppement = "/main/resources/reports/";
-	public static final String chemRechDeploiment = "/reports/";
+@Component
+public class DeploiementUtils {
 
-	public static final String pathdd= "production" ;
 	@Autowired
-	private static ServletContext context;
+	private ServletContext context;  // Injecte le ServletContext
 
-	public static String ChemRechDev() {
-		return context.getRealPath(chemRechDeveloppement);
+	@Value("${report.path}")
+	private String reportPath;  // Injecte la valeur du chemin définie dans application.properties
+
+	/**
+	 * Méthode qui renvoie le chemin de base du répertoire des rapports.
+	 * Utilise ServletContext si disponible, sinon la configuration de Spring.
+	 */
+	public String getCheminBase() {
+		// Vérifie si le chemin d'accès est valide en production (ServletContext)
+		String chemin = context.getRealPath("/webapps/hyban/reports/");
+
+		// Si le chemin n'est pas trouvé via ServletContext (dans un contexte Spring Boot autonome),
+		// utilise le chemin défini dans application.properties.
+		if (chemin == null) {
+			chemin = reportPath;  // Utilise la valeur de report.path dans application.properties
+		}
+
+		return chemin;
 	}
 
-	public static String ChemRechProd() {
-		return context.getRealPath(chemRechDeploiment);
+	/**
+	 * Méthode pour obtenir le chemin d'un sous-rapport relatif à un rapport principal.
+	 * @param cheminRelatif chemin relatif du sous-rapport
+	 * @return chemin complet du sous-rapport
+	 */
+	public String getCheminSubReport(String cheminRelatif) {
+		return Paths.get(getCheminBase(), cheminRelatif).toString();
 	}
-
-
 }
+
 
 
 //
