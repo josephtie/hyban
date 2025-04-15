@@ -1,17 +1,16 @@
 package com.nectux.mizan.hyban.utils;
-
 public class ITSCalculator {
-    // Définition des tranches d'imposition et des taux correspondants
+
     private static final double[][] TRANCHES = {
-            {0, 75_000, 0.0},       // 0% jusqu'à 75 000 FCFA
-            {75_001, 150_000, 0.10}, // 10% entre 75 001 et 150 000 FCFA
-            {150_001, 300_000, 0.15}, // 15% entre 150 001 et 300 000 FCFA
-            {300_001, 600_000, 0.20}, // 20% entre 300 001 et 600 000 FCFA
-            {600_001, 1_000_000, 0.25}, // 25% entre 600 001 et 1 000 000 FCFA
-            {1_000_001, Double.MAX_VALUE, 0.30} // 30% au-delà de 1 000 000 FCFA
+            {0, 75_000, 0.0},
+            {75_000, 240_000, 0.16},
+            {240_000, 800_000, 0.21},
+            {800_000, 2_400_000, 0.24},
+            {2_400_000, 8_000_000, 0.28},
+            {8_000_000, Double.MAX_VALUE, 0.32}
     };
 
-    public static double calculerITS(double revenuImposable) {
+    public static double calculerITS(double revenuImposable, boolean afficherDetails) {
         double impots = 0.0;
 
         for (double[] tranche : TRANCHES) {
@@ -21,23 +20,27 @@ public class ITSCalculator {
 
             if (revenuImposable > bas) {
                 double taxable = Math.min(revenuImposable, haut) - bas;
-                impots += taxable * taux;
+                double impotsTranche = taxable * taux;
+                impots += impotsTranche;
+
+                if (afficherDetails) {
+                    System.out.printf("Tranche: %.0f - %.0f FCFA | Taux: %.0f%% | Taxable: %.0f FCFA | Impôt: %.2f FCFA%n",
+                            bas, haut, taux * 100, taxable, impotsTranche);
+                }
             } else {
                 break;
             }
         }
 
+        if (afficherDetails) {
+            System.out.printf(">>> Total ITS dû: %.2f FCFA%n", impots);
+        }
+
         return impots;
     }
 
-//    public static void main(String[] args) {
-//        double salaireBrut = 1_200_000; // Exemple de salaire brut mensuel en FCFA
-//        double abattement = 0.2; // Abattement de 20 %
-//        double revenuImposable = salaireBrut * (1 - abattement);
-//
-//        double its = calculerITS(revenuImposable);
-//        System.out.println("Salaire brut : " + salaireBrut + " FCFA");
-//        System.out.println("Revenu imposable après abattement : " + revenuImposable + " FCFA");
-//        System.out.println("ITS à payer : " + its + " FCFA");
-//    }
+    public static void main(String[] args) {
+        double revenu = 2_055_237;
+        double its = calculerITS(revenu, true);
+    }
 }

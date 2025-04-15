@@ -112,6 +112,7 @@
                                                     <option value="3"> Imposable & Non Imposable</option>
                                   <option value="4"> Retenue Mutuelle</option>
                                   <option value="5"> Regularisation</option>
+                                    <option value="6"> Retenue Sociale</option>
                                                 </select>
                             
                         </div>

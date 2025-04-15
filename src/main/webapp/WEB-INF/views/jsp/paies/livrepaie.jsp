@@ -188,7 +188,7 @@
                     <h4 class="modal-title" id="myModalLabel">G&eacute;n&eacute;ration du bulletin de paie</h4>
 				</div>
                 <div class="modal-body">
-                	<h3>Vous etes sur le point de g&eacute;n&eacute;rer le bulletin de paie de la p&eacute;riode de <span id="periodePaie" class="danger">Mars 2016</span> du personnel.</h3>
+                	<h3>Vous etes sur le point de generer le bulletin de paie de la periode de <span id="periodePaie" class="danger">Mars 2016</span> du personnel.</h3>
                 	<br/>
                 	<h4>En cliquant sur le bouton "Valider", le proccessus sera lanc&eacute;.</h4>
                 </div>
@@ -263,6 +263,9 @@
                 <div class="modal-body">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
 					<button type="submit" onclick="genererLivreDePaie()" class="btn btn-success">Valider</button>
+					 <button id="exportExcelLiv" class="btn btn-success" > Exporter en Excel</button>
+
+
 
                 <!-- <div id="toolbar">
 			    <div class="form-inline">
@@ -272,7 +275,7 @@
             
               <%-- <form action="#" id="formList"> --%>
 
-						<div class="table-responsive">
+				<div class="table-responsive">
 				<table id="tableliv" class="table table-info table-striped table-responsive" style="overflow:auto"
 					data-toggle="table" data-click-to-select="true"
 					data-single-select="false"					
@@ -333,6 +336,10 @@
 							<th data-field="mtbasecnps"  data-align="left">base Cnps</th>
 							
 							<th data-field="mtcnps"  data-align="center">CNPS</th>
+							<c:forEach items="${listePrimesSociale}" var="rubrique" >
+                            	<th  data-field="primeS${rubrique.id}" data-rubrique="${rubrique.id}" data-formatter="primeSFormatter" data-align="right">${rubrique.libelle}</th>
+                            </c:forEach>
+                            <th data-field="retenueSociiale"   data-align="left">Retenue Sociale</th>
 							<th data-field="mtavceAcpte"   data-align="left">Avance & Acompte</th>
 							<th data-field="mtpretAlios"  data-align="center">Pret</th>
 							<%--<th data-field="mtcarec"  data-align="center">Carec</th>--%>
@@ -537,10 +544,13 @@
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">Imprimer les bulletins de paie de  ${periode}</h4>
+
 				</div>
                 <div class="modal-body">
 					<br>
-
+ <button id="exportExcelBull" class="btn btn-success" style="margin-bottom: 10px;">
+                                    Exporter en Excel
+                                </button>
                     <div class="table-responsive">
 				<table id="tableBull" class="table table-info table-striped"
 					data-toggle="table" 
@@ -596,6 +606,10 @@
 							<th data-field="totalretenuefiscal"  data-align="left">Retenue fiscale</th>
 							<th data-field="basecnps"  data-align="left">Base cnps</th>
 							<th data-field="cnps"  data-align="center">CNPS</th>
+							<c:forEach items="${listePrimesSociale}" var="rubrique" >
+                             <th  data-field="primeb${rubrique.id}" data-rubrique="${rubrique.id}" data-formatter="primeFormatterBull" data-align="right">${rubrique.libelle}</th>
+                            </c:forEach>
+                            <th data-field="retenueSociiale"   data-align="left">Retenue Sociale</th>
 							<th data-field="avanceetacompte"   data-align="left">Avance & Acompte</th>
 							<th data-field="pretaloes"  data-align="center">Pret</th>
 							<!-- <th data-field="montantcarec"  data-align="center">Carec</th> -->
@@ -754,7 +768,21 @@ jQuery(document).ready(function($) {
             }
         });
 	});
-	
+	    $('#exportExcelBull').click(function () {
+                $('#tableBull').tableExport({
+                    type: 'excel',
+                    fileName: 'export_bulletinpaie',
+                    exportDataType: 'all' // 'all', 'selected' ou 'basic'
+                });
+            });
+
+        $('#exportExcelLiv').click(function () {
+                        $('#tableliv').tableExport({
+                            type: 'excel',
+                            fileName: 'export_livrepaie',
+                            exportDataType: 'all' // 'all', 'selected' ou 'basic'
+                        });
+                    });
 /* 	jQuery("tableBull").tableExport({
 	    headings: true,                    // (Boolean), display table headings (th/td elements) in the <thead>
 	    footers: true,                     // (Boolean), display table footers (th/td elements) in the <tfoot>
@@ -1279,6 +1307,49 @@ function primeGFormatter(idRub,row,index){
     });
     return '<span id="'+idSpanPrimeG+'"></span>';
 }
+
+function primeSFormatter(idRub,row,index){
+    var $rubrique = $(this)[0];
+    var idSpanPrimeS = 'primeS'+ row.contratPersonnel.id+$rubrique.rubrique;
+    $("#"+idSpanPrimeS).html(0);
+    //alert('bbbbbbbb');
+    //Recuperer via ajax la prime du personnel
+    jQuery.ajax({
+        type: "GET",
+        url: baseUrl+"/paie/primeIndividuel",
+        data: {idPrime: $rubrique.rubrique,idPeriode:periodeID,idCtrat:row.contratPersonnel.id},
+        cache: false,
+        success: function (response) {
+            if (response != null) {
+                for (i = 0; i < response.length; i++) {
+                    console.log(response[i].montant);
+                    console.log(response[i].prime.libelle);
+//                        if(response[i].montant=null)
+//                        $("#"+idSpanPrimeS).html(0);
+//                        else
+                        $("#"+idSpanPrimeS).html(response[i].montant);
+                    //}
+                }
+
+                //$("#"+idSpanPrime).html(response.montant);
+                //jQuery('#sursal').val(response.sursalaire);
+//                jQuery("#rhpModalCalculenvers").modal('hide');
+                //$tablebull.bootstrapTable('refresh', { url: baseUrl +'/paie/bulletinperiodeactifjson?id='+ periodeID});
+            } else {
+                alert('Impossible de charger cet objet');
+            }
+        },
+        error: function () {
+
+        },
+        complete: function () {
+            //$tablebull.bootstrapTable('refresh', {  url: baseUrl +'/paie/bulletinperiodeactifjson?id='+ periodeID});
+            //   location.reload();
+        }
+    });
+    return '<span id="'+idSpanPrimeS+'"></span>';
+}
+
 
 function primeMFormatter(idRub,row,index){
     var $rubrique = $(this)[0];

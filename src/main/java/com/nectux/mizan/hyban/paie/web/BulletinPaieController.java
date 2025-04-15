@@ -12,8 +12,8 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.impl.SLF4JLogFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+
 import com.nectux.mizan.hyban.paie.entity.ImprimBulletinPaie;
 import com.nectux.mizan.hyban.paie.service.BulletinPaieService;
 import com.nectux.mizan.hyban.paie.service.JasperReportService;
@@ -135,6 +135,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		    modelMap.addAttribute("listePrimesNonImpos", rubriqueService.getRubriquesActivesType(2));
             modelMap.addAttribute("listePrimesImposetNon", rubriqueService.getRubriquesActivesType(3));
 		    modelMap.addAttribute("listePrimesMutuelle", rubriqueService.getRubriquesActivesType(4));
+		    modelMap.addAttribute("listePrimesSociale", rubriqueService.getRubriquesActivesType(6));
 		    modelMap.addAttribute("listePrimesGains", rubriqueService.getRubriquesActivesType(5));
 
 
@@ -222,10 +223,12 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		PageRequest page = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
 		PeriodePaie	 maperiode=periodePaieService.findPeriodePaie(id);
 		BulletinPaieDTO bulletinDTO=new BulletinPaieDTO();
-		if(search == null && search == "")
-			bulletinDTO = bulletinPaieService.loadBulletinPaie(page,maperiode);
-		else
+		if (search != null && !search.trim().isEmpty())
+
 			bulletinDTO = bulletinPaieService.loadBulletinPaie(page,maperiode ,search);
+		else
+			bulletinDTO = bulletinPaieService.loadBulletinPaie(page,maperiode);
+
 		return bulletinDTO ;
 	}
 	@ResponseStatus(HttpStatus.OK)
@@ -279,8 +282,9 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			 Float nbpart=calculNbrepart(ctratpersonnel.getPersonnel().getNombrEnfant(),ctratpersonnel.getPersonnel());
 			 List<PrimePersonnel> listIndemniteBrut=new ArrayList<PrimePersonnel>();
 			 List<PrimePersonnel> listIndemniteNonBrut=new ArrayList<PrimePersonnel>();
-		List<PrimePersonnel> listRetenueMutuelle=new ArrayList<PrimePersonnel>();
-		List<PrimePersonnel> listGainsNet=new ArrayList<PrimePersonnel>();
+		     List<PrimePersonnel> listRetenueMutuelle=new ArrayList<PrimePersonnel>();
+		     List<PrimePersonnel> listRetenueSociale=new ArrayList<PrimePersonnel>();
+		   List<PrimePersonnel> listGainsNet=new ArrayList<PrimePersonnel>();
 			 List<PrimePersonnel> listIndemnite  =new ArrayList<PrimePersonnel>();
 			 listIndemnite =  primePersonnelRepository.findByContratPersonnelPersonnelIdAndPeriodePaieId(ctratpersonnel.getPersonnel().getId(), maperiode.getId());
 				if(listIndemnite.size()>0){
@@ -307,11 +311,16 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 						{
 							listGainsNet.add(kprme);
 						}
+						if(kprme.getPrime().getEtatImposition()==6)
+						{
+							listRetenueSociale.add(kprme);
+						}
+						//listRetenueSociale
 					}
 					
 				} 
 			 
-		 livredePaie= new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), nbpart ,op, ctratpersonnel.getCategorie().getSalaireDeBase(),5000d, ctratpersonnel.getIndemniteLogement(),0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet);
+		 livredePaie= new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), nbpart ,op, ctratpersonnel.getCategorie().getSalaireDeBase(),5000d, ctratpersonnel.getIndemniteLogement(),0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
 		 try { 
 				int i=0;
 					for( i = 0; i < 20; i++){	
@@ -319,8 +328,9 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 						 Double nouvSursal = (double) 0;Double nouvDiff= (double) 0;Double nouvMontantBrutImp= (double) 0;
 						nouvMontantBrutImp=Math.rint(valued*livredePaie.getBrutImposable()/livredePaie.getNetPayer());
 						nouvDiff=nouvMontantBrutImp-livredePaie.getBrutImposable();						
-						nouvSursal=nouvDiff+livredePaie.getSursalaire();						
-						livredePaie = new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), ctratpersonnel.getPersonnel().getNombrePart(), op, ctratpersonnel.getCategorie().getSalaireDeBase(),nouvSursal, ctratpersonnel.getIndemniteLogement(), 0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet);
+						nouvSursal=nouvDiff+livredePaie.getSursalaire();
+						livredePaie= new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), nbpart ,op, ctratpersonnel.getCategorie().getSalaireDeBase(),5000d, ctratpersonnel.getIndemniteLogement(),0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
+						livredePaie = new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), ctratpersonnel.getPersonnel().getNombrePart(), op, ctratpersonnel.getCategorie().getSalaireDeBase(),nouvSursal, ctratpersonnel.getIndemniteLogement(), 0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
 					//	System.out.println("*********************SECOND BULLETIN*"+i);
 						System.out.println("*SECOND BULLETIN#############-----------"+livredePaie.toString());	
 				// i++;
@@ -572,7 +582,8 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		// Détection de l'environnement (local vs Linux)
 		String reportsPath;
 		if (Files.exists(Paths.get("src/main/resources/reports"))) {
-			reportsPath = request.getSession().getServletContext().getRealPath("/");
+			// Mode développement : accès direct au répertoire des ressources
+			reportsPath = "src/main/resources/reports";
 		} else {
 			reportsPath = request.getSession().getServletContext().getRealPath( "/reports");
 		}
@@ -607,9 +618,25 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			// Paramètres du rapport
 			//String reportsPathlogo = request.getSession().getServletContext().getRealPath( "/static/logo/");
 			List<Societe> malist=societeService.findtsmois();
-			String cheminComplet=malist.get(0).getUrlLogo();
-			String cheminRelatif = cheminComplet.startsWith("hyban/") ? cheminComplet.substring(5) : cheminComplet;
-			Path logoPath = Paths.get(request.getSession().getServletContext().getRealPath(cheminRelatif)).toAbsolutePath();
+			String cheminComplet = malist.get(0).getUrlLogo();
+			String logoRep;
+			Path logoPath = null;
+			String cheminRelatif;
+
+			if (Files.exists(Paths.get("src/main/resources/static"))) {
+				// Mode développement : accès direct au répertoire des ressources
+				logoRep = "src/main/resources/";
+				cheminRelatif = cheminComplet.startsWith("/") ? cheminComplet.substring(1) : cheminComplet;
+				logger.info("Chemin relatif du logo : {}", cheminComplet);
+				logoPath = Paths.get(logoRep, cheminRelatif).toAbsolutePath();
+
+			} else {
+				logoRep = request.getSession().getServletContext().getRealPath( "/static");
+				cheminRelatif = cheminComplet.startsWith("hyban/") ? cheminComplet.substring(5) : cheminComplet;
+				logger.info("Chemin relatif du logo : {}", cheminComplet);
+				logoPath = Paths.get(request.getSession().getServletContext().getRealPath(cheminRelatif)).toAbsolutePath();
+			}
+
 			if (!Files.exists(logoPath)) {
 				throw new FileNotFoundException("Le logo est introuvable : " + logoPath);
 			}
@@ -639,10 +666,13 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 	}
 
 	public byte[] generateMoisBulllipPdf(List<BulletinPaie> bulletinData,HttpServletRequest request) throws Exception {
-		// Vérification et compilation du rapport principal
+		logger.info("Début de la génération du PDF du bulletin de paie");
+		logger.info("nombre de rapports utilisé : {}", bulletinData.size());
+		// Détection de l'environnement (local vs Linux)
 		String reportsPath;
 		if (Files.exists(Paths.get("src/main/resources/reports"))) {
-			reportsPath = request.getSession().getServletContext().getRealPath("/");
+			// Mode développement : accès direct au répertoire des ressources
+			reportsPath = "src/main/resources/reports";
 		} else {
 			reportsPath = request.getSession().getServletContext().getRealPath( "/reports");
 		}
@@ -660,7 +690,6 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		logger.info("Fichier principal trouvé : {}", mainReportFile);
 		logger.info("Fichier sous-rapport trouvé : {}", subReportFile);
 
-
 		// Compilation
 		Path mainReportPath = Paths.get(mainReportFile.toString().replace(".jrxml", ".jasper"));
 		Path subReportPath = Paths.get(subReportFile.toString().replace(".jrxml", ".jasper"));
@@ -671,28 +700,57 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		logger.info("Compilation du rapport principal : {}", mainReportPath);
 		JasperCompileManager.compileReportToFile(mainReportFile.toString(), mainReportPath.toString());
 
-		// Compilation du rapport principal
-		try (InputStream reportStream = new FileInputStream(String.valueOf(mainReportPath))) {
+		try (InputStream reportStream = Files.newInputStream(mainReportPath)) {
 			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportStream);
+			logger.info("Rapport principal chargé avec succès");
 
 			// Paramètres du rapport
+			//String reportsPathlogo = request.getSession().getServletContext().getRealPath( "/static/logo/");
+			List<Societe> malist=societeService.findtsmois();
+			String cheminComplet = malist.get(0).getUrlLogo();
+			String logoRep;
+			Path logoPath = null;
+			String cheminRelatif;
+
+			if (Files.exists(Paths.get("src/main/resources/static"))) {
+				// Mode développement : accès direct au répertoire des ressources
+				logoRep = "src/main/resources/";
+				cheminRelatif = cheminComplet.startsWith("/") ? cheminComplet.substring(1) : cheminComplet;
+				logger.info("Chemin relatif du logo : {}", cheminComplet);
+				logoPath = Paths.get(logoRep, cheminRelatif).toAbsolutePath();
+
+			} else {
+				logoRep = request.getSession().getServletContext().getRealPath( "/static");
+				cheminRelatif = cheminComplet.startsWith("hyban/") ? cheminComplet.substring(5) : cheminComplet;
+				logger.info("Chemin relatif du logo : {}", cheminComplet);
+				logoPath = Paths.get(request.getSession().getServletContext().getRealPath(cheminRelatif)).toAbsolutePath();
+			}
+
+			if (!Files.exists(logoPath)) {
+				throw new FileNotFoundException("Le logo est introuvable : " + logoPath);
+			}
+
 			Map<String, Object> parameters = new HashMap<>();
-			parameters.put("SUBREPORT_DIR", subReportFile.getParent() + "/"); // Passer le dossier du sous-rapport
-			parameters.put("logo", "/static/logo/logodefis1.png"); // Passer le dossier du sous-rapport
+			parameters.put("SUBREPORT_DIR", subReportFile.getParent() + "/");
+			parameters.put("logo", logoPath.toString());
 
+			logger.info("Paramètres du rapport définis : {}", parameters);
+			//List<BulletinPaie> singleBulletinList = Collections.singletonList(bulletinData); // Récupérer un seul bulletin
+			//JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(singleBulletinList);
 			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(bulletinData);
+			logger.info("Source de données créée avec succès");
 
-			// Remplissage du rapport Jasper avec les données
+			// Génération du rapport
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+			logger.info("Rapport rempli avec succès");
 
-			// Génération du PDF
 			// Génération du PDF
 			byte[] pdfData = JasperExportManager.exportReportToPdf(jasperPrint);
 			logger.info("PDF généré avec succès (taille : {} octets)", pdfData.length);
 
 			return pdfData;
-			//return JasperExportManager.exportReportToPdf(jasperPrint);
 		} catch (JRException | IOException e) {
+			logger.error("Erreur lors de la génération du rapport Jasper", e);
 			throw new RuntimeException("Erreur lors de la génération du rapport Jasper: " + e.getMessage(), e);
 		}
 	}
@@ -1166,6 +1224,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		//listBull = bulletinService.findAllBulletinByPeriodePaie(periodePaie);
 		listBull = bulletinPaieService.rechercherBulletinMoisCalculer(periodePaie, true);
 		System.out.println("nb bulletin : "+listBull.size());
+		logger.info("nb bulletin : "+listBull.size());
 		for (int r = 0; r<listBull.size(); r++){
 		
 			BulletinPaie bulletin = new BulletinPaie();
@@ -1472,21 +1531,21 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			//	modelMap.addAttribute("congacquis",Double.parseDouble(bulletin.getNbcongedu()));
 			//	modelMap.addAttribute("tpsPresence",bulletin.getTpsdepresence());	
 				view="bulletinpdf";
-			listImprimebulletin.add(bulletin);
+
 			}
 
-			byte[] pdfBytes = generateMoisBulllipPdf(listImprimebulletin,request);
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_PDF);
-			headers.setContentDispositionFormData("filename", "Bulletin_.pdf");
-
-			return ResponseEntity.ok().headers(headers).body(pdfBytes);
+			listImprimebulletin.add(bulletin);
 
 		}
-		
-		
-		return null; //mav;
+        logger.info("nombre de bulletin à imprimer: {}" , listImprimebulletin.size());
+		byte[] pdfBytes = generateMoisBulllipPdf(listImprimebulletin,request);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_PDF);
+		headers.setContentDispositionFormData("filename", "Bulletin_M.pdf");
+		return ResponseEntity.ok().headers(headers).body(pdfBytes);
+		//return null; //mav;
 		
 		
 	}

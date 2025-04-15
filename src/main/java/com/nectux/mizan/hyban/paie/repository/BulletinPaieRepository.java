@@ -59,6 +59,13 @@ public interface BulletinPaieRepository extends JpaRepository<BulletinPaie, Long
 
 	public Page<BulletinPaie> findByPeriodePaieIdAndContratPersonnelPersonnelNomIgnoreCaseContaining(Pageable pageable,Long idperiode,String search);
 
+	@Query("SELECT b FROM BulletinPaie b WHERE b.periodePaie.id = :periodeId AND LOWER(b.contratPersonnel.personnel.nom) LIKE LOWER(CONCAT('%', :search, '%'))")
+	Page<BulletinPaie> chercherParNom(
+			@Param("periodeId") Long periodeId,
+			@Param("search") String search,
+			Pageable pageable
+	);
+
 	public Page<BulletinPaie> findAll(Pageable pageable);
 	
 	

@@ -432,6 +432,7 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 		 List<PrimePersonnel> listIndemniteBrut=new ArrayList<PrimePersonnel>();
 		 List<PrimePersonnel> listIndemniteNonBrut=new ArrayList<PrimePersonnel>();
 		List<PrimePersonnel> listRetenueMutuelle=new ArrayList<PrimePersonnel>();
+		List<PrimePersonnel> listRetenueSociale=new ArrayList<PrimePersonnel>();
 		List<PrimePersonnel> listGainsNet=new ArrayList<PrimePersonnel>();
 		 List<PrimePersonnel> listIndemnite  =new ArrayList<PrimePersonnel>();
 		 listIndemnite =  primePersonnelRepository.findByContratPersonnelPersonnelIdAndPeriodePaieId(ctratpersonnellz.getPersonnel().getId(), periodePaieActif.getId());
@@ -459,10 +460,14 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 					{
 						listGainsNet.add(kprme);
 					}
+					if(kprme.getPrime().getEtatImposition()==6)
+					{
+						listRetenueSociale.add(kprme);
+					}
 				}
 				
 			} 
-			LivreDePaie	 livrePaiecalpm = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(), ctratpersonnellz.getPersonnel().getNombrePart(), op, ctratpersonnellz.getCategorie().getSalaireDeBase(),5000d, ctratpersonnellz.getIndemniteLogement(),0d, 0d,ctratpersonnellz,null,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet);
+			LivreDePaie	 livrePaiecalpm = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(), ctratpersonnellz.getPersonnel().getNombrePart(), op, ctratpersonnellz.getCategorie().getSalaireDeBase(),5000d, ctratpersonnellz.getIndemniteLogement(),0d, 0d,ctratpersonnellz,null,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
 			try { 
 			 int pi=0;
 				while (livrePaiecalpm.getNetPayer()!=ctratpersonnellz.getNetAPayer() || pi==3) {		 				
@@ -470,7 +475,7 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 					nouvMontantBrutImp=Math.rint(ctratpersonnellz.getNetAPayer()*livrePaiecalpm.getBrutImposable()/livrePaiecalpm.getNetPayer());
 					nouvDiff=nouvMontantBrutImp-livrePaiecalpm.getBrutImposable();						
 					nouvSursal=nouvDiff+livrePaiecalpm.getSursalaire();						
-					livrePaiecalpm = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(), ctratpersonnellz.getPersonnel().getNombrePart(), op, ctratpersonnellz.getCategorie().getSalaireDeBase(),nouvSursal, ctratpersonnellz.getIndemniteLogement(), 0d, 0d,ctratpersonnellz,null,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet);
+					livrePaiecalpm = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(), ctratpersonnellz.getPersonnel().getNombrePart(), op, ctratpersonnellz.getCategorie().getSalaireDeBase(),nouvSursal, ctratpersonnellz.getIndemniteLogement(), 0d, 0d,ctratpersonnellz,null,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
 			//	 logger.info("*********************SECOND BULLETIN********************############## SECOND BULLETIN #############-----------"+livrePaiecal.toString());	
 					pi=pi+1;
 			  }

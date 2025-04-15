@@ -95,6 +95,10 @@ public class InitDatabaseService {
 				TypeContrat typeContrat2 = new TypeContrat();
 				typeContrat2.setLibelle("ESSAI");
 				typeContratService.save(typeContrat2);
+
+				TypeContrat typeContrat3 = new TypeContrat();
+				typeContrat3.setLibelle("CONSULTANCE");
+				typeContratService.save(typeContrat3);
 			}
 
 			if (fonctionService.count() == 0) {

@@ -85,6 +85,9 @@ public class LivreDePaie {
 	@Transient
 	private String mtbrutImposable;
 
+	private Double autrePrelevmentSociale;
+	@Transient
+	private String mtautrePrelevmentSociale;
 
 	private Double autrePrelevment;
 	@Transient
@@ -107,6 +110,14 @@ public class LivreDePaie {
 	private Double CMU;
 	@Transient
 	private String mtCMU ;
+
+	private Double CMUSalarial;
+	@Transient
+	private String mtCMUSalarial ;
+
+	private Double CMUPatronal;
+	@Transient
+	private String mtCMUPatronal ;
 	
 	private Double cn;
 	@Transient
@@ -143,6 +154,14 @@ public class LivreDePaie {
 	private Double totalRetenue;
 	@Transient
 	private String mttotalRetenue;
+
+	private Double RetenueSociale;
+	@Transient
+	private String mtRetenueSocial;
+
+	private Double totalRetenueSociale;
+	@Transient
+	private String mttotalRetenueSocial;
 	
 	private Double indemniteRepresentation;
 	@Transient
@@ -201,6 +220,10 @@ public class LivreDePaie {
 	private Double totalMasseSalariale;
 	@Transient
 	private String mttotalMasseSalariale;
+
+	private Double retenueSociiale;
+	@Transient
+	private String mtretenueSociiale;
 	
 	private BulletinPaie bullpaie;
 	
@@ -224,6 +247,10 @@ public class LivreDePaie {
 	@Transient
 	List<PrimePersonnel> listRetenueMutuellt = new ArrayList<PrimePersonnel>();
 
+
+	@Transient
+	List<PrimePersonnel> listRetenueSociale = new ArrayList<PrimePersonnel>();
+
 	@Transient
 	List<PrimePersonnel> listGainsNet = new ArrayList<PrimePersonnel>();
 
@@ -242,7 +269,7 @@ public class LivreDePaie {
 		// TODO Auto-generated constructor stub
 	}
 
-	public LivreDePaie(String mat, String nomPre, Float nbrePart, int ancien, Double salBase, Double sursal, Double indemLog, Double avanceEtAccompte, Double pretALIOS,ContratPersonnel ctratperso,TempEffectif tempeffect,PeriodePaie plconge,List<PrimePersonnel> listIndemnite,List<PrimePersonnel> listIndemniteNonImp1,List<PrimePersonnel> listMutuelle,List<PrimePersonnel> listGains) {
+	public LivreDePaie(String mat, String nomPre, Float nbrePart, int ancien, Double salBase, Double sursal, Double indemLog, Double avanceEtAccompte, Double pretALIOS,ContratPersonnel ctratperso,TempEffectif tempeffect,PeriodePaie plconge,List<PrimePersonnel> listIndemnite,List<PrimePersonnel> listIndemniteNonImp1,List<PrimePersonnel> listMutuelle,List<PrimePersonnel> listGains,List<PrimePersonnel> listRetenueSociale) {
 		super();
 		this.matricule = mat;
 		this.nomPrenom = nomPre;
@@ -251,9 +278,11 @@ public class LivreDePaie {
 		this.listIndemniteBrut=listIndemnite;
 		//this.listRubrique=rubriqueRepository.findByActiveTrue();
 		this.listIndemniteNonImp=listIndemniteNonImp1;
+		this.listRetenueSociale =listRetenueSociale;
 		this.listRetenueMutuellt=listMutuelle;
 		this.listGainsNet=listGains;
 		if(ctratperso.getPersonnel().getCarec()==true){
+
 			if(tempeffect==null){
 		       this.salaireBase = Math.ceil(salBase);
 		        if(sursal==null)
@@ -293,7 +322,7 @@ public class LivreDePaie {
 //		  			 if((indemniteTransport+ctratperso.getIndemniteRepresent())<(salaireBase+primeAnciennete+indemniteLogement+sursalaire+ctratperso.getIndemniteRepresent()+indemniteTransport)*10/100)
 //			  			 autreIndemImposable=0d;
 //			  		 	else
-//						autreIndemImposable=Math.rint((indemniteTransport+ctratperso.getIndemniteRepresent()-((salaireBase+primeAnciennete+indemniteLogement+sursalaire+ctratperso.getIndemniteRepresent()+indemniteTransport)*10/100)));
+//						autreIndemImposable=Math.ceil((indemniteTransport+ctratperso.getIndemniteRepresent()-((salaireBase+primeAnciennete+indemniteLogement+sursalaire+ctratperso.getIndemniteRepresent()+indemniteTransport)*10/100)));
 		     		
 		  				 autreImposable=0d;
 		     			if(listIndemniteBrut.size()>0 || listIndemniteBrut!=null){
@@ -318,25 +347,25 @@ public class LivreDePaie {
 		    }
 	 	   else
 		   {
-			       this.salaireBase = Math.rint(salBase*tempeffect.getJourspresence()/30);
+			       this.salaireBase = Math.ceil(salBase*tempeffect.getJourspresence()/30);
 			        if(sursal==null)
-			          this.sursalaire = Math.rint(0d);
+			          this.sursalaire = Math.ceil(0d);
 			           else
-			         this.sursalaire = Math.rint(sursal*tempeffect.getJourspresence()/30);
+			         this.sursalaire = Math.ceil(sursal*tempeffect.getJourspresence()/30);
 			 
 			        if(ancien>= 2)
-				      this.primeAnciennete = Math.rint((salaireBase) * ancien / 100);
+				      this.primeAnciennete = Math.ceil((salaireBase) * ancien / 100);
 			        else
-				        this.primeAnciennete = Math.rint(0);
+				        this.primeAnciennete = Math.ceil(0);
 			 
 		            if(indemLog==null)
-			           this.indemniteLogement = Math.rint(0);
+			           this.indemniteLogement = Math.ceil(0);
 			        else
-		                this.indemniteLogement = Math.rint(indemLog*tempeffect.getJourspresence()/30);
+		                this.indemniteLogement = Math.ceil(indemLog*tempeffect.getJourspresence()/30);
 		     
 		           if(ctratperso.getIndemniteTransport()==null)
-		            {  this.indemniteTransportImp=Math.rint(0);
-		              this.indemniteTransport=Math.rint(0);
+		            {  this.indemniteTransportImp=Math.ceil(0);
+		              this.indemniteTransport=Math.ceil(0);
 		        
 		            }else{
 		        	  if(ctratperso.getIndemniteTransport() > 25000){
@@ -354,7 +383,7 @@ public class LivreDePaie {
 //			       if((indemniteTransport+ctratperso.getIndemniteRepresent())<(salaireBase+primeAnciennete+indemniteLogement+sursalaire+ctratperso.getIndemniteRepresent()+indemniteTransport)*10/100)
 //				      autreIndemImposable=0d;
 //					  else
-//					   autreIndemImposable=Math.rint((indemniteTransport+ctratperso.getIndemniteRepresent()-((salaireBase+primeAnciennete+indemniteLogement+sursalaire+ctratperso.getIndemniteRepresent()+indemniteTransport)*10/100)));
+//					   autreIndemImposable=Math.ceil((indemniteTransport+ctratperso.getIndemniteRepresent()-((salaireBase+primeAnciennete+indemniteLogement+sursalaire+ctratperso.getIndemniteRepresent()+indemniteTransport)*10/100)));
 //		     //*tempeffect.getJourspresence()/30
 		            autreImposable=0d;
 		 	        if(listIndemniteBrut.size()>0 || listIndemniteBrut!=null){
@@ -375,9 +404,9 @@ public class LivreDePaie {
 				 this.temptravail=tempeffect.getHeurspresence();
 		}
 		
-			this.brutImposable = Math.rint(salaireBase + sursalaire + primeAnciennete + indemniteLogement+indemniteTransportImp+autreIndemImposable+autreImposable);
+			this.brutImposable = Math.ceil(salaireBase + sursalaire + primeAnciennete + indemniteLogement+indemniteTransportImp+autreIndemImposable+autreImposable);
 			Double ricf = getRICF(nombrePart);
-			double itsbrut =Math.ceil(calculerITS(brutImposable));
+			double itsbrut =Math.ceil(calculerITS(brutImposable,true));
 			this.its = Math.max(0, itsbrut - ricf / 12);
 		 //   this.cn =  Math.ceil(calculerCN());
 		  //  this.igr = Math.ceil(calculerIGR());
@@ -389,9 +418,9 @@ public class LivreDePaie {
 
 
 //		if(ctratperso.getIndemniteResp()==null)
-//			this.indemniteResponsabilte = Math.rint(0);
+//			this.indemniteResponsabilte = Math.ceil(0);
 //		else
-//			this.indemniteResponsabilte = Math.rint(ctratperso.getIndemniteResp());
+//			this.indemniteResponsabilte = Math.ceil(ctratperso.getIndemniteResp());
 
 			autreNonImposable=0d;
 			if(listIndemniteNonImp.size()>0 || listIndemniteNonImp!=null){
@@ -417,14 +446,28 @@ public class LivreDePaie {
   			}
 
 				this.brutNonImposable=indemniteRepresentation+indemniteTransport+autreNonImposable;
-		//this.indemniteRepresentation = Math.rint(calculerIndemniterRepresentation());
-				this.basecnps=brutImposable + indemniteRepresentation+autreNonImposable-autreIndemImposable;
+		//this.indemniteRepresentation = Math.ceil(calculerIndemniterRepresentation());
+				this.basecnps=brutImposable + indemniteRepresentation+autreNonImposable - autreIndemImposable;
 				//double cnpsBrut[]=calculerCNPS(basecnps,2);
-				this.cnps = Math.ceil(calculCNPS(basecnps));//Math.rint(cnpsBrut[2]);
+				this.cnps = Math.ceil(calculCNPS(basecnps));//Math.ceil(cnpsBrut[2]);
 				this.avceAcpte = Math.ceil(avanceEtAccompte);
 				this.pretAlios = Math.ceil(pretALIOS);
-		//this.indemniteTransport = Math.rint(calculerIndemniteTransport());
+		//this.indemniteTransport = Math.ceil(calculerIndemniteTransport());
 			this.totalBrut = Math.ceil(brutImposable + indemniteRepresentation+ indemniteTransport+autreNonImposable);
+			autrePrelevmentSociale=0d; double patronalcmu=0d;
+			if(listRetenueSociale.size()>0 || listRetenueSociale!=null){
+				for(PrimePersonnel sociale : listRetenueSociale){
+					if(sociale.getPrime().getLibelle().equals("CMU Patronal")){
+						patronalcmu=sociale.getMontant();
+					}
+					else{
+						autrePrelevmentSociale=autrePrelevmentSociale + sociale.getMontant();}
+
+				}
+			}
+			this.CMU=autrePrelevmentSociale;
+			this.retenueSociiale=autrePrelevmentSociale +cnps;
+            this.CMUPatronal=patronalcmu;
 			autrePrelevment=0d;
 			if(listMutuelle.size()>0 || listMutuelle!=null){
 				for(PrimePersonnel mutuell : listMutuelle){
@@ -432,7 +475,7 @@ public class LivreDePaie {
 				}
 			}
 
-				this.totalRetenue = Math.ceil(totalRetenueFiscale + cnps + avceAcpte + pretAlios+autrePrelevment );
+				this.totalRetenue = Math.ceil(totalRetenueFiscale + avceAcpte + pretAlios+autrePrelevment +retenueSociiale);
 				regularisation=0d;
 			if(listGains.size()>0 || listGains!=null){
 				for(PrimePersonnel primeGains : listGains){
@@ -440,13 +483,13 @@ public class LivreDePaie {
 				}
 			}
 				this.netPayer = Math.ceil((brutImposable + indemniteRepresentation + indemniteTransport+autreNonImposable)+ regularisation -autreIndemImposable- totalRetenue);
-				//this.is = Math.rint(brutImposable * 1.2 / 100);
-				this.ta = 0d;//Math.rint(brutImposable * 0.4 / 100);
-				this.fpc =0d ;//Math.rint(brutImposable * 0.6 / 100);
+				//this.is = Math.ceil(brutImposable * 1.2 / 100);
+				this.ta = 0d;//Math.ceil(brutImposable * 0.4 / 100);
+				this.fpc =0d ;//Math.ceil(brutImposable * 0.6 / 100);
 				this.prestationFamiliale = Math.ceil(calcalerPrestationFamilial());
 				this.accidentTravail = Math.ceil(calculerAccidentTravail());
 				this.retraite = Math.ceil((brutImposable + indemniteRepresentation+autreNonImposable) * 7.7 / 100);
-				this.totalPatronal =Math.ceil(prestationFamiliale + accidentTravail + retraite); ///Math.ceil( ta + fpc + prestationFamiliale + accidentTravail + retraite);
+				this.totalPatronal =Math.ceil(prestationFamiliale + accidentTravail + retraite+ CMUPatronal); ///Math.ceil( ta + fpc + prestationFamiliale + accidentTravail + retraite);
 				this.totalMasseSalariale = Math.ceil(brutImposable + indemniteRepresentation+ indemniteTransport +autreNonImposable+regularisation+ totalPatronal);
 				this.tempspresence= countnbreJrdu(ctratperso.getPersonnel().getDateRetourcge(), plconge.getDatefin(), ctratperso);
 				this.moisdepresence= ProvisionConge.calculerTempsPresence(ctratperso.getPersonnel().getDateRetourcge(), plconge.getDatefin());
@@ -500,24 +543,24 @@ public class LivreDePaie {
 						}
 					}
 			//if(ctratperso.getPersonnel().getCarec()==false)
-			//{	 this.its = Math.rint(0);
-				this.cn =  Math.rint(0);
-				this.igr = Math.rint(0);
-				this.totalRetenueFiscale = Math.rint(0);
-				this.brutImposable = Math.rint(autreImposable);
-				this.brutNonImposable = Math.rint(autreNonImposable);
-				this.basecnps=Math.rint(0);
-				this.is = Math.rint(0);
-				this.ta = Math.rint(0);
-				this.fpc = Math.rint(0);
-				this.prestationFamiliale = Math.rint(0);
-				this.accidentTravail = Math.rint(0);
-				this.retraite = Math.rint(0);
-				this.cnps = Math.rint(0);
-				this.retraite = Math.rint(0);
-				this.plafondFamiliale = Math.rint(0);
+			//{	 this.its = Math.ceil(0);
+				this.cn =  Math.ceil(0);
+				this.igr = Math.ceil(0);
+				this.totalRetenueFiscale = Math.ceil(0);
+				this.brutImposable = Math.ceil(autreImposable);
+				this.brutNonImposable = Math.ceil(autreNonImposable);
+				this.basecnps=Math.ceil(0);
+				this.is = Math.ceil(0);
+				this.ta = Math.ceil(0);
+				this.fpc = Math.ceil(0);
+				this.prestationFamiliale = Math.ceil(0);
+				this.accidentTravail = Math.ceil(0);
+				this.retraite = Math.ceil(0);
+				this.cnps = Math.ceil(0);
+				this.retraite = Math.ceil(0);
+				this.plafondFamiliale = Math.ceil(0);
 
-				avceAcpte=Math.rint(0); pretAlios=Math.rint(0);
+				avceAcpte=Math.ceil(0); pretAlios=Math.ceil(0);
 					autrePrelevment=0d;
 					if(listMutuelle.size()>0 || listMutuelle!=null){
 						for(PrimePersonnel mutuell : listMutuelle){
@@ -531,10 +574,10 @@ public class LivreDePaie {
 				this.netPayer = Math.ceil(brutImposable +regularisation+ brutNonImposable-totalRetenue);
 				//this.is = Math.ceil(brutImposable * 1.2 / 100);
 				//this.ta = Math.ceil(brutImposable * 0.4 / 100);
-				//this.fpc = Math.rint(brutImposable * 1.2 / 100);
-				//this.prestationFamiliale = Math.rint(calcalerPrestationFamilial());
-				//this.accidentTravail = Math.rint(calculerAccidentTravail());
-				//this.retraite = Math.rint((brutImposable + indemniteRepresentation+indemniteResponsabilte+autreNonImposable) * 7.7 / 100);
+				//this.fpc = Math.ceil(brutImposable * 1.2 / 100);
+				//this.prestationFamiliale = Math.ceil(calcalerPrestationFamilial());
+				//this.accidentTravail = Math.ceil(calculerAccidentTravail());
+				//this.retraite = Math.ceil((brutImposable + indemniteRepresentation+indemniteResponsabilte+autreNonImposable) * 7.7 / 100);
 				this.totalPatronal = Math.ceil(is + ta + fpc + prestationFamiliale + accidentTravail + retraite);
 				this.totalMasseSalariale = Math.ceil(brutImposable + brutNonImposable+regularisation+ totalPatronal);
 				this.tempspresence= countnbreJrdu(ctratperso.getPersonnel().getDateRetourcge(), plconge.getDatefin(), ctratperso);
@@ -620,11 +663,11 @@ public class LivreDePaie {
 //	}
 	
 	public Double calculCNPS(Double basecnps){
-		Double cnps = (basecnps );
-		if(cnps < 1647315.0)
+		Double cnps = (basecnps ); //3000000
+		if(cnps < 3375000.0)
 			cnps = (basecnps ) * 6.3 / 100;
-		else 
-			cnps = 1647315 * 6.3 / 100;
+		else
+			cnps = 3375000.0 * 6.3 / 100;
 		return cnps;
 	}
 
@@ -1360,6 +1403,128 @@ public class LivreDePaie {
 
 	public void setMtregularisation(String mtregularisation) {
 		this.mtregularisation = mtregularisation;
+	}
+
+	public List<PrimePersonnel> getListRetenueSociale() {
+		return listRetenueSociale;
+	}
+
+	public void setListRetenueSociale(List<PrimePersonnel> listRetenueSociale) {
+		this.listRetenueSociale = listRetenueSociale;
+	}
+
+	public Double getCMU() {
+		return CMU;
+	}
+
+	public void setCMU(Double CMU) {
+		this.CMU = CMU;
+	}
+
+	public String getMtCMU() {
+		return mtCMU;
+	}
+
+	public void setMtCMU(String mtCMU) {
+		this.mtCMU = mtCMU;
+	}
+
+	public Double getAutrePrelevmentSociale() {
+		return autrePrelevmentSociale;
+	}
+
+	public void setAutrePrelevmentSociale(Double autrePrelevmentSociale) {
+		this.autrePrelevmentSociale = autrePrelevmentSociale;
+	}
+
+	public String getMtautrePrelevmentSociale() {
+		return mtautrePrelevmentSociale;
+	}
+
+	public void setMtautrePrelevmentSociale(String mtautrePrelevmentSociale) {
+		this.mtautrePrelevmentSociale = mtautrePrelevmentSociale;
+	}
+
+	public Double getRetenueSociale() {
+		return RetenueSociale;
+	}
+
+	public void setRetenueSociale(Double retenueSociale) {
+		RetenueSociale = retenueSociale;
+	}
+
+	public String getMtRetenueSocial() {
+		return mtRetenueSocial;
+	}
+
+	public void setMtRetenueSocial(String mtRetenueSocial) {
+		this.mtRetenueSocial = mtRetenueSocial;
+	}
+
+	public Double getTotalRetenueSociale() {
+		return totalRetenueSociale;
+	}
+
+	public void setTotalRetenueSociale(Double totalRetenueSociale) {
+		this.totalRetenueSociale = totalRetenueSociale;
+	}
+
+	public String getMttotalRetenueSocial() {
+		return mttotalRetenueSocial;
+	}
+
+	public void setMttotalRetenueSocial(String mttotalRetenueSocial) {
+		this.mttotalRetenueSocial = mttotalRetenueSocial;
+	}
+
+	public Double getRetenueSociiale() {
+		return retenueSociiale;
+	}
+
+
+
+	public void setRetenueSociiale(Double retenueSociiale) {
+		this.retenueSociiale = retenueSociiale;
+	}
+
+	public String getMtretenueSociiale() {
+		return mtretenueSociiale;
+	}
+
+	public void setMtretenueSociiale(String mtretenueSociiale) {
+		this.mtretenueSociiale = mtretenueSociiale;
+	}
+
+	public Double getCMUSalarial() {
+		return CMUSalarial;
+	}
+
+	public void setCMUSalarial(Double CMUSalarial) {
+		this.CMUSalarial = CMUSalarial;
+	}
+
+	public String getMtCMUSalarial() {
+		return mtCMUSalarial;
+	}
+
+	public void setMtCMUSalarial(String mtCMUSalarial) {
+		this.mtCMUSalarial = mtCMUSalarial;
+	}
+
+	public Double getCMUPatronal() {
+		return CMUPatronal;
+	}
+
+	public void setCMUPatronal(Double CMUPatronal) {
+		this.CMUPatronal = CMUPatronal;
+	}
+
+	public String getMtCMUPatronal() {
+		return mtCMUPatronal;
+	}
+
+	public void setMtCMUPatronal(String mtCMUPatronal) {
+		this.mtCMUPatronal = mtCMUPatronal;
 	}
 
 	@Override

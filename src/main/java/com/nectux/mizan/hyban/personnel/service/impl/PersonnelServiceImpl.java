@@ -18,8 +18,9 @@ import com.nectux.mizan.hyban.personnel.dto.PersonnelDTO;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.personnel.entity.Service;
 import com.nectux.mizan.hyban.utils.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,7 +46,7 @@ import javax.persistence.EntityNotFoundException;
 @org.springframework.stereotype.Service("personnelService")
 public class PersonnelServiceImpl implements PersonnelService {
 	
-	private static final Logger logger = LogManager.getLogger(PersonnelServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(PersonnelServiceImpl.class);
 
 	@Autowired private ServiceRepository serviceRepository;
 	@Autowired private ExerciceRepository exerciceRepository;
@@ -82,8 +83,10 @@ public class PersonnelServiceImpl implements PersonnelService {
 		personnelmat=personnelRepository.findByMatricule(matricule);
 		personnelcnps=personnelRepository.findByNumeroCnps(numeroCNPS);
 		try{
-			if(personnelmat==null && personnelcnps==null){
-			if(id != null){personnel = personnelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + id));;}
+			if(personnelmat==null ){
+
+			if(id != null){
+				personnel = personnelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + id));;}
 				
 			
 			System.out.println("############################################################################# 1 :" + personnel.toString());			
@@ -140,8 +143,15 @@ public class PersonnelServiceImpl implements PersonnelService {
 			contratPersonnel.setPersonnel(personnel);
 			contratPersonnel.setCategorie(categorieRepository.findById(categorie).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + categorie)));
 			contratPersonnel.setFonction(fonctionRepository.findById(fonction).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + fonction)));
+
 			contratPersonnel.setDateDebut(Utils.stringToDate(dateDebut, "dd/MM/yyyy"));
-			contratPersonnel.setDateFin(Utils.stringToDate(dateFin, "dd/MM/yyyy"));
+				if (dateFin != null && !dateFin.trim().isEmpty()) {
+					contratPersonnel.setDateFin(Utils.stringToDate(dateFin, "dd/MM/yyyy"));
+				} else {
+					contratPersonnel.setDateFin(null);
+				}
+
+
 			contratPersonnel.setNetAPayer(salaireNet);
 			contratPersonnel.setIndemniteLogement(indemnitelogement);
 			contratPersonnel.setTypeContrat(typeContratRepository.findById(typeContrat).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + typeContrat)));
@@ -155,14 +165,14 @@ public class PersonnelServiceImpl implements PersonnelService {
 			contratPersonnel.setSursalaire(sursalaire);
 			contratPersonnel = contratPersonnelRepository.save(contratPersonnel);
 			
-			if(contratPersonnel.getTypeContrat().getId()==4L){
+			if(contratPersonnel.getTypeContrat().getId()==5L){
 				 contratPersonnel.getPersonnel().setStage(true);
 				 contratPersonnel.getPersonnel().setFonctionnaire(false);
 				 contratPersonnel.getPersonnel().setConsultant(false);
 
 			 }
 			
-			if(contratPersonnel.getTypeContrat().getId()==5L){
+			if(contratPersonnel.getTypeContrat().getId()==4L){
 				 contratPersonnel.getPersonnel().setConsultant(true);
 				contratPersonnel.getPersonnel().setFonctionnaire(false);
 				contratPersonnel.getPersonnel().setStage(false);
@@ -707,6 +717,7 @@ public LivreDePaie calculbullFirst(ContratPersonnel ctratpersonnellz,PeriodePaie
 	 List<PrimePersonnel> listIndemniteBrut=new ArrayList<PrimePersonnel>();
 	 List<PrimePersonnel> listIndemniteNonBrut=new ArrayList<PrimePersonnel>();
 	 List<PrimePersonnel> listRetenueMutuelle=new ArrayList<PrimePersonnel>();
+	 List<PrimePersonnel> listRetenueSociale=new ArrayList<PrimePersonnel>();
 	List<PrimePersonnel> listGainsNet=new ArrayList<PrimePersonnel>();
 	 List<PrimePersonnel> listIndemnite  =new ArrayList<PrimePersonnel>();
 	 listIndemnite =  primePersonnelRepository.findByContratPersonnelPersonnelIdAndPeriodePaieId(ctratpersonnellz.getPersonnel().getId(), periodePaieActif.getId());
@@ -734,10 +745,14 @@ public LivreDePaie calculbullFirst(ContratPersonnel ctratpersonnellz,PeriodePaie
 				{
 					listGainsNet.add(kprme);
 				}
+				if(kprme.getPrime().getEtatImposition()==6)
+				{
+					listRetenueSociale.add(kprme);
+				}
 			}
 			
 		}
-		LivreDePaie	 livrePaiecalpm = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(), ctratpersonnellz.getPersonnel().getNombrePart(), op, ctratpersonnellz.getCategorie().getSalaireDeBase(),5000d, ctratpersonnellz.getIndemniteLogement(),0d, 0d,ctratpersonnellz,null,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet);
+		LivreDePaie	 livrePaiecalpm = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(), ctratpersonnellz.getPersonnel().getNombrePart(), op, ctratpersonnellz.getCategorie().getSalaireDeBase(),5000d, ctratpersonnellz.getIndemniteLogement(),0d, 0d,ctratpersonnellz,null,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
 		try { 
 		int i=0;
 			while (livrePaiecalpm.getNetPayer()!=ctratpersonnellz.getNetAPayer()|| i==3) {		 				
@@ -745,7 +760,7 @@ public LivreDePaie calculbullFirst(ContratPersonnel ctratpersonnellz,PeriodePaie
 				nouvMontantBrutImp=Math.rint(ctratpersonnellz.getNetAPayer()*livrePaiecalpm.getBrutImposable()/livrePaiecalpm.getNetPayer());
 				nouvDiff=nouvMontantBrutImp-livrePaiecalpm.getBrutImposable();						
 				nouvSursal=nouvDiff+livrePaiecalpm.getSursalaire();						
-				livrePaiecalpm = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(), ctratpersonnellz.getPersonnel().getNombrePart(), op, ctratpersonnellz.getCategorie().getSalaireDeBase(),nouvSursal, ctratpersonnellz.getIndemniteLogement(), 0d, 0d,ctratpersonnellz,null,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet);
+				livrePaiecalpm = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(), ctratpersonnellz.getPersonnel().getNombrePart(), op, ctratpersonnellz.getCategorie().getSalaireDeBase(),nouvSursal, ctratpersonnellz.getIndemniteLogement(), 0d, 0d,ctratpersonnellz,null,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
 		//	 logger.info("*********************SECOND BULLETIN********************############## SECOND BULLETIN #############-----------"+livrePaiecal.toString());	
 		 i++;
 			}

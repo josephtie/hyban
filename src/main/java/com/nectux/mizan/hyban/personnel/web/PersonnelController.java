@@ -3,6 +3,7 @@ package com.nectux.mizan.hyban.personnel.web;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -33,9 +34,10 @@ import com.nectux.mizan.hyban.utils.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -54,7 +56,7 @@ import javax.persistence.EntityNotFoundException;
 @RequestMapping("/personnels")
 public class PersonnelController {
 	
-	private static final Logger logger = LogManager.getLogger(PersonnelController.class);
+	private static final Logger logger = LoggerFactory.getLogger(PersonnelController.class);
 	
 	@Autowired private UtilisateurService userService;
 	@Autowired private PersonnelService personnelService;
@@ -443,7 +445,7 @@ public class PersonnelController {
 					System.out.println("list Personnel : "+listPersonnelHomme.size());
 				} catch(Exception ex){
 					logger.error(ex.getMessage());
-					logger.error(ex.getStackTrace());
+					logger.error(Arrays.toString(ex.getStackTrace()));
 					logger.error("une erreur a ete dectectee lors de la suppression du categorie Personnel");
 				}
 

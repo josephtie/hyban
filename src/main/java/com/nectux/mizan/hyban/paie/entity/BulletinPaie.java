@@ -220,8 +220,10 @@ private Double basecnps;
 	
 	@Transient
 	private String montantbaseCnps;
-	
-	
+
+	private Double retenueSociiale;
+	@Transient
+	private String mtretenueSociiale;
 	
 	private Double indemniteRepresentation;
 	
@@ -826,9 +828,23 @@ private Double basecnps;
 		this.listImprimBulletinPaieIndemniteNonImp = listImprimBulletinPaieIndemniteNonImp;
 	}
 
-	
-	
-	
+
+	public String getMtretenueSociiale() {
+		return mtretenueSociiale;
+	}
+
+	public void setMtretenueSociiale(String mtretenueSociiale) {
+		this.mtretenueSociiale = Utils.formattingAmount(retenueSociiale);
+	}
+
+	public Double getRetenueSociiale() {
+		return retenueSociiale;
+	}
+
+	public void setRetenueSociiale(Double retenueSociiale) {
+		this.retenueSociiale = retenueSociiale;
+	}
+
 	public Double getIndemniteRespons() {
 		return indemniteRespons;
 	}

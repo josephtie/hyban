@@ -141,6 +141,8 @@ public class Rubrique {
 			stretatimposition="Retenue Mutuelle";
 		if(etatImposition==5)
 			stretatimposition="Regularisation";
+		if(etatImposition==6)
+			stretatimposition="Retenue Sociale";
 		return stretatimposition;
 	}
 

@@ -91,6 +91,9 @@
 
                             </div>
             <div class="table-responsive">
+            <button id="exportExcel" class="btn btn-success" style="margin-bottom: 10px;">
+                Exporter en Excel
+            </button>
                 <table id="table" class="table table-info table-striped"
                        data-toggle="table" 
                        data-click-to-select="true"
@@ -100,7 +103,8 @@
                        data-pagination="true"
                        data-show-export="true"
 					   data-export-dataType="all"
-				     	data-show-columns="true"
+					   data-export-types='["excel", "csv", "txt"]'
+                       data-show-columns="true"
                        data-page-list="[10, 20, 50, 100, 200]" 
                        data-search="true">
                     <thead>
@@ -1948,7 +1952,13 @@ jQuery(document).ready(function ($) {
             }
         });
     });
-    
+    $('#exportExcel').click(function () {
+            $('#table').tableExport({
+                type: 'excel',
+                fileName: 'export_personnels',
+                exportDataType: 'all' // 'all', 'selected' ou 'basic'
+            });
+        });
     $("#numerocnps").blur(function (e) {
         var cnps = this.value;
         if(cnps.length < 3 || $("#id").val()){
@@ -2492,7 +2502,7 @@ function isValidContrat() {
     var dateProbableFin = new Date(dateDebut.getUTCFullYear() + 1, dateDebut.getUTCMonth(), dateDebut.getDate());
     var dateFin = new Date(jQuery("#datefin").datepicker('getDate'));
     if (dateFin > dateProbableFin) {
-        alert("La duree du contrat est invalide.\nLa duree doit etre comprise entre 0 et 2 ans");
+        alert("La duree du contrat est invalide.\nLa duree doit etre comprise entre 0 et 2 ans pour un CDD");
         jQuery("#datefin").val("");
         return false;
     }

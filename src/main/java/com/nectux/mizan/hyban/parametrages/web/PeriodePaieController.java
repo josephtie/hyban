@@ -156,22 +156,31 @@ private static final Logger logger = LogManager.getLogger(PeriodePaieController.
 	    			bulletinPaieService.save(monBull);
 	    		}	
 	    		for(PrimePersonnel myprime :listprimePers){
-	    			PrimePersonnel monBull= new PrimePersonnel();
-	    			monBull=myprime;
-					if(monBull.getPrime().getPermanent()==true)
+	    			//PrimePersonnel monBull= new PrimePersonnel();
+	    			//monBull=myprime;
+					if(myprime.getPrime().getPermanent() == true)
 					{
-						monBull.setId(null);
-						monBull.setPeriode(maperiodenew);
-						listprimePersNew.add(monBull);
+						PrimePersonnel cloned = new PrimePersonnel();
+
+						// Copier les champs nécessaires sauf l'id
+						cloned.setPrime(myprime.getPrime());
+						cloned.setContratPersonnel(myprime.getContratPersonnel());
+						cloned.setMontant(myprime.getMontant());
+						cloned.setPrime(myprime.getPrime());
+						cloned.setPeriode(maperiodenew);
+						// Ajoute d’autres champs si besoin…
+
+						listprimePersNew.add(cloned);
+
 					}
 	    		}
-	    		
-	    primePersonnelRepository.saveAll(listprimePersNew)	;
+			maperiodenew.setCloture(false);
+			maperiodenew= PeriodePaieRepository.save(maperiodenew);
+	   primePersonnelRepository.saveAll(listprimePersNew)	;
 		maperiode.setCloture(true);
 		maperiode= PeriodePaieRepository.save(maperiode);
 		
-		maperiodenew.setCloture(false);
-		maperiodenew= PeriodePaieRepository.save(maperiodenew);
+
 		
 	   
 	      if(maperiode.getMois().getId()==12L){
@@ -185,14 +194,14 @@ private static final Logger logger = LogManager.getLogger(PeriodePaieController.
 			   monexonew= exerciceService.save(monexonew);
 	        }
 	    periodeDTO.setResult("success");
-	    
+
 	    }
 	    else{
 	    	periodeDTO.setResult("error");
 	      }
 		}
 		periodeDTO.setRow(maperiode);
-		
+
 		return periodeDTO;
 	}
 	
