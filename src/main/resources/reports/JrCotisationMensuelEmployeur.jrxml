@@ -4,8 +4,9 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="logo" class="java.lang.String"/>
-	<parameter name="agence" class="net.iconseils.erpholding.rhpaie.entreprise.entity.Agence"/>
-	<parameter name="periodePaie" class="com.azorax.smartpaie.parametrages.entity.PeriodePaie"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" />
+	<parameter name="agence" class="com.nectux.mizan.hyban.parametrages.entity.Societe"/>
+	<parameter name="periodePaie" class="com.nectux.mizan.hyban.parametrages.entity.PeriodePaie"/>
 	<parameter name="cumulCnps" class="java.lang.String"/>
 	<parameter name="cumulPf" class="java.lang.String"/>
 	<parameter name="cumulAt" class="java.lang.String"/>
@@ -26,9 +27,10 @@
 	<parameter name="SomCumul" class="java.lang.String"/>
 	<parameter name="dcumulcnps" class="java.lang.String"/>
 	<parameter name="dPfAt" class="java.lang.String"/>
-	<parameter name="societe" class="com.azorax.smartpaie.parametrages.entity.Societe"/>
+	<parameter name="societe" class="com.nectux.mizan.hyban.parametrages.entity.Societe"/>
 	<parameter name="parameter1" class="java.lang.String"/>
-	<field name="categorie" class="java.lang.String"/>
+	<field name="listImprimebulletin" class="java.util.List" />
+
 	<field name="nbSalarie" class="java.lang.Integer"/>
 	<field name="cumulCnps" class="java.lang.Double"/>
 	<field name="cumulPfAt" class="java.lang.Double"/>
@@ -206,223 +208,19 @@ TEL 20.33.17.04]]></text>
 			</textField>
 		</band>
 	</title>
-	<columnHeader>
-		<band height="115" splitType="Stretch">
-			<staticText>
-				<reportElement x="1" y="41" width="219" height="73" uuid="3c74ba2d-1f32-4bbb-a548-7aa93ffb1ba7"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[CATEGORIE DE SALAIRES]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="221" y="41" width="55" height="73" uuid="aa87c0ce-3f33-45ce-b72c-322b9c3d57a9"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7"/>
-				</textElement>
-				<text><![CDATA[NOMBRE DE SALAIRE]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="276" y="57" width="114" height="20" uuid="80e40beb-3f42-49f8-8fd0-cd0dd95790c7"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="7"/>
-				</textElement>
-				<text><![CDATA[REGIME DE RETRAITE]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="390" y="57" width="109" height="57" uuid="d9ba0cb0-dd87-46ab-8ce5-8f59f0d50931"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7"/>
-				</textElement>
-				<text><![CDATA[REGIME DE PRESTATIONS FAMILIALES ET DES ACCIDENTS DU TRAVAIL
-Plafond = 3231 F par jours ou 70.000 par mois]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="276" y="77" width="114" height="37" uuid="dde4b16c-67ba-4caa-aa0b-c37e6afbdd68"/>
-				<box>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font size="7"/>
-				</textElement>
-				<text><![CDATA[Plafond = 1.647.315 F par mois]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="276" y="41" width="223" height="17" uuid="2fee4cfc-90b1-4f19-963b-7830267c1698"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7"/>
-				</textElement>
-				<text><![CDATA[SALAIRES BRUTS SOUMIS A COTISATIONS]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="221" y="24" width="55" height="17" uuid="b1d318e1-c5ca-4262-8053-149a196ce91f"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7"/>
-				</textElement>
-				<text><![CDATA[MOIS DE:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="276" y="24" width="223" height="17" uuid="b1496c1c-a176-4f55-8b91-73e0b79ece31"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{periodePaie}.getMois().getMois()]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="321" y="9" width="367" height="15" uuid="3726b9fe-4c0f-4e96-abfd-fe0cd2354ac1"/>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[TOTAL SALAIRES BRUTS PAYES AU COURS DE LA PERIODE :]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="499" y="25" width="190" height="36" uuid="d3258c56-1120-4ad9-90c2-960ff4c25997"/>
-				<box rightPadding="2"/>
-				<textElement textAlignment="Justified" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Cumul salaires brut soumis à cotisation au titre des regimes de Prest Famil et des  Accid de Travail]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="498" y="62" width="190" height="36" uuid="371894aa-b6ac-4b5f-a80d-bf695ca9700d"/>
-				<box rightPadding="2"/>
-				<textElement textAlignment="Justified" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Cumul salaires brut soumis à cotisation au titre du Regime de Retraite ]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="691" y="81" width="104" height="17" isPrintWhenDetailOverflows="true" uuid="84b9c236-0e47-4810-8abd-517a887497d9"/>
-				<box rightPadding="7">
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{dcumulcnps}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="691" y="40" width="104" height="17" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC" uuid="5e758523-16d5-40f3-be33-4a04a89bcff0"/>
-				<box rightPadding="7">
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{dPfAt}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="691" y="9" width="104" height="17" isPrintWhenDetailOverflows="true" uuid="1ec5ef53-800a-43d4-9bb5-a4ad5875ab9e"/>
-				<box rightPadding="7">
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{monBrutTotal}]]></textFieldExpression>
-			</textField>
-		</band>
-	</columnHeader>
+
 	<detail>
-		<band height="21" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="0" width="221" height="20" isPrintWhenDetailOverflows="true" uuid="807e7d53-7c95-4c26-bb09-6fdf712ae4d0"/>
-				<box leftPadding="5">
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font size="7"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{categorie}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="221" y="0" width="55" height="20" isPrintWhenDetailOverflows="true" uuid="c8ba9abc-11f4-41f9-93bf-551a45f80fb8"/>
-				<box>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{nbSalarie}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="390" y="0" width="109" height="20" isPrintWhenDetailOverflows="true" uuid="208bdf0b-2de3-46ad-b3fc-a90457f10f5c"/>
-				<box rightPadding="7">
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{mtcumulPfAt}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="276" y="0" width="114" height="20" isPrintWhenDetailOverflows="true" uuid="3068571e-fddc-4482-92b6-45094d6cec7b"/>
-				<box rightPadding="7">
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{mtcumulCnps}]]></textFieldExpression>
-			</textField>
+		<band height="170" splitType="Stretch">
+
+			<subreport>
+				<reportElement positionType="Float" x="0" y="114" width="555" height="44" uuid="548990e2-de8b-49f7-b4bb-9f19f80e41ec" />
+				<subreportParameter name="listDetailpasse">
+					<subreportParameterExpression>$F{listImprimebulletin}</subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listImprimebulletin})]]></dataSourceExpression>
+
+				<subreportExpression>$P{SUBREPORT_DIR} + "subreport_list.jasper"</subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 	<pageFooter>

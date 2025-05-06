@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+                                  http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="subreport_list" pageWidth="595" pageHeight="842" columnWidth="555"
+              leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="49fa7a55-b4e6-4973-b2f1-87e636b6a6ae">
+
+    <!-- Champs utilisés dans la liste -->
+    <parameter name="SUBREPORT_DATA_SOURCE" class="net.sf.jasperreports.engine.JRDataSource"/>
+    <field name="categorie" class="java.lang.String"/>
+    <field name="nbSalarie" class="java.lang.Integer"/>
+    <field name="valtx" class="java.lang.Double"/>
+    <field name="valmt" class="java.lang.String"/>
+    <field name="numcnps" class="java.lang.String"/>
+    <field name="montantcumulCnps" class="java.lang.String"/>
+    <field name="montantcumulPfAt" class="java.lang.String"/>
+
+    <!-- En-têtes de colonnes -->
+    <columnHeader>
+        <band height="25">
+            <staticText><reportElement x="0" y="0" width="80" height="25"/><text><![CDATA[Catégorie]]></text></staticText>
+            <staticText><reportElement x="80" y="0" width="70" height="25"/><text><![CDATA[Salariés]]></text></staticText>
+            <staticText><reportElement x="150" y="0" width="50" height="25"/><text><![CDATA[Taux]]></text></staticText>
+            <staticText><reportElement x="200" y="0" width="80" height="25"/><text><![CDATA[Montant]]></text></staticText>
+            <staticText><reportElement x="280" y="0" width="80" height="25"/><text><![CDATA[CNPS N°]]></text></staticText>
+            <staticText><reportElement x="360" y="0" width="100" height="25"/><text><![CDATA[Cumul CNPS]]></text></staticText>
+            <staticText><reportElement x="460" y="0" width="95" height="25"/><text><![CDATA[Cumul PF/AT]]></text></staticText>
+        </band>
+    </columnHeader>
+
+    <!-- Détail : données ligne par ligne -->
+    <detail>
+        <band height="20">
+            <textField><reportElement x="0" y="0" width="80" height="20"/><textFieldExpression><![CDATA[$F{categorie}]]></textFieldExpression></textField>
+            <textField><reportElement x="80" y="0" width="70" height="20"/><textFieldExpression><![CDATA[$F{nbSalarie}]]></textFieldExpression></textField>
+            <textField><reportElement x="150" y="0" width="50" height="20"/><textFieldExpression><![CDATA[$F{valtx}]]></textFieldExpression></textField>
+            <textField><reportElement x="200" y="0" width="80" height="20"/><textFieldExpression><![CDATA[$F{valmt}]]></textFieldExpression></textField>
+            <textField><reportElement x="280" y="0" width="80" height="20"/><textFieldExpression><![CDATA[$F{numcnps}]]></textFieldExpression></textField>
+            <textField><reportElement x="360" y="0" width="100" height="20"/><textFieldExpression><![CDATA[$F{montantcumulCnps}]]></textFieldExpression></textField>
+            <textField><reportElement x="460" y="0" width="95" height="20"/><textFieldExpression><![CDATA[$F{montantcumulPfAt}]]></textFieldExpression></textField>
+        </band>
+    </detail>
+
+</jasperReport>

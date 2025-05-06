@@ -99,7 +99,8 @@
 			<div class="col-md-3">
                 		<select id="periodePaieImpression" name="periodePaieImpression" onchange="chargerbulletinParPeriode()" class="form-control select2" required="required"></select>
                 		<br/>
-                	</div>
+                </div>
+                <div style="max-height: 500px; overflow-y: auto;">
 				<table id="tableBullhisto" class="table table-info table-striped"
 					data-toggle="table" data-click-to-select="true"
 					data-single-select="false"
@@ -167,6 +168,7 @@
 					</thead>
 		
 				</table>
+				</div>
 			</form>
 		</div>
 	</div>
@@ -275,7 +277,7 @@
             
               <%-- <form action="#" id="formList"> --%>
 
-				<div class="table-responsive">
+				<div class="table-responsive"  style="max-height: 500px; overflow-y: auto;">
 				<table id="tableliv" class="table table-info table-striped table-responsive" style="overflow:auto"
 					data-toggle="table" data-click-to-select="true"
 					data-single-select="false"					
@@ -359,6 +361,7 @@
 							<th data-field="mtis"  data-align="center">IS</th>
 							<th data-field="mtta"  data-align="center">TA</th>
 							<th data-field="mtfpc"  data-align="right">FPC</th>
+							<th data-field="mtfpcregul"  data-align="right">FPC REGUL</th>
 							<th data-field="mtprestationFamiliale" data-align="right">Prest familiale</th>
 							<th data-field="mtaccidentTravail" data-align="right">Acc de travail</th>
 							<th data-field="mtretraite" data-align="right">Retraite</th>
@@ -551,7 +554,7 @@
  <button id="exportExcelBull" class="btn btn-success" style="margin-bottom: 10px;">
                                     Exporter en Excel
                                 </button>
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
 				<table id="tableBull" class="table table-info table-striped"
 					data-toggle="table" 
 					data-click-to-select="true"
@@ -782,7 +785,7 @@ jQuery(document).ready(function($) {
                             fileName: 'export_livrepaie',
                             exportDataType: 'all' // 'all', 'selected' ou 'basic'
                         });
-                    });
+        });
 /* 	jQuery("tableBull").tableExport({
 	    headings: true,                    // (Boolean), display table headings (th/td elements) in the <thead>
 	    footers: true,                     // (Boolean), display table footers (th/td elements) in the <tfoot>

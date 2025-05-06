@@ -40,7 +40,8 @@ public class Personnel {
 	
 	@Transient
 	private String nomComplet;
-	
+
+	//@Column(unique=true)
 	private String matricule;
 	
 	private String sexe;

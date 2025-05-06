@@ -34,12 +34,17 @@
 									<ul class="dropdown-menu" role="menu">
 										<%--<li role="presentation" class="dropdown-header">Dropdown header</li>--%>
 										<li><a href="#" onclick="widgetView1()">Contrats en cours</a></li>
-										<li><a href="#" onclick="widgetView()">Contrats Expires</a></li>
+										<li><a href="#" onclick="widgetView()">Contrats Expires par Mois</a></li>
+										<li><a href="#" onclick="widgetView2()">Contrats Expires par Date</a></li>
 									</ul>
 								</div>
 
 							</div>
 				<div id="tableWidget" >
+				<div class="col-md-3">
+                                <button id="btnGenererExcell" type="button"  class="btn btn-success "  onclick="chargercontratExcell()"><i class="fa fa-plus"></i>Exporter Excell</button>
+                               <br/>
+                  </div>
 			    <table id="table" class="table table-info table-striped"
 				   data-toggle="table"
 				   data-click-to-select="true"
@@ -48,6 +53,7 @@
 				   data-url="${pageContext.request.contextPath}/personnels/listcontratpersonneljson"
 				   data-side-pagination="server"
 				   data-pagination="true" data-search="true"
+				   data-search="true"
 				   data-page-list="[5, 10, 20, 50, 100, 200]">
 				<thead>
 				<tr>
@@ -71,10 +77,16 @@
 
 							<br/><br/>
 		<div id="tableWidgethisto" class="widgetcontent">
+		<div class="row">
+            <div class="form-group">
 			<div class="col-md-3">
 				<select id="periodePaieImpression" name="periodePaieImpression" onchange="chargercontratParPeriode()" class="form-control select2" required="required"></select>
 				<br/>
 			</div>
+			<div class="col-md-3">
+                <button id="btnGenererExcell" type="button"  class="btn btn-success "  onclick="chargercontratParPeriodeExcell()"><i class="fa fa-plus"></i>Exporter Excell</button>
+               <br/>
+            </div></div></div>
 			<table id="tablepm" class="table table-info table-striped"
 				   data-toggle="table"
 				   data-click-to-select="true"
@@ -83,6 +95,7 @@
 			<%--   	data-url="${pageContext.request.contextPath}/personnels/listcontratpersonneljson" --%>
 				   data-side-pagination="server"
 				   data-pagination="true"
+				   data-search="true"
 				   data-page-list="[5, 10, 20, 50, 100, 200]">
 				<thead>
 				<tr>
@@ -103,6 +116,57 @@
 				</thead>
 			</table>
 		</div><!--widgetcontent-->
+
+		<div id="tableWidgetDate" class="widgetcontent">
+		            <div class="row">
+                    <div class="form-group">
+						<div class="col-md-3">
+								<input type="text" id="dateDebw" name="dateDebw"  data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker" placeholder="Date de debut de contrat" required="required" />
+						<br/>
+						</div>
+						<div class="col-md-3">
+							<input type="text" id="dateFinw" name="dateFinw"  data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker" placeholder="Date de fin de contrat" required="required" />
+						<br/>
+						</div>
+						<div class="col-md-3">
+								<button id="btnGenerer" type="button"  class="btn btn-success "  onclick="chargercontratParDate()"><i class="fa fa-plus"></i>Rechercher</button>
+						<br/>
+						</div>
+                 	<div class="col-md-3">
+                 		<button id="btnGenererExcell" type="button"  class="btn btn-success "  onclick="chargercontratParDateExell()"><i class="fa fa-plus"></i>Exporter Excell</button>
+                 		<br/>
+                 	</div>
+        			</div>
+        			</div>
+        			<table id="tablepmDate" class="table table-info table-striped"
+        				   data-toggle="table"
+        				   data-click-to-select="true"
+        				   data-single-select="true"
+        				   data-sort-name="flag" data-sort-order="desc"
+        			<%--   	data-url="${pageContext.request.contextPath}/personnels/listcontratpersonneljson" --%>
+        				   data-side-pagination="server"
+        				   data-pagination="true"
+        				   data-search="true"
+        				   data-page-list="[5, 10, 20, 50, 100, 200]">
+        				<thead>
+        				<tr>
+        					<th data-field="personnel" data-formatter="matriculeFormatter" data-align="left" data-sortable="true">Matricule</th>
+        					<th data-field="personnel" data-formatter="nomCompletFormatter" data-align="left" data-sortable="true">Nom</th>
+        					<th data-field="personnel" data-formatter="sexeFormatter" data-align="left">Sexe</th>
+        					<th data-field="personnel" data-formatter="cnpsFormatter">Num CNPS</th>
+        					<th data-field="personnel" data-formatter="situationMatrimonialeFormatter">Sit. Matri</th>
+        					<th data-field="personnel" data-formatter="nombreEnfantFormatter" data-align="right">Nbre d'enfants</th>
+        					<th data-field="typeContrat" data-formatter="typeContratFormatter">Type de contrat</th>
+        					<th data-field="fonction" data-formatter="fonctionFormatter">Fonction</th>
+        					<th data-field="dDebut">Date d&eacute;but</th>
+        					<th data-field="dFin">Date fin</th>
+        					<th data-field="categorie" data-formatter="categorieFormatter" data-align="right">Salaire cat&eacute;goriel</th>
+        					<th data-field="netPayer" data-align="right">Net &agrave; payer</th>
+        					<!-- <th data-field="id" data-formatter="optionFormatter" data-width="100px" data-align="center">Options</th> -->
+        				</tr>
+        				</thead>
+        			</table>
+        		</div><!--widgetcontent-->
 	    </div><!--widgetbox-->
 </div><!-- widgetcontent-->
 			</div>
@@ -197,15 +261,14 @@
         $table = $('#table');
         $tableImprimer = $('#tablepm');
         jQuery('#tableWidgethisto').hide();
+        jQuery('#tableWidgetDate').hide();
         jQuery('#tableWidget').show();
         jQuery(".select2" ).select2();
-        $("#dateFin").datepicker({
-
-            formatDate: 'dd/mm/yy',
-            format: 'dd/mm/yyyy',
-            showOtherMonths:true
-
+         $("#dateFin, .datePicker, #dateDew, #dateFinw").datepicker({
+         format: 'dd/mm/yyyy',
+         showOtherMonths: true
         });
+
         chargerPeriodePaie();
         //Fermeture du modal
         $('#rhpModal').on('hidden.bs.modal', function () {
@@ -265,20 +328,41 @@
         $tableImprimer.bootstrapTable('removeAll');
         $tableImprimer.bootstrapTable ('refresh', {url: baseUrl +'/personnels/listcontratpersonnelExpjson?id='+ jQuery('#periodePaieImpression').val()});
         $tableImprimer.bootstrapTable('scrollTo', 0);
-		/*     jQuery.ajax({
-		 type: "GET",
-		 url: baseUrl + "/personnels/listcontratpersonnelExpjson",
-		 cache: false,
-		 data:{id:jQuery('#periodePaieImpression').val()},
+		
 
-		 success: function (response) {
-		 if (response != null) {
+    }
 
+	
+    function chargercontratParDate(){
 
-		 }
-		 },
-		 });   */
+        $tableDatew = jQuery('#tablepmDate');
+        $tableDatew.bootstrapTable('removeAll');
+        $tableDatew.bootstrapTable ('refresh', {url: baseUrl +'/personnels/listcontratpersonnelExpDatejson?dateDebw='+ jQuery('#dateDebw').val()+'&dateFinw='+ jQuery('#dateFinw').val()});
+        $tableDatew.bootstrapTable('scrollTo', 0);
+		
 
+    }
+    function chargercontratParDate(){
+    $('#tablepmDate').tableExport({
+                                type: 'excel',
+                                fileName: 'export_Contratdate',
+                                exportDataType: 'all' // 'all', 'selected' ou 'basic'
+     });
+    }
+    function chargercontratParPeriodeExcell(){
+          $('#tablepm').tableExport({
+                                        type: 'excel',
+                                        fileName: 'export_Contratmois',
+                                        exportDataType: 'all' // 'all', 'selected' ou 'basic'
+             });
+    }
+
+    function   chargercontratExcell(){
+      $('#table').tableExport({
+                                    type: 'excel',
+                                    fileName: 'export_Contrat',
+                                    exportDataType: 'all' // 'all', 'selected' ou 'basic'
+         });
     }
     function finish(idContrat){
         var $scope = angular.element(document.getElementById("formAjout")).scope();
@@ -377,11 +461,18 @@
     function widgetView(){
 
             jQuery('#tableWidget').hide('slow');
+            jQuery('#tableWidgetDate').hide('slow');
             jQuery('#tableWidgethisto').show('slow');
 
     }
     function widgetView1(){
     jQuery('#tableWidget').show('slow');
     jQuery('#tableWidgethisto').hide('slow');
+    jQuery('#tableWidgetDate').hide('slow');
     }
+        function widgetView2(){
+        jQuery('#tableWidgetDate').show('slow');
+        jQuery('#tableWidgethisto').hide('slow');
+        jQuery('#tableWidget').hide('slow');
+        }
 </script>

@@ -58,8 +58,8 @@
 				<thead>
 					<tr>
 						<th data-field="utilisateur" data-formatter="nomCompletFormatter" data-align="left" data-sortable="true">Nom</th>
-						<th data-field="utilisateur" data-formatter="dateNaissanceFormatter" data-align="center" data-sortable="true">Date de Naissance</th>
-						<th data-field="utilisateur" data-formatter="adresseFormatter" data-align="left" data-sortable="true">Adresse</th>
+						<!--<th data-field="utilisateur" data-formatter="dateNaissanceFormatter" data-align="center" data-sortable="true">Date de Naissance</th>
+						<th data-field="utilisateur" data-formatter="adresseFormatter" data-align="left" data-sortable="true">Adresse</th>-->
 						<th data-field="utilisateur" data-formatter="telephoneFormatter" data-align="center" ata-sortable="true">T&eacute;l&eacute;phone</th>
 						<th data-field="utilisateur" data-formatter="emailFormatter" data-align="left" data-sortable="true">Email</th>
 						<th data-field="role" data-formatter="roleFormatter" data-align="left" data-sortable="true">Role</th>
@@ -109,8 +109,8 @@
 						<div class="col-md-9">
 							<div class="row">
 								<div class="col-md-4">
-									<label for="naissance">N&eacute(e) le</label> 
-									<input type="text" class="form-control input-default" id="naissance" name="naissance" placeholder="N�(e) le" maxlength="10" required="required" >
+									<label for="naissance">Username</label>
+									<input type="text" class="form-control input-default" id="naissance" name="naissance" placeholder="username"  required="required" >
 								</div>
 								<div class="col-md-8 ">
 									<label for="email">Email</label> 
@@ -235,10 +235,7 @@ function loadDataToForm(id, role, nom, dateNaissance, email, telephone, adresse)
 jQuery(document).ready(function($){
 	$( ".select2" ).select2();
 	$table = $('#table');
-	$("#naissance").datepicker({
-		dateFormat: 'dd/mm/yy',
-        showOtherMonths:true
-    });
+
 	
 	$("#formAjout").submit(function(){
 		var formData = $(this).serialize();

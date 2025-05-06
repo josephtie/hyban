@@ -180,13 +180,14 @@ label {
 						<th data-field="mtbrutNonImposable" data-align="right">Brut Non Imp.</th>
 
 						<th data-field="mtits" data-align="right">ITS</th>
-						<th data-field="mtcn"  data-align="left" data-sortable="true">CN</th>
-						<th data-field="mtigr"  data-align="left" data-sortable="true">IGR</th>
+						<%--<th data-field="mtcn"  data-align="left" data-sortable="true">CN</th>
+						<th data-field="mtigr"  data-align="left" data-sortable="true">IGR</th>--%>
 
 						<th data-field="mttotalRetenueFiscale"  data-align="left">Retenue fiscale</th>
 						<th data-field="mtbasecnps"  data-align="left">base Cnps</th>
 
 						<th data-field="mtcnps"  data-align="center">CNPS</th>
+						<th data-field="cmu"  data-align="center">CMU Salarial</th>
 						<%--<th data-field="mtavceAcpte"   data-align="left">Avance & Acompte</th>--%>
 						<%--<th data-field="mtpretAlios"  data-align="center">Pret</th>--%>
 						<%--<th data-field="mtcarec"  data-align="center">Carec</th>--%>
@@ -209,6 +210,7 @@ label {
 						<th data-field="mtprestationFamiliale" data-align="right">Prest familiale</th>
 						<th data-field="mtaccidentTravail" data-align="right">Acc de travail</th>
 						<th data-field="mtretraite" data-align="right">Retraite</th>
+						<th data-field="cmupatronal"   data-align="left">CMU Patronal</th>
 						<th data-field="mttotalPatronal" data-align="right"> Total patronal</th>
 						<th data-field="mttotalMasseSalariale" data-align="right">Total masse salariale</th>
 
@@ -449,7 +451,7 @@ function listMouvementConge(idCtrat,idPersonnel) {
                 
             }
         });
-    }  
+    }
 function pretFormatter(pret, row, index) {
 	if(row.pret.libelle == ''){
 		return "";

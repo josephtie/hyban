@@ -1,6 +1,8 @@
 package com.nectux.mizan.hyban.paie.entity;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import javax.persistence.Transient;
 

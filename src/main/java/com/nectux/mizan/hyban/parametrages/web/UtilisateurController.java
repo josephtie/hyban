@@ -3,10 +3,10 @@ package com.nectux.mizan.hyban.parametrages.web;
 import java.io.IOException;
 import java.security.Principal;
 
+import com.nectux.mizan.hyban.parametrages.dto.UserDto;
 import com.nectux.mizan.hyban.parametrages.dto.UtilisateurDTO;
 import com.nectux.mizan.hyban.parametrages.dto.UtilisateurRoleDTO;
-import com.nectux.mizan.hyban.parametrages.entity.Societe;
-import com.nectux.mizan.hyban.parametrages.entity.UtilisateurRole;
+import com.nectux.mizan.hyban.parametrages.entity.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.nectux.mizan.hyban.parametrages.entity.Utilisateur;
 import com.nectux.mizan.hyban.parametrages.service.SocieteService;
 import com.nectux.mizan.hyban.parametrages.service.UtilisateurRoleService;
 import com.nectux.mizan.hyban.parametrages.service.UtilisateurService;
@@ -92,8 +91,27 @@ public class UtilisateurController {
 																	@RequestParam(value="telephone", required=false) String telephone, 
 																	@RequestParam(value="adresse", required=false) String adresse, 
 																	@RequestParam(value="email", required=true) String email) {
-		
-		return utilisateurService.save(id, idrole, nomComplet, dateNaissance, telephone, adresse, email);
+		UserDto utilisateur=new UserDto();//UtilisateurRole utilisateurRole=new UtilisateurRole();
+		utilisateur.setPassword("1234567L");
+		utilisateur.setEmail("joseph.tie@gmail.com");
+		utilisateur.setNomComplet(nomComplet);
+		utilisateur.setUsername(dateNaissance);
+		//RoleName name= Role.("ROLE_ADMIN");
+		if(idrole == 1){
+			utilisateur.setRoleName(RoleName.ADMIN);
+		}
+		if(idrole == 2){
+			utilisateur.setRoleName(RoleName.DAF);
+		}
+		if(idrole == 3){
+			utilisateur.setRoleName(RoleName.RH);
+		}
+		if(idrole == 4){
+			utilisateur.setRoleName(RoleName.PTGE);
+		}
+		utilisateur.setRoleName(RoleName.ADMIN);
+		//return utilisateurService.createUtilisateur(utilisateur);
+		return utilisateurService.save(id, idrole, nomComplet, dateNaissance, telephone, adresse, email,"123456M");
 	}
 	
 	

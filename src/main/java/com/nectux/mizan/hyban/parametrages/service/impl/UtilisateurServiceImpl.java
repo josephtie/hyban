@@ -1,6 +1,7 @@
 package com.nectux.mizan.hyban.parametrages.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import com.nectux.mizan.hyban.parametrages.dto.UserDto;
 import com.nectux.mizan.hyban.parametrages.dto.UtilisateurDTO;
@@ -15,6 +16,7 @@ import com.nectux.mizan.hyban.parametrages.repository.RoleRepository;
 import com.nectux.mizan.hyban.parametrages.repository.UtilisateurRepository;
 import com.nectux.mizan.hyban.parametrages.repository.UtilisateurRoleRepository;
 import com.nectux.mizan.hyban.securite.UserAccountStatus;
+import com.nectux.mizan.hyban.utils.EmailService;
 import com.nectux.mizan.hyban.utils.SecurityService;
 import com.nectux.mizan.hyban.utils.Utils;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nectux.mizan.hyban.parametrages.service.UtilisateurService;
 
+import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 
 @Transactional
@@ -39,6 +42,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	@Autowired private UtilisateurRepository utilisateurRepository;
 	@Autowired private RoleRepository roleRepository;
 	@Autowired private UtilisateurRoleRepository utilisateurRoleRepository;
+	@Autowired EmailService emailService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Override
@@ -66,23 +70,34 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 				utilisateur = utilisateurRepository.findById(utilisateurRole.getUtilisateur().getId()).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " ));
 			}
 			utilisateur.setNomComplet(nomcomplet);
+			utilisateur.setUsername(dNaissance);
 			utilisateur.setEmail(email);
 			if(id == null){
 				String motDePasse = SecurityService.generateWord(8);
 				//utilisateur.setBisapp(motDePasse);
-				//utilisateur.setMotDePasse(motDePasse);
+				utilisateur.setPassword(motDePasse);
 				String message="";
 				message="Votre Inscription a été effectuée avec succes sur BETHEL-PAIE. Nous vous souhaitons la bienvenue sur BETHEL-PAIE, Nous esperons que vous serez satisfait.\r"+
 						"Utilisateur:" + email  +"\r" +
 						"Mot de passe: "+ motDePasse;
+				Map<String, String> vars = Map.of(
+						"username", utilisateur.getUsername(),
+						"message", message,
+						"year", "2025",
+						"email", utilisateur.getEmail()
+				);
+				try {
+					emailService.sendHtmlEmail(email, "Parametre de connexion HYBAN ", vars);
+				}catch (MessagingException heror){
+					heror.getMessage();
 
-				// Utils.sendEmail(email, "Parametre de connexion BETHEL-PAIE ",message);
+				}
 				//utilisateur.set(true);
 				//utilisateur.setStatut(UserAccountStatus.STATUS_APPROVED.name());
 			}
-			utilisateur = utilisateurRepository.save(utilisateur);
+//			utilisateur = utilisateurRepository.save(utilisateur);
 //			if(role == 1)
-//				utilisateurRole.setRole(RoleName.ROLE_ADMIN);
+//				utilisateur.set(RoleName.valueOf().ROLE_ADMIN);
 //			if(role == 2)
 //				utilisateurRole.setRole(Role.valueOf("ROLE_DAF"));
 //			if(role == 3)
@@ -124,12 +139,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 			if(id != null)
 				utilisateur = utilisateurRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id));
 			utilisateur.setNomComplet(nomcomplet);
-//			utilisateur.setDateNaissance(Utils.stringToDate(dNaissance, "dd/MM/yyyy"));
-//			utilisateur.setTelephone(telephone);
-			utilisateur.setUsername(adresse);
+			utilisateur.setPassword(dNaissance);
+		//	utilisateur.setTelephone(telephone);
+			utilisateur.setUsername(dNaissance);
 			utilisateur.setEmail(email);
 			if(id == null){
-				utilisateur.setPassword(motDePasse);
+				utilisateur.setPassword(passwordEncoder.encode(motDePasse));
 			}
 			//utilisateur.setActif(true);
 			//utilisateur.setStatut(UserAccountStatus.STATUS_APPROVED.name());
@@ -137,25 +152,43 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 			if(role == 1){
 				Role role1 = new Role();RoleName roleName=RoleName.ADMIN;
 				role1.setName(roleName);
-				utilisateurRole.setRole(role1);
+				utilisateurRole.setRole(roleRepository.findById(1L).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id)));
 			}
 			if(role == 2){
-			Role role2 = new Role();RoleName roleName=RoleName.DAF;
+			Role role2 = new Role();
+			RoleName roleName=RoleName.DAF;
 			role2.setName(roleName);
-			utilisateurRole.setRole(role2);
+			utilisateurRole.setRole(roleRepository.findById(2L).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id)));
 			}
 			if(role == 3){
 				Role role3 = new Role();RoleName roleName=RoleName.RH;
 				role3.setName(roleName);
-				utilisateurRole.setRole(role3);
+				utilisateurRole.setRole(roleRepository.findById(3L).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id)));
 			}
 			if(role == 4){
 				Role role4 = new Role();RoleName roleName=RoleName.PTGE;
 				role4.setName(roleName);
-				utilisateurRole.setRole(role4);
+				utilisateurRole.setRole(roleRepository.findById(4L).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id)));
 			}
 			utilisateurRole.setUtilisateur(utilisateur);
+			//utilisateurRepository.save(utilisateurRole.getUtilisateur());
 			utilisateurRole = utilisateurRoleRepository.save(utilisateurRole);
+			String message="";
+			message="Votre Inscription a été effectuée avec succes sur BETHEL-PAIE. Nous vous souhaitons la bienvenue sur BETHEL-PAIE, Nous esperons que vous serez satisfait.\r"+
+					"Utilisateur:" + email  +"\r" +
+					"Mot de passe: "+ motDePasse;
+			Map<String, String> vars = Map.of(
+					"username", utilisateur.getUsername(),
+					"message", message,
+					"year", "2025",
+					"email", utilisateur.getEmail()
+			);
+			try {
+				emailService.sendHtmlEmail(email, "Parametre de connexion HYBAN ", vars);
+			}catch (MessagingException heror){
+				heror.getMessage();
+
+			}
 			utilisateurRoleDTO.setRow(utilisateurRole);
 			utilisateurRoleDTO.setResult("success");
 			logger.info(new StringBuilder().append(">>>>> ").append(utilisateur.toString()).append(" ENREGISTRE AVEC SUCCES").toString());

@@ -1,5 +1,7 @@
 package com.nectux.mizan.hyban.utils;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -191,7 +193,18 @@ public class Utils {
         String sMoney = numberFormat.format(money);
         return sMoney;
     }
-	
+    public static DecimalFormat formattingAmountv2(){
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        formatter.setGroupingSize(3);
+        formatter.setGroupingUsed(true);
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator(' ');
+        formatter.setDecimalFormatSymbols(symbols);
+        return formatter;
+    }
+
+
+
 //	public static void sendEmail(String receiver, String subject, String content) throws Exception {
 //        final String username = new String("smartpaie@betheltechnolgies.com");
 //        final String password = new String("aurielle80");

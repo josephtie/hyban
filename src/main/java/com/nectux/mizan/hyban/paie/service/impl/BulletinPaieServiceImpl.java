@@ -178,11 +178,11 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		  ContratPersonnel ctratpersonnelFind = new ContratPersonnel();
 		  periodePaieActif=periodePaieRepository.findById(idPeriode).orElseThrow(() -> new EntityNotFoundException("ContratPersonnel not found for id " + idPeriode));
 
-		    personnelList=personnelRepository.findByStatutAndRetraitEffectOrderByNomAsc(true,false);
+		    personnelList = personnelRepository.findByStatutAndRetraitEffectOrderByNomAsc(true,false);
 		  for(int i = 0; i < personnelList.size(); i++){
 
 			  ctratpersonnelFind=contratPersonnelRepository.findByPersonnelIdAndStatut(personnelList.get(i).getId(),true);
-			if(ctratpersonnelFind!=null)
+			   if(ctratpersonnelFind!=null)
 			    personnelListTrt.add(ctratpersonnelFind.getPersonnel());
 			  logger.info("*****************************************personnel list******"+ctratpersonnelListTrt.toString());
 		 
@@ -385,9 +385,11 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 							List<BulletinPaie> bulletinPaieList = bulletinPaieRepository.findByPeriodePaieAnneeIdAndClotureTrueAndContratPersonnelPersonnelId(periodePaieActif.getAnnee().getId(),ctratpersonnellz.getPersonnel().getId());
 							if(bulletinPaieList.size()>0 && (ctratpersonnellz.getTypeContrat().getId()==1L || ctratpersonnellz.getTypeContrat().getId()==2L )){
 							   for(BulletinPaie bulletinPaie : bulletinPaieList){
-								cumulIgr = bulletinPaie.getIgr() + cumulIgr;
+								cumulIgr =0D + cumulIgr;
+								//cumulIgr = bulletinPaie.getIgr() + cumulIgr;
 								cumulits = bulletinPaie.getIts() + cumulits;
-								cumulCn = bulletinPaie.getCn() + cumulCn;
+								//cumulCn = bulletinPaie.getCn() + cumulCn;
+								cumulCn = 0D + cumulCn;
 								cumulCnps = bulletinPaie.getCnps() + cumulCnps;
 								salairnet=salairnet+bulletinPaie.getNetapayer();
 
@@ -432,6 +434,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 			     detailsbull.setJourTravail(livrePaiecalR.getJourTravail());
 			     detailsbull.setTemptravail(livrePaiecalR.getTemptravail());
 			     detailsbull.setFpc(livrePaiecalR.getFpc()); 
+			     detailsbull.setFpcregul(livrePaiecalR.getFpcregul());
 			     detailsbull.setPrestationFamiliale(livrePaiecalR.getPrestationFamiliale());
 			     detailsbull.setAccidentTravail(livrePaiecalR.getAccidentTravail());
 			     detailsbull.setRetraite(livrePaiecalR.getRetraite());

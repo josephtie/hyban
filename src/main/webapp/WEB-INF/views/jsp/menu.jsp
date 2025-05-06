@@ -10,16 +10,16 @@
     <!-- START X-NAVIGATION -->
     <ul class="x-navigation">
         <li class="xn-logo">
-            <a href="${pageContext.request.contextPath}/welcome">BETHEL</a>
+            <a href="<%= baseUrl %>/welcome">BETHEL</a>
             <a href="#" class="x-navigation-control"></a>
         </li>
         <li class="xn-profile">
             <a href="#" class="profile-mini">
-               <img src="<%= baseUrl %>static/logo/logodefis1.png" alt="John Doe" />
+               <img src="<%= baseUrl %>${urllogo}" alt="John Doe" />
             </a>
             <div class="profile">
                 <div class="profile-image">
-                     <img src="<%= baseUrl %>/${urllogo}" style="height: 90px;width: 90px" alt="John Doe"/>
+                     <img src="<%= baseUrl %>${urllogo}" style="height: 90px;width: 90px" alt="John Doe"/>
                 </div>
                 <div class="profile-data">
                     <div class="profile-data-name">${user.nomComplet} </div>
@@ -33,7 +33,7 @@
         </li>
         <li class="xn-title">Navigation <span style="color: white">${periode}</span></li>
         <li>
-            <a href="${contextPath}/welcome"><span class="fa fa-desktop"></span> <span class="xn-text">Tableau de bord</span></a>
+            <a href="${pageContext.request.contextPath}/welcome"><span class="fa fa-desktop"></span> <span class="xn-text">Tableau de bord</span></a>
         </li>
 
         <c:if test="${profil eq 'ADMIN'}">
@@ -50,6 +50,9 @@
                     <li class="${activeContract}"><a href="${contextPath}personnels/contrat">Contrat</a></li>
                     <li class="${activeCategory}"><a href="${contextPath}personnels/categorie">Categorie</a></li>
                     <li class="${activeFunction}"><a href="${contextPath}personnels/fonction">Emploi&Fonction</a></li>
+                   <li class="${activeAbsence}"><a href="${contextPath}absence/absences"><span class="fa fa-file-text-o"></span> Absences</a><div class="informer informer-danger">New!</div></li>
+
+                     <li class="${activeSantion}"><a href="${contextPath}carriere/sanctions"><span class="fa fa-list-alt"></span> Sanction</a></li>
                     <li class="${activeHoliday}"><a href="${contextPath}personnels/planningconges">Planning congé</a></li>
                 </ul>
             </li>
@@ -72,7 +75,7 @@
                             <li class="${activeLend}"><a href="${contextPath}paie/primespersonnel"><span class="fa fa-align-justify"></span> Saisie des elements</a></li>
                             <li class="${activePayrollBook}"><a href="${contextPath}paie/livrepaie"><span class="fa fa-align-justify"></span> Livre de paie</a></li>
                             <li class="${activePayrollBook}"><a href="${contextPath}paie/histobull"><span class="fa fa-align-justify"></span> Historique Bulletin</a></li>
-                            <li class="${activeRappelBook}"><a href="${contextPath}rappel/livrerappel"><span class="fa fa-list-alt"></span>Rappel</a></li>
+                            <!--  <li class="${activeRappelBook}"><a href="${contextPath}rappel/livrerappel"><span class="fa fa-list-alt"></span>Rappel</a></li>-->
                             <li class="${activeDepartBook}"><a href="${contextPath}departCdd/livredepart"><span class="fa fa-list-alt"></span>Depart CDD</a></li>
                             <li class="${activeHolidayPayroll}"><a href="${contextPath}conge/provisionconge"><span class="fa fa-th-large"></span> Provision congé </a></li>
                             <li class="${activeGratificationBook}"><a href="${contextPath}gratification/livrepaiegratification"><span class="fa fa-table"></span> Livre de gratification</a></li>
@@ -86,14 +89,14 @@
 
                 </ul>
             </li>
-            <li class="xn-openable ${activeCotisation}">
+             <!-- <li class="xn-openable ${activeCotisation}">
                 <a href="#"><span class="fa fa-bar-chart-o"></span> <span class="xn-text">Cotisation</span></a>
                 <ul>
                     <li class="${activeSocialPayrool}"><a href="${contextPath}paie/etat">CNPS</a></li>
                     <li class="${activeITSFDFP}"><a href="${contextPath}paie/etatimp">FDFP/ITS</a></li>
                     <li class="${activeState301}" ><a href="${contextPath}paie/etatimptab">Etat 301</a></li>
                 </ul>
-            </li>
+            </li>-->
             <li class="xn-openable ${activeSetting}">
                 <a href="tables.html"><span class="fa fa-cogs"></span> <span class="xn-text">Parametrages</span></a>
                 <ul>
@@ -103,9 +106,7 @@
                     <li class="${activecptviremt}"><a href="${contextPath}parametrages/cptevirement"><span class="fa fa-file-text-o"></span> Comptes Virement</a><div class="informer informer-danger">New!</div></li>
                     <li class="${activebanque}"><a href="${contextPath}parametrages/rubriques"><span class="fa fa-list-alt"></span> Rubrique de paie</a></li>
 
-                    <li class="${activeAbsence}"><a href="${contextPath}absence/absences"><span class="fa fa-file-text-o"></span> Absences</a><div class="informer informer-danger">New!</div></li>
-                    <li class="${activeSanctionType}"><a href="${contextPath}carriere/typesanction"><span class="fa fa-list-alt"></span> Type de sanction</a></li>
-                    <li class="${activeSantion}"><a href="${contextPath}carriere/sanctions"><span class="fa fa-list-alt"></span> Sanction</a></li>
+                 <li class="${activeSanctionType}"><a href="${contextPath}carriere/typesanction"><span class="fa fa-list-alt"></span> Type de sanction</a></li>
                     <li class="${activeUser}"><a href="${contextPath}parametrages/utilisateur"><span class="fa fa-list-alt"></span> Utilisateurs</a></li>
                     <li class="${activeSociety}"><a href="${contextPath}parametrages/societe"><span class="fa fa-list-alt"></span> Societe</a></li>
                 </ul>
@@ -126,6 +127,8 @@
                     <li class="${activeContract}"><a href="${contextPath}personnels/contrat">Contrat</a></li>
                     <li class="${activeCategory}"><a href="${contextPath}personnels/categorie">Categorie</a></li>
                     <li class="${activeFunction}"><a href="${contextPath}personnels/fonction">Emploi&Fonction</a></li>
+                    <li class="${activeAbsence}"><a href="${contextPath}absence/absences"><span class="fa fa-file-text-o"></span> Absences</a><div class="informer informer-danger">New!</div></li>
+                     <li class="${activeSantion}"><a href="${contextPath}carriere/sanctions"><span class="fa fa-list-alt"></span> Sanction</a></li>
                     <li class="${activeHoliday}"><a href="${contextPath}personnels/planningconges">Planning congé</a></li>
                 </ul>
             </li>
@@ -147,9 +150,8 @@
                            <li class="${activecptviremt}"><a href="${contextPath}parametrages/cptevirement"><span class="fa fa-file-text-o"></span> Comptes Virement</a><div class="informer informer-danger">New!</div></li>
                            <li class="${activebanque}"><a href="${contextPath}parametrages/rubriques"><span class="fa fa-list-alt"></span> Rubrique de paie</a></li> --%>
 
-                    <li class="${activeAbsence}"><a href="${contextPath}absence/absences"><span class="fa fa-file-text-o"></span> Absences</a><div class="informer informer-danger">New!</div></li>
                     <li class="${activeSanctionType}"><a href="${contextPath}carriere/typesanction"><span class="fa fa-list-alt"></span> Type de sanction</a></li>
-                    <li class="${activeSantion}"><a href="${contextPath}carriere/sanctions"><span class="fa fa-list-alt"></span> Sanction</a></li>
+
                         <%-- <li class="${activeUser}"><a href="${contextPath}parametrages/utilisateur"><span class="fa fa-list-alt"></span> Utilisateurs</a></li> --%>
                         <%-- <li class="${activeSociety}"><a href="${contextPath}parametrages/societe"><span class="fa fa-list-alt"></span> Societe</a></li> --%>
                 </ul>
@@ -175,14 +177,14 @@
 
                 </ul>
             </li>
-            <li class="xn-openable ${activeCotisation}">
+            <!--  <li class="xn-openable ${activeCotisation}">
                 <a href="#"><span class="fa fa-bar-chart-o"></span> <span class="xn-text">Cotisation</span></a>
                 <ul>
                     <li class="${activeSocialPayrool}"><a href="${contextPath}paie/etat">CNPS</a></li>
                     <li class="${activeITSFDFP}"><a href="${contextPath}paie/etatimp">FDFP/ITS</a></li>
                     <li class="${activeState301}" ><a href="${contextPath}paie/etatimptab">Etat 301</a></li>
                 </ul>
-            </li>
+            </li>-->
 
             <li class="xn-openable ${activeSetting}">
                 <a href="tables.html"><span class="fa fa-cogs"></span> <span class="xn-text">Parametrages</span></a>

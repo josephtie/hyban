@@ -258,10 +258,27 @@ public class ContratPersonnelController {
 		//	contratPersonnelDTO = contratPersonnelService.loadContratActif(pageRequest, search);
 		
 		return contratPersonnelDTO;
-	}	
-	
-	
-	
+	}
+
+
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/listcontratpersonnelExpDatejson", method = RequestMethod.GET)
+	public @ResponseBody ContratPersonnelDTO getContratListExpiredDateJSON(@RequestParam(value="dateDebw", required=true) String dateDeb,@RequestParam(value="dateFinw", required=true) String dateFin,@RequestParam(value="limit", required=false) Integer limit,
+																			  @RequestParam(value="offset", required=false) Integer offset, Principal principal) {
+
+		if(offset == null) offset = 0;
+		if(limit == null) limit = 10;
+
+		//final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "id");
+		PageRequest pageRequest = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
+		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
+		//	if(search == null)
+		contratPersonnelDTO = contratPersonnelService.loadContratExpieredumois(pageRequest, 2L,convertirDate(dateDeb) ,convertirDate(dateFin));
+		//else
+		//	contratPersonnelDTO = contratPersonnelService.loadContratActif(pageRequest, search);
+
+		return contratPersonnelDTO;
+	}
 	
 
 	
@@ -292,5 +309,20 @@ public class ContratPersonnelController {
 	public @ResponseBody List<ContratPersonnel> getExpireContractDelai(@RequestParam(value="nbre", required=true) int nbre,Principal principal) throws Exception {
 		
 		return contratPersonnelService.findExpireContract(nbre);
-	}	
+	}
+
+
+	public static String convertirDate(String dateIso) {
+		if (dateIso == null || !dateIso.matches("\\d{4}-\\d{2}-\\d{2}")) {
+			throw new IllegalArgumentException("Format de date invalide. Attendu : AAAA-MM-JJ");
+		}
+
+		String[] parties = dateIso.split("-");
+		String annee = parties[0];
+		String mois = parties[1];
+		String jour = parties[2];
+
+		return jour + "/" + mois + "/" + annee;
+	}
+
 }

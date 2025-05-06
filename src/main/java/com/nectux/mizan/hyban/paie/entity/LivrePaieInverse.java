@@ -1,56 +1,53 @@
 package com.nectux.mizan.hyban.paie.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.nectux.mizan.hyban.paie.repository.PrimePersonnelRepository;
+import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
+import com.nectux.mizan.hyban.parametrages.entity.Rubrique;
+import com.nectux.mizan.hyban.parametrages.repository.RubriqueRepository;
+import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
+import com.nectux.mizan.hyban.utils.DifferenceDate;
+import com.nectux.mizan.hyban.utils.ProvisionConge;
+import com.nectux.mizan.hyban.utils.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import com.nectux.mizan.hyban.paie.repository.PrimePersonnelRepository;
-import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
-import com.nectux.mizan.hyban.parametrages.repository.RubriqueRepository;
-import com.nectux.mizan.hyban.parametrages.entity.Rubrique;
-import com.nectux.mizan.hyban.utils.CalculRICF;
-import com.nectux.mizan.hyban.utils.DifferenceDate;
-import com.nectux.mizan.hyban.utils.Utils;
-import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
-import com.nectux.mizan.hyban.utils.ProvisionConge;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import static com.nectux.mizan.hyban.utils.CNPSCalculator.calculerCNPS;
 import static com.nectux.mizan.hyban.utils.CalculRICF.getRICF;
 import static com.nectux.mizan.hyban.utils.ITSCalculator.calculerITS;
 
 
-public class LivreDePaie {
+public class LivrePaieInverse {
 
 	RubriqueRepository rubriqueRepository;
 	@Autowired
 	private	PrimePersonnelRepository primePersonnelRepository;
 
-	
+
 	private String matricule;
-	
+
 	private String nomPrenom;
-	
+
 	private Float nombrePart;
-	
+
 	private int anciennete;
-	
+
 	private Double salaireBase;
-	
+
 	@Transient
 	private String mtsalaireBase;
-	
+
 	private Double autreImposable;
-	
+
 	@Transient
 	private String mtautreImposable;
-	
+
 	private Double autreIndemImposable;
-	
+
 	@Transient
 	private String mtautreIndemImposable;
 
@@ -59,28 +56,28 @@ public class LivreDePaie {
 	@Transient
 	private String mtplafondFamiliale;
 	private Double autreNonImposable;
-	
+
 	@Transient
 	private String mtautreNonImposable;
-	
+
 	private Double sursalaire;
-	
+
 	@Transient
 	private String mtsursalaire;
-	
+
 	private Double primeAnciennete;
-	
+
 	private Integer moisdepresence;
-	
+
 	private Integer tempspresence;
-	
+
 	@Transient
 	private String mtprimeAnciennete;
-	
+
 	private Double indemniteLogement;
 	@Transient
 	private String mtindemniteLogement;
-	
+
 	private Double brutImposable;
 	@Transient
 	private String mtbrutImposable;
@@ -100,7 +97,7 @@ public class LivreDePaie {
 	private Double brutNonImposable;
 	@Transient
 	private String mtbrutNonImposable;
-	
+
 	private Double its;
 
 
@@ -118,39 +115,39 @@ public class LivreDePaie {
 	private Double CMUPatronal;
 	@Transient
 	private String mtCMUPatronal ;
-	
+
 	private Double cn;
 	@Transient
 	private String mtcn;
-	
+
 	private Double igr;
 	@Transient
 	private String mtigr;
-	
+
 	private Double totalRetenueFiscale;
 	@Transient
 	private String mttotalRetenueFiscale;
-	
+
 	private Double cnps;
 	@Transient
 	private String mtcnps;
-	
+
 	private Double basecnps;
 	@Transient
 	private String mtbasecnps;
-	
+
 	private Double avceAcpte;
 	@Transient
 	private String mtavceAcpte;
-	
+
 	private Double pretAlios;
 	@Transient
 	private String mtpretAlios;
-	
+
 	private Double carec;
 	@Transient
 	private String mtcarec;
-	
+
 	private Double totalRetenue;
 	@Transient
 	private String mttotalRetenue;
@@ -162,65 +159,61 @@ public class LivreDePaie {
 	private Double totalRetenueSociale;
 	@Transient
 	private String mttotalRetenueSocial;
-	
+
 	private Double indemniteRepresentation;
 	@Transient
 	private String mtindemniteRepresentation;
-	
+
 	private Double indemniteTransport;
 	@Transient
 	private String mtindemniteTransport;
-	
-	
+
+
 	private Double indemniteTransportImp;
 	@Transient
 	private String mtindemniteTransportImp;
-	
+
 	private Double indemniteResponsabilte;
 	@Transient
 	private String mtindemniteResponsabilte;
-	
-	
+
+
 	private Double netPayer;
 	@Transient
 	private String mtnetPayer;
-	
+
 	private Double totalBrut;
 	@Transient
 	private String mttotalBrut;
-	
+
 	private Double is;
 	@Transient
 	private String mtis;
-	
+
 	private Double ta;
 	@Transient
 	private String mtta;
-	
+
 	private Double fpc;
 	@Transient
 	private String mtfpc;
 
-	private Double fpcregul;
-	@Transient
-	private String mtfpcregul;
-	
 	private Double prestationFamiliale;
 	@Transient
 	private String mtprestationFamiliale;
-	
+
 	private Double accidentTravail;
 	@Transient
 	private String mtaccidentTravail;
-	
+
 	private Double retraite;
 	@Transient
 	private String mtretraite;
-	
+
 	private Double totalPatronal;
 	@Transient
 	private String mttotalPatronal;
-	
+
 	private Double totalMasseSalariale;
 	@Transient
 	private String mttotalMasseSalariale;
@@ -228,16 +221,16 @@ public class LivreDePaie {
 	private Double retenueSociiale;
 	@Transient
 	private String mtretenueSociiale;
-	
+
 	private BulletinPaie bullpaie;
-	
+
 	private Double jourTravail;
-	
+
 	private Double temptravail;
-	
+
 	@Transient
 	List<PrimePersonnel> listIndemniteBrut = new ArrayList<PrimePersonnel>();
-	
+
 	@Transient
 	List<PrimePersonnel> listIndemniteNonImp = new ArrayList<PrimePersonnel>();
 
@@ -262,18 +255,18 @@ public class LivreDePaie {
 	@ManyToOne
 	@JoinColumn(nullable=false)
 	private ContratPersonnel contratPersonnel;
-	
+
 	@ManyToOne
 	@JoinColumn(nullable=false)
 	private PeriodePaie periodePaie;
-	
 
-	public LivreDePaie() {
+
+	public LivrePaieInverse(String matTEST, String s, Float nbpart, int op, Double salaireDeBase, double v, double v1, Double montantTransp, double v2, double v3, boolean b, Object o, Object object, List<PrimePersonnel> listIndemniteBrut, List<PrimePersonnel> listIndemniteNonBrut, List<PrimePersonnel> listRetenueMutuelle, List<PrimePersonnel> listGainsNet, List<PrimePersonnel> listRetenueSociale) {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public LivreDePaie(String mat, String nomPre, Float nbrePart, int ancien, Double salBase, Double sursal, Double indemLog, Double avanceEtAccompte, Double pretALIOS,ContratPersonnel ctratperso,TempEffectif tempeffect,PeriodePaie plconge,List<PrimePersonnel> listIndemnite,List<PrimePersonnel> listIndemniteNonImp1,List<PrimePersonnel> listMutuelle,List<PrimePersonnel> listGains,List<PrimePersonnel> listRetenueSociale) {
+	public LivrePaieInverse(String mat, String nomPre, Float nbrePart, int ancien, Double salBase, Double sursal, Double indemLog, Double avanceEtAccompte, Double pretALIOS, ContratPersonnel ctratperso, TempEffectif tempeffect, PeriodePaie plconge, List<PrimePersonnel> listIndemnite, List<PrimePersonnel> listIndemniteNonImp1, List<PrimePersonnel> listMutuelle, List<PrimePersonnel> listGains, List<PrimePersonnel> listRetenueSociale) {
 		super();
 		this.matricule = mat;
 		this.nomPrenom = nomPre;
@@ -412,8 +405,8 @@ public class LivreDePaie {
 			Double ricf = getRICF(nombrePart);
 			double itsbrut =Math.ceil(calculerITS(brutImposable,true));
 			this.its = Math.max(0, itsbrut - ricf / 12);
-		   this.cn = 0d;
-		    this.igr = 0d;
+		 //   this.cn =  Math.ceil(calculerCN());
+		  //  this.igr = Math.ceil(calculerIGR());
 		    this.totalRetenueFiscale = Math.ceil(its );//+ cn + igr);
 	     	if(ctratperso.getIndemniteRepresent()==null)
 			this.indemniteRepresentation = Math.ceil(0);
@@ -487,14 +480,13 @@ public class LivreDePaie {
 				}
 			}
 				this.netPayer = Math.ceil((brutImposable + indemniteRepresentation + indemniteTransport+autreNonImposable)+ regularisation -autreIndemImposable- totalRetenue);
-				this.is = its;
-				this.ta = Math.ceil(brutImposable * 0.4 / 100);
-				this.fpc =Math.ceil(brutImposable * 0.6 / 100);
-				this.fpcregul =Math.ceil(brutImposable * 0.6 / 100);
+				//this.is = Math.ceil(brutImposable * 1.2 / 100);
+				this.ta = 0d;//Math.ceil(brutImposable * 0.4 / 100);
+				this.fpc =0d ;//Math.ceil(brutImposable * 0.6 / 100);
 				this.prestationFamiliale = Math.ceil(calcalerPrestationFamilial());
 				this.accidentTravail = Math.ceil(calculerAccidentTravail());
 				this.retraite = Math.ceil((brutImposable + indemniteRepresentation+autreNonImposable) * 7.7 / 100);
-				this.totalPatronal =Math.ceil(is + ta + fpc+fpcregul +prestationFamiliale + accidentTravail + retraite+ CMUPatronal); ///Math.ceil( ta + fpc + prestationFamiliale + accidentTravail + retraite);
+				this.totalPatronal =Math.ceil(prestationFamiliale + accidentTravail + retraite+ CMUPatronal); ///Math.ceil( ta + fpc + prestationFamiliale + accidentTravail + retraite);
 				this.totalMasseSalariale = Math.ceil(brutImposable + indemniteRepresentation+ indemniteTransport +autreNonImposable+regularisation+ totalPatronal);
 				this.tempspresence= countnbreJrdu(ctratperso.getPersonnel().getDateRetourcge(), plconge.getDatefin(), ctratperso);
 				this.moisdepresence= ProvisionConge.calculerTempsPresence(ctratperso.getPersonnel().getDateRetourcge(), plconge.getDatefin());
@@ -595,10 +587,10 @@ public class LivreDePaie {
 	
 	public Double calculerAccidentTravail(){
 		Double pf = brutImposable + autreNonImposable;
-		if(pf == 70000)
-			pf = 70000 * 4.0 / 100;
-		else if(pf > 70000)
-			pf = brutImposable * 4 / 100;
+		if(pf == 75000)
+			pf = 75000 * 2.0 / 100;
+		else if(pf > 75000)
+			pf = brutImposable * 2 / 100;
 		else 
 			pf = 0.0;
 		return pf;
@@ -606,9 +598,9 @@ public class LivreDePaie {
 	
 	public Double calcalerPrestationFamilial(){
 		Double pf = brutImposable + autreNonImposable;
-		if(pf == 70000)
-			pf = 70000 * 5.75 / 100;
-		else if(pf > 70000)
+		if(pf == 75000)
+			pf = 75000 * 5.75 / 100;
+		else if(pf > 75000)
 			pf = brutImposable * 5.75 / 100;
 		else 
 			pf = 0.0;
@@ -1164,7 +1156,6 @@ public class LivreDePaie {
 	}
 
 	public void setMtfpc(String mtfpc) {
-
 		this.mtfpc = mtfpc;
 	}
 
@@ -1533,28 +1524,10 @@ public class LivreDePaie {
 		this.mtCMUPatronal = mtCMUPatronal;
 	}
 
-	public Double getFpcregul() {
-		return fpcregul;
-	}
-
-	public void setFpcregul(Double fpcregul) {
-		this.fpcregul = fpcregul;
-	}
-
-	public String getMtfpcregul() {
-		return mtfpcregul=Utils.formattingAmount(fpcregul);
-	}
-
-	public void setMtfpcregul(String mtfpcregul) {
-		this.mtfpcregul = mtfpcregul;
-	}
-
 	@Override
 	public String toString() {
 		return "LivreDePaie{" +
-				"rubriqueRepository=" + rubriqueRepository +
-				", primePersonnelRepository=" + primePersonnelRepository +
-				", matricule='" + matricule + '\'' +
+				"matricule='" + matricule + '\'' +
 				", nomPrenom='" + nomPrenom + '\'' +
 				", nombrePart=" + nombrePart +
 				", anciennete=" + anciennete +
@@ -1578,8 +1551,6 @@ public class LivreDePaie {
 				", mtindemniteLogement='" + mtindemniteLogement + '\'' +
 				", brutImposable=" + brutImposable +
 				", mtbrutImposable='" + mtbrutImposable + '\'' +
-				", autrePrelevmentSociale=" + autrePrelevmentSociale +
-				", mtautrePrelevmentSociale='" + mtautrePrelevmentSociale + '\'' +
 				", autrePrelevment=" + autrePrelevment +
 				", mtautrePrelevment='" + mtautrePrelevment + '\'' +
 				", regularisation=" + regularisation +
@@ -1588,12 +1559,6 @@ public class LivreDePaie {
 				", mtbrutNonImposable='" + mtbrutNonImposable + '\'' +
 				", its=" + its +
 				", mtits='" + mtits + '\'' +
-				", CMU=" + CMU +
-				", mtCMU='" + mtCMU + '\'' +
-				", CMUSalarial=" + CMUSalarial +
-				", mtCMUSalarial='" + mtCMUSalarial + '\'' +
-				", CMUPatronal=" + CMUPatronal +
-				", mtCMUPatronal='" + mtCMUPatronal + '\'' +
 				", cn=" + cn +
 				", mtcn='" + mtcn + '\'' +
 				", igr=" + igr +
@@ -1612,10 +1577,6 @@ public class LivreDePaie {
 				", mtcarec='" + mtcarec + '\'' +
 				", totalRetenue=" + totalRetenue +
 				", mttotalRetenue='" + mttotalRetenue + '\'' +
-				", RetenueSociale=" + RetenueSociale +
-				", mtRetenueSocial='" + mtRetenueSocial + '\'' +
-				", totalRetenueSociale=" + totalRetenueSociale +
-				", mttotalRetenueSocial='" + mttotalRetenueSocial + '\'' +
 				", indemniteRepresentation=" + indemniteRepresentation +
 				", mtindemniteRepresentation='" + mtindemniteRepresentation + '\'' +
 				", indemniteTransport=" + indemniteTransport +
@@ -1634,8 +1595,6 @@ public class LivreDePaie {
 				", mtta='" + mtta + '\'' +
 				", fpc=" + fpc +
 				", mtfpc='" + mtfpc + '\'' +
-				", fpcregul=" + fpcregul +
-				", mtfpcregul='" + mtfpcregul + '\'' +
 				", prestationFamiliale=" + prestationFamiliale +
 				", mtprestationFamiliale='" + mtprestationFamiliale + '\'' +
 				", accidentTravail=" + accidentTravail +
@@ -1646,17 +1605,13 @@ public class LivreDePaie {
 				", mttotalPatronal='" + mttotalPatronal + '\'' +
 				", totalMasseSalariale=" + totalMasseSalariale +
 				", mttotalMasseSalariale='" + mttotalMasseSalariale + '\'' +
-				", retenueSociiale=" + retenueSociiale +
-				", mtretenueSociiale='" + mtretenueSociiale + '\'' +
 				", bullpaie=" + bullpaie +
 				", jourTravail=" + jourTravail +
 				", temptravail=" + temptravail +
 				", listIndemniteBrut=" + listIndemniteBrut +
 				", listIndemniteNonImp=" + listIndemniteNonImp +
-				", listRubrique=" + listRubrique +
 				", listIndemBrutNonImp=" + listIndemBrutNonImp +
 				", listRetenueMutuellt=" + listRetenueMutuellt +
-				", listRetenueSociale=" + listRetenueSociale +
 				", listGainsNet=" + listGainsNet +
 				", contratPersonnel=" + contratPersonnel +
 				", periodePaie=" + periodePaie +

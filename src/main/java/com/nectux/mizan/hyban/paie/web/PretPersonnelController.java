@@ -212,6 +212,7 @@ private static final Logger logger = LogManager.getLogger(PretPersonnelControlle
 		List<PrimePersonnel> listRetenueMutuelle=new ArrayList<PrimePersonnel>();
 		List<PrimePersonnel> listGainsNet=new ArrayList<PrimePersonnel>();
 		List<PrimePersonnel> listIndemnite  =new ArrayList<PrimePersonnel>();
+		List<PrimePersonnel> listRetenueSociale  =new ArrayList<PrimePersonnel>();
 //		listIndemnite =  primePersonnelRepository.findByContratPersonnelPersonnelIdAndPeriodePaieId(ctratpersonnel.getPersonnel().getId(), maperiode.getId());
 //		if(listIndemnite.size()>0){
 //			for(PrimePersonnel kprme:listIndemnite){
@@ -239,7 +240,7 @@ private static final Logger logger = LogManager.getLogger(PretPersonnelControlle
 //				}
 //			}
 
-		//}
+		//}LivreDePaieSimulation
 
 		livredePaie= new LivreDePaieSimulation("MatTEST","nomTest"+" "+" PrenomTest", nbpart ,op, categorie1.getSalaireDeBase(),5000d, 0d,montantTransp, 0d,0d,true,null,null,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet);
 		try {

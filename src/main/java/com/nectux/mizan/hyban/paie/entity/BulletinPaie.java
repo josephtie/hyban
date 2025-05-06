@@ -265,9 +265,12 @@ private Double basecnps;
 	private String montantTa;
 	
 	private Double fpc;
-	
+	private Double fpcregul;
 	@Transient
 	private String montantFpc;
+
+	@Transient
+	private String montantFpcregul;
 	
 	private Double prestationFamiliale;
 	
@@ -893,6 +896,22 @@ private Double basecnps;
 
 	public void setMtbrutNonImpo(String mtbrutNonImpo) {
 		this.mtbrutNonImpo = mtbrutNonImpo;
+	}
+
+	public Double getFpcregul() {
+		return fpcregul;
+	}
+
+	public void setFpcregul(Double fpcregul) {
+		this.fpcregul = fpcregul;
+	}
+
+	public String getMontantFpcregul() {
+		return montantFpcregul=Utils.formattingAmount(fpcregul);
+	}
+
+	public void setMontantFpcregul(String montantFpcregul) {
+		this.montantFpcregul = montantFpcregul;
 	}
 
 	@Override

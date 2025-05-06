@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
 import java.io.IOException;
 import java.security.Principal;
@@ -87,7 +90,16 @@ public class MainController {
 	    modelMap.addAttribute("activeExercice", "");
 	    modelMap.addAttribute("activePeriode", "");
 	    modelMap.addAttribute("activeMois", "");
-	    maperiode=periodePaieService.findPeriodeactive();
+		DecimalFormat formatter = new DecimalFormat("#,###");
+		formatter.setGroupingSize(3);
+		formatter.setGroupingUsed(true);
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setGroupingSeparator(' ');
+		formatter.setDecimalFormatSymbols(symbols);
+
+		//String formatted = formatter.format(number); // "14 377 088"
+
+		maperiode=periodePaieService.findPeriodeactive();
 	    if(maperiode==null){}
 	    else{
 	    	modelMap.addAttribute("activeMois", maperiode.getMois().getMois()+" "+ maperiode.getAnnee().getAnnee());
@@ -95,7 +107,7 @@ public class MainController {
 			modelMap.addAttribute("anneId", maperiode.getAnnee().getId());
 			modelMap.addAttribute("ctratTrue", contratPersonnelRepository.findByStatutTrueAndDepartFalseOrderByPersonnelNomAscPersonnelPrenomAsc().size());
 			modelMap.addAttribute("nbrEmpl", personnelService.count());
-			modelMap.addAttribute("massSalar", bulletinPaieService.MasseSalarialMois(maperiode).doubleValue());
+			modelMap.addAttribute("massSalar",formatter.format(Math.ceil(bulletinPaieService.MasseSalarialMois(maperiode).doubleValue())));
 			modelMap.addAttribute("periode",  maperiode.getMois().getMois()+" "+ maperiode.getAnnee().getAnnee());
 	    }
 	    Societe mysociete=null;

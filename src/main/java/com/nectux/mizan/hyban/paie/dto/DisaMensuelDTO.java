@@ -5,6 +5,9 @@ package com.nectux.mizan.hyban.paie.dto;
 
 import com.nectux.mizan.hyban.utils.Utils;
 
+import javax.persistence.Transient;
+import java.util.List;
+
 /**
  * @author Lag
  *
@@ -33,7 +36,10 @@ public class DisaMensuelDTO {
 	
 	@javax.persistence.Transient
 	private String mtcumulPfAt;
-	
+
+
+	@Transient
+	private List<DisaMensuelDTO> listImprimebulletin;
 	public DisaMensuelDTO() {
 
 	}
@@ -128,12 +134,31 @@ public class DisaMensuelDTO {
 
 	@Override
 	public String toString() {
-		return "DisaMensuelDTO [categorie=" + categorie + ", nbSalarie="
-				+ nbSalarie + ", valtx=" + valtx + ", valmt=" + valmt
-				+ ", numcnps=" + numcnps + ", cumulCnps=" + cumulCnps
-				+ ", cumulPfAt=" + cumulPfAt + "]";
+		return "DisaMensuelDTO{" +
+				"categorie='" + categorie + '\'' +
+				", nbSalarie=" + nbSalarie +
+				", valtx=" + valtx +
+				", valmt='" + valmt + '\'' +
+				", numcnps='" + numcnps + '\'' +
+				", cumulCnps=" + cumulCnps +
+				", cumulPfAt=" + cumulPfAt +
+				", montantcumulCnps='" + montantcumulCnps + '\'' +
+				", montantcumulPfAt='" + montantcumulPfAt + '\'' +
+				", mtcumulCnps='" + mtcumulCnps + '\'' +
+				", mtcumulPfAt='" + mtcumulPfAt + '\'' +
+				", listImprimebulletin=" + listImprimebulletin +
+				'}';
 	}
 
-	
+
+
+	public List<DisaMensuelDTO> getListImprimebulletin() {
+		return listImprimebulletin;
+	}
+
+	public void setListImprimebulletin(List<DisaMensuelDTO> listImprimebulletin) {
+		this.listImprimebulletin = listImprimebulletin;
+	}
+
 
 }

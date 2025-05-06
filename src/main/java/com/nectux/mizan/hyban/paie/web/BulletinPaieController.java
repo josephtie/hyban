@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.logging.LogManager;
 
@@ -259,7 +261,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/calculalenvers", method = RequestMethod.POST)
-	public @ResponseBody LivreDePaie cherchBullpersonnel(@RequestParam(value="idPersonnel", required=true) Long id,@RequestParam(value="netApayer", required=true) Double valued,	Principal principal) {
+	public @ResponseBody LivreDePaie calculalenvers(@RequestParam(value="idPersonnel", required=true) Long id,@RequestParam(value="netApayer", required=true) Double valued,	Principal principal) {
 		LivreDePaie livredePaie = null;
 		// List<ContratPersonnel> personnelListTrt = new ArrayList<ContratPersonnel>();
 		 ContratPersonnel ctratpersonnel=contratPersonnelRepository.findByPersonnelIdAndStatut(id, true);
@@ -345,7 +347,24 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		 return livredePaie;
 	}
 	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/savebullOnePersonnel", method = RequestMethod.POST)
@@ -1060,31 +1079,31 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 
 			ImprimBulletinPaie imprimBulletinPaieIts = new ImprimBulletinPaie();
-			imprimBulletinPaieIts.setLibelle("I.T.S");
-			imprimBulletinPaieIts.setTaux(1.2D);
+			imprimBulletinPaieIts.setLibelle("I.T.S (nouveau Barême)");
+			imprimBulletinPaieIts.setTaux(null);
 			imprimBulletinPaieIts.setBase(bulletin.getBrutImposable());
 			imprimBulletinPaieIts.setRetenue(bulletin.getIts());
 			listImprimBulletinPaie.add(imprimBulletinPaieIts);
 
-			ImprimBulletinPaie imprimBulletinPaieIgr = new ImprimBulletinPaie();
-			imprimBulletinPaieIgr.setLibelle("I.G.R");
+			//ImprimBulletinPaie imprimBulletinPaieIgr = new ImprimBulletinPaie();
+			////imprimBulletinPaieIgr.setLibelle("I.G.R");
 			//imprimBulletinPaieCn.setTaux(1.2D);					
 			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());		
-			imprimBulletinPaieIgr.setRetenue(bulletin.getIgr());
-			listImprimBulletinPaie.add(imprimBulletinPaieIgr);
+			//imprimBulletinPaieIgr.setRetenue(bulletin.getIgr());
+			//////listImprimBulletinPaie.add(imprimBulletinPaieIgr);
 
-			ImprimBulletinPaie imprimBulletinPaieCn = new ImprimBulletinPaie();
-			imprimBulletinPaieCn.setLibelle("CONTRIBUTION NATIONALE");
-			//imprimBulletinPaieCn.setTaux(1.2D);					
-			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());		
-			imprimBulletinPaieCn.setRetenue(bulletin.getCn());
-			listImprimBulletinPaie.add(imprimBulletinPaieCn);
+//			ImprimBulletinPaie imprimBulletinPaieCn = new ImprimBulletinPaie();
+//			imprimBulletinPaieCn.setLibelle("CONTRIBUTION NATIONALE");
+//			//imprimBulletinPaieCn.setTaux(1.2D);
+//			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+//			imprimBulletinPaieCn.setRetenue(bulletin.getCn());
+//			listImprimBulletinPaie.add(imprimBulletinPaieCn);
 
 
 			ImprimBulletinPaie imprimBulletinPaieCnps = new ImprimBulletinPaie();
 			imprimBulletinPaieCnps.setLibelle("RETRAITE CNPS ");
-			//imprimBulletinPaieCn.setTaux(1.2D);					
-			imprimBulletinPaieCn.setBase(bulletin.getBasecnps());
+			imprimBulletinPaieCnps.setTaux(6.30);
+			imprimBulletinPaieCnps.setBase(bulletin.getBasecnps());
 			imprimBulletinPaieCnps.setRetenue(bulletin.getCnps());
 			listImprimBulletinPaie.add(imprimBulletinPaieCnps);
 
@@ -1097,7 +1116,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 			ImprimBulletinPaie imprimBulletinPaieCnpsPATRON = new ImprimBulletinPaie();
 			imprimBulletinPaieCnpsPATRON.setLibelle("RETRAITE CNPS/PART PATRONAL ");
-			//imprimBulletinPaieCn.setTaux(1.2D);					
+		//SSSS	imprimBulletinPaieCnpsPATRON.setTauxPatron(7.70);
 			imprimBulletinPaieCnpsPATRON.setBase(bulletin.getBasecnps());
 			imprimBulletinPaieCnpsPATRON.setRetenuePatron(bulletin.getRetraite());
 			listImprimBulletinPaie.add(imprimBulletinPaieCnpsPATRON);
@@ -1105,31 +1124,38 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 			ImprimBulletinPaie imprimBulletinPaiePF = new ImprimBulletinPaie();
 			imprimBulletinPaiePF.setLibelle("PRESTATION FAMILIALE");
-			//imprimBulletinPaieCn.setTaux(1.2D);					
-			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());		
+			//imprimBulletinPaiePF.setTauxPatron(5.75);
+			imprimBulletinPaiePF.setBase(70000d);
 			imprimBulletinPaiePF.setRetenuePatron(bulletin.getPrestationFamiliale());
 			listImprimBulletinPaie.add(imprimBulletinPaiePF);
 
 			ImprimBulletinPaie imprimBulletinPaieAC = new ImprimBulletinPaie();
 			imprimBulletinPaieAC.setLibelle("ACCIDENT DE TRAVAIL");
-			//imprimBulletinPaieCn.setTaux(1.2D);					
-			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());		
+			imprimBulletinPaieAC.setTauxPatron(2.0);
+			imprimBulletinPaieAC.setBase(70000d);
 			imprimBulletinPaieAC.setRetenuePatron(bulletin.getAccidentTravail());
 			listImprimBulletinPaie.add(imprimBulletinPaieAC);
 
 			ImprimBulletinPaie imprimBulletinPaieTA = new ImprimBulletinPaie();
 			imprimBulletinPaieTA.setLibelle("FDFP -TAXE APPRENTISAGE ");
-			//imprimBulletinPaieCn.setTaux(1.2D);					
-			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());		
+			imprimBulletinPaieTA.setTauxPatron(0.40d);
+			imprimBulletinPaieTA.setBase(bulletin.getBrutImposable());
 			imprimBulletinPaieTA.setRetenuePatron(bulletin.getTa());
 			listImprimBulletinPaie.add(imprimBulletinPaieTA);
 
 			ImprimBulletinPaie imprimBulletinPaieFDFP = new ImprimBulletinPaie();
 			imprimBulletinPaieFDFP.setLibelle("FDFP -TAXE A LA FPC ");
-			//imprimBulletinPaieCn.setTaux(1.2D);					
-			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());		
+			imprimBulletinPaieFDFP.setTauxPatron(0.6D);
+			imprimBulletinPaieFDFP.setBase(bulletin.getBrutImposable());
 			imprimBulletinPaieFDFP.setRetenuePatron(bulletin.getFpc());
 			listImprimBulletinPaie.add(imprimBulletinPaieFDFP);
+
+			ImprimBulletinPaie imprimBulletinPaieFDFPRegul = new ImprimBulletinPaie();
+			imprimBulletinPaieFDFPRegul.setLibelle("FDFP -TAXE A LA FPC  REGUL");
+			imprimBulletinPaieFDFPRegul.setTauxPatron(0.6D);
+			imprimBulletinPaieFDFPRegul.setBase(bulletin.getBrutImposable());
+			imprimBulletinPaieFDFPRegul.setRetenuePatron(bulletin.getFpcregul());
+			listImprimBulletinPaie.add(imprimBulletinPaieFDFPRegul);
 
 
 			ImprimBulletinPaie imprimBulletinPaieAMAO = new ImprimBulletinPaie();
@@ -1238,7 +1264,12 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			List<ImprimBulletinPaie> listImprimBulletinPaie = new ArrayList<ImprimBulletinPaie>();
 			List<ImprimBulletinPaie> listImprimBulletinPaieEngt = new ArrayList<ImprimBulletinPaie>();
 			List<ImprimBulletinPaie> listImprimBulletinPaieIndem = new ArrayList<ImprimBulletinPaie>();
-		
+			DecimalFormat formatter = new DecimalFormat("#,###");
+			formatter.setGroupingSize(3);
+			formatter.setGroupingUsed(true);
+			DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+			symbols.setGroupingSeparator(' ');
+			formatter.setDecimalFormatSymbols(symbols);
 			if(bulletin.getId() != null){
 				ImprimBulletinPaie imprimBulletinPaieSB = new ImprimBulletinPaie();
 				imprimBulletinPaieSB.setLibelle("SALAIRE DE BASE CATEGORIE");
@@ -1391,31 +1422,31 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 
 				ImprimBulletinPaie imprimBulletinPaieIts = new ImprimBulletinPaie();
-				imprimBulletinPaieIts.setLibelle("I.T.S");
-				imprimBulletinPaieIts.setTaux(1.2D);
+				imprimBulletinPaieIts.setLibelle("I.T.S (Nouveau Barème)");
+				imprimBulletinPaieIts.setTaux(null);
 				imprimBulletinPaieIts.setBase(bulletin.getBrutImposable());
 				imprimBulletinPaieIts.setRetenue(bulletin.getIts());
 				listImprimBulletinPaie.add(imprimBulletinPaieIts);
 
-				ImprimBulletinPaie imprimBulletinPaieIgr = new ImprimBulletinPaie();
-				imprimBulletinPaieIgr.setLibelle("I.G.R");
+				//ImprimBulletinPaie imprimBulletinPaieIgr = new ImprimBulletinPaie();
+				//imprimBulletinPaieIgr.setLibelle("I.G.R");
 				//imprimBulletinPaieCn.setTaux(1.2D);
 				//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
-				imprimBulletinPaieIgr.setRetenue(bulletin.getIgr());
-				listImprimBulletinPaie.add(imprimBulletinPaieIgr);
+				//imprimBulletinPaieIgr.setRetenue(bulletin.getIgr());
+				//listImprimBulletinPaie.add(imprimBulletinPaieIgr);
 
-				ImprimBulletinPaie imprimBulletinPaieCn = new ImprimBulletinPaie();
-				imprimBulletinPaieCn.setLibelle("CONTRIBUTION NATIONALE");
+				//ImprimBulletinPaie imprimBulletinPaieCn = new ImprimBulletinPaie();
+				//imprimBulletinPaieCn.setLibelle("CONTRIBUTION NATIONALE");
 				//imprimBulletinPaieCn.setTaux(1.2D);
 				//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
-				imprimBulletinPaieCn.setRetenue(bulletin.getCn());
-				listImprimBulletinPaie.add(imprimBulletinPaieCn);
+				//imprimBulletinPaieCn.setRetenue(bulletin.getCn());
+				//listImprimBulletinPaie.add(imprimBulletinPaieCn);
 
 
 				ImprimBulletinPaie imprimBulletinPaieCnps = new ImprimBulletinPaie();
 				imprimBulletinPaieCnps.setLibelle("RETRAITE CNPS ");
 				//imprimBulletinPaieCn.setTaux(1.2D);
-				imprimBulletinPaieCn.setBase(bulletin.getBasecnps());
+				imprimBulletinPaieCnps.setBase(bulletin.getBasecnps());
 				imprimBulletinPaieCnps.setRetenue(bulletin.getCnps());
 				listImprimBulletinPaie.add(imprimBulletinPaieCnps);
 
@@ -1436,32 +1467,39 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 				ImprimBulletinPaie imprimBulletinPaiePF= new ImprimBulletinPaie();
 				imprimBulletinPaiePF.setLibelle("PRESTATION FAMILIALE");
-				//imprimBulletinPaieCn.setTaux(1.2D);
-				//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+				imprimBulletinPaiePF.setTaux(5.75);
+
+				imprimBulletinPaiePF.setBase(70000d);
 				imprimBulletinPaiePF.setRetenuePatron(bulletin.getPrestationFamiliale());
 				listImprimBulletinPaie.add(imprimBulletinPaiePF);
 
 				ImprimBulletinPaie imprimBulletinPaieAC= new ImprimBulletinPaie();
 				imprimBulletinPaieAC.setLibelle("ACCIDENT DE TRAVAIL");
-				//imprimBulletinPaieCn.setTaux(1.2D);
-				//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+				imprimBulletinPaieAC.setTaux(2d);
+				imprimBulletinPaieAC.setBase(70000d);
 				imprimBulletinPaieAC.setRetenuePatron(bulletin.getAccidentTravail());
 				listImprimBulletinPaie.add(imprimBulletinPaieAC);
 
 				ImprimBulletinPaie imprimBulletinPaieTA= new ImprimBulletinPaie();
 				imprimBulletinPaieTA.setLibelle("FDFP -TAXE APPRENTISAGE ");
-				//imprimBulletinPaieCn.setTaux(1.2D);
-				//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+				imprimBulletinPaieTA.setTaux(0.4);
+				imprimBulletinPaieTA.setBase(bulletin.getBrutImposable());
 				imprimBulletinPaieTA.setRetenuePatron(bulletin.getTa());
 				listImprimBulletinPaie.add(imprimBulletinPaieTA);
 
 				ImprimBulletinPaie imprimBulletinPaieFDFP= new ImprimBulletinPaie();
 				imprimBulletinPaieFDFP.setLibelle("FDFP -TAXE A LA FPC ");
-				//imprimBulletinPaieCn.setTaux(1.2D);
-				//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+				imprimBulletinPaieFDFP.setTaux(0.6);
+				imprimBulletinPaieFDFP.setBase(bulletin.getBrutImposable());
 				imprimBulletinPaieFDFP.setRetenuePatron(bulletin.getFpc());
 				listImprimBulletinPaie.add(imprimBulletinPaieFDFP);
 
+				ImprimBulletinPaie imprimBulletinPaieFDFPREG= new ImprimBulletinPaie();
+				imprimBulletinPaieFDFPREG.setLibelle("FDFP -TAXE A LA FPC  REGUL");
+				imprimBulletinPaieFDFPREG.setTaux(0.6);
+				imprimBulletinPaieFDFPREG.setBase(bulletin.getBrutImposable());
+				imprimBulletinPaieFDFPREG.setRetenuePatron(bulletin.getFpcregul());
+				listImprimBulletinPaie.add(imprimBulletinPaieFDFPREG);
 
 				ImprimBulletinPaie imprimBulletinPaieAMAO= new ImprimBulletinPaie();
 				imprimBulletinPaieAMAO.setLibelle("AVANCES/ACOMPTES ");

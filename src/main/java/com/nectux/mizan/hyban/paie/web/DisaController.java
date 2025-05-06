@@ -1,10 +1,13 @@
 package com.nectux.mizan.hyban.paie.web;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,12 +36,16 @@ import com.nectux.mizan.hyban.parametrages.service.SocieteService;
 import com.nectux.mizan.hyban.parametrages.service.UtilisateurRoleService;
 import com.nectux.mizan.hyban.parametrages.service.UtilisateurService;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.*;
 
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -1064,9 +1071,97 @@ public String ImprimerEtattab2Trim(ModelMap modelMap,@RequestParam(value="annee"
 		
 		
 	}
-	
-@RequestMapping(value = "/JRCotisationMensuelEmployeur", method = RequestMethod.GET)
-public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode", required=true) Long idmois ,@RequestParam(value="tPf", required=false) Double tPf ,@RequestParam(value="tAt", required=false) Double tAt ,@RequestParam(value="tCnps", required=false) Double tCnps ,@RequestParam(value="print", required=false) String print, HttpServletRequest request) {
+	public byte[] generatePayslipPdf(List<DisaMensuelDTO>  bulletinData,HttpServletRequest request) throws Exception {
+		logger.info("Début de la génération du PDF du bulletin de paie");
+
+		// Détection de l'environnement (local vs Linux)
+		String reportsPath;
+		if (Files.exists(Paths.get("src/main/resources/reports"))) {
+			// Mode développement : accès direct au répertoire des ressources
+			reportsPath = "src/main/resources/reports";
+		} else {
+			reportsPath = request.getSession().getServletContext().getRealPath( "/reports");
+		}
+
+		Path reportsDir = Paths.get(reportsPath).toAbsolutePath();
+		logger.info("Chemin des rapports utilisé : {}", reportsDir);
+
+		// Détection des fichiers
+		Path mainReportFile = reportsDir.resolve("JrCotisationMensuelEmployeur.jrxml");
+		Path subReportFile = reportsDir.resolve("subreport_list.jrxml");
+
+		if (!Files.exists(mainReportFile) ) {
+			throw new FileNotFoundException("Fichiers de rapport introuvables : " + mainReportFile );
+		}
+		logger.info("Fichier principal trouvé : {}", mainReportFile);
+		logger.info("Fichier sous-rapport trouvé : {}", subReportFile);
+
+		// Compilation
+		Path mainReportPath = Paths.get(mainReportFile.toString().replace(".jrxml", ".jasper"));
+		Path subReportPath = Paths.get(subReportFile.toString().replace(".jrxml", ".jasper"));
+
+		logger.info("Compilation du sous-rapport : {}", subReportPath);
+		JasperCompileManager.compileReportToFile(subReportFile.toString(), subReportPath.toString());
+
+		logger.info("Compilation du rapport principal : {}", mainReportPath);
+		JasperCompileManager.compileReportToFile(mainReportFile.toString(), mainReportPath.toString());
+
+		try (InputStream reportStream = Files.newInputStream(mainReportPath)) {
+			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportStream);
+			logger.info("Rapport principal chargé avec succès");
+
+			// Paramètres du rapport
+			//String reportsPathlogo = request.getSession().getServletContext().getRealPath( "/static/logo/");
+			List<Societe> malist=societeService.findtsmois();
+			String cheminComplet = malist.get(0).getUrlLogo();
+			String logoRep;
+			Path logoPath = null;
+			String cheminRelatif;
+
+			if (Files.exists(Paths.get("src/main/resources/static"))) {
+				// Mode développement : accès direct au répertoire des ressources
+				logoRep = "src/main/resources/";
+				cheminRelatif = cheminComplet.startsWith("/") ? cheminComplet.substring(1) : cheminComplet;
+				logger.info("Chemin relatif du logo : {}", cheminComplet);
+				logoPath = Paths.get(logoRep, cheminRelatif).toAbsolutePath();
+
+			} else {
+				logoRep = request.getSession().getServletContext().getRealPath( "/static");
+				cheminRelatif = cheminComplet.startsWith("hyban/") ? cheminComplet.substring(5) : cheminComplet;
+				logger.info("Chemin relatif du logo : {}", cheminComplet);
+				logoPath = Paths.get(request.getSession().getServletContext().getRealPath(cheminRelatif)).toAbsolutePath();
+			}
+
+			if (!Files.exists(logoPath)) {
+				throw new FileNotFoundException("Le logo est introuvable : " + logoPath);
+			}
+
+			Map<String, Object> parameters = new HashMap<>();
+			parameters.put("SUBREPORT_DIR", subReportFile.getParent() + "/");
+			parameters.put("logo", logoPath.toString());
+
+			logger.info("Paramètres du rapport définis : {}", parameters);
+
+			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(Collections.singletonList(bulletinData));
+			logger.info("Source de données créée avec succès");
+
+			// Génération du rapport
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+			logger.info("Rapport rempli avec succès");
+
+			// Génération du PDF
+			byte[] pdfData = JasperExportManager.exportReportToPdf(jasperPrint);
+			logger.info("PDF généré avec succès (taille : {} octets)", pdfData.length);
+
+			return pdfData;
+		} catch (JRException | IOException e) {
+			logger.error("Erreur lors de la génération du rapport Jasper", e);
+			throw new RuntimeException("Erreur lors de la génération du rapport Jasper: " + e.getMessage(), e);
+		}
+	}
+
+	@RequestMapping(value = "/JRCotisationMensuelEmployeur", method = RequestMethod.GET)
+	public ResponseEntity<byte[]>  ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode", required=true) Long idmois ,@RequestParam(value="tPf", required=false) Double tPf ,@RequestParam(value="tAt", required=false) Double tAt ,@RequestParam(value="tCnps", required=false) Double tCnps ,@RequestParam(value="print", required=false) String print, HttpServletRequest request) {
 		
 		String view="disaMensuelpdf";
 		
@@ -1075,9 +1170,7 @@ public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode
 		List<PeriodePaie> listPeriodepaie = new ArrayList<PeriodePaie>();
 		try {
 			periodePaie = periodePaieService.findPeriodePaie(idmois);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
 		
 		List<DisaMensuelDTO> listImprimebulletin=  new ArrayList<DisaMensuelDTO>();
 		
@@ -1157,7 +1250,7 @@ public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode
 				Double monBrutTotal = 0d;
 
 				for(BulletinPaie bulls : listBulletin){
-					String typSalarie = bulls.getContratPersonnel().getPersonnel().getTypeSalarie();
+					String typSalarie = bulls.getContratPersonnel().getPersonnel().getTypeSalarie().toUpperCase();
 					nbMoisBulletin = nbMoisBulletin + 1;
 					
 					Double salaireBrut = bulls.getBrutImposable();
@@ -1171,31 +1264,31 @@ public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode
 								Double baseCnps = bulls.getBasecnps();
 								
 								if(typSalarie.equals("M")){
-									if( salaireBrut <= 70000d){
+									if( salaireBrut <= 75000d){
 										mensuelInf70000 = mensuelInf70000 + 1;
 									
-										if(baseCnps <= 1647315d)
+										if(baseCnps <= 3375000.0)
 											mensuelInf70000CNPS = mensuelInf70000CNPS + baseCnps;
 										else
-											mensuelInf70000CNPS = mensuelInf70000CNPS + 1647315F;
+											mensuelInf70000CNPS = mensuelInf70000CNPS + 3375000.0;
 										
 									}
 									else{
-										if(salaireBrut <= 1647315d){
+										if(salaireBrut <= 3375000.0){
 											mensuelSup70000 = mensuelSup70000 + 1;
 											
-											if(baseCnps <= 1647315d)
+											if(baseCnps <= 3375000.0)
 												mensuelSup70000CNPS = mensuelSup70000CNPS + baseCnps;
 											else
-												mensuelSup70000CNPS = mensuelSup70000CNPS + 1647315d;
+												mensuelSup70000CNPS = mensuelSup70000CNPS + 3375000.0;
 											
 										}
 										else{
 											mensuelSup1647315 = mensuelSup1647315 + 1;
-											if(baseCnps <= 1647315d)
+											if(baseCnps <= 3375000.0)
 												mensuelSup1647315CNPS = mensuelSup1647315CNPS + baseCnps;
 											else
-												mensuelSup1647315CNPS = mensuelSup1647315CNPS + 1647315d;
+												mensuelSup1647315CNPS = mensuelSup1647315CNPS + 3375000.0;
 											
 										}
 										
@@ -1206,18 +1299,18 @@ public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode
 									if( salaireBrut <= 3231d){
 										journalierInf3231 = journalierInf3231 + 1;
 										
-										if(baseCnps <= 1647315d)
+										if(baseCnps <= 3375000.0)
 											journalierInf3231CNPS = journalierInf3231CNPS + baseCnps;
 										else
-											journalierInf3231CNPS = journalierInf3231CNPS + 1647315d;
+											journalierInf3231CNPS = journalierInf3231CNPS + 3375000.0;
 										
 									}
 									else{
 										journalierSup3231 = journalierSup3231 + 1;
-										if(baseCnps <= 1647315d)
+										if(baseCnps <= 3375000.0)
 											journalierSup3231CNPS = journalierSup3231CNPS + baseCnps;
 										else
-											journalierSup3231CNPS = journalierSup3231CNPS + 1647315d;
+											journalierSup3231CNPS = journalierSup3231CNPS + 3375000.0;
 										
 									}
 									
@@ -1234,28 +1327,28 @@ public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode
 								Double retenuAt = bulls.getAccidentTravail();
 								
 								if(typSalarie.equals("M")){
-									if( salaireBrut <= 70000d){
+									if( salaireBrut <= 75000d){
 									
-										if(retenuAt <= 70000d)
+										if(retenuAt <= 75000d)
 											mensuelInf70000AT = mensuelInf70000AT + retenuAt;
 										else
-											mensuelInf70000AT = mensuelInf70000AT + 70000F;
+											mensuelInf70000AT = mensuelInf70000AT + 75000F;
 									}
 									else{
-										if(salaireBrut <= 1647315d){
+										if(salaireBrut <= 3375000.0){
 											
-											if(retenuAt <= 70000d)
+											if(retenuAt <= 75000d)
 												mensuelSup70000AT = mensuelSup70000AT + retenuAt;
 											else
-												mensuelSup70000AT = mensuelSup70000AT + 70000d;
+												mensuelSup70000AT = mensuelSup70000AT + 75000d;
 											
 										}
 										else{
 											
-											if(retenuAt <= 70000d)
+											if(retenuAt <= 75000d)
 												mensuelSup1647315AT = mensuelSup1647315AT + retenuAt;
 											else
-												mensuelSup1647315AT = mensuelSup1647315AT + 70000d;
+												mensuelSup1647315AT = mensuelSup1647315AT + 75000d;
 											
 										}
 										
@@ -1266,17 +1359,17 @@ public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode
 									if( salaireBrut <= 3231d){
 										journalierInf3231 = journalierInf3231 + 1;
 										
-										if(retenuAt <= 70000d)
+										if(retenuAt <= 75000d)
 											journalierInf3231AT = journalierInf3231AT + retenuAt;
 										else
-											journalierInf3231AT = journalierInf3231AT + 70000d;
+											journalierInf3231AT = journalierInf3231AT + 75000d;
 										
 									}
 									else{
-										if(retenuAt <= 70000d)
+										if(retenuAt <= 75000d)
 											journalierSup3231AT = journalierSup3231AT + retenuAt;
 										else
-											journalierSup3231AT = journalierSup3231AT + 70000d;
+											journalierSup3231AT = journalierSup3231AT + 75000d;
 										
 									}
 									
@@ -1292,28 +1385,28 @@ public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode
 								
 
 								if(typSalarie.equals("M")){
-									if( salaireBrut <= 70000d){
+									if( salaireBrut <= 75000d){
 									
-										if(retenuPf <= 70000d)
+										if(retenuPf <= 75000d)
 											mensuelInf70000PF = mensuelInf70000PF + retenuPf;
 										else
-											mensuelInf70000PF = mensuelInf70000PF + 70000d;
+											mensuelInf70000PF = mensuelInf70000PF + 75000d;
 										
 									}
 									else{
-										if(salaireBrut <= 1647315d){
+										if(salaireBrut <= 3375000.0){
 											
-											if(retenuPf <= 70000d)
+											if(retenuPf <= 75000d)
 												mensuelSup70000PF = mensuelSup70000PF + retenuPf;
 											else
-												mensuelSup70000PF = mensuelSup70000PF + 70000d;
+												mensuelSup70000PF = mensuelSup70000PF + 75000d;
 											
 										}
 										else{
-											if(retenuPf <= 70000F)
+											if(retenuPf <= 75000F)
 												mensuelSup1647315PF = mensuelSup1647315PF + retenuPf;
 											else
-												mensuelSup1647315PF = mensuelSup1647315PF + 70000d;
+												mensuelSup1647315PF = mensuelSup1647315PF + 75000d;
 											
 										}
 										
@@ -1324,17 +1417,17 @@ public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode
 									if( salaireBrut <= 3231d){
 										journalierInf3231 = journalierInf3231 + 1;
 										
-										if(retenuPf <= 70000d)
+										if(retenuPf <= 75000d)
 											journalierInf3231PF = journalierInf3231PF + retenuPf;
 										else
-											journalierInf3231PF = journalierInf3231PF + 70000d;
+											journalierInf3231PF = journalierInf3231PF + 75000d;
 										
 									}
 									else{
-										if(retenuPf <= 70000d)
+										if(retenuPf <= 75000d)
 											journalierSup3231PF = journalierSup3231PF + retenuPf;
 										else
-											journalierSup3231PF = journalierSup3231PF + 70000d;
+											journalierSup3231PF = journalierSup3231PF + 75000d;
 										
 									}
 									
@@ -1350,20 +1443,20 @@ public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode
 							mensuelSup70000ATPF = mensuelSup70000AT + mensuelSup70000PF;
 							mensuelSup1647315ATPF = mensuelSup1647315AT + mensuelSup1647315PF;
 							
-							if(journalierInf3231ATPF > 70000d)
-								journalierInf3231ATPF = 70000d;
+							if(journalierInf3231ATPF > 75000d)
+								journalierInf3231ATPF = 75000d;
 							
-							if(journalierSup3231ATPF > 70000d)
-								journalierSup3231ATPF = 70000d;
+							if(journalierSup3231ATPF > 75000d)
+								journalierSup3231ATPF = 75000d;
 							
-							if(mensuelInf70000ATPF > 70000d)
-								mensuelInf70000ATPF = 70000d;
+							if(mensuelInf70000ATPF > 75000d)
+								mensuelInf70000ATPF = 75000d;
 							
-							if(mensuelSup70000ATPF > 70000d)
-								mensuelSup70000ATPF = 70000d;
+							if(mensuelSup70000ATPF > 75000d)
+								mensuelSup70000ATPF = 75000d;
 							
-							if(mensuelSup1647315ATPF > 70000d)
-								mensuelSup1647315ATPF = 70000d;
+							if(mensuelSup1647315ATPF > 75000d)
+								mensuelSup1647315ATPF = 75000d;
 							
 							
 						//}
@@ -1399,29 +1492,29 @@ public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode
 				listImprimebulletin.add(disaDTO2);
 				
 				DisaMensuelDTO disaDTO3 = new DisaMensuelDTO();
-				disaDTO3.setCategorie("Mensuels superieurs a 70 000 F par mois et inferieurs ou egaux a  1 647 315 F par mois");
+				disaDTO3.setCategorie("Mensuels superieurs a 75 000 F par mois et inferieurs ou egaux a  1 647 315 F par mois");
 				Double[] tab0 = new Double[2];
 				tab0=bulletinPaieService.MensuelBaseCnpsSup70000(periodePaie);
 				disaDTO3.setNbSalarie(tab0[0].intValue());
 				disaDTO3.setCumulCnps(tab0[1]);
-				disaDTO3.setCumulPfAt(tab0[0].intValue()*70000d);
+				disaDTO3.setCumulPfAt(tab0[0].intValue()*75000d);
 				listImprimebulletin.add(disaDTO3);
 				
 				DisaMensuelDTO disaDTO4 = new DisaMensuelDTO();
-				disaDTO4.setCategorie("Mensuels superieurs a  1 647 315 F par mois");
+				disaDTO4.setCategorie("Mensuels superieurs a  3 375 000 F par mois");
 				Double[] tab = new Double[2];
 				tab=bulletinPaieService.MensuelBaseCnpsSup(periodePaie);
 				disaDTO4.setNbSalarie(tab[0].intValue());
-				//mensuelSup1647315CNPS=1647315d;
+				//mensuelSup1647315CNPS=3375000.0;
 				disaDTO4.setCumulCnps(tab[1]);
-				disaDTO4.setCumulPfAt(tab[0].intValue()*70000d);
+				disaDTO4.setCumulPfAt(tab[0].intValue()*75000d);
 				listImprimebulletin.add(disaDTO4);
 				
 				DisaMensuelDTO disaDTO5 = new DisaMensuelDTO();
 				disaDTO5.setCategorie("TOTAL ");
 				disaDTO5.setNbSalarie(disaDTO4.getNbSalarie()+disaDTO3.getNbSalarie()+disaDTO2.getNbSalarie());
 				disaDTO5.setCumulCnps(tab[1]+tab0[1]+tab1[1]);
-				disaDTO5.setCumulPfAt(disaDTO3.getNbSalarie()*70000d+disaDTO4.getNbSalarie()*70000d+disaDTO2.getCumulPfAt());
+				disaDTO5.setCumulPfAt(disaDTO3.getNbSalarie()*75000d+disaDTO4.getNbSalarie()*75000d+disaDTO2.getCumulPfAt());
 				listImprimebulletin.add(disaDTO5);
 				
 				Double cumulCnps = 0d;
@@ -1477,17 +1570,17 @@ public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode
 					 modelMap.addAttribute("periodePaie",periodePaie);	
 				modelMap.addAttribute("societe", societeRepository.findById(1L));
 					
-					JRDataSource jrDatasource = null;
-					
-					//System.out.println("-----------nb list bull imprrrr "+listImprimebulletin.size());
-					//impressionService.imprimeListBulletinN(codeAnsco, listImprimebulletin, 1);
-					GenericDataSource<DisaMensuelDTO> dsStudent =  new GenericDataSource<DisaMensuelDTO>(DisaMensuelDTO.class);
-					try {
-						jrDatasource = dsStudent.create(null, listImprimebulletin);
-						//System.out.println("----------- jr data source "+jrDatasource.toString());
-					} catch (JRException e) {
-						e.printStackTrace();
-					}
+//					JRDataSource jrDatasource = null;
+//
+//					//System.out.println("-----------nb list bull imprrrr "+listImprimebulletin.size());
+//					//impressionService.imprimeListBulletinN(codeAnsco, listImprimebulletin, 1);
+//					GenericDataSource<DisaMensuelDTO> dsStudent =  new GenericDataSource<DisaMensuelDTO>(DisaMensuelDTO.class);
+//					try {
+//						jrDatasource = dsStudent.create(null, listImprimebulletin);
+//						//System.out.println("----------- jr data source "+jrDatasource.toString());
+//					} catch (JRException e) {
+//						e.printStackTrace();
+//					}
 
 					
 				
@@ -1498,211 +1591,232 @@ public String ImprimerDisaMensuel(ModelMap modelMap,@RequestParam(value="periode
 					modelMap.addAttribute("monBrutTotal",Utils.formattingAmount(monBrutTotal));
 				
 					
-					modelMap.addAttribute("datasource", jrDatasource);
+				//	modelMap.addAttribute("datasource", jrDatasource);
 					
 					if(print.equalsIgnoreCase("p"))
 						modelMap.addAttribute("format", "pdf");
 					if(print.equalsIgnoreCase("e"))
 						modelMap.addAttribute("format", "xls");
 					
-					logger.info("Bulletin individuel imprimer");
+					logger.info("Bulletin individuel imprimer",listImprimebulletin.toString());
+			logger.info("Bulletin individuel imprimer");
+			byte[] pdfBytes = generatePayslipPdf(listImprimebulletin,request);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_PDF);
+			headers.setContentDispositionFormData("filename", "CnpsMensuel.pdf");
+
+			return ResponseEntity.ok().headers(headers).body(pdfBytes);
 		}
+	} catch (Exception e) {
+		e.printStackTrace(); // Remplacer par un logger
+		return ResponseEntity.internalServerError().build();
+	}
+		//}
 		
-		return view; //mav;
+		return null; //mav;
 		
 		
 	}
-@RequestMapping(value = "/jrFdfp", method = RequestMethod.GET)	
-public String ImprimerFdfpTrim(ModelMap modelMap,@RequestParam(value="periode", required=true) Long idmois ,@RequestParam(value="print", required=false) String print, HttpServletRequest request) {
-		
-		String view="fdfppdf";
-		
-		Long encours=idmois;
-		PeriodePaie periodePaie = new PeriodePaie();
-		List<PeriodePaie> listPeriodepaie = new ArrayList<PeriodePaie>();
-		try {
-			periodePaie = periodePaieService.findPeriodePaie(idmois);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		List<DisaMensuelDTO> listImprimebulletin=  new ArrayList<DisaMensuelDTO>();
-		
-		if(periodePaie.getId() != null){
-			
-
-			Double mensuelTotalBrut1= 0d;	Double mensuelmasseSalariale= 0d;
-			Double mensuelTotalBrut2= 0d;
-			Double mensuelTotalBrut3= 0d;
-		
-			
-	
-				
-				//Recuperation des bulletins pour cette exercie et pour le personnel
-				List<BulletinPaie> listBulletin = new ArrayList<BulletinPaie>();
-				try {
-					//listBulletin = bulletinService.findBulletinByPersonnelAndAnnee(annee, pers);
-					//BulletinPaie bull=new BulletinPaie();
-					listBulletin= bulletinPaieService.findBulletinByPeriodePaieContract(periodePaie.getId());
-					// listBulletin.add(bull);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				for(BulletinPaie bulls : listBulletin){
-					mensuelTotalBrut1=mensuelTotalBrut1+bulls.getBrutImposable();
-					if(bulls.getContratPersonnel().getTypeContrat().getId()==1L ||bulls.getContratPersonnel().getTypeContrat().getId()==2L )
-					      mensuelmasseSalariale=mensuelmasseSalariale+(bulls.getTotalmassesalarial());
-				}
-				/*List<BulletinPaie> listBulletin2 = new ArrayList<BulletinPaie>();
-				PeriodePaie	periodePaie1=periodePaieService.findPeriodePaie(encours+1L);
-				try {
-					//listBulletin = bulletinService.findBulletinByPersonnelAndAnnee(annee, pers);
-					//BulletinPaie bull=new BulletinPaie();
-					listBulletin2= bulletinPaieService.rechercherBulletinMoisCalculer(periodePaie1, true);
-					// listBulletin.add(bull);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				for(BulletinPaie bulls2 : listBulletin2){
-					mensuelTotalBrut2=mensuelTotalBrut2+bulls2.getTotalbrut();
-				}
-				List<BulletinPaie> listBulletin3 = new ArrayList<BulletinPaie>();
-				PeriodePaie	periodePaie2=periodePaieService.findPeriodePaie(encours+2L);
-				try {
-					//listBulletin = bulletinService.findBulletinByPersonnelAndAnnee(annee, pers);
-					//BulletinPaie bull=new BulletinPaie();
-					listBulletin3= bulletinPaieService.rechercherBulletinMoisCalculer(periodePaie2, true);
-					// listBulletin.add(bull);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				for(BulletinPaie bulls3 : listBulletin3){
-					mensuelTotalBrut3=mensuelTotalBrut3+bulls3.getTotalbrut();
-				}
-				//System.out.println("####### bull : "+listBulletin.getc.getPrenom()+"  ---- "+listBulletin.toString());
-				
-							
-				Double cumulTotalBrut = mensuelTotalBrut1+mensuelTotalBrut2+mensuelTotalBrut3;*/
-				
-		
-			
-			DisaMensuelDTO disaDTO = new DisaMensuelDTO();
-			/*disaDTO.setCategorie("14 TAXE D APPRENTISSAGE");
-			disaDTO.setValtx(0.4d);
-			disaDTO.setCumulCnps(Math.rint(cumulTotalBrut));
-			disaDTO.setCumulPfAt(Math.rint(cumulTotalBrut*0.4d/100));
-			
-			disaDTO.setMontantcumulCnps(Utils.formattingAmount(Math.rint(cumulTotalBrut)));
-			disaDTO.setCumulPfAt(Math.rint(cumulTotalBrut*0.4d/100));
-			disaDTO.setMontantcumulPfAt(Utils.formattingAmount(Math.rint(cumulTotalBrut*0.4d/100)));*/
-			
-			modelMap.addAttribute("libelle1","14 TAXE D APPRENTISSAGE");
-			//modelMap.addAttribute("cod1lib", "0 6");
-			modelMap.addAttribute("libeff1",0.4d);
-			modelMap.addAttribute("libSb1",Utils.formattingAmount(Math.rint(mensuelTotalBrut1)));
-			modelMap.addAttribute("lib1mt",Utils.formattingAmount(Math.rint(mensuelTotalBrut1*0.4d/100)));
-			
-			
-			listImprimebulletin.add(disaDTO);
-			
-			DisaMensuelDTO disaDTO1 = new DisaMensuelDTO();
-			/*disaDTO1.setCategorie("15 TAXE A LA FORMATION PROFESSIONNELLE CONTINUE");
-			disaDTO1.setValtx(0.6d);
-			disaDTO1.setCumulCnps(Math.rint(cumulTotalBrut));
-			disaDTO1.setMontantcumulCnps(Utils.formattingAmount(Math.rint(cumulTotalBrut)));
-			disaDTO1.setMontantcumulPfAt(Utils.formattingAmount(Math.rint(cumulTotalBrut*0.6d/100)));*/
-			
-			
-			modelMap.addAttribute("libelle2","15 TAXE A LA FORMATION PROFESSIONNELLE CONTINUE part complementaire.....");
-			//modelMap.addAttribute("cod2lib", "0 6");
-			modelMap.addAttribute("libeff2",0.6d);
-			modelMap.addAttribute("libSb2",Utils.formattingAmount(Math.rint(mensuelTotalBrut1)));
-			modelMap.addAttribute("lib2mt",Utils.formattingAmount(Math.rint(mensuelTotalBrut1*0.6d/100)));
-			listImprimebulletin.add(disaDTO1);
-			
-	
-			 List<ImprimBulletinPaie> listImprimBulletinPaie = new ArrayList<ImprimBulletinPaie>();
-	
-				JRDataSource jrDatasource = null;
-				
-				//System.out.println("-----------nb list bull imprrrr "+listImprimebulletin.size());
-				//impressionService.imprimeListBulletinN(codeAnsco, listImprimebulletin, 1);
-				GenericDataSource<DisaMensuelDTO> dsStudent =  new GenericDataSource<DisaMensuelDTO>(DisaMensuelDTO.class);
-				try {
-					jrDatasource = dsStudent.create(null, listImprimebulletin);
-					//System.out.println("----------- jr data source "+jrDatasource.toString());
-				} catch (JRException e) {
-					e.printStackTrace();
-				}
-
-				
-			
-				//System.out.println(" la chemin est ------------ "+request.getSession().getServletContext().getRealPath("/WEB-INF/classes/"));
-				
-				//modelMap.addAttribute("embleme", request.getSession().getServletContext().getRealPath("/resources/images/embleme.png"));
-				//Pour le deploiement
-				//modelMap.addAttribute("SUBREPORT_DIR", request.getSession().getServletContext().getRealPath("/WEB-INF/classes")+"\\");
-				//modelMap.addAttribute("SUBREPORT_DIR", "D:\\Projets java\\Workspace Education\\RhPaie\\src\\main\\resources\\");
-//				modelMap.addAttribute("SUBREPORT_DIR", DeploimentUtils.RecupSubReportChem(request.getSession().getServletContext().getRealPath(DeploimentUtils.ChemRech())));
-				
-			modelMap.addAttribute("logo", request.getSession().getServletContext().getRealPath("resources/front-end/images/dgi_logo1.jpg"));
-				//modelMap.addAttribute("exercice", annee.getAnnee());
-				//modelMap.addAttribute("raisonSocial", utilisateurCourant.getAgence().getRaisonSocial());
-				//modelMap.addAttribute("agence", utilisateurCourant.getAgenceAffiche());
-				modelMap.addAttribute("periodePaie", periodePaie);
-				
-				modelMap.addAttribute("datasource", jrDatasource);
-				if(periodePaie.getMois().getId()<10L)
-				   modelMap.addAttribute("moisk","0|"+ periodePaie.getMois().getId().toString());
-				else 
-					modelMap.addAttribute("moisk", periodePaie.getMois().getId().toString().substring(0, 1)+"|"+periodePaie.getMois().getId().toString().substring(1));
-				String trimeste="";
-				if(periodePaie.getMois().getId()<=3)trimeste="1|T";
-				if(periodePaie.getMois().getId()>=4 && periodePaie.getMois().getId()<=6 )trimeste="2|T";
-				if(periodePaie.getMois().getId()>=7 && periodePaie.getMois().getId()<=9 )trimeste="3|T";
-				if(periodePaie.getMois().getId()>=10 && periodePaie.getMois().getId()<=12 )trimeste="4|T";
-				modelMap.addAttribute("trimest", trimeste);
-			//	modelMap.addAttribute("nocpteCont", trimeste);
-				modelMap.addAttribute("annee", periodePaie.getAnnee().getAnnee().substring(2, 4).substring(0, 1)+"|"+periodePaie.getAnnee().getAnnee().substring(2, 4).substring(1));
-				//	modelMap.addAttribute("raisonsoc", "CGECI");
-				modelMap.addAttribute("societe", societeRepository.findById(1L));
-				String  output = societeRepository.findById(1L).get().getCpteContrib();
-				//String[] output =  societeRepository.findOne(1L).getCpteContrib().split("w"); 
-			//	System.out.println(output.length);
-				modelMap.addAttribute("1i", output.substring(0,1));
-				modelMap.addAttribute("2i", output.substring(1,2));
-				//	modelMap.addAttribute("2i", output[1]);
-				modelMap.addAttribute("3i", output.substring(2, 3));
-				modelMap.addAttribute("4i", output.substring(3, 4));
-				modelMap.addAttribute("5i", output.substring(4, 5));
-				modelMap.addAttribute("6i", output.substring(5, 6));
-				modelMap.addAttribute("7i", output.substring(6, 7));
-				modelMap.addAttribute("8i", output.substring(7, 8));
-				modelMap.addAttribute("effectif", listBulletin.size());
-				modelMap.addAttribute("libSommt",Utils.formattingAmount((Math.rint(mensuelTotalBrut1*0.4d/100))+Math.rint(mensuelTotalBrut1*0.6d/100)));
-				
-				
-					Double[] tab = new Double[2];
-					tab=bulletinPaieService.MasseSalarialdeLexo(periodePaie);
-					modelMap.addAttribute("cumulfdp",Utils.formattingAmount(Math.rint(tab[1]*1.2/100)));
-				     modelMap.addAttribute("txmassSalariale",Utils.formattingAmount(Math.rint(tab[1]*1.2/100)));
-				     modelMap.addAttribute("massSalariale",Utils.formattingAmount(Math.rint(tab[1])));
-				
-					
-				
-				
-				if(print.equalsIgnoreCase("p"))
-					modelMap.addAttribute("format", "pdf");
-				if(print.equalsIgnoreCase("e"))
-					modelMap.addAttribute("format", "xls");
-				
-				logger.info("Bulletin individuel imprimer");
-		}else{}
-		
-		return view; //mav;
-		
-		
-	}
+//@RequestMapping(value = "/jrFdfp", method = RequestMethod.GET)
+//public ResponseEntity<byte[]>  ImprimerFdfpTrim(ModelMap modelMap,@RequestParam(value="periode", required=true) Long idmois ,@RequestParam(value="print", required=false) String print, HttpServletRequest request) throws Exception {
+//
+//		String view="fdfppdf";
+//
+//		Long encours=idmois;
+//		PeriodePaie periodePaie = new PeriodePaie();
+//		List<PeriodePaie> listPeriodepaie = new ArrayList<PeriodePaie>();
+//		try {
+//			periodePaie = periodePaieService.findPeriodePaie(idmois);
+//
+//		List<DisaMensuelDTO> listImprimebulletin=  new ArrayList<DisaMensuelDTO>();
+//
+//		if(periodePaie.getId() != null){
+//
+//
+//			Double mensuelTotalBrut1= 0d;	Double mensuelmasseSalariale= 0d;
+//			Double mensuelTotalBrut2= 0d;
+//			Double mensuelTotalBrut3= 0d;
+//
+//
+//
+//
+//				//Recuperation des bulletins pour cette exercie et pour le personnel
+//				List<BulletinPaie> listBulletin = new ArrayList<BulletinPaie>();
+//				try {
+//					//listBulletin = bulletinService.findBulletinByPersonnelAndAnnee(annee, pers);
+//					//BulletinPaie bull=new BulletinPaie();
+//					listBulletin= bulletinPaieService.findBulletinByPeriodePaieContract(periodePaie.getId());
+//					// listBulletin.add(bull);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//				for(BulletinPaie bulls : listBulletin){
+//					mensuelTotalBrut1=mensuelTotalBrut1+bulls.getBrutImposable();
+//					if(bulls.getContratPersonnel().getTypeContrat().getId()==1L ||bulls.getContratPersonnel().getTypeContrat().getId()==2L )
+//					      mensuelmasseSalariale=mensuelmasseSalariale+(bulls.getTotalmassesalarial());
+//				}
+//				/*List<BulletinPaie> listBulletin2 = new ArrayList<BulletinPaie>();
+//				PeriodePaie	periodePaie1=periodePaieService.findPeriodePaie(encours+1L);
+//				try {
+//					//listBulletin = bulletinService.findBulletinByPersonnelAndAnnee(annee, pers);
+//					//BulletinPaie bull=new BulletinPaie();
+//					listBulletin2= bulletinPaieService.rechercherBulletinMoisCalculer(periodePaie1, true);
+//					// listBulletin.add(bull);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//				for(BulletinPaie bulls2 : listBulletin2){
+//					mensuelTotalBrut2=mensuelTotalBrut2+bulls2.getTotalbrut();
+//				}
+//				List<BulletinPaie> listBulletin3 = new ArrayList<BulletinPaie>();
+//				PeriodePaie	periodePaie2=periodePaieService.findPeriodePaie(encours+2L);
+//				try {
+//					//listBulletin = bulletinService.findBulletinByPersonnelAndAnnee(annee, pers);
+//					//BulletinPaie bull=new BulletinPaie();
+//					listBulletin3= bulletinPaieService.rechercherBulletinMoisCalculer(periodePaie2, true);
+//					// listBulletin.add(bull);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//				for(BulletinPaie bulls3 : listBulletin3){
+//					mensuelTotalBrut3=mensuelTotalBrut3+bulls3.getTotalbrut();
+//				}
+//				//System.out.println("####### bull : "+listBulletin.getc.getPrenom()+"  ---- "+listBulletin.toString());
+//
+//
+//				Double cumulTotalBrut = mensuelTotalBrut1+mensuelTotalBrut2+mensuelTotalBrut3;*/
+//
+//
+//
+//			DisaMensuelDTO disaDTO = new DisaMensuelDTO();
+//			/*disaDTO.setCategorie("14 TAXE D APPRENTISSAGE");
+//			disaDTO.setValtx(0.4d);
+//			disaDTO.setCumulCnps(Math.rint(cumulTotalBrut));
+//			disaDTO.setCumulPfAt(Math.rint(cumulTotalBrut*0.4d/100));
+//
+//			disaDTO.setMontantcumulCnps(Utils.formattingAmount(Math.rint(cumulTotalBrut)));
+//			disaDTO.setCumulPfAt(Math.rint(cumulTotalBrut*0.4d/100));
+//			disaDTO.setMontantcumulPfAt(Utils.formattingAmount(Math.rint(cumulTotalBrut*0.4d/100)));*/
+//
+//			modelMap.addAttribute("libelle1","14 TAXE D APPRENTISSAGE");
+//			//modelMap.addAttribute("cod1lib", "0 6");
+//			modelMap.addAttribute("libeff1",0.4d);
+//			modelMap.addAttribute("libSb1",Utils.formattingAmount(Math.rint(mensuelTotalBrut1)));
+//			modelMap.addAttribute("lib1mt",Utils.formattingAmount(Math.rint(mensuelTotalBrut1*0.4d/100)));
+//
+//
+//			listImprimebulletin.add(disaDTO);
+//
+//			DisaMensuelDTO disaDTO1 = new DisaMensuelDTO();
+//			/*disaDTO1.setCategorie("15 TAXE A LA FORMATION PROFESSIONNELLE CONTINUE");
+//			disaDTO1.setValtx(0.6d);
+//			disaDTO1.setCumulCnps(Math.rint(cumulTotalBrut));
+//			disaDTO1.setMontantcumulCnps(Utils.formattingAmount(Math.rint(cumulTotalBrut)));
+//			disaDTO1.setMontantcumulPfAt(Utils.formattingAmount(Math.rint(cumulTotalBrut*0.6d/100)));*/
+//
+//
+//			modelMap.addAttribute("libelle2","15 TAXE A LA FORMATION PROFESSIONNELLE CONTINUE part complementaire.....");
+//			//modelMap.addAttribute("cod2lib", "0 6");
+//			modelMap.addAttribute("libeff2",0.6d);
+//			modelMap.addAttribute("libSb2",Utils.formattingAmount(Math.rint(mensuelTotalBrut1)));
+//			modelMap.addAttribute("lib2mt",Utils.formattingAmount(Math.rint(mensuelTotalBrut1*0.6d/100)));
+//			listImprimebulletin.add(disaDTO1);
+//
+//
+//			 List<ImprimBulletinPaie> listImprimBulletinPaie = new ArrayList<ImprimBulletinPaie>();
+//
+//				JRDataSource jrDatasource = null;
+//
+//				//System.out.println("-----------nb list bull imprrrr "+listImprimebulletin.size());
+//				//impressionService.imprimeListBulletinN(codeAnsco, listImprimebulletin, 1);
+//				GenericDataSource<DisaMensuelDTO> dsStudent =  new GenericDataSource<DisaMensuelDTO>(DisaMensuelDTO.class);
+//				try {
+//					jrDatasource = dsStudent.create(null, listImprimebulletin);
+//					//System.out.println("----------- jr data source "+jrDatasource.toString());
+//				} catch (JRException e) {
+//					e.printStackTrace();
+//				}
+//
+//			//BulletinPaie bulletinData = getPayslipData(employeeId,bulletin);
+//			byte[] pdfBytes = generatePayslipPdf(listImprimebulletin,request);
+//
+//			HttpHeaders headers = new HttpHeaders();
+//			headers.setContentType(MediaType.APPLICATION_PDF);
+//			headers.setContentDispositionFormData("filename", "Bulletin_Paie.pdf");
+//
+//			return ResponseEntity.ok().headers(headers).body(pdfBytes);
+//
+//
+//			//System.out.println(" la chemin est ------------ "+request.getSession().getServletContext().getRealPath("/WEB-INF/classes/"));
+//
+//				//modelMap.addAttribute("embleme", request.getSession().getServletContext().getRealPath("/resources/images/embleme.png"));
+//				//Pour le deploiement
+//				//modelMap.addAttribute("SUBREPORT_DIR", request.getSession().getServletContext().getRealPath("/WEB-INF/classes")+"\\");
+//				//modelMap.addAttribute("SUBREPORT_DIR", "D:\\Projets java\\Workspace Education\\RhPaie\\src\\main\\resources\\");
+////				modelMap.addAttribute("SUBREPORT_DIR", DeploimentUtils.RecupSubReportChem(request.getSession().getServletContext().getRealPath(DeploimentUtils.ChemRech())));
+//
+//			   //modelMap.addAttribute("logo", request.getSession().getServletContext().getRealPath("resources/front-end/images/dgi_logo1.jpg"));
+//				//modelMap.addAttribute("exercice", annee.getAnnee());
+//				//modelMap.addAttribute("raisonSocial", utilisateurCourant.getAgence().getRaisonSocial());
+//				//modelMap.addAttribute("agence", utilisateurCourant.getAgenceAffiche());
+//				//modelMap.addAttribute("periodePaie", periodePaie);
+//
+//				//modelMap.addAttribute("datasource", jrDatasource);
+//				if(periodePaie.getMois().getId()<10L)
+//				   modelMap.addAttribute("moisk","0|"+ periodePaie.getMois().getId().toString());
+//				else
+//					modelMap.addAttribute("moisk", periodePaie.getMois().getId().toString().substring(0, 1)+"|"+periodePaie.getMois().getId().toString().substring(1));
+//				String trimeste="";
+//				if(periodePaie.getMois().getId()<=3)trimeste="1|T";
+//				if(periodePaie.getMois().getId()>=4 && periodePaie.getMois().getId()<=6 )trimeste="2|T";
+//				if(periodePaie.getMois().getId()>=7 && periodePaie.getMois().getId()<=9 )trimeste="3|T";
+//				if(periodePaie.getMois().getId()>=10 && periodePaie.getMois().getId()<=12 )trimeste="4|T";
+//				modelMap.addAttribute("trimest", trimeste);
+//			//	modelMap.addAttribute("nocpteCont", trimeste);
+//				modelMap.addAttribute("annee", periodePaie.getAnnee().getAnnee().substring(2, 4).substring(0, 1)+"|"+periodePaie.getAnnee().getAnnee().substring(2, 4).substring(1));
+//				//	modelMap.addAttribute("raisonsoc", "CGECI");
+//				modelMap.addAttribute("societe", societeRepository.findById(1L));
+//				String  output = societeRepository.findById(1L).get().getCpteContrib();
+//				//String[] output =  societeRepository.findOne(1L).getCpteContrib().split("w");
+//			//	System.out.println(output.length);
+//				modelMap.addAttribute("1i", output.substring(0,1));
+//				modelMap.addAttribute("2i", output.substring(1,2));
+//				//	modelMap.addAttribute("2i", output[1]);
+//				modelMap.addAttribute("3i", output.substring(2, 3));
+//				modelMap.addAttribute("4i", output.substring(3, 4));
+//				modelMap.addAttribute("5i", output.substring(4, 5));
+//				modelMap.addAttribute("6i", output.substring(5, 6));
+//				modelMap.addAttribute("7i", output.substring(6, 7));
+//				modelMap.addAttribute("8i", output.substring(7, 8));
+//				modelMap.addAttribute("effectif", listBulletin.size());
+//				modelMap.addAttribute("libSommt",Utils.formattingAmount((Math.rint(mensuelTotalBrut1*0.4d/100))+Math.rint(mensuelTotalBrut1*0.6d/100)));
+//
+//
+//					Double[] tab = new Double[2];
+//					tab=bulletinPaieService.MasseSalarialdeLexo(periodePaie);
+//					modelMap.addAttribute("cumulfdp",Utils.formattingAmount(Math.rint(tab[1]*1.2/100)));
+//				     modelMap.addAttribute("txmassSalariale",Utils.formattingAmount(Math.rint(tab[1]*1.2/100)));
+//				     modelMap.addAttribute("massSalariale",Utils.formattingAmount(Math.rint(tab[1])));
+//
+//
+//
+//
+//				if(print.equalsIgnoreCase("p"))
+//					modelMap.addAttribute("format", "pdf");
+//				if(print.equalsIgnoreCase("e"))
+//					modelMap.addAttribute("format", "xls");
+//
+//				logger.info("Bulletin individuel imprimer");
+//		}else{}
+//
+//		} catch (Exception e) {
+//				e.printStackTrace();
+//		}
+//
+//		return null; //mav;
+//
+//
+//	}
 
 
 /*	
@@ -2566,7 +2680,7 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 						
 						Double salaireBrut = bull.getBrutImposable();
 					/*	if(typSalarie.equals("M")){
-							if( salaireBrut <= 70000F)
+							if( salaireBrut <= 75000F)
 								mensuelInf70000 = mensuelInf70000 + 1;
 							else{
 								if(salaireBrut <= 1647315F)
@@ -2602,31 +2716,31 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 									Double retenuCnps = bull.getRetraite();
 									
 									if(typSalarie.equals("M")){
-										if( salaireBrut <= 70000F){
+										if( salaireBrut <= 75000F){
 											mensuelInf70000 = mensuelInf70000 + 1;
 										
-											if(retenuCnps <= 1647315F)
+											if(retenuCnps <= 3375000.0)
 												mensuelInf70000CNPS = mensuelInf70000CNPS + retenuCnps;
 											else
-												mensuelInf70000CNPS = mensuelInf70000CNPS + 1647315F;
+												mensuelInf70000CNPS = mensuelInf70000CNPS + 3375000.0;
 											
 										}
 										else{
-											if(salaireBrut <= 1647315F){
+											if(salaireBrut <= 3375000.0){
 												mensuelSup70000 = mensuelSup70000 + 1;
 												
-												if(retenuCnps <= 1647315F)
+												if(retenuCnps <= 3375000.0)
 													mensuelSup70000CNPS = mensuelSup70000CNPS + retenuCnps;
 												else
-													mensuelSup70000CNPS = mensuelSup70000CNPS + 1647315F;
+													mensuelSup70000CNPS = mensuelSup70000CNPS + 3375000.0;
 												
 											}
 											else{
 												mensuelSup1647315 = mensuelSup1647315 + 1;
-												if(retenuCnps <= 1647315F)
+												if(retenuCnps <= 3375000.0)
 													mensuelSup1647315CNPS = mensuelSup1647315CNPS + retenuCnps;
 												else
-													mensuelSup1647315CNPS = mensuelSup1647315CNPS + 1647315F;
+													mensuelSup1647315CNPS = mensuelSup1647315CNPS + 3375000.0;
 												
 											}
 											
@@ -2637,18 +2751,18 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 										if( salaireBrut <= 3231F){
 											journalierInf3231 = journalierInf3231 + 1;
 											
-											if(retenuCnps <= 1647315F)
+											if(retenuCnps <= 3375000.0)
 												journalierInf3231CNPS = journalierInf3231CNPS + retenuCnps;
 											else
-												journalierInf3231CNPS = journalierInf3231CNPS + 1647315F;
+												journalierInf3231CNPS = journalierInf3231CNPS + 3375000.0;
 											
 										}
 										else{
 											journalierSup3231 = journalierSup3231 + 1;
-											if(retenuCnps <= 1647315F)
+											if(retenuCnps <= 3375000.0)
 												journalierSup3231CNPS = journalierSup3231CNPS + retenuCnps;
 											else
-												journalierSup3231CNPS = journalierSup3231CNPS + 1647315F;
+												journalierSup3231CNPS = journalierSup3231CNPS + 3375000.0;
 											
 										}
 										
@@ -2665,28 +2779,28 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 									Double retenuAt = bull.getAccidentTravail();
 									
 									if(typSalarie.equals("M")){
-										if( salaireBrut <= 70000F){
+										if( salaireBrut <= 75000F){
 										
-											if(retenuAt <= 70000F)
+											if(retenuAt <= 75000F)
 												mensuelInf70000AT = mensuelInf70000AT + retenuAt;
 											else
-												mensuelInf70000AT = mensuelInf70000AT + 70000F;
+												mensuelInf70000AT = mensuelInf70000AT + 75000F;
 											
 										}
 										else{
-											if(salaireBrut <= 1647315F){
+											if(salaireBrut <= 3375000.0){
 												
-												if(retenuAt <= 70000F)
+												if(retenuAt <= 75000F)
 													mensuelSup70000AT = mensuelSup70000AT + retenuAt;
 												else
-													mensuelSup70000AT = mensuelSup70000AT + 70000F;
+													mensuelSup70000AT = mensuelSup70000AT + 75000F;
 												
 											}
 											else{
-												if(retenuAt <= 70000F)
+												if(retenuAt <= 75000F)
 													mensuelSup1647315AT = mensuelSup1647315AT + retenuAt;
 												else
-													mensuelSup1647315AT = mensuelSup1647315AT + 70000F;
+													mensuelSup1647315AT = mensuelSup1647315AT + 75000F;
 												
 											}
 											
@@ -2697,17 +2811,17 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 										if( salaireBrut <= 3231F){
 											journalierInf3231 = journalierInf3231 + 1;
 											
-											if(retenuAt <= 70000F)
+											if(retenuAt <= 75000F)
 												journalierInf3231AT = journalierInf3231AT + retenuAt;
 											else
-												journalierInf3231AT = journalierInf3231AT + 70000F;
+												journalierInf3231AT = journalierInf3231AT + 75000F;
 											
 										}
 										else{
-											if(retenuAt <= 70000F)
+											if(retenuAt <= 75000F)
 												journalierSup3231AT = journalierSup3231AT + retenuAt;
 											else
-												journalierSup3231AT = journalierSup3231AT + 70000F;
+												journalierSup3231AT = journalierSup3231AT + 75000F;
 											
 										}
 										
@@ -2723,28 +2837,28 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 									
 
 									if(typSalarie.equals("M")){
-										if( salaireBrut <= 70000F){
+										if( salaireBrut <= 75000F){
 										
-											if(retenuPf <= 70000F)
+											if(retenuPf <= 75000F)
 												mensuelInf70000PF = mensuelInf70000PF + retenuPf;
 											else
-												mensuelInf70000PF = mensuelInf70000PF + 70000F;
+												mensuelInf70000PF = mensuelInf70000PF + 75000F;
 											
 										}
 										else{
-											if(salaireBrut <= 1647315F){
+											if(salaireBrut <= 3375000.0){
 												
-												if(retenuPf <= 70000F)
+												if(retenuPf <= 75000F)
 													mensuelSup70000PF = mensuelSup70000PF + retenuPf;
 												else
-													mensuelSup70000PF = mensuelSup70000PF + 70000F;
+													mensuelSup70000PF = mensuelSup70000PF + 75000F;
 												
 											}
 											else{
-												if(retenuPf <= 70000F)
+												if(retenuPf <= 75000F)
 													mensuelSup1647315PF = mensuelSup1647315PF + retenuPf;
 												else
-													mensuelSup1647315PF = mensuelSup1647315PF + 70000F;
+													mensuelSup1647315PF = mensuelSup1647315PF + 75000F;
 												
 											}
 											
@@ -2755,17 +2869,17 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 										if( salaireBrut <= 3231F){
 											journalierInf3231 = journalierInf3231 + 1;
 											
-											if(retenuPf <= 70000F)
+											if(retenuPf <= 75000F)
 												journalierInf3231PF = journalierInf3231PF + retenuPf;
 											else
-												journalierInf3231PF = journalierInf3231PF + 70000F;
+												journalierInf3231PF = journalierInf3231PF + 75000F;
 											
 										}
 										else{
-											if(retenuPf <= 70000F)
+											if(retenuPf <= 75000F)
 												journalierSup3231PF = journalierSup3231PF + retenuPf;
 											else
-												journalierSup3231PF = journalierSup3231PF + 70000F;
+												journalierSup3231PF = journalierSup3231PF + 75000F;
 											
 										}
 										
@@ -2781,20 +2895,20 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 								mensuelSup70000ATPF = mensuelSup70000AT + mensuelSup70000PF;
 								mensuelSup1647315ATPF = mensuelSup1647315AT + mensuelSup1647315PF;
 								
-								if(journalierInf3231ATPF > 70000d)
-									journalierInf3231ATPF = 70000d;
+								if(journalierInf3231ATPF > 75000d)
+									journalierInf3231ATPF = 75000d;
 								
-								if(journalierSup3231ATPF > 70000d)
-									journalierSup3231ATPF = 70000d;
+								if(journalierSup3231ATPF > 75000d)
+									journalierSup3231ATPF = 75000d;
 								
-								if(mensuelInf70000ATPF > 70000d)
-									mensuelInf70000ATPF = 70000d;
+								if(mensuelInf70000ATPF > 75000d)
+									mensuelInf70000ATPF = 75000d;
 								
-								if(mensuelSup70000ATPF > 70000d)
-									mensuelSup70000ATPF = 70000d;
+								if(mensuelSup70000ATPF > 75000d)
+									mensuelSup70000ATPF = 75000d;
 								
-								if(mensuelSup1647315ATPF > 70000d)
-									mensuelSup1647315ATPF = 70000d;
+								if(mensuelSup1647315ATPF > 75000d)
+									mensuelSup1647315ATPF = 75000d;
 								
 								
 							//}
@@ -2872,10 +2986,10 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 						String typSalarie = bull1.getContratPersonnel().getPersonnel().getTypeSalarie();
 						Double salaireBrut = bull1.getBrutImposable();
 				/*		if(typSalarie.equals("M")){
-							if( salaireBrut <= 70000F)
+							if( salaireBrut <= 75000F)
 								mensuelInf70000Mois2 = mensuelInf70000Mois2 + 1;
 							else{
-								if(salaireBrut <= 1647315F)
+								if(salaireBrut <= 3375000.0)
 									mensuelSup70000Mois2 = mensuelSup70000Mois2 + 1;
 								else
 									mensuelSup1647315Mois2 = mensuelSup1647315Mois2 + 1;
@@ -2901,31 +3015,31 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 									Double retenuCnps =bull1.getRetraite();
 
 									if(typSalarie.equals("M")){
-										if( salaireBrut <= 70000F){
+										if( salaireBrut <= 75000F){
 											mensuelInf70000Mois2 = mensuelInf70000Mois2 + 1;
 
-											if(retenuCnps <= 1647315F)
+											if(retenuCnps <= 3375000.0)
 												mensuelInf70000CNPSMois2 = mensuelInf70000CNPSMois2 + retenuCnps;
 											else
-												mensuelInf70000CNPSMois2 = mensuelInf70000CNPSMois2 + 1647315F;
+												mensuelInf70000CNPSMois2 = mensuelInf70000CNPSMois2 + 3375000.0;
 
 										}
 										else{
-											if(salaireBrut <= 1647315F){
+											if(salaireBrut <= 3375000.0){
 												mensuelSup70000Mois2 = mensuelSup70000Mois2 + 1;
 
-												if(retenuCnps <= 1647315F)
+												if(retenuCnps <= 3375000.0)
 													mensuelSup70000CNPSMois2 = mensuelSup70000CNPSMois2 + retenuCnps;
 												else
-													mensuelSup70000CNPSMois2 = mensuelSup70000CNPSMois2 + 1647315F;
+													mensuelSup70000CNPSMois2 = mensuelSup70000CNPSMois2 + 3375000.0;
 
 											}
 											else{
 												mensuelSup1647315Mois2 = mensuelSup1647315Mois2 + 1;
-												if(retenuCnps <= 1647315F)
+												if(retenuCnps <= 3375000.0)
 													mensuelSup1647315CNPSMois2 = mensuelSup1647315CNPSMois2 + retenuCnps;
 												else
-													mensuelSup1647315CNPSMois2 = mensuelSup1647315CNPSMois2 + 1647315F;
+													mensuelSup1647315CNPSMois2 = mensuelSup1647315CNPSMois2 + 3375000.0;
 
 											}
 
@@ -2936,18 +3050,18 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 										if( salaireBrut <= 3231F){
 											journalierInf3231Mois2 = journalierInf3231Mois2 + 1;
 
-											if(retenuCnps <= 1647315F)
+											if(retenuCnps <= 3375000.0)
 												journalierInf3231CNPSMois2 = journalierInf3231CNPSMois2 + retenuCnps;
 											else
-												journalierInf3231CNPSMois2 = journalierInf3231CNPSMois2 + 1647315F;
+												journalierInf3231CNPSMois2 = journalierInf3231CNPSMois2 + 3375000.0;
 
 										}
 										else{
 											journalierSup3231Mois2 = journalierSup3231Mois2 + 1;
-											if(retenuCnps <= 1647315F)
+											if(retenuCnps <= 3375000.0)
 												journalierSup3231CNPSMois2 = journalierSup3231CNPSMois2 + retenuCnps;
 											else
-												journalierSup3231CNPSMois2 = journalierSup3231CNPSMois2 + 1647315F;
+												journalierSup3231CNPSMois2 = journalierSup3231CNPSMois2 + 3375000.0;
 
 										}
 
@@ -2964,28 +3078,28 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 									Double retenuAt =bull1.getAccidentTravail();
 
 									if(typSalarie.equals("M")){
-										if( salaireBrut <= 70000F){
+										if( salaireBrut <= 75000F){
 
-											if(retenuAt <= 70000F)
+											if(retenuAt <= 75000F)
 												mensuelInf70000ATMois2 = mensuelInf70000ATMois2 + retenuAt;
 											else
-												mensuelInf70000ATMois2 = mensuelInf70000ATMois2 + 70000F;
+												mensuelInf70000ATMois2 = mensuelInf70000ATMois2 + 75000F;
 
 										}
 										else{
-											if(salaireBrut <= 1647315F){
+											if(salaireBrut <= 3375000.0){
 
-												if(retenuAt <= 70000F)
+												if(retenuAt <= 75000F)
 													mensuelSup70000ATMois2 = mensuelSup70000ATMois2 + retenuAt;
 												else
-													mensuelSup70000ATMois2 = mensuelSup70000ATMois2 + 70000F;
+													mensuelSup70000ATMois2 = mensuelSup70000ATMois2 + 75000F;
 
 											}
 											else{
-												if(retenuAt <= 70000F)
+												if(retenuAt <= 75000F)
 													mensuelSup1647315ATMois2 = mensuelSup1647315ATMois2 + retenuAt;
 												else
-													mensuelSup1647315ATMois2 = mensuelSup1647315ATMois2 + 70000F;
+													mensuelSup1647315ATMois2 = mensuelSup1647315ATMois2 + 75000F;
 
 											}
 
@@ -2996,17 +3110,17 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 										if( salaireBrut <= 3231F){
 											journalierInf3231Mois2 = journalierInf3231Mois2 + 1;
 
-											if(retenuAt <= 70000F)
+											if(retenuAt <= 75000F)
 												journalierInf3231ATMois2 = journalierInf3231ATMois2 + retenuAt;
 											else
-												journalierInf3231ATMois2 = journalierInf3231ATMois2 + 70000F;
+												journalierInf3231ATMois2 = journalierInf3231ATMois2 + 75000F;
 
 										}
 										else{
-											if(retenuAt <= 70000F)
+											if(retenuAt <= 75000F)
 												journalierSup3231ATMois2 = journalierSup3231ATMois2 + retenuAt;
 											else
-												journalierSup3231ATMois2 = journalierSup3231ATMois2 + 70000F;
+												journalierSup3231ATMois2 = journalierSup3231ATMois2 + 75000F;
 
 										}
 
@@ -3022,28 +3136,28 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 
 
 									if(typSalarie.equals("M")){
-										if( salaireBrut <= 70000F){
+										if( salaireBrut <= 75000F){
 
-											if(retenuPf <= 70000F)
+											if(retenuPf <= 75000F)
 												mensuelInf70000PFMois2 = mensuelInf70000PFMois2 + retenuPf;
 											else
-												mensuelInf70000PFMois2 = mensuelInf70000PFMois2 + 70000d;
+												mensuelInf70000PFMois2 = mensuelInf70000PFMois2 + 75000d;
 
 										}
 										else{
-											if(salaireBrut <= 1647315F){
+											if(salaireBrut <= 3375000.0){
 
-												if(retenuPf <= 70000F)
+												if(retenuPf <= 75000F)
 													mensuelSup70000PFMois2 = mensuelSup70000PFMois2 + retenuPf;
 												else
-													mensuelSup70000PFMois2 = mensuelSup70000PFMois2 + 70000F;
+													mensuelSup70000PFMois2 = mensuelSup70000PFMois2 + 75000F;
 
 											}
 											else{
-												if(retenuPf <= 70000F)
+												if(retenuPf <= 75000F)
 													mensuelSup1647315PFMois2 = mensuelSup1647315PFMois2 + retenuPf;
 												else
-													mensuelSup1647315PFMois2 = mensuelSup1647315PFMois2 + 70000F;
+													mensuelSup1647315PFMois2 = mensuelSup1647315PFMois2 + 75000F;
 
 											}
 
@@ -3054,17 +3168,17 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 										if( salaireBrut <= 3231F){
 											journalierInf3231Mois2 = journalierInf3231Mois2 + 1;
 
-											if(retenuPf <= 70000F)
+											if(retenuPf <= 75000F)
 												journalierInf3231PFMois2 = journalierInf3231PFMois2 + retenuPf;
 											else
-												journalierInf3231PFMois2 = journalierInf3231PFMois2 + 70000F;
+												journalierInf3231PFMois2 = journalierInf3231PFMois2 + 75000F;
 
 										}
 										else{
-											if(retenuPf <= 70000F)
+											if(retenuPf <= 75000F)
 												journalierSup3231PFMois2 = journalierSup3231PFMois2 + retenuPf;
 											else
-												journalierSup3231PFMois2 = journalierSup3231PFMois2 + 70000F;
+												journalierSup3231PFMois2 = journalierSup3231PFMois2 + 75000F;
 
 										}
 
@@ -3080,20 +3194,20 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 								mensuelSup70000ATPFMois2 = mensuelSup70000ATMois2 + mensuelSup70000PFMois2;
 								mensuelSup1647315ATPFMois2 = mensuelSup1647315ATMois2 + mensuelSup1647315PFMois2;
 
-								if(journalierInf3231ATPFMois2 > 70000d)
-									journalierInf3231ATPFMois2 = 70000d;
+								if(journalierInf3231ATPFMois2 > 75000d)
+									journalierInf3231ATPFMois2 = 75000d;
 
-								if(journalierSup3231ATPFMois2 > 70000d)
-									journalierSup3231ATPFMois2 = 70000d;
+								if(journalierSup3231ATPFMois2 > 75000d)
+									journalierSup3231ATPFMois2 = 75000d;
 
-								if(mensuelInf70000ATPFMois2 > 70000d)
-									mensuelInf70000ATPFMois2 = 70000d;
+								if(mensuelInf70000ATPFMois2 > 75000d)
+									mensuelInf70000ATPFMois2 = 75000d;
 
-								if(mensuelSup70000ATPFMois2 > 70000d)
-									mensuelSup70000ATPFMois2 = 70000d;
+								if(mensuelSup70000ATPFMois2 > 75000d)
+									mensuelSup70000ATPFMois2 = 75000d;
 
-								if(mensuelSup1647315ATPFMois2 > 70000d)
-									mensuelSup1647315ATPFMois2 = 70000d;
+								if(mensuelSup1647315ATPFMois2 > 75000d)
+									mensuelSup1647315ATPFMois2 = 75000d;
 
 
 							
@@ -3168,10 +3282,10 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 						String typSalarie2 = bull2.getContratPersonnel().getPersonnel().getTypeSalarie();
 						Double salaireBrut = bull2.getBrutImposable();
 				/*		if(typSalarie2.equals("M")){
-							if( salaireBrut <= 70000F)
+							if( salaireBrut <= 75000F)
 								mensuelInf70000Mois3 = mensuelInf70000Mois3 + 1;
 							else{
-								if(salaireBrut <= 1647315F)
+								if(salaireBrut <= 3375000.0)
 									mensuelSup70000Mois3 = mensuelSup70000Mois3 + 1;
 								else
 									mensuelSup1647315Mois3 = mensuelSup1647315Mois3 + 1;
@@ -3195,31 +3309,31 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 									Double retenuCnps = bull2.getRetraite();
 									
 									if(typSalarie2.equals("M")){
-										if( salaireBrut <= 70000F){
+										if( salaireBrut <= 75000F){
 											mensuelInf70000Mois3 = mensuelInf70000Mois3 + 1;
 										
-											if(retenuCnps <= 1647315F)
+											if(retenuCnps <= 3375000.0)
 												mensuelInf70000CNPSMois3 = mensuelInf70000CNPSMois3 + retenuCnps;
 											else
-												mensuelInf70000CNPSMois3 = mensuelInf70000CNPSMois3 + 1647315F;
+												mensuelInf70000CNPSMois3 = mensuelInf70000CNPSMois3 + 3375000.0;
 											
 										}
 										else{
-											if(salaireBrut <= 1647315F){
+											if(salaireBrut <= 3375000.0){
 												mensuelSup70000Mois3 = mensuelSup70000Mois3 + 1;
 												
-												if(retenuCnps <= 1647315F)
+												if(retenuCnps <= 3375000.0)
 													mensuelSup70000CNPSMois3 = mensuelSup70000CNPSMois3 + retenuCnps;
 												else
-													mensuelSup70000CNPSMois3 = mensuelSup70000CNPSMois3 + 1647315F;
+													mensuelSup70000CNPSMois3 = mensuelSup70000CNPSMois3 + 3375000.0;
 												
 											}
 											else{
 												mensuelSup1647315Mois3 = mensuelSup1647315Mois3 + 1;
-												if(retenuCnps <= 1647315F)
+												if(retenuCnps <= 3375000.0)
 													mensuelSup1647315CNPSMois3 = mensuelSup1647315CNPSMois3 + retenuCnps;
 												else
-													mensuelSup1647315CNPSMois3 = mensuelSup1647315CNPSMois3 + 1647315F;
+													mensuelSup1647315CNPSMois3 = mensuelSup1647315CNPSMois3 + 3375000.0;
 												
 											}
 											
@@ -3230,18 +3344,18 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 										if( salaireBrut <= 3231F){
 											journalierInf3231Mois3 = journalierInf3231Mois3 + 1;
 											
-											if(retenuCnps <= 1647315F)
+											if(retenuCnps <= 3375000.0)
 												journalierInf3231CNPSMois3 = journalierInf3231CNPSMois3 + retenuCnps;
 											else
-												journalierInf3231CNPSMois3 = journalierInf3231CNPSMois3 + 1647315F;
+												journalierInf3231CNPSMois3 = journalierInf3231CNPSMois3 + 3375000.0;
 											
 										}
 										else{
 											journalierSup3231Mois3 = journalierSup3231Mois3 + 1;
-											if(retenuCnps <= 1647315F)
+											if(retenuCnps <= 3375000.0)
 												journalierSup3231CNPSMois3 = journalierSup3231CNPSMois3 + retenuCnps;
 											else
-												journalierSup3231CNPSMois3 = journalierSup3231CNPSMois3 + 1647315F;
+												journalierSup3231CNPSMois3 = journalierSup3231CNPSMois3 + 3375000.0;
 											
 										}
 										
@@ -3258,28 +3372,28 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 									Double retenuAt = bull2.getAccidentTravail();
 									
 									if(typSalarie2.equals("M")){
-										if( salaireBrut <= 70000F){
+										if( salaireBrut <= 75000F){
 										
-											if(retenuAt <= 70000F)
+											if(retenuAt <= 75000F)
 												mensuelInf70000ATMois3 = mensuelInf70000ATMois3 + retenuAt;
 											else
-												mensuelInf70000ATMois3 = mensuelInf70000ATMois3 + 70000F;
+												mensuelInf70000ATMois3 = mensuelInf70000ATMois3 + 75000F;
 											
 										}
 										else{
-											if(salaireBrut <= 1647315F){
+											if(salaireBrut <= 3375000.0){
 												
-												if(retenuAt <= 70000F)
+												if(retenuAt <= 75000F)
 													mensuelSup70000ATMois3 = mensuelSup70000ATMois3 + retenuAt;
 												else
-													mensuelSup70000ATMois3 = mensuelSup70000ATMois3 + 70000F;
+													mensuelSup70000ATMois3 = mensuelSup70000ATMois3 + 75000F;
 												
 											}
 											else{
-												if(retenuAt <= 70000F)
+												if(retenuAt <= 75000F)
 													mensuelSup1647315ATMois3 = mensuelSup1647315ATMois3 + retenuAt;
 												else
-													mensuelSup1647315ATMois3 = mensuelSup1647315ATMois3 + 70000F;
+													mensuelSup1647315ATMois3 = mensuelSup1647315ATMois3 + 75000F;
 												
 											}
 											
@@ -3290,17 +3404,17 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 										if( salaireBrut <= 3231F){
 											journalierInf3231Mois3 = journalierInf3231Mois3 + 1;
 											
-											if(retenuAt <= 70000F)
+											if(retenuAt <= 75000F)
 												journalierInf3231ATMois3 = journalierInf3231ATMois3 + retenuAt;
 											else
-												journalierInf3231ATMois3 = journalierInf3231ATMois3 + 70000F;
+												journalierInf3231ATMois3 = journalierInf3231ATMois3 + 75000F;
 											
 										}
 										else{
-											if(retenuAt <= 70000F)
+											if(retenuAt <= 75000F)
 												journalierSup3231ATMois3 = journalierSup3231ATMois3 + retenuAt;
 											else
-												journalierSup3231ATMois3 = journalierSup3231ATMois3 + 70000F;
+												journalierSup3231ATMois3 = journalierSup3231ATMois3 + 75000F;
 											
 										}
 										
@@ -3316,28 +3430,28 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 									
 
 									if(typSalarie2.equals("M")){
-										if( salaireBrut <= 70000F){
+										if( salaireBrut <= 75000F){
 										
-											if(retenuPf <= 70000F)
+											if(retenuPf <= 75000F)
 												mensuelInf70000PFMois3 = mensuelInf70000PFMois3 + retenuPf;
 											else
-												mensuelInf70000PFMois3 = mensuelInf70000PFMois3 + 70000F;
+												mensuelInf70000PFMois3 = mensuelInf70000PFMois3 + 75000F;
 											
 										}
 										else{
-											if(salaireBrut <= 1647315F){
+											if(salaireBrut <= 3375000.0){
 												
-												if(retenuPf <= 70000F)
+												if(retenuPf <= 75000F)
 													mensuelSup70000PFMois3 = mensuelSup70000PFMois3 + retenuPf;
 												else
-													mensuelSup70000PFMois3 = mensuelSup70000PFMois3 + 70000F;
+													mensuelSup70000PFMois3 = mensuelSup70000PFMois3 + 75000F;
 												
 											}
 											else{
-												if(retenuPf <= 70000F)
+												if(retenuPf <= 75000F)
 													mensuelSup1647315PFMois3 = mensuelSup1647315PFMois3 + retenuPf;
 												else
-													mensuelSup1647315PFMois3 = mensuelSup1647315PFMois3 + 70000F;
+													mensuelSup1647315PFMois3 = mensuelSup1647315PFMois3 + 75000F;
 												
 											}
 											
@@ -3348,17 +3462,17 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 										if( salaireBrut <= 3231F){
 											journalierInf3231Mois3 = journalierInf3231Mois3 + 1;
 											
-											if(retenuPf <= 70000F)
+											if(retenuPf <= 75000F)
 												journalierInf3231PFMois3 = journalierInf3231PFMois3 + retenuPf;
 											else
-												journalierInf3231PFMois3 = journalierInf3231PFMois3 + 70000F;
+												journalierInf3231PFMois3 = journalierInf3231PFMois3 + 75000F;
 											
 										}
 										else{
-											if(retenuPf <= 70000F)
+											if(retenuPf <= 75000F)
 												journalierSup3231PFMois3 = journalierSup3231PFMois3 + retenuPf;
 											else
-												journalierSup3231PFMois3 = journalierSup3231PFMois3 + 70000F;
+												journalierSup3231PFMois3 = journalierSup3231PFMois3 + 75000F;
 											
 										}
 										
@@ -3374,20 +3488,20 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 								mensuelSup70000ATPFMois3 = mensuelSup70000ATMois3 + mensuelSup70000PFMois3;
 								mensuelSup1647315ATPFMois3 = mensuelSup1647315ATMois3 + mensuelSup1647315PFMois3;
 								
-								if(journalierInf3231ATPFMois3 > 70000d)
-									journalierInf3231ATPFMois3 = 70000d;
+								if(journalierInf3231ATPFMois3 > 75000d)
+									journalierInf3231ATPFMois3 = 75000d;
 								
-								if(journalierSup3231ATPFMois3 > 70000d)
-									journalierSup3231ATPFMois3 = 70000d;
+								if(journalierSup3231ATPFMois3 > 75000d)
+									journalierSup3231ATPFMois3 = 75000d;
 								
-								if(mensuelInf70000ATPFMois3 > 70000d)
-									mensuelInf70000ATPFMois3 = 70000d;
+								if(mensuelInf70000ATPFMois3 > 75000d)
+									mensuelInf70000ATPFMois3 = 75000d;
 								
-								if(mensuelSup70000ATPFMois3 > 70000d)
-									mensuelSup70000ATPFMois3 = 70000d;
+								if(mensuelSup70000ATPFMois3 > 75000d)
+									mensuelSup70000ATPFMois3 = 75000d;
 								
-								if(mensuelSup1647315ATPFMois3 > 70000d)
-									mensuelSup1647315ATPFMois3 = 70000d;
+								if(mensuelSup1647315ATPFMois3 > 75000d)
+									mensuelSup1647315ATPFMois3 = 75000d;
 								
 								
 						//	}
@@ -3737,16 +3851,16 @@ public String ImprimerDisaTrimestriel(ModelMap modelMap,@RequestParam(value="per
 					//}
 					
 					Double somBrut =  netImposableMensuel + primeTranspNonImpo;
-					if(somBrut <70000F)
+					if(somBrut <75000F)
 						cumulSalaireAnnuelSoumisAuPfAt = cumulSalaireAnnuelSoumisAuPfAt + somBrut;
 					else
-						cumulSalaireAnnuelSoumisAuPfAt = cumulSalaireAnnuelSoumisAuPfAt + 70000F;
+						cumulSalaireAnnuelSoumisAuPfAt = cumulSalaireAnnuelSoumisAuPfAt + 75000F;
 					
 					
-					if(somBrut <1647315F)
+					if(somBrut <3375000.0)
 						cumulSalaireAnnuelSoumisCnps = cumulSalaireAnnuelSoumisCnps + (somBrut - primeTranspNonImpo);
 					else
-						cumulSalaireAnnuelSoumisCnps = cumulSalaireAnnuelSoumisCnps + (1647315F - primeTranspNonImpo);
+						cumulSalaireAnnuelSoumisCnps = cumulSalaireAnnuelSoumisCnps + (3375000.0 - primeTranspNonImpo);
 						
 				}
 			}
