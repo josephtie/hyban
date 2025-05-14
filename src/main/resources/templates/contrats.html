@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<%@page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false"%>
+
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<html lang="fr">
+<% String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort(); %>
+<head>
+    <meta charset="UTF-8">
+    <title>Contrats expirés</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 6px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            max-width: 700px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            color: #d9534f;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: #d9534f;
+            color: #fff;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo {
+            display: block;
+            margin: 0 auto 20px;
+            max-height: 80px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img class="logo" src="<%= baseUrl %> ${urllogo}"  alt="Logo de l’entreprise" />
+    <h2>Liste des contrats expirés</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Poste</th>
+            <th>Date de fin</th>
+        </tr>
+        </thead>
+        <tbody>
+        ${tableBody}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

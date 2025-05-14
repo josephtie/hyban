@@ -48,6 +48,7 @@
 			     <button id="btnGenerer" type="submit" data-toggle="modal" data-target="#rhpModal" title="Cocher les employes mis en sommeil" class="btn btn-success "><i class="fa fa-plus"></i>Generer livre de paie</button>
 			    <button id="btnGenerer" type="button" data-toggle="modal" data-target="#rhpModalImprimer" class="btn btn-success "  onclick="chargerBull()"><i class="fa fa-plus"></i>Imprimer bulletin</button>
 			    <button id="btnVrmt" type="button" data-toggle="modal" data-target="#rhpModalVirmt" class="btn btn-success "><i class="fa fa-plus"></i>Ordre de virement</button>
+			    <button id="btnGenererNet" type="submit" title="Prise en compte Net apayer" class="btn btn-info "><i class="fa fa-plus"></i>Net à payer regul</button>
 			    </div>
 			</div>
 			<form action="#" id="formList">
@@ -1710,6 +1711,36 @@ jQuery("#enversCalcValider").click(function(){
 	        }
 	    });
 		
+	});
+
+
+jQuery("#btnGenererNet").click(function(){
+	var idFonction=jQuery('#idpersc').val();
+	// var netpay=jQuery('#sursal').val();//  data: {idPersonnel: idFonction,sursa},
+		jQuery.ajax({
+	        type: "POST",
+	        url: baseUrl+"/paie/calculalenvers-liste",
+	        data: {id: idFonction},
+	        cache: false,
+			success: function (response) {
+	        	if (response != null) {
+	        		console.log(response);
+	        		//jQuery('#sursal').val(response.sursalaire);
+	        		jQuery("#rhpModalCalculenvers").modal('hide');
+	        		//$tablebull.bootstrapTable('refresh', { url: baseUrl +'/paie/bulletinperiodeactifjson?id='+ periodeID});
+				} else {
+					alert('Impossible de charger cet objet');
+				}
+	        },
+	        error: function () {
+
+	        },
+	        complete: function () {
+	       	//$tablebull.bootstrapTable('refresh', {  url: baseUrl +'/paie/bulletinperiodeactifjson?id='+ periodeID});
+	     //   location.reload();
+	        }
+	    });
+
 	});
 
 

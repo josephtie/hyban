@@ -170,6 +170,11 @@
 	<put-attribute name="content" value="/WEB-INF/views/jsp/paies/pretpersonnel.jsp" />
     </definition>
 
+	<definition name="departpersonnels" extends="fetemplate">
+		<put-attribute name="title" value=" HYBAN -Depart CDD-CDI" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/departpersonnel.jsp" />
+	</definition>
+
 	<definition name="primespersonnel" extends="fetemplate">
 	<put-attribute name="title" value=" HYBAN -Pret" />
 	<put-attribute name="content" value="/WEB-INF/views/jsp/paies/primespersonnel.jsp" />

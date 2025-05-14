@@ -76,7 +76,7 @@
                             <li class="${activePayrollBook}"><a href="${contextPath}paie/livrepaie"><span class="fa fa-align-justify"></span> Livre de paie</a></li>
                             <li class="${activePayrollBook}"><a href="${contextPath}paie/histobull"><span class="fa fa-align-justify"></span> Historique Bulletin</a></li>
                             <!--  <li class="${activeRappelBook}"><a href="${contextPath}rappel/livrerappel"><span class="fa fa-list-alt"></span>Rappel</a></li>-->
-                            <li class="${activeDepartBook}"><a href="${contextPath}departCdd/livredepart"><span class="fa fa-list-alt"></span>Depart CDD</a></li>
+                            <li class="${activeDepartBook}"><a href="${contextPath}histpaie/departpersonnels"><span class="fa fa-list-alt"></span>Depart CDD</a></li>
                             <li class="${activeHolidayPayroll}"><a href="${contextPath}conge/provisionconge"><span class="fa fa-th-large"></span> Provision congé </a></li>
                             <li class="${activeGratificationBook}"><a href="${contextPath}gratification/livrepaiegratification"><span class="fa fa-table"></span> Livre de gratification</a></li>
 

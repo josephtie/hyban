@@ -290,8 +290,17 @@ public class ContratPersonnelController {
 		
 		
 		
-	}	
-	
+	}
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/listexpirecontratpersonneldays", method = RequestMethod.GET)
+	public @ResponseBody List<ContratPersonnel> getExpireContractday15(Principal principal) throws Exception {
+
+		return contratPersonnelService.findExpireContract(14);
+
+
+
+	}
+
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/cherchcontratpersonnelActif", method = RequestMethod.POST)
 	public @ResponseBody ContratPersonnelDTO getChearchContract(@RequestParam(value="id", required=false) Long ictrat,Principal principal) throws Exception {

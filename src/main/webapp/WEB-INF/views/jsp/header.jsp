@@ -4,7 +4,17 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <c:url value="/" var="contextPath"/>
+<style>
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
 
+.blink {
+  animation: blink 1s infinite;
+}
+</style>
 <ul class="x-navigation x-navigation-horizontal x-navigation-panel">
     <!-- TOGGLE NAVIGATION -->
 
@@ -26,12 +36,12 @@
             <li><a href="${contextPath}j_spring_security_logout" ><span class="fa fa-sign-out"></span> Deconnexion</a></li>
         </ul>
     </li>
-    <li class="xn-icon-button pull-right">
-        <a href="#"><span class="fa fa-comments"></span></a>
+    <li class="xn-icon-button pull-right "  id="contratStat" ng-class="{'blink': contratAterme.nombre > 0}">
+        <a href="#"><span class="fa fa-comments blink"></span></a>
         <div class="informer informer-danger">{{contratAterme.nombre}}</div>
         <div class="panel panel-primary animated zoomIn xn-drop-left xn-panel-dragging"  ng-controller="contratStatCtrl">
             <div class="panel-heading">
-                <h3 class="panel-title"><span class="fa fa-comments"></span> Contrats expirés</h3>
+                <h3 class="panel-title"><span class="panel-title-box"></span> Les Contrats qui expirent: 15 jrs</h3>
                 <div class="pull-right">
                     <span class="label label-danger">{{contratAterme.nombre}} new</span>
                 </div>
@@ -42,9 +52,9 @@
                  <%--</li>--%>
                 <a href="#" class="list-group-item" ng-repeat="contrat in contratAterme.contrats">
                     <div class="list-group-status status-online"></div>
-                    <img src="back-office/assets/images/users/user2.jpg" class="pull-left" alt="John Doe"/>
+                    <img src="/static/back-office/assets/images/users/user2.jpg" class="pull-left" alt="John Doe"/>
                     <span class="contacts-title">{{contrat.personnel.nomComplet}} - {{contrat.dFin}}</span>
-                    <p>Praesent placerat tellus id augue condimentum</p>
+
                 </a>
 
             </div>
@@ -53,61 +63,7 @@
             </div>
         </div>
     </li>
-    <li class="xn-icon-button pull-right">
-        <a href="#"><span class="fa fa-tasks"></span></a>
-        <div class="informer informer-warning">3</div>
-        <div class="panel panel-primary animated zoomIn xn-drop-left xn-panel-dragging">
-            <div class="panel-heading">
-                <h3 class="panel-title"><span class="fa fa-tasks"></span> Tasks</h3>
-                <div class="pull-right">
-                    <span class="label label-warning">3 active</span>
-                </div>
-            </div>
-            <div class="panel-body list-group scroll" style="height: 200px;">
-                <a class="list-group-item" href="#">
-                    <strong>Phasellus augue arcu, elementum</strong>
-                    <div class="progress progress-small progress-striped active">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">50%</div>
-                    </div>
-                    <small class="text-muted">John Doe, 25 Sep 2015 / 50%</small>
-                </a>
-                <a class="list-group-item" href="#">
-                    <strong>Aenean ac cursus</strong>
-                    <div class="progress progress-small progress-striped active">
-                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;">80%</div>
-                    </div>
-                    <small class="text-muted">Dmitry Ivaniuk, 24 Sep 2015 / 80%</small>
-                </a>
-                <a class="list-group-item" href="#">
-                    <strong>Lorem ipsum dolor</strong>
-                    <div class="progress progress-small progress-striped active">
-                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="width: 95%;">95%</div>
-                    </div>
-                    <small class="text-muted">John Doe, 23 Sep 2015 / 95%</small>
-                </a>
-                <a class="list-group-item" href="#">
-                    <strong>Cras suscipit ac quam at tincidunt.</strong>
-                    <div class="progress progress-small">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">100%</div>
-                    </div>
-                    <small class="text-muted">John Doe, 21 Sep 2015 /</small><small class="text-success"> Done</small>
-                </a>
-            </div>
-            <div class="panel-footer text-center">
-                <a href="pages-tasks.html">Show all tasks</a>
-            </div>
-        </div>
-    </li>
-    <!-- END TASKS -->
-    <!-- LANG BAR -->
-    <li class="xn-icon-button pull-right">
-        <a href="#"><span class="flag flag-gb"></span></a>
-        <ul class="xn-drop-left xn-drop-white animated zoomIn">
-            <li><a href="#"><span class="flag flag-gb"></span> English</a></li>
-            <li><a href="#"><span class="flag flag-de"></span> Deutsch</a></li>
-            <li><a href="#"><span class="flag flag-cn"></span> Chinese</a></li>
-        </ul>
-    </li>
+
     <!-- END TOGGLE NAVIGATION -->
 </ul>
 <div class="modal fade" id="rhpModalmodif" tabindex="-1" role="dialog" aria-labelledby="rhpModalmodifLabel" data-backdrop="static">

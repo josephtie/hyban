@@ -32,7 +32,8 @@ public interface ContratPersonnelRepository extends CrudRepository<ContratPerson
 	public Page<ContratPersonnel> findByStatutAndPersonnelMatriculeIgnoreCaseContainingOrPersonnelNomIgnoreCaseContaining(Pageable pageable,Boolean val, String matricule,String matricule1);
 
 	public ContratPersonnel findByPersonnelIdAndStatut(Long idlong, Boolean val);
-	
+	public List<ContratPersonnel> findByStatut( Boolean val);
+
 	public List<ContratPersonnel> findByPersonnel(Personnel personnel);
 	
 	public List<ContratPersonnel> findByTypeContrat(TypeContrat typeContrat);

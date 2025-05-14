@@ -260,6 +260,116 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 	}
 
 	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/calculalenvers-liste", method = RequestMethod.POST)
+	public @ResponseBody List<LivreDePaie> calculalenversListe(@RequestParam(value="id", required=false) Long id,Principal principal,ModelMap modelMap) {
+		Logger logger = LoggerFactory.getLogger(getClass());
+		logger.info("Démarrage du calcul à l'envers pour tous les contrats actifs.");
+		maperiode=periodePaieService.findPeriodeactive();
+		List<LivreDePaie> resultats = new ArrayList<>();
+		List<ContratPersonnel> contratsActifs = contratPersonnelRepository.findByStatut(true);
+
+		logger.info("{} contrats actifs récupérés.", contratsActifs.size());
+
+		for (ContratPersonnel ctratpersonnel : contratsActifs) {
+			Double netAPayer = ctratpersonnel.getNetAPayer();
+			if (netAPayer == null || netAPayer == 0d) {
+				logger.warn("Net à payer manquant pour le personnel : {}", ctratpersonnel.getPersonnel().getNom());
+				continue;
+			}
+
+			logger.info("Traitement du personnel {} (matricule: {}, net à payer: {})",
+					ctratpersonnel.getPersonnel().getNom(),
+					ctratpersonnel.getPersonnel().getMatricule(),
+					netAPayer
+			);
+
+			try {
+				PlanningConge planningConge = planningCongeRepository.findByContratPersonnelAndStatut(ctratpersonnel, true);
+				TempEffectif tpeff = tempeffectifRepository.findByPersonnelAndPeriodePaie(ctratpersonnel.getPersonnel(), maperiode);
+
+				Double[] ancienete = calculAnciennete(ctratpersonnel.getCategorie().getSalaireDeBase(), ctratpersonnel.getPersonnel().getDateArrivee());
+				double newancienete = ancienete[1] + (ctratpersonnel.getAncienneteInitial() != 0 ? ctratpersonnel.getAncienneteInitial() : 0);
+				int op = (int) Math.min(Math.max(newancienete, 0), 25);
+
+				Float nbpart = calculNbrepart(ctratpersonnel.getPersonnel().getNombrEnfant(), ctratpersonnel.getPersonnel());
+
+				List<PrimePersonnel> primes = primePersonnelRepository.findByContratPersonnelPersonnelIdAndPeriodePaieId(
+						ctratpersonnel.getPersonnel().getId(), maperiode.getId());
+
+				List<PrimePersonnel> listIndemniteBrut = new ArrayList<>();
+				List<PrimePersonnel> listIndemniteNonBrut = new ArrayList<>();
+				List<PrimePersonnel> listRetenueMutuelle = new ArrayList<>();
+				List<PrimePersonnel> listRetenueSociale = new ArrayList<>();
+				List<PrimePersonnel> listGainsNet = new ArrayList<>();
+
+				for (PrimePersonnel kprme : primes) {
+					switch (kprme.getPrime().getEtatImposition()) {
+						case 1 -> listIndemniteBrut.add(kprme);
+						case 2 -> listIndemniteNonBrut.add(kprme);
+						case 3 -> {
+							if (kprme.getPrime().getMtExedent() != null) {
+								listIndemniteBrut.add(kprme);
+								listIndemniteNonBrut.add(kprme);
+							}
+						}
+						case 4 -> listRetenueMutuelle.add(kprme);
+						case 5 -> listGainsNet.add(kprme);
+						case 6 -> listRetenueSociale.add(kprme);
+					}
+				}
+
+				LivreDePaie livredePaie = new LivreDePaie(
+						ctratpersonnel.getPersonnel().getMatricule(),
+						ctratpersonnel.getPersonnel().getNom() + " " + ctratpersonnel.getPersonnel().getPrenom(),
+						nbpart, op, ctratpersonnel.getCategorie().getSalaireDeBase(),
+						5000d, ctratpersonnel.getIndemniteLogement(), 0d, 0d,
+						ctratpersonnel, null, maperiode,
+						listIndemniteBrut, listIndemniteNonBrut,
+						listRetenueMutuelle, listGainsNet, listRetenueSociale
+				);
+
+				for (int i = 0; i < 20; i++) {
+					double brutAvant = livredePaie.getBrutImposable();
+					double netAvant = livredePaie.getNetPayer();
+
+					double nouvMontantBrutImp = Math.rint(netAPayer * brutAvant / netAvant);
+					double nouvDiff = nouvMontantBrutImp - brutAvant;
+					double nouvSursal = nouvDiff + livredePaie.getSursalaire();
+
+					logger.debug("Itération {} - brut: {}, net: {}, brut ajusté: {}, nouveau sursalaire: {}",
+							i + 1, brutAvant, netAvant, nouvMontantBrutImp, nouvSursal);
+
+					livredePaie = new LivreDePaie(
+							ctratpersonnel.getPersonnel().getMatricule(),
+							ctratpersonnel.getPersonnel().getNom() + " " + ctratpersonnel.getPersonnel().getPrenom(),
+							nbpart, op, ctratpersonnel.getCategorie().getSalaireDeBase(),
+							nouvSursal, ctratpersonnel.getIndemniteLogement(), 0d, 0d,
+							ctratpersonnel, null, maperiode,
+							listIndemniteBrut, listIndemniteNonBrut,
+							listRetenueMutuelle, listGainsNet, listRetenueSociale
+					);
+				}
+
+				ctratpersonnel.setSursalaire(livredePaie.getSursalaire());
+				contratPersonnelRepository.save(ctratpersonnel);
+				resultats.add(livredePaie);
+
+				logger.info("Calcul réussi pour {}. Net final: {}, brut final: {}",
+						ctratpersonnel.getPersonnel().getNom(), livredePaie.getNetPayer(), livredePaie.getBrutImposable());
+
+			} catch (Exception e) {
+				logger.error("Erreur pour le personnel {} : {}",
+						ctratpersonnel.getPersonnel().getNom(), e.getMessage(), e);
+			}
+		}
+
+		logger.info("Fin du traitement. {} bulletins générés.", resultats.size());
+		return resultats;
+	}
+
+
+
+	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/calculalenvers", method = RequestMethod.POST)
 	public @ResponseBody LivreDePaie calculalenvers(@RequestParam(value="idPersonnel", required=true) Long id,@RequestParam(value="netApayer", required=true) Double valued,	Principal principal) {
 		LivreDePaie livredePaie = null;
@@ -651,7 +761,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 			} else {
 				logoRep = request.getSession().getServletContext().getRealPath( "/static");
-				cheminRelatif = cheminComplet.startsWith("hyban/") ? cheminComplet.substring(5) : cheminComplet;
+				cheminRelatif = cheminComplet.startsWith("/") ? cheminComplet.substring(5) : cheminComplet;
 				logger.info("Chemin relatif du logo : {}", cheminComplet);
 				logoPath = Paths.get(request.getSession().getServletContext().getRealPath(cheminRelatif)).toAbsolutePath();
 			}

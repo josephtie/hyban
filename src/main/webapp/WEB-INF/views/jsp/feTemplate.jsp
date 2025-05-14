@@ -104,34 +104,22 @@
 
     <script type="text/javascript">
         //AngularJS
-        app.controller('contratStatCtrl', function ($scope) {
-            $scope.contratAterme = {nombre: 0};
-            $scope.populate = function (contratAterme) {
-                $scope.contratAterme = contratAterme;
-            };
+
+
+app.controller('contratStatCtrl', function ($scope, $http) {
+    $scope.contratAterme = {nombre: 0, contrats: []};
+
+    $http.get(baseUrl + "/personnels/listexpirecontratpersonneldays")
+        .then(function (response) {
+            $scope.contratAterme.nombre = response.data.length;
+            $scope.contratAterme.contrats = response.data;
+        }, function (error) {
+            console.error("Erreur lors du chargement des contrats expirés :", error);
         });
+});
 
 
 
-        jQuery(function ($) {
-            $.getJSON(baseUrl + "/personnels/listexpirecontratpersonnel", function (data) {
-                var el = document.getElementById("contratStat");
-                var $el = angular.element(el);
-                var $scope = $el.scope();
-
-                if ($scope && $scope.$apply) {
-                    var contrat = {};
-                    contrat.nombre = data.length;
-                    contrat.contrats = data;
-
-                    $scope.$apply(function () {
-                        $scope.populate(contrat);
-                    });
-                } else {
-                    console.warn("⚠️ Le scope Angular de #contratStat n’est pas encore prêt.");
-                }
-            });
-        });
         //End AngularJs
     </script>
 </body>
