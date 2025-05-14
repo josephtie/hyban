@@ -7,6 +7,9 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.logging.LogManager;
 
@@ -288,7 +291,9 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 				PlanningConge     planningConge = planningCongeRepository.findByContratPersonnelAndStatut(ctratpersonnel,true);
 				TempEffectif tpeff;
 				tpeff=tempeffectifRepository.findByPersonnelAndPeriodePaie(ctratpersonnel.getPersonnel(), maperiode);
-
+				long anneesAnciennete = ChronoUnit.YEARS.between(ctratpersonnel.getPersonnel().getDateArrivee().toInstant()
+						.atZone(ZoneId.systemDefault())
+						.toLocalDate(), LocalDate.now() );
 				Double[]  ancienete=calculAnciennete(ctratpersonnel.getCategorie().getSalaireDeBase(),ctratpersonnel.getPersonnel().getDateArrivee());
 				double newancienete;
 				if(ctratpersonnel.getAncienneteInitial()!=0) {
@@ -391,7 +396,9 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		    PlanningConge     planningConge = planningCongeRepository.findByContratPersonnelAndStatut(ctratpersonnel,true);
 		     TempEffectif tpeff;
 			 tpeff=tempeffectifRepository.findByPersonnelAndPeriodePaie(ctratpersonnel.getPersonnel(), maperiode);
-			 
+		     long anneesAnciennete = ChronoUnit.YEARS.between(ctratpersonnel.getPersonnel().getDateArrivee().toInstant()
+					 .atZone(ZoneId.systemDefault())
+					 .toLocalDate(), LocalDate.now() );
 			 Double[]  ancienete=calculAnciennete(ctratpersonnel.getCategorie().getSalaireDeBase(),ctratpersonnel.getPersonnel().getDateArrivee());
 		    	double newancienete;
 		    	if(ctratpersonnel.getAncienneteInitial()!=0) {

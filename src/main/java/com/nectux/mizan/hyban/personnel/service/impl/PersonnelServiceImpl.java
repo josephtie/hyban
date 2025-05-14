@@ -470,7 +470,7 @@ public class PersonnelServiceImpl implements PersonnelService {
 	@Override
 	public int count() {
 		// TODO Auto-generated method stub
-		return (int) personnelRepository.count();
+		return (int) personnelRepository.countByRetraitEffectFalse();
 	}
 
 	@Override
