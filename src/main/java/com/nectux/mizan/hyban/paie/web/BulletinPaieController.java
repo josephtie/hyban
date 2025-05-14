@@ -761,7 +761,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 			} else {
 				logoRep = request.getSession().getServletContext().getRealPath( "/static");
-				cheminRelatif = cheminComplet.startsWith("/") ? cheminComplet.substring(5) : cheminComplet;
+				cheminRelatif = cheminComplet.startsWith("/") ? cheminComplet.substring(1) : cheminComplet;
 				logger.info("Chemin relatif du logo : {}", cheminComplet);
 				logoPath = Paths.get(request.getSession().getServletContext().getRealPath(cheminRelatif)).toAbsolutePath();
 			}
