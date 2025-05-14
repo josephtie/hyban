@@ -288,8 +288,17 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 				TempEffectif tpeff = tempeffectifRepository.findByPersonnelAndPeriodePaie(ctratpersonnel.getPersonnel(), maperiode);
 
 				Double[] ancienete = calculAnciennete(ctratpersonnel.getCategorie().getSalaireDeBase(), ctratpersonnel.getPersonnel().getDateArrivee());
-				double newancienete = ancienete[1] + (ctratpersonnel.getAncienneteInitial() != 0 ? ctratpersonnel.getAncienneteInitial() : 0);
-				int op = (int) Math.min(Math.max(newancienete, 0), 25);
+				double newancienete;
+				if(ctratpersonnel.getAncienneteInitial()!=0) {
+					newancienete=ancienete[1] +ctratpersonnel.getAncienneteInitial();
+				}else{
+					newancienete=ancienete[1];
+				}
+				int anc=(int)newancienete;
+				int op=0;
+				if(anc < 2) op=0;
+				if(anc>=2 && anc<=25) op=anc;
+				if(anc>25) op=25;
 
 				Float nbpart = calculNbrepart(ctratpersonnel.getPersonnel().getNombrEnfant(), ctratpersonnel.getPersonnel());
 
@@ -850,7 +859,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 			} else {
 				logoRep = request.getSession().getServletContext().getRealPath( "/static");
-				cheminRelatif = cheminComplet.startsWith("hyban/") ? cheminComplet.substring(5) : cheminComplet;
+				cheminRelatif = cheminComplet.startsWith("hyban/") ? cheminComplet.substring(6) : cheminComplet;
 				logger.info("Chemin relatif du logo : {}", cheminComplet);
 				logoPath = Paths.get(request.getSession().getServletContext().getRealPath(cheminRelatif)).toAbsolutePath();
 			}
