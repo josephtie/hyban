@@ -61,7 +61,7 @@ private static final Logger logger = LogManager.getLogger(PaieController.class);
 	    
 		return "paie";
 	}
-	@RequestMapping("/departpersonnels")
+	@RequestMapping("/departpersonnel")
 	public String viewAccountType(ModelMap modelMap, Principal principal) throws IOException {
 		logger.info(">>>>> Utilisateurs");
 
@@ -77,7 +77,7 @@ private static final Logger logger = LogManager.getLogger(PaieController.class);
 				.findFirst().orElse(""));
 		modelMap.addAttribute("icon", "iconfa-home");
 		modelMap.addAttribute("littleTitle", "Paie");
-		modelMap.addAttribute("bigTitle", "Prets personnels");
+		modelMap.addAttribute("bigTitle", "Soldes de tous Comptes CDD/CDI");
 
 		List<PeriodePaie> listPeriodepaie;
 		List<Pret> listPrets;

@@ -52,7 +52,7 @@
                  <%--</li>--%>
                 <a href="#" class="list-group-item" ng-repeat="contrat in contratAterme.contrats">
                     <div class="list-group-status status-online"></div>
-                    <img src="/static/back-office/assets/images/users/user2.jpg" class="pull-left" alt="John Doe"/>
+                    <img src="/hyban/static/back-office/assets/images/users/user2.jpg" class="pull-left" alt="John Doe"/>
                     <span class="contacts-title">{{contrat.personnel.nomComplet}} - {{contrat.dFin}}</span>
 
                 </a>
