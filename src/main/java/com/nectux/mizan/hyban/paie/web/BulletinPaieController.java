@@ -282,12 +282,14 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 					ctratpersonnel.getPersonnel().getMatricule(),
 					netAPayer
 			);
-
+			LivreDePaie livredePaie = null;
 			try {
-				PlanningConge planningConge = planningCongeRepository.findByContratPersonnelAndStatut(ctratpersonnel, true);
-				TempEffectif tpeff = tempeffectifRepository.findByPersonnelAndPeriodePaie(ctratpersonnel.getPersonnel(), maperiode);
+				//ContratPersonnel ctratpersonnelh=contratPersonnelRepository.findByPersonnelIdAndStatut(id, true);
+				PlanningConge     planningConge = planningCongeRepository.findByContratPersonnelAndStatut(ctratpersonnel,true);
+				TempEffectif tpeff;
+				tpeff=tempeffectifRepository.findByPersonnelAndPeriodePaie(ctratpersonnel.getPersonnel(), maperiode);
 
-				Double[] ancienete = calculAnciennete(ctratpersonnel.getCategorie().getSalaireDeBase(), ctratpersonnel.getPersonnel().getDateArrivee());
+				Double[]  ancienete=calculAnciennete(ctratpersonnel.getCategorie().getSalaireDeBase(),ctratpersonnel.getPersonnel().getDateArrivee());
 				double newancienete;
 				if(ctratpersonnel.getAncienneteInitial()!=0) {
 					newancienete=ancienete[1] +ctratpersonnel.getAncienneteInitial();
@@ -299,64 +301,66 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 				if(anc < 2) op=0;
 				if(anc>=2 && anc<=25) op=anc;
 				if(anc>25) op=25;
-
-				Float nbpart = calculNbrepart(ctratpersonnel.getPersonnel().getNombrEnfant(), ctratpersonnel.getPersonnel());
-
-				List<PrimePersonnel> primes = primePersonnelRepository.findByContratPersonnelPersonnelIdAndPeriodePaieId(
-						ctratpersonnel.getPersonnel().getId(), maperiode.getId());
-
-				List<PrimePersonnel> listIndemniteBrut = new ArrayList<>();
-				List<PrimePersonnel> listIndemniteNonBrut = new ArrayList<>();
-				List<PrimePersonnel> listRetenueMutuelle = new ArrayList<>();
-				List<PrimePersonnel> listRetenueSociale = new ArrayList<>();
-				List<PrimePersonnel> listGainsNet = new ArrayList<>();
-
-				for (PrimePersonnel kprme : primes) {
-					switch (kprme.getPrime().getEtatImposition()) {
-						case 1 -> listIndemniteBrut.add(kprme);
-						case 2 -> listIndemniteNonBrut.add(kprme);
-						case 3 -> {
-							if (kprme.getPrime().getMtExedent() != null) {
-								listIndemniteBrut.add(kprme);
-								listIndemniteNonBrut.add(kprme);
-							}
+				Float nbpart=calculNbrepart(ctratpersonnel.getPersonnel().getNombrEnfant(),ctratpersonnel.getPersonnel());
+				List<PrimePersonnel> listIndemniteBrut=new ArrayList<PrimePersonnel>();
+				List<PrimePersonnel> listIndemniteNonBrut=new ArrayList<PrimePersonnel>();
+				List<PrimePersonnel> listRetenueMutuelle=new ArrayList<PrimePersonnel>();
+				List<PrimePersonnel> listRetenueSociale=new ArrayList<PrimePersonnel>();
+				List<PrimePersonnel> listGainsNet=new ArrayList<PrimePersonnel>();
+				List<PrimePersonnel> listIndemnite  =new ArrayList<PrimePersonnel>();
+				listIndemnite =  primePersonnelRepository.findByContratPersonnelPersonnelIdAndPeriodePaieId(ctratpersonnel.getPersonnel().getId(), maperiode.getId());
+				if(listIndemnite.size()>0){
+					for(PrimePersonnel kprme:listIndemnite){
+						if(kprme.getPrime().getEtatImposition()==1)
+						{
+							listIndemniteBrut.add(kprme);
 						}
-						case 4 -> listRetenueMutuelle.add(kprme);
-						case 5 -> listGainsNet.add(kprme);
-						case 6 -> listRetenueSociale.add(kprme);
+						if(kprme.getPrime().getEtatImposition()==2)
+						{
+							listIndemniteNonBrut.add(kprme);
+						}
+						if(kprme.getPrime().getEtatImposition()==3)
+						{
+							if(kprme.getPrime().getMtExedent()!=null)
+							{listIndemniteBrut.add(kprme);
+								listIndemniteNonBrut.add(kprme);}
+						}
+						if(kprme.getPrime().getEtatImposition()==4)
+						{
+							listRetenueMutuelle.add(kprme);
+						}
+						if(kprme.getPrime().getEtatImposition()==5)
+						{
+							listGainsNet.add(kprme);
+						}
+						if(kprme.getPrime().getEtatImposition()==6)
+						{
+							listRetenueSociale.add(kprme);
+						}
+						//listRetenueSociale
 					}
+
 				}
 
-				LivreDePaie livredePaie = new LivreDePaie(
-						ctratpersonnel.getPersonnel().getMatricule(),
-						ctratpersonnel.getPersonnel().getNom() + " " + ctratpersonnel.getPersonnel().getPrenom(),
-						nbpart, op, ctratpersonnel.getCategorie().getSalaireDeBase(),
-						5000d, ctratpersonnel.getIndemniteLogement(), 0d, 0d,
-						ctratpersonnel, null, maperiode,
-						listIndemniteBrut, listIndemniteNonBrut,
-						listRetenueMutuelle, listGainsNet, listRetenueSociale
-				);
+				livredePaie= new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), nbpart ,op, ctratpersonnel.getCategorie().getSalaireDeBase(),5000d, ctratpersonnel.getIndemniteLogement(),0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
+				try {
+					int i=0;
+					for( i = 0; i < 20; i++){
+						//(livredePaie.getNetPayer()==valued)
+						Double nouvSursal = (double) 0;Double nouvDiff= (double) 0;Double nouvMontantBrutImp= (double) 0;
+						nouvMontantBrutImp=Math.rint(ctratpersonnel.getNetAPayer()*livredePaie.getBrutImposable()/livredePaie.getNetPayer());
+						nouvDiff=nouvMontantBrutImp-livredePaie.getBrutImposable();
+						nouvSursal=nouvDiff+livredePaie.getSursalaire();
+						livredePaie= new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), nbpart ,op, ctratpersonnel.getCategorie().getSalaireDeBase(),5000d, ctratpersonnel.getIndemniteLogement(),0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
+						livredePaie = new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), ctratpersonnel.getPersonnel().getNombrePart(), op, ctratpersonnel.getCategorie().getSalaireDeBase(),nouvSursal, ctratpersonnel.getIndemniteLogement(), 0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
+						//	System.out.println("*********************SECOND BULLETIN*"+i);
+						System.out.println("*SECOND BULLETIN#############-----------"+livredePaie.toString());
+						// i++;
+					}
 
-				for (int i = 0; i < 20; i++) {
-					double brutAvant = livredePaie.getBrutImposable();
-					double netAvant = livredePaie.getNetPayer();
 
-					double nouvMontantBrutImp = Math.rint(netAPayer * brutAvant / netAvant);
-					double nouvDiff = nouvMontantBrutImp - brutAvant;
-					double nouvSursal = nouvDiff + livredePaie.getSursalaire();
-
-					logger.debug("Itération {} - brut: {}, net: {}, brut ajusté: {}, nouveau sursalaire: {}",
-							i + 1, brutAvant, netAvant, nouvMontantBrutImp, nouvSursal);
-
-					livredePaie = new LivreDePaie(
-							ctratpersonnel.getPersonnel().getMatricule(),
-							ctratpersonnel.getPersonnel().getNom() + " " + ctratpersonnel.getPersonnel().getPrenom(),
-							nbpart, op, ctratpersonnel.getCategorie().getSalaireDeBase(),
-							nouvSursal, ctratpersonnel.getIndemniteLogement(), 0d, 0d,
-							ctratpersonnel, null, maperiode,
-							listIndemniteBrut, listIndemniteNonBrut,
-							listRetenueMutuelle, listGainsNet, listRetenueSociale
-					);
+				} catch (Exception e) {
+					System.out.println("FINISH"+ e.getMessage());
 				}
 
 				ctratpersonnel.setSursalaire(livredePaie.getSursalaire());
@@ -442,20 +446,20 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 				} 
 			 
 		 livredePaie= new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), nbpart ,op, ctratpersonnel.getCategorie().getSalaireDeBase(),5000d, ctratpersonnel.getIndemniteLogement(),0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
-		 try { 
-				int i=0;
-					for( i = 0; i < 20; i++){	
-						//(livredePaie.getNetPayer()==valued)
-						 Double nouvSursal = (double) 0;Double nouvDiff= (double) 0;Double nouvMontantBrutImp= (double) 0;
-						nouvMontantBrutImp=Math.rint(valued*livredePaie.getBrutImposable()/livredePaie.getNetPayer());
-						nouvDiff=nouvMontantBrutImp-livredePaie.getBrutImposable();						
-						nouvSursal=nouvDiff+livredePaie.getSursalaire();
-						livredePaie= new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), nbpart ,op, ctratpersonnel.getCategorie().getSalaireDeBase(),5000d, ctratpersonnel.getIndemniteLogement(),0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
-						livredePaie = new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), ctratpersonnel.getPersonnel().getNombrePart(), op, ctratpersonnel.getCategorie().getSalaireDeBase(),nouvSursal, ctratpersonnel.getIndemniteLogement(), 0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
-					//	System.out.println("*********************SECOND BULLETIN*"+i);
-						System.out.println("*SECOND BULLETIN#############-----------"+livredePaie.toString());	
-				// i++;
-					}
+				try {
+					int i=0;
+						for( i = 0; i < 20; i++){
+							//(livredePaie.getNetPayer()==valued)
+							 Double nouvSursal = (double) 0;Double nouvDiff= (double) 0;Double nouvMontantBrutImp= (double) 0;
+							nouvMontantBrutImp=Math.rint(valued*livredePaie.getBrutImposable()/livredePaie.getNetPayer());
+							nouvDiff=nouvMontantBrutImp-livredePaie.getBrutImposable();
+							nouvSursal=nouvDiff+livredePaie.getSursalaire();
+							livredePaie= new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), nbpart ,op, ctratpersonnel.getCategorie().getSalaireDeBase(),5000d, ctratpersonnel.getIndemniteLogement(),0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
+							livredePaie = new LivreDePaie(ctratpersonnel.getPersonnel().getMatricule(),ctratpersonnel.getPersonnel().getNom()+" "+ctratpersonnel.getPersonnel().getPrenom(), ctratpersonnel.getPersonnel().getNombrePart(), op, ctratpersonnel.getCategorie().getSalaireDeBase(),nouvSursal, ctratpersonnel.getIndemniteLogement(), 0d, 0d,ctratpersonnel,null,maperiode,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
+						//	System.out.println("*********************SECOND BULLETIN*"+i);
+							System.out.println("*SECOND BULLETIN#############-----------"+livredePaie.toString());
+					// i++;
+						}
 				
 				 
 				} catch (Exception e) {
