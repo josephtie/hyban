@@ -801,42 +801,45 @@ public class PersonnelController {
 		List<PrintLs> listPrintDTO = new ArrayList<PrintLs>();
 
 		Exercice annee = new Exercice();
-		if(aid != null){
+		if (aid != null) {
 			try {
-				annee = exerciceRepository.findById(aid) .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + aid));
+				annee = exerciceRepository.findById(aid).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + aid));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		List<TypeContrat> listtypeCtrat = new ArrayList<TypeContrat>();
 		List<Personnel> listpersCtrat = new ArrayList<Personnel>();
-		listpersCtrat= personnelRepository.findByRetraitEffectFalse();
+		listpersCtrat = personnelRepository.findByRetraitEffectFalse();
 		PeriodePaie periodePaie = periodePaieService.findPeriodeactive();
-		listtypeCtrat=typeContratRepository.findAll();
-		Double ctratuel=0d;Double stagiairel=0d;Double consultant=0d;Double fonctionnaire=0d;
+		listtypeCtrat = typeContratRepository.findAll();
+		Double ctratuel = 0d;
+		Double stagiairel = 0d;
+		Double consultant = 0d;
+		Double fonctionnaire = 0d;
 		for (Personnel typctrat : listpersCtrat) {
-			if(contratPersonnelRepository.findByPersonnelIdAndStatut(typctrat.getId(),true)!=null){
-			if(typctrat.getCarec()==true) {
-				if(bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie,typctrat)!=null)
-				          ctratuel = ctratuel + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie,typctrat).getTotalmassesalarial();
-			}else{
-				if(typctrat.getStage()==true){
-					if(bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie,typctrat)!=null)
-					  stagiairel = stagiairel+bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie,typctrat).getTotalmassesalarial();}
-				if(typctrat.getStage()==null){
-					if(bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie,typctrat)!=null)
-					ctratuel = ctratuel+bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie,typctrat).getTotalmassesalarial();}
-				if(typctrat.getConsultant()==true){
-					if(bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie,typctrat)!=null)
-					consultant = consultant+bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie,typctrat).getTotalmassesalarial();}
+			if (contratPersonnelRepository.findByPersonnelIdAndStatut(typctrat.getId(), true) != null) {
 
-				if(typctrat.getFonctionnaire()==true){
-					if(bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie,typctrat)!=null)
-						fonctionnaire = fonctionnaire+bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie,typctrat).getTotalmassesalarial();}
-			   }
+				if (Boolean.TRUE.equals(typctrat.getCarec())) {
+					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
+						ctratuel = ctratuel + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
+				} else if (Boolean.TRUE.equals(typctrat.getStage())) {
+					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
+						stagiairel = stagiairel + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
+				} else if (Boolean.TRUE.equals(typctrat.getConsultant())) {
+					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
+						consultant = consultant + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
+				} else if (Boolean.TRUE.equals(typctrat.getFonctionnaire())) {
+					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
+						fonctionnaire = fonctionnaire + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
+				} else {
+					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
+						ctratuel = ctratuel + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
+
+				}
 			}
-		}
 
+	   }
 		PrintLs printDTO = new PrintLs();
 		printDTO.setI1(ctratuel.intValue());
 		printDTO.setS1("Contractuel");
@@ -888,13 +891,13 @@ public class PersonnelController {
 		listtypeCtrat=typeContratRepository.findAll();
 		Integer ctratuel=0;Integer stagiairel=0;Integer consultant=0;Integer fonctionnaire=0;
 		for (Personnel typctrat : listpersCtrat) {
-			if(typctrat.getCarec()==true)
+			if(Boolean.TRUE.equals(typctrat.getCarec()))
 				ctratuel=ctratuel+1;
 			else{
-				if(typctrat.getStage()==true){stagiairel = stagiairel+1;}
+				if(Boolean.TRUE.equals(typctrat.getStage())){stagiairel = stagiairel+1;}
 				//if(typctrat.getStage()==null){ctratuel = ctratuel+1;}
-				if(typctrat.getConsultant()==true){consultant = consultant+1;}
-				if(typctrat.getFonctionnaire()==true){fonctionnaire = fonctionnaire+1;}
+				if(Boolean.TRUE.equals(typctrat.getConsultant())){consultant = consultant+1;}
+				if(Boolean.TRUE.equals(typctrat.getFonctionnaire())){fonctionnaire = fonctionnaire+1;}
 			}
 		}
 

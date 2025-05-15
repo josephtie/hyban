@@ -2,6 +2,9 @@ package com.nectux.mizan.hyban.paie.service.impl;
 
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -196,13 +199,16 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		    	 ContratPersonnel ctratpersonnellz = new ContratPersonnel();	   
 		    	ctratpersonnellz=contratPersonnelRepository.findByPersonnelIdAndStatut(person.getId(),true);
 		    	if(ctratpersonnellz.getStatut()==false)ctratpersonnellz=null;
+				long anneesAnciennete = ChronoUnit.YEARS.between(ctratpersonnellz.getPersonnel().getDateArrivee().toInstant()
+						.atZone(ZoneId.systemDefault())
+						.toLocalDate(), LocalDate.now() );
 		    		
-		    	Double[]  ancienete=calculAnciennete(ctratpersonnellz.getCategorie().getSalaireDeBase(),ctratpersonnellz.getPersonnel().getDateArrivee());
+		    	//Double[]  ancienete=calculAnciennete(ctratpersonnellz.getCategorie().getSalaireDeBase(),ctratpersonnellz.getPersonnel().getDateArrivee());
 		    	double newancienete;
 		    	if(ctratpersonnellz.getAncienneteInitial()!=0) {
-		    		 newancienete=ancienete[1] +ctratpersonnellz.getAncienneteInitial();
+		    		 newancienete=anneesAnciennete +ctratpersonnellz.getAncienneteInitial();
 		    	}else{
-		    		newancienete=ancienete[1];
+		    		newancienete=anneesAnciennete;
 		    	}
 		    	int anc=(int)newancienete;
 		 
@@ -295,14 +301,14 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 								}
 	    					}
 	    					
-	    				} 
-	    			 
+	    				}
+				int op=0;
+				if(anc < 2) op=0;
+				if(anc>=2 && anc<=25) op=anc;
+				if(anc>25) op=25;
 		    	  if(countbull==0){
 		    			 
-		    			 int op=0;
-			    		 if(anc < 2) op=0;		    		 
-			    		 if(anc>=2 && anc<=25) op=anc;
-			    		 if(anc>25) op=25;
+
 		    			 Float nbpart=calculNbrepart(person.getNombrEnfant(),person);
 		    			
 		    		
@@ -323,10 +329,10 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		    	 		List<BulletinPaie> monbull=bulletinPaieRepository.findTop1ByContratPersonnelOrderByIdDesc(ctratpersonnellz);
 		    	 		if(monbull.size()==0){} else{		    		
 		    	 			if ( tpeff==null){		    		 
-		    	 				livrePaiecalR = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(), nbpart1, op1, ctratpersonnellz.getCategorie().getSalaireDeBase(),ctratpersonnellz.getSursalaire(), ctratpersonnellz.getIndemniteLogement(),somavsAcpte, somalios,ctratpersonnellz,null,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
+		    	 				livrePaiecalR = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(), nbpart1, op, ctratpersonnellz.getCategorie().getSalaireDeBase(),ctratpersonnellz.getSursalaire(), ctratpersonnellz.getIndemniteLogement(),somavsAcpte, somalios,ctratpersonnellz,null,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
 							}else{
 						
-								livrePaiecalR = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(),  nbpart1, op1, ctratpersonnellz.getCategorie().getSalaireDeBase(),ctratpersonnellz.getSursalaire(), ctratpersonnellz.getIndemniteLogement(),somavsAcpte, somalios,ctratpersonnellz,tpeff,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
+								livrePaiecalR = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(),  nbpart1, op, ctratpersonnellz.getCategorie().getSalaireDeBase(),ctratpersonnellz.getSursalaire(), ctratpersonnellz.getIndemniteLogement(),somavsAcpte, somalios,ctratpersonnellz,tpeff,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
 					
 		    	 	}
 		    	 

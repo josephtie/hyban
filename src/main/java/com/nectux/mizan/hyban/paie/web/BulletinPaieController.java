@@ -294,12 +294,12 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 				long anneesAnciennete = ChronoUnit.YEARS.between(ctratpersonnel.getPersonnel().getDateArrivee().toInstant()
 						.atZone(ZoneId.systemDefault())
 						.toLocalDate(), LocalDate.now() );
-				Double[]  ancienete=calculAnciennete(ctratpersonnel.getCategorie().getSalaireDeBase(),ctratpersonnel.getPersonnel().getDateArrivee());
+				//Double[]  ancienete=calculAnciennete(ctratpersonnel.getCategorie().getSalaireDeBase(),ctratpersonnel.getPersonnel().getDateArrivee());
 				double newancienete;
 				if(ctratpersonnel.getAncienneteInitial()!=0) {
-					newancienete=ancienete[1] +ctratpersonnel.getAncienneteInitial();
+					newancienete=anneesAnciennete +ctratpersonnel.getAncienneteInitial();
 				}else{
-					newancienete=ancienete[1];
+					newancienete=anneesAnciennete;
 				}
 				int anc=(int)newancienete;
 				int op=0;
@@ -399,12 +399,12 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		     long anneesAnciennete = ChronoUnit.YEARS.between(ctratpersonnel.getPersonnel().getDateArrivee().toInstant()
 					 .atZone(ZoneId.systemDefault())
 					 .toLocalDate(), LocalDate.now() );
-			 Double[]  ancienete=calculAnciennete(ctratpersonnel.getCategorie().getSalaireDeBase(),ctratpersonnel.getPersonnel().getDateArrivee());
+			// Double[]  ancienete=calculAnciennete(ctratpersonnel.getCategorie().getSalaireDeBase(),ctratpersonnel.getPersonnel().getDateArrivee());
 		    	double newancienete;
 		    	if(ctratpersonnel.getAncienneteInitial()!=0) {
-		    		 newancienete=ancienete[1] +ctratpersonnel.getAncienneteInitial();
+		    		 newancienete=anneesAnciennete + ctratpersonnel.getAncienneteInitial();
 		    	}else{
-		    		newancienete=ancienete[1];
+		    		newancienete=anneesAnciennete;
 		    	}
 		    	int anc=(int)newancienete;
 			 int op=0;
