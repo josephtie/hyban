@@ -30,6 +30,7 @@ import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.personnel.repository.ContratPersonnelRepository;
 import com.nectux.mizan.hyban.personnel.repository.PersonnelRepository;
+import com.nectux.mizan.hyban.utils.PrintLs;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -1105,6 +1106,22 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 
 
 
+	public List<PrintLs> calculerMasseSalarialeParTypeContrat(PeriodePaie periode) {
+		List<Object[]> resultats = bulletinPaieRepository.getMasseSalarialeParTypeContrat(periode.getId());
+		List<PrintLs> listPrint = new ArrayList<>();
+
+		for (Object[] row : resultats) {
+			String type = (String) row[0];
+			Double total = (Double) row[1];
+
+			PrintLs dto = new PrintLs();
+			dto.setS1(type);
+			dto.setTitle1(type + "s"); // ex : Contractuels
+			dto.setI1(total != null ? total.intValue() : 0);
+			listPrint.add(dto);
+		}
+		return listPrint;
+	}
 
 
 }

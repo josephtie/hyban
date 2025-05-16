@@ -54,7 +54,7 @@
 				   data-side-pagination="server"
 				   data-pagination="true" data-search="true"
 				   data-search="true"
-				   data-page-list="[5, 10, 20, 50, 100, 200]">
+				   data-page-list="[ 10, 20, 50, 100, 200,1000]">
 				<thead>
 				<tr>
 					<th data-field="personnel" data-formatter="matriculeFormatter" data-align="left" data-sortable="true">Matricule</th>
@@ -96,7 +96,7 @@
 				   data-side-pagination="server"
 				   data-pagination="true"
 				   data-search="true"
-				   data-page-list="[5, 10, 20, 50, 100, 200]">
+				   data-page-list="[ 10, 20, 50, 100, 200,1000]">
 				<thead>
 				<tr>
 					<th data-field="personnel" data-formatter="matriculeFormatter" data-align="left" data-sortable="true">Matricule</th>
@@ -147,7 +147,7 @@
         				   data-side-pagination="server"
         				   data-pagination="true"
         				   data-search="true"
-        				   data-page-list="[5, 10, 20, 50, 100, 200]">
+        				   data-page-list="[ 10, 20, 50, 100, 200,1000]">
         				<thead>
         				<tr>
         					<th data-field="personnel" data-formatter="matriculeFormatter" data-align="left" data-sortable="true">Matricule</th>

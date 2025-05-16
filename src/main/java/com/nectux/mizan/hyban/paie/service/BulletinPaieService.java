@@ -9,6 +9,7 @@ import com.nectux.mizan.hyban.paie.entity.BulletinPaie;
 import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 
+import com.nectux.mizan.hyban.utils.PrintLs;
 import org.springframework.data.domain.Pageable;
 
 public interface BulletinPaieService {
@@ -85,4 +86,6 @@ public interface BulletinPaieService {
 	public Double MensuelBrutImpAnne(Long anneeId);
 
 	public Double[] MensuelBaseCnpsInf(PeriodePaie periodePaie);
+
+	public List<PrintLs> calculerMasseSalarialeParTypeContrat(PeriodePaie periode);
 }

@@ -105,7 +105,7 @@
 					   data-export-dataType="all"
 					   data-export-types='["excel", "csv", "txt"]'
                        data-show-columns="true"
-                       data-page-list="[10, 20, 50, 100, 200]" 
+                       data-page-list="[10, 20, 50, 100, 200,1000]"
                        data-search="true">
                     <thead>
                         <tr>

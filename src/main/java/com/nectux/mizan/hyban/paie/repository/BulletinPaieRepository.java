@@ -43,6 +43,7 @@ public interface BulletinPaieRepository extends JpaRepository<BulletinPaie, Long
 	public Page<BulletinPaie> findByPeriodePaieAndContratPersonnelPersonnelNomIgnoreCaseContainingOrContratPersonnelPersonnelPrenomIgnoreCaseContaining(Pageable pageable,PeriodePaie periodePaie,String search,String search1);
 	
 	//public Page<BulletinPaie> findByPeriodePaieIdAndContratPersonnelPersonnelNomIgnoreCaseContainingOrContratPersonnelPersonnelPrenomIgnoreCaseContaining(Pageable pageable,Long idperiode,String search);
+
 	@Query("SELECT b FROM BulletinPaie b " +
 			"JOIN b.periodePaie p " +
 			"JOIN b.contratPersonnel c " +
@@ -125,4 +126,28 @@ public interface BulletinPaieRepository extends JpaRepository<BulletinPaie, Long
 	public List<BulletinPaie> findByContratPersonnelPersonnelBanquekIdAndPeriodePaieIdAndCalculerTrue(@Param("idbanque") Long idbanque,@Param("idperiode") Long idperiode);
 
     List<BulletinPaie> findByPeriodePaieIdAndCalculer(Long id, boolean b);
+
+
+
+	@Query(value = """
+    SELECT
+        CASE
+            WHEN p.carec = true THEN 'Contractuel'
+            WHEN p.stage = true THEN 'Stagiaire'
+            WHEN p.consultant = true THEN 'Consultant'
+            WHEN p.fonctionnaire = true THEN 'Fonctionnaire'
+            ELSE 'Contractuel'
+        END AS type_contrat,
+        SUM(b.totalmassesalarial) AS total_masse
+    FROM cgeci_rhpaie_bulletin_paie b
+    JOIN cgeci_rhpaie_contrat_personnel c ON b.contrat_personnel_id = c.id
+    JOIN cgeci_rhpaie_personnel p ON c.personnel_id = p.id
+    WHERE b.periode_paie_id = :periodeId
+      AND c.statut = true
+      AND p.retrait_effect = false
+    GROUP BY type_contrat
+""", nativeQuery = true)
+	List<Object[]> getMasseSalarialeParTypeContrat(@Param("periodeId") Long periodeId);
+
+
 }

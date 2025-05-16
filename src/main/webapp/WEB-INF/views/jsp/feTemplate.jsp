@@ -11,10 +11,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel=icon" href="<%=request.getContextPath()%>/static/back-office/favicon.ico" />
         <title><tiles:insertAttribute name="title" /></title>
-  <title><tiles:insertAttribute name="title" /></title>
 
 
-   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/back-office/css/theme-default.css" rel="stylesheet" type="text/css" media="screen" />
+
+                   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/back-office/css/theme-default.css" rel="stylesheet" type="text/css" media="screen" />
                    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/front-end/css/rhp-style.css" rel="stylesheet" type="text/css" media="screen" />
                    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/back-office/css/mcustomscrollbar/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css" media="screen" />
                    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/back-office/css/site.css" rel="stylesheet" type="text/css" media="screen" />
@@ -35,7 +35,7 @@
                   <script src="${pageContext.request.contextPath}/static/back-office/assets/bootstrap-table/dist/bootstrap-table.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/bootstrap/bootstrap-datepicker.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/assets/bootstrap-table/tableExport.min.js"></script>
-                   <script src="${pageContext.request.contextPath}/static/back-office/assets/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js"></script>-->
+                   <script src="${pageContext.request.contextPath}/static/back-office/assets/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/morris/raphael-min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/morris/morris.min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/icheck/icheck.min.js"></script>

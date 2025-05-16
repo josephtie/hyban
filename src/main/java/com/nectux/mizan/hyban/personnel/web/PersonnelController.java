@@ -2,10 +2,7 @@ package com.nectux.mizan.hyban.personnel.web;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import com.nectux.mizan.hyban.paie.entity.Conge;
 import com.nectux.mizan.hyban.paie.service.BulletinPaieService;
@@ -793,79 +790,98 @@ public class PersonnelController {
 		return toJson(listPrintDTO);
 	}
 
+//	@RequestMapping(value = "/stat/massesalariale", method = RequestMethod.GET)
+//	@ResponseBody
+//	public String statmassesalarialetypContrat( @RequestParam(value="id", required=false) Long aid, ModelMap modelMap, Principal principal) throws IOException {
+//
+//
+//		List<PrintLs> listPrintDTO = new ArrayList<PrintLs>();
+//
+//		Exercice annee = new Exercice();
+//		if (aid != null) {
+//			try {
+//				annee = exerciceRepository.findById(aid).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + aid));
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		List<TypeContrat> listtypeCtrat = new ArrayList<TypeContrat>();
+//		List<Personnel> listpersCtrat = new ArrayList<Personnel>();
+//		listpersCtrat = personnelRepository.findByRetraitEffectFalse();
+//		PeriodePaie periodePaie = periodePaieService.findPeriodeactive();
+//		listtypeCtrat = typeContratRepository.findAll();
+//		Double ctratuel = 0d;
+//		Double stagiairel = 0d;
+//		Double consultant = 0d;
+//		Double fonctionnaire = 0d;
+//		for (Personnel typctrat : listpersCtrat) {
+//			if (contratPersonnelRepository.findByPersonnelIdAndStatut(typctrat.getId(), true) != null) {
+//
+//				if (Boolean.TRUE.equals(typctrat.getCarec())) {
+//					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
+//						ctratuel = ctratuel + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
+//				} else if (Boolean.TRUE.equals(typctrat.getStage())) {
+//					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
+//						stagiairel = stagiairel + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
+//				} else if (Boolean.TRUE.equals(typctrat.getConsultant())) {
+//					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
+//						consultant = consultant + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
+//				} else if (Boolean.TRUE.equals(typctrat.getFonctionnaire())) {
+//					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
+//						fonctionnaire = fonctionnaire + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
+//				} else {
+//					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
+//						ctratuel = ctratuel + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
+//
+//				}
+//			}
+//
+//	   }
+//		PrintLs printDTO = new PrintLs();
+//		printDTO.setI1(ctratuel.intValue());
+//		printDTO.setS1("Contractuel");
+//		printDTO.setTitle1("Contractuels");
+//		listPrintDTO.add(printDTO);
+//
+//		PrintLs printDTO1 = new PrintLs();
+//		printDTO1.setI1(stagiairel.intValue());
+//		printDTO1.setS1("Stagiaire");
+//		printDTO1.setTitle1("Stagiaires");
+//		listPrintDTO.add(printDTO1);
+//
+//		PrintLs printDTO2 = new PrintLs();
+//		printDTO2.setI1(consultant.intValue());
+//		printDTO2.setS1("Consultant");
+//		printDTO2.setTitle1("Consultant");
+//		listPrintDTO.add(printDTO2);
+//
+//		PrintLs printDTO3 = new PrintLs();
+//		printDTO3.setI1(fonctionnaire.intValue());
+//		printDTO3.setS1("Fonctionnaire");
+//		printDTO3.setTitle1("Fonctionnaire");
+//		listPrintDTO.add(printDTO3);
+//
+//		//return new ModelAndView("redirect:../../../rhp/personnel/processing/listpersonnal?uid="+utilisateurCourant.getUid());
+//		return toJson(listPrintDTO);
+//	}
+
+
 	@RequestMapping(value = "/stat/massesalariale", method = RequestMethod.GET)
 	@ResponseBody
-	public String statmassesalarialetypContrat( @RequestParam(value="id", required=false) Long aid, ModelMap modelMap, Principal principal) throws IOException {
-
-
-		List<PrintLs> listPrintDTO = new ArrayList<PrintLs>();
-
-		Exercice annee = new Exercice();
+	public String statmassesalarialetypContrat(@RequestParam(value = "id", required = false) Long aid) throws IOException {
+		Exercice exercice = null;
 		if (aid != null) {
-			try {
-				annee = exerciceRepository.findById(aid).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + aid));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			exercice = exerciceRepository.findById(aid)
+					.orElseThrow(() -> new EntityNotFoundException("Exercice not found for id " + aid));
 		}
-		List<TypeContrat> listtypeCtrat = new ArrayList<TypeContrat>();
-		List<Personnel> listpersCtrat = new ArrayList<Personnel>();
-		listpersCtrat = personnelRepository.findByRetraitEffectFalse();
-		PeriodePaie periodePaie = periodePaieService.findPeriodeactive();
-		listtypeCtrat = typeContratRepository.findAll();
-		Double ctratuel = 0d;
-		Double stagiairel = 0d;
-		Double consultant = 0d;
-		Double fonctionnaire = 0d;
-		for (Personnel typctrat : listpersCtrat) {
-			if (contratPersonnelRepository.findByPersonnelIdAndStatut(typctrat.getId(), true) != null) {
 
-				if (Boolean.TRUE.equals(typctrat.getCarec())) {
-					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
-						ctratuel = ctratuel + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
-				} else if (Boolean.TRUE.equals(typctrat.getStage())) {
-					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
-						stagiairel = stagiairel + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
-				} else if (Boolean.TRUE.equals(typctrat.getConsultant())) {
-					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
-						consultant = consultant + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
-				} else if (Boolean.TRUE.equals(typctrat.getFonctionnaire())) {
-					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
-						fonctionnaire = fonctionnaire + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
-				} else {
-					if (bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat) != null)
-						ctratuel = ctratuel + bulletinPaieService.findBulletinByPeriodePaieAndPersonnel(periodePaie, typctrat).getTotalmassesalarial();
+		PeriodePaie periode = periodePaieService.findPeriodeactive();
+		if (periode == null) {
+			return toJson(Collections.emptyList());
+		}
 
-				}
-			}
-
-	   }
-		PrintLs printDTO = new PrintLs();
-		printDTO.setI1(ctratuel.intValue());
-		printDTO.setS1("Contractuel");
-		printDTO.setTitle1("Contractuels");
-		listPrintDTO.add(printDTO);
-
-		PrintLs printDTO1 = new PrintLs();
-		printDTO1.setI1(stagiairel.intValue());
-		printDTO1.setS1("Stagiaire");
-		printDTO1.setTitle1("Stagiaires");
-		listPrintDTO.add(printDTO1);
-
-		PrintLs printDTO2 = new PrintLs();
-		printDTO2.setI1(consultant.intValue());
-		printDTO2.setS1("Consultant");
-		printDTO2.setTitle1("Consultant");
-		listPrintDTO.add(printDTO2);
-
-		PrintLs printDTO3 = new PrintLs();
-		printDTO3.setI1(fonctionnaire.intValue());
-		printDTO3.setS1("Fonctionnaire");
-		printDTO3.setTitle1("Fonctionnaire");
-		listPrintDTO.add(printDTO3);
-
-		//return new ModelAndView("redirect:../../../rhp/personnel/processing/listpersonnal?uid="+utilisateurCourant.getUid());
-		return toJson(listPrintDTO);
+		List<PrintLs> masseSalariale = bulletinPaieService.calculerMasseSalarialeParTypeContrat(periode);
+		return toJson(masseSalariale);
 	}
 
 

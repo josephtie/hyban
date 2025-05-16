@@ -327,12 +327,12 @@
         new Chart(document.getElementById("retraitebar2"), {
             type: 'pie',
             data: {
-                labels: [dataVal[0].s1, dataVal[1].s1, dataVal[2].s1, dataVal[3].s1],
+                labels: [dataVal[0].s1, dataVal[1].s1, dataVal[2].s1],
                 datasets: [
                     {
                         label: "Population (millions)",
-                        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#ff0033"],
-                        data: [dataVal[0].i1,dataVal[1].i1,dataVal[2].i1,dataVal[3].i1]
+                        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f"],
+                        data: [dataVal[0].i1,dataVal[1].i1,dataVal[2].i1]
                     }
                 ]
             },
@@ -610,25 +610,25 @@
 
     });
      }
-//    new Chart(document.getElementById("retraitebar1"), {
-//        type: 'doughnut',
-//        data: {
-//            labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
-//            datasets: [
-//                {
-//                    label: "Population (millions)",
-//                    backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-//                    data: [2478,5267,734,784,433]
-//                }
-//            ]
-//        },
-//        options: {
-//            title: {
-//                display: true,
-//                text: 'Employes par type de contrats'
-//            }
-//        }
-//    });
+    new Chart(document.getElementById("retraitebar1"), {
+       type: 'doughnut',
+       data: {
+            labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+            datasets: [
+                {
+                    label: "Population (millions)",
+                    backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                    data: [2478,5267,734,784,433]
+               }
+            ]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Employes par type de contrats'
+           }
+        }
+    });
 
 
 </script>

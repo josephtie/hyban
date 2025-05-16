@@ -62,6 +62,7 @@ public interface PersonnelRepository extends CrudRepository<Personnel, Long> {
     List<Personnel> findByStatutAndRetraitEffectOrderByNomAsc(boolean b, boolean b1);
 
     List<Personnel> findByRetraitEffectFalse();
+    List<Personnel> findByRetraitEffectFalseAndCarecTrue();
 
 	int countByRetraitEffectFalse();
 }
