@@ -8,15 +8,20 @@ import java.security.Principal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.logging.LogManager;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.impl.SLF4JLogFactory;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import com.nectux.mizan.hyban.paie.entity.ImprimBulletinPaie;
@@ -53,8 +58,9 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -901,6 +907,64 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		} catch (JRException | IOException e) {
 			logger.error("Erreur lors de la génération du rapport Jasper", e);
 			throw new RuntimeException("Erreur lors de la génération du rapport Jasper: " + e.getMessage(), e);
+		}
+	}
+
+	@GetMapping("/export")
+	public ResponseEntity<byte[]> exportBulletinsJulaya(HttpServletResponse response) throws IOException {
+
+		// Chargement du fichier modèle
+		ClassPathResource templateFile = new ClassPathResource("templates/FICHIERTYPEJULAYA.xlsm");
+		PeriodePaie maperiode = periodePaieService.findPeriodeactive();
+
+		try (InputStream inputStream = templateFile.getInputStream();
+			 Workbook workbook = WorkbookFactory.create(inputStream);
+			 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+			Sheet sheet = workbook.getSheetAt(0); // première feuille
+
+			List<BulletinPaie> bulletins = bulletinPaieRepository.findByPeriodePaieIdAndCalculerTrue(maperiode.getId());
+			int rowNum = 1; // ligne 2
+
+			for (BulletinPaie bulletin : bulletins) {
+				ContratPersonnel contrat = bulletin.getContratPersonnel();
+				Personnel personnel = contrat.getPersonnel();
+
+				String reference = personnel.getRib();
+				if (reference == null || reference.isBlank()) {
+					reference = (personnel.getNumeroGuichet() != null ? personnel.getNumeroGuichet() : "")
+							+ (personnel.getNumeroCompte() != null ? personnel.getNumeroCompte() : "");
+				}
+
+				Row row = sheet.createRow(rowNum++);
+				row.createCell(0).setCellValue(reference);
+				row.createCell(1).setCellValue(bulletin.getNetapayer().doubleValue());
+				row.createCell(2).setCellValue(personnel.getNom() + " " + personnel.getPrenom());
+				row.createCell(3).setCellValue("Salaire " + bulletin.getPeriodePaie().getMois().getMois() + " " + bulletin.getPeriodePaie().getAnnee().getAnnee());
+				row.createCell(4).setCellValue("Virement");
+			}
+
+			// Génération du nom de fichier
+			String fileName = "julaya_export_" +
+					LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".xlsm";
+
+			// Enregistrement local
+			Path exportDir = Paths.get("exports");
+			Files.createDirectories(exportDir);
+			Path filePath = exportDir.resolve(fileName);
+			try (OutputStream fileOut = Files.newOutputStream(filePath)) {
+				workbook.write(fileOut);
+			}
+
+			// Écriture dans le flux pour téléchargement
+			workbook.write(out);
+			byte[] fileContent = out.toByteArray();
+
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel.sheet.macroEnabled.12"))
+					.contentLength(fileContent.length)
+					.body(fileContent);
 		}
 	}
 

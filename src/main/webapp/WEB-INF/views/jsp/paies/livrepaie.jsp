@@ -553,9 +553,10 @@
 				</div>
                 <div class="modal-body">
 					<br>
- <button id="exportExcelBull" class="btn btn-success" style="margin-bottom: 10px;">
+                  <button id="exportExcelBull" class="btn btn-success" style="margin-bottom: 10px;">
                                     Exporter en Excel
                                 </button>
+
                     <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
 				<table id="tableBull" class="table table-info table-striped"
 					data-toggle="table" 
@@ -653,6 +654,7 @@
                 	<!-- <input type="hidden"  id="idPeriode1" name="id"> --> 
                     <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-success">Imprimer</button>
+                    <button id="julayaExp" type="button" class="btn btn-info">Export julaya</button>
                     
                 </div>
             </form>
@@ -781,13 +783,22 @@ jQuery(document).ready(function($) {
                 });
             });
 
-        $('#exportExcelLiv').click(function () {
+$('#exportExcelBullJulaya').click(function () {
+    window.location.href = contextPath + "/paie/export";
+});
+
+$('#julayaExp').click(function () {
+
+              window.location.href = contextPath + "/paie/export";
+         });
+
+$('#exportExcelLiv').click(function () {
                         $('#tableliv').tableExport({
                             type: 'excel',
                             fileName: 'export_livrepaie',
                             exportDataType: 'all' // 'all', 'selected' ou 'basic'
                         });
-        });
+});
 /* 	jQuery("tableBull").tableExport({
 	    headings: true,                    // (Boolean), display table headings (th/td elements) in the <thead>
 	    footers: true,                     // (Boolean), display table footers (th/td elements) in the <tfoot>
