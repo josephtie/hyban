@@ -929,11 +929,14 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			for (BulletinPaie bulletin : bulletins) {
 				ContratPersonnel contrat = bulletin.getContratPersonnel();
 				Personnel personnel = contrat.getPersonnel();
+				String modePaiement = personnel.getModePaiement(); // Assure-toi que ce champ existe
 
-				String reference = personnel.getRib();
-				if (reference == null || reference.isBlank()) {
-					reference = (personnel.getNumeroGuichet() != null ? personnel.getNumeroGuichet() : "")
-							+ (personnel.getNumeroCompte() != null ? personnel.getNumeroCompte() : "");
+				String reference;
+
+				if ("virement-bancaire".equalsIgnoreCase(modePaiement)) {
+					reference = (personnel.getNumeroCompte() != null ? personnel.getNumeroCompte() : "");
+				} else {
+					reference = (personnel.getTelephone() != null ? personnel.getTelephone() : "");
 				}
 
 				Row row = sheet.createRow(rowNum++);
@@ -941,8 +944,9 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 				row.createCell(1).setCellValue(bulletin.getNetapayer().doubleValue());
 				row.createCell(2).setCellValue(personnel.getNom() + " " + personnel.getPrenom());
 				row.createCell(3).setCellValue("Salaire " + bulletin.getPeriodePaie().getMois().getMois() + " " + bulletin.getPeriodePaie().getAnnee().getAnnee());
-				row.createCell(4).setCellValue("Virement");
+				row.createCell(4).setCellValue(modePaiement); // Ex : "virement-bancaire", "transfert-wave"
 			}
+
 
 			// Génération du nom de fichier
 			String fileName = "julaya_export_" +
