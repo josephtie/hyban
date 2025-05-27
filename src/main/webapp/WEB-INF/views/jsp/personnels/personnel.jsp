@@ -168,7 +168,7 @@
                                 <div class="form-group">
                                     <div class="col-md-4">
                                         <label for="matricule">Matricule <span class="required">*</span></label> 
-                                        <div class="pull-right verif-matricule"><img src="<%=request.getContextPath() %>/resources/front-end/images/loaders/loader27.gif" /></div>
+                                        <div class="pull-right verif-matricule"><img src="<%=request.getContextPath() %>/hyban/static/front-end/images/loaders/loader27.gif" /></div>
                                         <input type="text" class="form-control input-default" id="matricule" name="matricule" placeholder="matricule" required="required" ng-model="personnel.matricule" />
                                     </div>
                                     <div class="col-md-4">
@@ -184,7 +184,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="matricule">Medaille</label> 
+                                        <label for="medaille">Medaille</label>
                                         <div>
                                             <select id="situationMedaille" name="situationMedaille" class="form-control select2">
                                                 <option>-- Choix du type de medaille --</option>
@@ -211,7 +211,7 @@
                                                 <input type="text" class="form-control input-default" id="prenom" name="prenom" placeholder="Prenom" required="required" ng-model="personnel.prenom">
                                             </div>
                                             <div class="col-md-4">
-                                                <label for="matricule">Qualit&eacute de l'emploi <span class="required">*</span></label>
+                                                <label for="qualitemploi">Qualit&eacute de emploi <span class="required">*</span></label>
                                                 <div>
                                                     <select id="situationEmploie" name="situationEmploie" class="form-control select2">
                                                         <option>-- Choix du type d'emploi --</option>
@@ -266,8 +266,19 @@
                                                 <label for="nationalite">Nationnalit&eacute; <span class="required">*</span></label> 
                                                 <select id="nationalite" name="nationalite" class="form-control select2">
                                                     <option>-- Choix de la nationnalite --</option>
-                                                    <option value="1" selected="selected"> Ivoirienne </option>
-                                                    <option value="2"> Togolaise </option>
+                                                    <option value="1" selected="selected"> IVOIRIENNE </option>
+                                                    <option value="2"> BURKINABE </option>
+                                                    <option value="3"> CAMEROUNAISE </option>
+                                                    <option value="4"> CENTRAFRICAINE </option>
+                                                    <option value="5"> GUINEE </option>
+                                                    <option value="6"> ITALIENNE </option>
+                                                    <option value="7"> BENINOISE </option>
+                                                    <option value="8"> MALIENNE </option>
+                                                    <option value="9"> NIGERIENNE </option>
+                                                    <option value="10"> SENEGALAISE </option>
+                                                    <option value="11"> TOGOLAISE </option>
+                                                    <option value="12"> TUNISIENNE </option>
+                                                    <option value="13"> TURC </option>
                                                 </select>
                                             </div>
                                             <div class="col-md-4">
@@ -314,7 +325,7 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <label for="numerocnps">Num&eacute; CNPS</label> 
-                                                <div class="pull-right verif-numerocnps"><img src="<%=request.getContextPath() %>/resources/front-end/images/loaders/loader27.gif" /></div>
+                                                <div class="pull-right verif-numerocnps"><img src="<%=request.getContextPath() %>/hyban/static/front-end/images/loaders/loader27.gif" /></div>
                                                 <input type="text" class="form-control input-default" id="numerocnps" name="numerocnps" placeholder="Numero CNPS" ng-model="personnel.numeroCnps">
                                             </div>
                                             <div class="col-md-4">

@@ -93,7 +93,7 @@ public class PersonnelServiceImpl implements PersonnelService {
 			personnel.setMatricule(matricule);
 			personnel.setNom(nom);
 			personnel.setPrenom(prenom);
-				if(sexe=="")
+				if(sexe == "")
 					personnel.setSexe("Masculin");
 				else
 				personnel.setSexe(sexe);	
@@ -166,23 +166,23 @@ public class PersonnelServiceImpl implements PersonnelService {
 			contratPersonnel = contratPersonnelRepository.save(contratPersonnel);
 			
 			if(contratPersonnel.getTypeContrat().getId()==5L){
-				 contratPersonnel.getPersonnel().setStage(true);
+				 contratPersonnel.getPersonnel().setStage(false);
 				 contratPersonnel.getPersonnel().setFonctionnaire(false);
-				 contratPersonnel.getPersonnel().setConsultant(false);
+				 contratPersonnel.getPersonnel().setConsultant(true);
 
 			 }
 			
-			if(contratPersonnel.getTypeContrat().getId()==4L){
-				 contratPersonnel.getPersonnel().setConsultant(true);
+			if(contratPersonnel.getTypeContrat().getId()==8L){
+				 contratPersonnel.getPersonnel().setConsultant(false);
 				contratPersonnel.getPersonnel().setFonctionnaire(false);
-				contratPersonnel.getPersonnel().setStage(false);
+				contratPersonnel.getPersonnel().setStage(true);
 			 }
 
-				if(contratPersonnel.getTypeContrat().getId()==6L){
-					contratPersonnel.getPersonnel().setConsultant(false);
-					contratPersonnel.getPersonnel().setFonctionnaire(true);
-					contratPersonnel.getPersonnel().setStage(false);
-				}
+				//if(contratPersonnel.getTypeContrat().getId()==6L){
+				//	contratPersonnel.getPersonnel().setConsultant(false);
+				//	contratPersonnel.getPersonnel().setFonctionnaire(true);
+				//	contratPersonnel.getPersonnel().setStage(false);
+				//}
 			 personnelRepository.save(contratPersonnel.getPersonnel());
 			//
 			PlanningConge planningConge = new PlanningConge();
