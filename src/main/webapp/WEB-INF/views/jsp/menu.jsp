@@ -10,7 +10,7 @@
     <!-- START X-NAVIGATION -->
     <ul class="x-navigation">
         <li class="xn-logo">
-            <a href="<%= baseUrl %>/welcome">BETHEL</a>
+            <a href="<%= baseUrl %>/welcome"></a>
             <a href="#" class="x-navigation-control"></a>
         </li>
         <li class="xn-profile">

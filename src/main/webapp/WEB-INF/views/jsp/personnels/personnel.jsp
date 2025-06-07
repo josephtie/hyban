@@ -1220,7 +1220,7 @@
                     <div class="form-inline">
                         <button type="button" class="btn btn-primary" title="Nouvelle affectation" id="btnAddAffectation"><span class="glyphicon glyphicon-plus"></span> Nouvelle affectation</button>
                     </div>
-                </div>
+                </div><div style="max-height: 500px; overflow-y: auto;">
                 <table id="tableAffectation" class="table table-info table-striped"
                        data-toggle="table"
                        data-toolbar="#toolbarAffectation"
@@ -1236,7 +1236,7 @@
                             <th data-field="observation">Observation</th>
                         </tr>
                     </thead>
-                </table>
+                </table> </div>
                 <br>
             </div>
         </div>
@@ -1327,7 +1327,7 @@
                     <div class="form-inline">
                         <button type="button" class="btn btn-primary" title="Nouvelle affectation" id="btnAddPromotion"><span class="glyphicon glyphicon-plus"></span> Nouvelle promotion</button>
                     </div>
-                </div>
+                </div>  </div><div style="max-height: 300px; overflow-y: auto;">
                 <table id="tablePromotion" class="table table-info table-striped"
                        data-toggle="table"
                        data-toolbar="#toolbarPromotion"
@@ -1345,7 +1345,7 @@
                     </thead>
                 </table>
                 <br>
-            </div>
+            </div></div>
         </div>
     </div>
 </div>
@@ -1542,7 +1542,7 @@
                     <div class="form-inline">
                         <button type="button" class="btn btn-primary" title="Nouveau cong�" id="btnAddMouvementConge"><span class="glyphicon glyphicon-plus"></span> Nouveau cong&eacute;</button>
                     </div>
-                </div>
+                </div><div style="max-height: 300px; overflow-y: auto;">
                 <table id="tableMouvementConge" class="table table-info table-striped"
                        data-toggle="table"
                        data-toolbar="#toolbarMouvementConge"
@@ -1561,9 +1561,160 @@
                 </table>
                 <br>
             </div>
+            </div>
         </div>
     </div>
 </div>
+
+<div class="modal main-popup fade"  id="listDocumentModal" ng-controller="listDocumentCtrl" role="dialog" aria-labelledby="listDocumentModalLabel" data-backdrop="static">
+    <div class="modal-dialog" style="width:50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="listDocumentModalLabel">Liste des Documents</h4>
+            </div>
+            <div class="modal-body">
+                <h3>Personnel</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th style="width:150px;">Matricule</th>
+                            <td style="width:300px;">{{personnel.matricule}}</td>
+                            <th style="width:150px;">N&deg; CNPS</th>
+                            <td>{{personnel.numeroCnps}}</td>
+                        </tr>
+                        <tr>
+                            <th>Nom</th>
+                            <td>{{personnel.nomComplet}}</td>
+                            <th>Sexe</th>
+                            <td>{{personnel.sexe}}</td>
+                        </tr>
+                        <tr>
+                            <th>N&eacute;(e) le</th>
+                            <td>{{personnel.dNaissance}}</td>
+                            <th>A</th>
+                            <td>{{personnel.lieuNaissance}}</td>
+                        </tr>
+                        <tr>
+                            <th>Situation matrimoniale</th>
+                            <td>{{personnel.situationMatri}}</td>
+                            <th>T&eacute;l&eacute;phone</th>
+                            <td>{{personnel.telephone}}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+        <form id="formDocument" class="form-document" >
+                    <h3 style="margin-top: 30px;">Document</h3>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Type de Document</label>
+                                <select class="form-control input-small" id="idDocument" name="idDocument" ng-model="DocumentId" ng-init="DocumentId=DocumentId">
+                                    <c:forEach items="${listeDocuments}" var="Document">
+                                        <option value="${Document.id}">${Document.nom}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Date d&eacute;pot</label>
+                                <input type="text" class="form-control input-small datePicker" name="dateDepot" placeholder="Date depot" maxlength="10" required="required" ng-model="documentPersonnel.ddateDepot">
+                            </div>
+                            <div class="col-md-4">
+                                <label>Numero de reference</label>
+                                <input type="text" class="form-control input-small " name="numeroReference" placeholder="Numero de reference" maxlength="10" required="required" ng-model="documentPersonnel.numeroReference">
+                            </div>
+                        </div>
+                    </div>
+                 <div class="form-group">
+                                      <div class="row">
+                                          <div class="col-md-4">
+                                              <label for="statut">Present ?</label>
+                                              <select class="form-control input-small" id="statutpresent" name="statutpresent" ng-change="statutDocument(documentPersonnel)" ng-model="statutpresent" ng-init="statutpresent='false'">
+                                                  <option value="true" >Present</option>
+                                                  <option value="false" selected="selected">Non</option>
+                                              </select>
+                                          </div>
+                              <div class="col-md-4">
+                                <label for="Repertoire">Repertoire<span class="required">*</span> </label>
+                               <select class="form-control input-small" id="idStorage" name="idStorage" ng-model="StorageId" ng-init="StorageId=StorageId">
+                                      <option value="" disabled selected>-- Sélectionnez --</option>
+                                    <c:forEach items="${listeStockages}" var="Locations">
+                                        <option value="${Locations.id}">${Locations.nom}</option>
+                                    </c:forEach>
+                                </select>
+
+                            </div>
+                          </div>
+                     </div>
+                           <div class="form-group">
+                                             <div class="row">
+                                                 <div class="col-md-4">
+                                                     <label for="sanctionsalaire">Choisir le fichier<span class="required">*</span></label>
+                                                         <input name= "fichierDocument" type="file" id="fichierDocument" name="files[]" multiple  class="form-control" required>
+                                                 </div>
+                                             </div>
+                                         </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Observations</label>
+                                <textarea class="form-control" name="remarques" ng-model="documentPersonnel.remarques" placeholder="Observation"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div id="actionDocument" class="col-md-12 text-right">
+                                <span></span>&nbsp;
+                                <input type="text"class="hidden" ng-hide="true" name="idPersonnel" ng-model="personnel.id"/>
+                                  <input type="text"class="hidden" ng-hide="true" name="id" ng-model="documentPersonnel.id"/>
+                                <button type="button" id="btnCancelDocument" class="btn btn-default">Annuler</button>
+                                <button type="submit" data-action="add" data-index="-1" class="btn btn-success">Valider</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <p>&nbsp;</p>
+                <div id="toolbarDocument">
+                    <div class="form-inline">
+                        <button type="button" class="btn btn-primary" title="Nouveau Document" id="btnAddDocument"><span class="glyphicon glyphicon-plus"></span> Nouveau Document</button>
+                    </div>
+                </div><div style="max-height: 300px; overflow-y: auto;">
+                <table id="tableDocument" class="table table-info table-striped"
+                       data-toggle="table"
+                       data-toolbar="#toolbarDocument"
+                       data-single-select="true"
+                       data-sort-order="desc"
+                       data-pagination="true"
+                       data-page-list="[5, 10, 20, 50, 100, 200]"
+                       data-search="true">
+                      <!--   data-formatter="commentaireDocumentFormatter" -->
+                    <thead>
+                        <tr>
+                            <th data-field="documentType" data-formatter="documentypeFormatter">Type de Document</th>
+                            <th data-field="ddatedepot">Date de depot</th>
+                            <th data-field="numeroReference">Reference</th>
+                            <th data-field="storageLocation" data-formatter="storageLocationFormatter">Lieu de stockage</th>
+                            <th data-field="present" data-formatter="presentFormatter" >Présent</th>
+
+                            <th data-field="urlFichier">Url</th>
+                            <th data-field="id" data-formatter="optionDocumentFormatter" data-align="center"></th>
+                        </tr>
+                    </thead>
+                </table>
+                <br>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 
 <div class="modal main-popup fade"  id="listAbsenceModal" ng-controller="listAbsenceCtrl" role="dialog" aria-labelledby="listAbsenceModalLabel" data-backdrop="static">
     <div class="modal-dialog" style="width:50%;">
@@ -1686,7 +1837,7 @@
                     <div class="form-inline">
                         <button type="button" class="btn btn-primary" title="Nouvelle absence" id="btnAddAbsence"><span class="glyphicon glyphicon-plus"></span> Nouvelle absence</button>
                     </div>
-                </div>
+                </div><div style="max-height: 300px; overflow-y: auto;">
                 <table id="tableAbsence" class="table table-info table-striped"
                        data-toggle="table"
                        data-toolbar="#toolbarAbsence"
@@ -1709,6 +1860,7 @@
                     </thead>
                 </table>
                 <br>
+            </div>
             </div>
         </div>
     </div>
@@ -1809,7 +1961,18 @@ app.controller('formAjoutCtrl', function ($scope) {
     $scope.populateContrat = function (mouvementConge) {
         $scope.mouvementConge = mouvementConge;
     };
-}).controller('listAbsenceCtrl', function ($scope) {
+}).controller('listDocumentCtrl', function ($scope) {
+       $scope.DocumentId = jQuery("#idDocument option:first").val();
+       $scope.idStorage = jQuery("#idStorage option:first").val();
+      $scope.populateForm = function (personnel, documentPersonnel) {
+          $scope.personnel = personnel;
+          if(documentPersonnel){
+              $scope.documentPersonnel = documentPersonnel;
+              $scope.idStorage = documentPersonnel.storageLocation.id;
+              $scope.statutpresent = documentPersonnel.present === true ? 'true' : 'false';
+          }
+      };
+  }).controller('listAbsenceCtrl', function ($scope) {
     $scope.absenceId = jQuery("#idAbsence option:first").val();
     $scope.populateForm = function (personnel, absencePersonnel) {
         $scope.personnel = personnel;
@@ -1885,10 +2048,10 @@ app.controller('formAjoutCtrl', function ($scope) {
 //End AngularJs
 
 var action = "ajout", indexRowUpdate = 0;
-var $table, $tableAbsence, $tableMouvementConge, $tableContrat, $tableEnfant, $tableConjoint, $tableAffectation, $tablePromotion, $tableSanction, $tablePersonnePrevenir;
+var $table, $tableAbsence,$tableDocument ,$tableMouvementConge, $tableContrat, $tableEnfant, $tableConjoint, $tableAffectation, $tablePromotion, $tableSanction, $tablePersonnePrevenir;
 jQuery(document).ready(function ($) {
     $("#tableWidget .fixed-table-body").removeClass("fixed-table-body");
-    $(".form-contrat, .form-absence, .form-mouvement-conge, .form-enfant, .form-conjoint, .form-personne-prevenir, #btnAddContrat, .verif-matricule, .verif-numerocnps").hide();
+    $(".form-contrat, .form-absence,.form-document, .form-mouvement-conge, .form-enfant, .form-conjoint, .form-personne-prevenir, #btnAddContrat, .verif-matricule, .verif-numerocnps").hide();
     $(".select2").select2();
     loadTypeContrat();
     loadFonction();
@@ -1896,6 +2059,7 @@ jQuery(document).ready(function ($) {
     loadTypeService();
     $table = $('#table');
     $tableAbsence = $('#tableAbsence');
+    $tableDocument = $('#tableDocument');
     $tableContrat = $('#tableContrat');
     $tableMouvementConge = $('#tableMouvementConge');
     $tableEnfant = $('#tableEnfant');
@@ -1910,7 +2074,7 @@ jQuery(document).ready(function ($) {
             format: 'd/m/Y H:i',
             value: new Date()
         });
-    $("#datenaissance, .datePicker, #dateNaissanceEnfant, #datearrivee, #datedebut, #datefin, #datedebutPop, #datefinPop").datepicker({
+    $("#datenaissance, .datePicker, #dateNaissanceEnfant, #datearrivee, #datedebut, #datefin, #datedebutPop, #datefinPop,#dateDepot").datepicker({
         format: 'dd/mm/yyyy',
         showOtherMonths: true
     });
@@ -2031,7 +2195,24 @@ jQuery(document).ready(function ($) {
     $("#btnCancelContrat, #listContratModal button.close").click(function (e) {
         $(".form-contrat").hide(500);
     });
-    
+    // Document
+    //Absence
+        $("#btnAddDocument").click(function (e) {
+            $(".form-document").show(500);
+            var $scope = angular.element(document.getElementById("listDocumentModal")).scope();
+            $scope.$apply(function () {
+                $scope.initForm();
+            });
+            $("#actionDocument button:submit").data("action", "add");
+        });
+        $("#btnCancelDocument, #listDocumentModal button.close").click(function (e) {
+            $(".form-document").hide(500);
+            var $scope = angular.element(document.getElementById("listDocumentModal")).scope();
+            $scope.$apply(function () {
+                $scope.initForm();
+            });
+        });
+
     //Absence
     $("#btnAddAbsence").click(function (e) {
         $(".form-absence").show(500);
@@ -2161,6 +2342,60 @@ jQuery(document).ready(function ($) {
         });
         return false;
     });
+
+    
+$("#formDocument").submit(function (e) {
+    e.preventDefault();
+
+    var form = document.getElementById('formDocument');
+    var oMyForm = new FormData(form);
+
+    $.ajax({
+        type: "POST",
+        url: baseUrl + "/personnel/documents/upload",
+        cache: false,
+        data: oMyForm,
+        enctype: 'multipart/form-data',
+        dataType: 'json',
+        contentType: false, // très important !
+        processData: false,
+        success: function (reponse) {
+            // Attention : ici tu traites `reponse` comme un objet JS
+            // alors que dataType est 'text'. Il faut parser :
+
+               // var res = JSON.parse(reponse);
+                if (reponse.result === true) {
+
+                    if ($("#actionDocument button:submit").data("action") === "add") {
+                        $tableDocument.bootstrapTable('prepend', reponse.row);
+                    } else {
+                        $tableDocument.bootstrapTable('updateRow', {
+                            index: $("#actionDocument button:submit").data("index"),
+                            row: reponse.row
+                        });
+                    }
+                    $(".form-Document").hide(500);
+                } else {
+                    alert("Saisie invalide");
+                }
+
+        },
+        beforeSend: function () {
+            $("#formDocument").attr("disabled", true);
+            $("#actionDocument span").addClass('loader');
+        },
+        error: function () {
+            $("#actionDocument span").removeClass('loader');
+        },
+        complete: function () {
+            $("#formDocument").removeAttr("disabled");
+            $("#actionDocument span").removeClass('loader');
+        }
+    });
+
+    return false;
+});
+
     
     $("#formMouvementConge").submit(function (e) {
         e.preventDefault();
@@ -2577,6 +2812,7 @@ function loadServiceByTypeService(typeService, defaultValue) {
 function optionFormatter(id, row, index) {
     var menuOptions = '<a href="#" onclick="javascript:edit(' + id + ')" data-toggle="modal" data-target="#rhpModal" title="Modifier [NOM : '+row.nom + ' ' + row.prenom +']"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;&nbsp;';
     menuOptions += '<a href="#" onclick="javascript:listAbsence(' + id + ')" data-toggle="modal" data-target="#listAbsenceModal" title="Absence [NOM : '+row.nom + ' ' + row.prenom +']"><span class="glyphicon glyphicon-tasks"></span></a>&nbsp;&nbsp;&nbsp;';
+    menuOptions += '<a href="#" onclick="javascript:listDocument(' + id + ')" data-toggle="modal" data-target="#listDocumentModal" title="Absence [NOM : '+row.nom + ' ' + row.prenom +']"><span class="glyphicon glyphicon-inbox"></span></a>&nbsp;&nbsp;&nbsp;';
     menuOptions += '<a onclick="openOptionsModal(' + id + ',' + index + ')" data-toggle="modal" data-target=".modal-options" href="#" title="Voir plus"><span class="glyphicon glyphicon-eye-open"></span></a>';
     return menuOptions;
 }
@@ -2610,6 +2846,16 @@ function edit(idPersonnel) {
 function listAbsence(idPersonnel) {
     var $scope = angular.element(document.getElementById("listAbsenceModal")).scope();
     loadAbsenceByPersonnel(idPersonnel);
+    var rows = $table.bootstrapTable('getData');
+    var personnel = _.findWhere(rows, {id: idPersonnel});
+    $scope.$apply(function () {
+        $scope.populateForm(personnel, null);
+    });
+}
+
+function listDocument(idPersonnel) {
+    var $scope = angular.element(document.getElementById("listDocumentModal")).scope();
+    loadDocumentByPersonnel(idPersonnel);
     var rows = $table.bootstrapTable('getData');
     var personnel = _.findWhere(rows, {id: idPersonnel});
     $scope.$apply(function () {
@@ -2731,6 +2977,8 @@ function loadAbsenceByPersonnel(idPersonnel) {
     });
 }
 
+
+
 function loadMouvementCongeByPersonnel(idPersonnel) {
     jQuery.ajax({
         type: "POST",
@@ -2752,6 +3000,54 @@ function loadMouvementCongeByPersonnel(idPersonnel) {
         }
     });
 }
+
+
+
+
+function loadDocumentByPersonnel(idPersonnel) {
+    jQuery.ajax({
+        type: "GET",
+        url: baseUrl + "/personnel/documents/employeId",
+        cache: false,
+        data: {idpersonnel: idPersonnel},
+          success: function (reponse) {
+         //   var reponsedata = _.findWhere(reponse, {id: idPersonnel});
+               $tableDocument.bootstrapTable('load', reponse.rows);
+           },
+           beforeSend: function () {
+               $tableDocument.bootstrapTable('load', []);
+           },
+           error: function () {
+
+           },
+           complete: function () {
+
+           }
+       });
+   }
+
+function telechargerDocumentByPersonnel(idPersonnel) {
+    jQuery.ajax({
+        type: "GET",
+        url: baseUrl + "/personnel/documents/download",
+        cache: false,
+        data: {idpersonnel: idPersonnel},
+          success: function (reponse) {
+         //   var reponsedata = _.findWhere(reponse, {id: idPersonnel});
+               $tableDocument.bootstrapTable('load', reponse.rows);
+           },
+           beforeSend: function () {
+               $tableDocument.bootstrapTable('load', []);
+           },
+           error: function () {
+
+           },
+           complete: function () {
+
+           }
+       });
+   }
+
 
 function loadContratByPersonnel(idPersonnel) {
     jQuery.ajax({
@@ -3089,6 +3385,17 @@ function updateComboContrat(contrat) {
    
 }
 
+function documentypeFormatter(documentType) {
+      return documentType.nom;
+}
+
+function storageLocationFormatter(storageLocation) {
+      return storageLocation.nom ;
+}
+
+function presentFormatter(present) {
+      return present ? '<span style="color:green;">Present</span>' : '<span style="color:red;">Non</span>';
+}
 
 function statutFormatter(statut) {
     return statut ? '<span style="color:green;">En cours</span>' : '<span style="color:red;">Termine</span>';
@@ -3098,6 +3405,12 @@ function optionAbsenceFormatter(id, row, index) {
     return '<a href="#" onclick="javascript:editAbsence(' + id + ', '+index+')" title="Modifier"><span class="glyphicon glyphicon-pencil"></span></a>';
 }
 
+function optionDocumentFormatter(id, row, index) {
+
+   var  docOptions =  '<a href="#" onclick="javascript:editDocument(' + id + ', '+index+')" title="Modifier"><span class="glyphicon glyphicon-pencil"></span></a>';
+      docOptions +=  '<a href="#" onclick="javascript:downDocument(' + id + ', '+index+')" title="telecharger"><span class="glyphicon glyphicon-download"></span></a>';
+         return docOptions;
+}
 function editAbsence(idAbsencePersonnel, index) {
     var $scope = angular.element(document.getElementById("listAbsenceModal")).scope();
     var rows = $tableAbsence.bootstrapTable('getData');
@@ -3109,6 +3422,28 @@ function editAbsence(idAbsencePersonnel, index) {
     jQuery("#actionAbsence button:submit").data("action", "update");
     jQuery("#actionAbsence button:submit").data("", index);
 }
+
+function editDocument(idemployeDocument, index) {
+    var $scope = angular.element(document.getElementById("listDocumentModal")).scope();
+    var rows = $tableDocument.bootstrapTable('getData');
+    var employeDocument = _.findWhere(rows, {id: idemployeDocument});
+    $scope.$apply(function () {
+        $scope.populateForm(employeDocument.personnel,employeDocument);
+    });
+    jQuery(".form-document").show(500);
+    jQuery("#actionDocument button:submit").data("action", "update");
+    jQuery("#actionDocument button:submit").data("", index);
+}
+
+function downDocument(idemployeDocument, index) {
+
+    var $scope = angular.element(document.getElementById("listDocumentModal")).scope();
+telechargerDocumentByPersonnel(idemployeDocument);
+    jQuery(".form-document").show(500);
+    jQuery("#actionDocument button:submit").data("action", "update");
+    jQuery("#actionDocument button:submit").data("", index);
+}
+
 
 function statutAbsenceFormatter(statut) {
     return statut ? "Justifi&eacute;" : "Non justifi&eacute;";

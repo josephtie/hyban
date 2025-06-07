@@ -113,7 +113,7 @@ public class Personnel {
 	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
 	@DateTimeFormat(pattern="dd/MM/yyyy")
 	private java.util.Date dateArrivee;
-	
+
 	@Transient
 	private String dArrivee;
 	

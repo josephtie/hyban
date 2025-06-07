@@ -11195,7 +11195,7 @@ li.ext_zip {
     background-image: url("../img/jqyery/resize-icon%402x.html");
   }
   .x-navigation > li.xn-logo > a:first-child {
-    background-image: url("../img/logo%402x.png");
+
     background-size: 220px 50px;
   }
   .x-navigation.x-navigation-minimized > li.xn-logo > a:first-child {

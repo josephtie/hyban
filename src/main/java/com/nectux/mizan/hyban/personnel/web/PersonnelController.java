@@ -18,7 +18,9 @@ import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.personnel.entity.Service;
 import com.nectux.mizan.hyban.personnel.repository.ContratPersonnelRepository;
+import com.nectux.mizan.hyban.personnel.repository.DocumentTypeRepository;
 import com.nectux.mizan.hyban.personnel.repository.PersonnelRepository;
+import com.nectux.mizan.hyban.personnel.repository.StorageLocationRepository;
 import com.nectux.mizan.hyban.personnel.service.ContratPersonnelService;
 import com.nectux.mizan.hyban.personnel.service.FonctionService;
 import com.nectux.mizan.hyban.personnel.service.PersonnelService;
@@ -58,6 +60,10 @@ public class PersonnelController {
 	@Autowired private UtilisateurService userService;
 	@Autowired private PersonnelService personnelService;
 	@Autowired private ExerciceRepository exerciceRepository;
+	@Autowired
+	private DocumentTypeRepository documentTypeRepository;
+	@Autowired
+	private StorageLocationRepository storageLocationRepository;
 	@Autowired private PersonnelRepository personnelRepository;
 	@Autowired private MoisService moisService;
 	@Autowired private BulletinPaieService bulletinPaieService;
@@ -105,6 +111,8 @@ public class PersonnelController {
             modelMap.addAttribute("listePromotions", fonctionService.findFonctions());
             modelMap.addAttribute("listeBanques", banqueService.getBanques());
             modelMap.addAttribute("listeAbsences", absenceService.getAbsences());
+			modelMap.addAttribute("listeDocuments",documentTypeRepository.findAll());
+			modelMap.addAttribute("listeStockages",storageLocationRepository.findAll());
             PeriodePaie periodePaie = periodePaieService.findPeriodeactive();
     	    if(periodePaie != null){
     	    	modelMap.addAttribute("activeMois", periodePaie.getMois().getMois()+" "+ periodePaie.getAnnee().getAnnee());

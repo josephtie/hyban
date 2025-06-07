@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeRequests(auth -> auth
                         .antMatchers("/api/auth/**", "/", "/home").permitAll()
-                        .antMatchers("/resources/**","/resources/reports/**",  "/static/**", "/js/**", "/css/**", "/images/**", "/img/**").permitAll()
+                        .antMatchers("/resources/**","/resources/reports/**","/resources/uploads/**",  "/static/**", "/js/**", "/css/**", "/images/**", "/img/**").permitAll()
                         .antMatchers("/login", "/register", "/static/**","/logo/**", "/js/**", "/images/**", "/WEB-INF/**").permitAll()
                         .antMatchers("/views/**").permitAll()
                         .anyRequest().authenticated()
