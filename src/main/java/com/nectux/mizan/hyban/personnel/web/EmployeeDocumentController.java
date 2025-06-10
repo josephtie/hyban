@@ -140,50 +140,44 @@ public class EmployeeDocumentController {
         }
 
 
+
     @GetMapping("/download")
-    public ResponseEntity<Resource> downloadDocument( @RequestParam("idpersonnel") Long employeeId) throws IOException {
+    public ResponseEntity<Resource> downloadDocument(@RequestParam("idpersonnel") Long employeeId,HttpServletRequest request) throws IOException {
         EmployeeDocument doc = repository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Document introuvable avec id = " + employeeId));
 
-//        // Chemin physique absolu depuis le chemin relatif en base
-//        String absolutePath;
-//        if (Files.exists(Paths.get("src/main/resources/uploads"))) {
-//            // Mode dev
-//            absolutePath = Paths.get("src/main/resources", doc.getUrlFichier()).toString();
-//        } else {
-//            // Mode prod
-//            absolutePath = new File(
-//                    new ClassPathResource("/").getFile().getParentFile(),
-//                    "uploads/" + doc.getUrlFichier().replaceFirst("uploads/", "")
-//            ).getAbsolutePath();
-//        }
-
-        // On suppose que doc.getUrlFichier() = "uploads/documents/Embauche/331/NE0259-xxx.docx"
+        String relativePath = doc.getUrlFichier(); // ex: uploads/documents/Embauche/331/file.docx
         Path absolutePath;
 
-        if (Files.exists(Paths.get("src/main/resources/uploads"))) {
-            // En production (Tomcat ou jar)
-            absolutePath = Paths.get(new File(".").getAbsolutePath()).resolve(doc.getUrlFichier());
-        } else {
-            // En local
-            absolutePath = Paths.get("hyban/"+doc.getUrlFichier());
+        // 1. Détection environnement local
+        Path localUploadsPath = Paths.get("src/main/resources/uploads");
+        if (Files.exists(localUploadsPath)) {
+            absolutePath = Paths.get("src/main/resources").resolve(relativePath);
+        }
+        // 2. Environnement de production : Tomcat (webapps/hyban/uploads/...)
+        else {
+            // Récupère le chemin absolu à partir du contexte web
+            String realBasePath = request.getServletContext().getRealPath("/");
+            if (realBasePath != null) {
+                absolutePath = Paths.get(realBasePath).resolve(relativePath);
+            } else {
+                throw new IllegalStateException("Impossible de déterminer le chemin d'accès en production.");
+            }
         }
 
         if (!Files.exists(absolutePath)) {
             throw new FileNotFoundException("Fichier introuvable : " + absolutePath.toString());
         }
-        Path path = Paths.get(absolutePath.toUri());
-        if (!Files.exists(path)) {
-            throw new FileNotFoundException("Fichier introuvable : " + path.toString());
-        }
 
-        Resource fileResource = new UrlResource(path.toUri());
+        Resource fileResource = new UrlResource(absolutePath.toUri());
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + path.getFileName().toString() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + absolutePath.getFileName().toString() + "\"")
                 .body(fileResource);
     }
+
+
 
 }
 
