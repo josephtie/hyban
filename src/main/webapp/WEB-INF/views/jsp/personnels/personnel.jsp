@@ -3027,26 +3027,17 @@ function loadDocumentByPersonnel(idPersonnel) {
    }
 
 function telechargerDocumentByPersonnel(idPersonnel) {
-    jQuery.ajax({
-        type: "GET",
-        url: baseUrl + "/personnel/documents/download",
-        cache: false,
-        data: {idpersonnel: idPersonnel},
-          success: function (reponse) {
-         //   var reponsedata = _.findWhere(reponse, {id: idPersonnel});
-               $tableDocument.bootstrapTable('load', reponse.rows);
-           },
-           beforeSend: function () {
-               $tableDocument.bootstrapTable('load', []);
-           },
-           error: function () {
+    const url = baseUrl + "/personnel/documents/download?idpersonnel=" + idPersonnel;
 
-           },
-           complete: function () {
+    // Crée un lien temporaire pour forcer le téléchargement
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", ""); // Facultatif : peut déclencher le téléchargement
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 
-           }
-       });
-   }
 
 
 function loadContratByPersonnel(idPersonnel) {

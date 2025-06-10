@@ -166,7 +166,7 @@ public class EmployeeDocumentController {
             absolutePath = Paths.get(new File(".").getAbsolutePath()).resolve(doc.getUrlFichier());
         } else {
             // En local
-            absolutePath = Paths.get(doc.getUrlFichier());
+            absolutePath = Paths.get("hyban/"+doc.getUrlFichier());
         }
 
         if (!Files.exists(absolutePath)) {
