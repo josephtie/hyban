@@ -103,7 +103,7 @@ public class EmployeeDocumentController {
                 // Mode développement : accès direct au répertoire des ressources
                 reportsPath = "src/main/resources/uploads/documents";
             } else {
-                reportsPath = request.getSession().getServletContext().getRealPath( "/uploads/documents");
+                reportsPath = request.getSession().getServletContext().getRealPath( "hyban/uploads/documents");
             }
 
             File folder = Paths.get(reportsPath, safeLibelle, String.valueOf(pers.getMatricule())).toAbsolutePath().toFile();
