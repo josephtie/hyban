@@ -103,7 +103,7 @@ public class EmployeeDocumentController {
                 // Mode développement : accès direct au répertoire des ressources
                 reportsPath = "src/main/resources/uploads/documents";
             } else {
-                reportsPath = request.getSession().getServletContext().getRealPath( "hyban/uploads/documents");
+                reportsPath = request.getSession().getServletContext().getRealPath( "/hyban/uploads/documents");
             }
 
             File folder = Paths.get(reportsPath, safeLibelle, String.valueOf(pers.getMatricule())).toAbsolutePath().toFile();
@@ -116,7 +116,7 @@ public class EmployeeDocumentController {
             uploadfile.transferTo(dest);
 
             // Chemin relatif pour stockage en base (à partir de `uploads/`)
-            String relativePath = Paths.get(uploadBasePath, safeLibelle, String.valueOf(employeeId), uniqueName).toString();
+            String relativePath = Paths.get("/hyban"+uploadBasePath, safeLibelle, String.valueOf(pers.getMatricule()), uniqueName).toString();
 
             // Enregistrement en base
             EmployeeDocument document = new EmployeeDocument();
@@ -157,7 +157,7 @@ public class EmployeeDocumentController {
         // 2. Environnement de production : Tomcat (webapps/hyban/uploads/...)
         else {
             // Récupère le chemin absolu à partir du contexte web
-            String realBasePath = request.getServletContext().getRealPath("/");
+            String realBasePath = request.getServletContext().getRealPath("hyban/");
             if (realBasePath != null) {
                 absolutePath = Paths.get(realBasePath).resolve(relativePath);
             } else {
