@@ -81,7 +81,7 @@ public class PersonnelServiceImpl implements PersonnelService {
 		Personnel personnel = new Personnel();Personnel personnelmat = new Personnel();Personnel personnelcnps = new Personnel();
 		ContratPersonnel contratPersonnel = new ContratPersonnel();
 		personnelmat=personnelRepository.findByMatricule(matricule);
-		personnelcnps=personnelRepository.findByNumeroCnps(numeroCNPS);
+		//personnelcnps=personnelRepository.findByNumeroCnps(numeroCNPS);
 		try{
 			if(personnelmat==null ){
 

@@ -175,7 +175,7 @@
                                         <label for="matricule">Type employe <span class="required">*</span></label>
                                         <div>
                                             <select id=typeEmp name="typeEmp" class="form-control select2">
-                                                <option>-- Choix du type employe --</option>
+                                             <option value="" disabled selected>-- Selectionnez type employe--</option>
                                                 <option value="M"  selected="selected"> MENSUEL </option>
                                                 <option value="j" > JOURNALIER </option>
                                                 <option value="h" > HORAIRE </option>
@@ -187,7 +187,8 @@
                                         <label for="medaille">Medaille</label>
                                         <div>
                                             <select id="situationMedaille" name="situationMedaille" class="form-control select2">
-                                                <option>-- Choix du type de medaille --</option>
+
+                                               <option value="" disabled selected>-- Selectionnez type medaille--</option>
                                                 <option value="1"  > HONNEUR </option>
                                                 <option value="2" > VERMEILLE </option>
                                                 <option value="3" > ARGENT </option>
@@ -214,7 +215,8 @@
                                                 <label for="qualitemploi">Qualit&eacute de emploi <span class="required">*</span></label>
                                                 <div>
                                                     <select id="situationEmploie" name="situationEmploie" class="form-control select2">
-                                                        <option>-- Choix du type d'emploi --</option>
+
+                                                         <option value="" disabled selected>-- Selectionnez type emploi--</option>
                                                         <option value="1"  > DIRECTEUR </option>
                                                         <option value="2" > CADRE SUPERIEUR </option>
                                                         <option value="3" > CADRE MOYEN </option>
@@ -265,7 +267,8 @@
                                             <div class="col-md-4">
                                                 <label for="nationalite">Nationnalit&eacute; <span class="required">*</span></label> 
                                                 <select id="nationalite" name="nationalite" class="form-control select2">
-                                                    <option>-- Choix de la nationnalite --</option>
+
+                                                     <option value="" disabled selected>-- Selectionnez nationnalite--</option>
                                                     <option value="1" selected="selected"> IVOIRIENNE </option>
                                                     <option value="2"> BURKINABE </option>
                                                     <option value="3"> CAMEROUNAISE </option>
@@ -284,7 +287,8 @@
                                             <div class="col-md-4">
                                                 <label for="situationmatrimoniale">Situation matrimoniale <span class="required">*</span></label> 
                                                 <select id="situationmatrimoniale" name="situationmatrimoniale" class="form-control select2">
-                                                    <option>-- Choix de la situation --</option>
+
+                                                     <option value="" disabled selected>-- Selectionnez situation Matrimoniale--</option>
                                                     <option value="1" selected="selected"> MARIE </option>
                                                     <option value="2" > CELIBATAIRE </option>
                                                     <option value="3" > DIVORCE </option>
@@ -294,7 +298,8 @@
                                             <div class="col-md-4">
                                                 <label for="nombreenfant">Nombre d'enfant <span class="required">*</span></label> 
                                                 <select id="nombreenfant" name="nombreenfant" class="form-control select2">
-                                                    <option>-- Nombre d'enfant --</option>
+
+                                                     <option value="" disabled selected>-- Selectionnez nombre  Enfant--</option>
                                                     <option value="0" selected="selected"> 0 </option>
                                                     <option value="1"> 1 </option>
                                                     <option value="2"> 2 </option>
@@ -377,11 +382,12 @@
                                             <div class="col-md-3">
                                                 <label for="banque">Banque</label> 
                                                <!--  <input type="text" class="form-control input-default" id="banque" name="banque" placeholder="Banque" ng-model="personnel.banque"> -->
-                                              <select class="form-control input-small select2" id="banque" name="banque" ng-model="personnel.banquek.id"     ng-init="personnel.banquek.id=banque">
-                                    <c:forEach items="${listeBanques}" var="banques">
-                                        <option value="${banques.id}">${banques.sigle} (${banques.codbanq})</option>
-                                    </c:forEach>
-                                </select>
+                                            <select class="form-control input-small select2" id="banque" name="banque" ng-model="personnel.banquek.id"     ng-init="personnel.banquek.id=banque">
+                                             <option value="" disabled selected>-- Selectionnez --</option>
+                                              <c:forEach items="${listeBanques}" var="banques">
+                                             <option value="${banques.id}">${banques.sigle} (${banques.codbanq})</option>
+                                              </c:forEach>
+                                           </select>
                                             
                                             </div>
                                             <div class="col-md-3">
@@ -405,7 +411,8 @@
                                             <div class="col-md-4">
                                                 <label for="modepaiement">Mode paiement <span class="required">*</span></label> 
                                                 <select id="modepaiement" name="modepaiement" class="form-control select2">
-                                                    <option>-- Mode de paiement --</option>
+
+                                                     <option value="" disabled selected>-- Selectionnez Mode de paiement--</option>
                                                     <option value="Virement" selected="selected"> Virement </option>
                                                     <option value="Cheque"> Cheque </option>
                                                     <option value="Espece"> Espece </option>
@@ -436,19 +443,19 @@
                                                 <div class="col-md-4 ">
                                                     <label for="fonction">Emploi <span class="required">*</span></label> 
                                                     <select id="fonction" name="fonction" class="form-control select2">
-
+                                                    <option value="" disabled selected>-- Selectionnez fonction/emploi--</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4 ">
                                                     <label for="typeContrat">Type contrat <span class="required">*</span></label> 
                                                     <select id="typeContrat" name="typecontrat" class="form-control select2">
-
+                                                    <option value="" disabled selected>-- Selectionnez type Contrat--</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4 ">
                                                     <label for="categorie">Cat&eacute;gorie <span class="required">*</span></label> 
                                                     <select id="categorie" name="categorie" class="form-control select2">
-
+                                                        <option value="" disabled selected>-- Selectionnez Categorie--</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -524,7 +531,7 @@
                                                 <div class="col-md-4 ">
                                                     <label for="ancienneteInitial">Anciennet&eacute; initiale <span class="required">*</span></label> 
                                                     <select id="ancienneteInitial" name="ancienneteinitial" class="form-control select2" ng-model="contrat.ancienneteInitial">
-                                                        <option>-- Anciennet&eacute; initiale --</option>
+                                                      <option value="" disabled selected>-- Anciennete initial--</option>
                                                         <option value="0" selected="selected"> 0 </option>
                                                         <option value="1"> 1 </option>
                                                         <option value="2"> 2 </option>
@@ -1614,6 +1621,7 @@
                             <div class="col-md-4">
                                 <label>Type de Document</label>
                                 <select class="form-control input-small" id="idDocument" name="idDocument" ng-model="DocumentId" ng-init="DocumentId=DocumentId">
+                                     <option value="" disabled selected>-- Selectionnez --</option>
                                     <c:forEach items="${listeDocuments}" var="Document">
                                         <option value="${Document.id}">${Document.nom}</option>
                                     </c:forEach>
@@ -1641,7 +1649,7 @@
                               <div class="col-md-4">
                                 <label for="Repertoire">Repertoire<span class="required">*</span> </label>
                                <select class="form-control input-small" id="idStorage" name="idStorage" ng-model="StorageId" ng-init="StorageId=StorageId">
-                                      <option value="" disabled selected>-- Sélectionnez --</option>
+                                      <option value="" disabled selected>-- Selectionnez --</option>
                                     <c:forEach items="${listeStockages}" var="Locations">
                                         <option value="${Locations.id}">${Locations.nom}</option>
                                     </c:forEach>
@@ -1702,7 +1710,7 @@
                             <th data-field="present" data-formatter="presentFormatter" >Présent</th>
 
                             <th data-field="urlFichier">Url</th>
-                            <th data-field="id" data-formatter="optionDocumentFormatter" data-align="center"></th>
+                            <th data-field="id" data-formatter="optionDocumentFormatter" data-align="center">Option</th>
                         </tr>
                     </thead>
                 </table>
@@ -2374,7 +2382,7 @@ $("#formDocument").submit(function (e) {
                             row: reponse.row
                         });
                     }
-                    $(".form-Document").hide(500);
+                    $(".form-document").hide(500);
                 } else {
                     alert("Saisie invalide");
                 }
@@ -2395,6 +2403,7 @@ $("#formDocument").submit(function (e) {
 
     return false;
 });
+
 
     
     $("#formMouvementConge").submit(function (e) {
@@ -3038,7 +3047,29 @@ function telechargerDocumentByPersonnel(idPersonnel) {
     document.body.removeChild(link);
 }
 
+function trashDoc(documentId) {
+    //
+        $.ajax({
+            url: '/personnel/documents/delete', // adaptez selon votre @RequestMapping
+            method: 'DELETE',
+            data: { idDocument: documentId },
+            success: function (response) {
+                if (response.result === true) {
+                      $tableDocument.bootstrapTable('load', reponse.rows);
+                } else {
+                    alert("Erreur : " + response.message);
+                }
+                $(".form-document").hide(500);
+            },
+             beforeSend: function () {
+                $tableDocument.bootstrapTable('load', []);
+             },
+            error: function (xhr) {
+                alert("Erreur serveur : " + xhr.responseText);
+            }
+        });
 
+}
 
 function loadContratByPersonnel(idPersonnel) {
     jQuery.ajax({
@@ -3398,8 +3429,9 @@ function optionAbsenceFormatter(id, row, index) {
 
 function optionDocumentFormatter(id, row, index) {
 
-   var  docOptions =  '<a href="#" onclick="javascript:editDocument(' + id + ', '+index+')" title="Modifier"><span class="glyphicon glyphicon-pencil"></span></a>';
-      docOptions +=  '<a href="#" onclick="javascript:downDocument(' + id + ', '+index+')" title="telecharger"><span class="glyphicon glyphicon-download"></span></a>';
+
+   var   docOptions =  '<a href="#" onclick="javascript:downDocument(' + id + ', '+index+')" title="telecharger"><span class="glyphicon glyphicon-download"></span></a>';
+      docOptions +='&nbsp;<a href="#"  onclick="javascript:deleteDocument(' + id + ', '+index+ ')"  title="Suprimer Document [LIBELLE : '+row.numeroReference+' ]"> <span class="glyphicon glyphicon-trash"></span></a>';
          return docOptions;
 }
 function editAbsence(idAbsencePersonnel, index) {
@@ -3429,12 +3461,20 @@ function editDocument(idemployeDocument, index) {
 function downDocument(idemployeDocument, index) {
 
     var $scope = angular.element(document.getElementById("listDocumentModal")).scope();
-telechargerDocumentByPersonnel(idemployeDocument);
+     telechargerDocumentByPersonnel(idemployeDocument);
     jQuery(".form-document").show(500);
     jQuery("#actionDocument button:submit").data("action", "update");
     jQuery("#actionDocument button:submit").data("", index);
 }
 
+function deleteDocument(idemployeDocument, index) {
+
+    var $scope = angular.element(document.getElementById("listDocumentModal")).scope();
+    trashDoc(idemployeDocument);
+    jQuery(".form-document").show(500);
+    jQuery("#actionDocument button:submit").data("action", "update");
+    jQuery("#actionDocument button:submit").data("", index);
+}
 
 function statutAbsenceFormatter(statut) {
     return statut ? "Justifi&eacute;" : "Non justifi&eacute;";

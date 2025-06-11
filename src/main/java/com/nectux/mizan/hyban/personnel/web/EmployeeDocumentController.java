@@ -175,6 +175,46 @@ public class EmployeeDocumentController {
                 .body(fileResource);
     }
 
+
+    @DeleteMapping("/delete")
+    public EmployeeDocumentDTO deleteDocument(@RequestParam("idDocument") Long documentId, HttpServletRequest request) {
+        EmployeeDocumentDTO employeeDocumentDTO = new EmployeeDocumentDTO();
+        try {
+            EmployeeDocument doc = repository.findById(documentId)
+                    .orElseThrow(() -> new RuntimeException("Document introuvable avec id = " + documentId));
+
+            // Construction du chemin absolu
+            String relativePath = doc.getUrlFichier().replaceFirst("^/+", "");
+            Path filePath;
+
+            if (Files.exists(Paths.get("src/main/resources/uploads"))) {
+                filePath = Paths.get("src/main/resources").resolve(relativePath);
+            } else {
+                String realBasePath = request.getServletContext().getRealPath("/");
+                filePath = Paths.get(realBasePath).resolve(relativePath);
+            }
+
+            // Suppression du fichier physique
+            if (Files.exists(filePath)) {
+                Files.delete(filePath);
+            }
+
+            // Suppression en base de données
+            repository.delete(doc);
+            employeeDocumentDTO.setRows(repository.findByPersonnelId(doc.getPersonnel().getId()));
+            employeeDocumentDTO.setResult(true);
+            return employeeDocumentDTO;
+            //employeeDocumentDTO.setRow(document);
+        } catch (Exception e) {
+            // Map<String, Object> error = new HashMap<>();
+            employeeDocumentDTO.setResult(false);
+            employeeDocumentDTO.setMessage("Erreur lors de la suppression : " + e.getMessage());
+            return employeeDocumentDTO;
+        }
+    }
+
+
+
 //        @PostMapping("/upload")
 //        public EmployeeDocumentDTO uploadDocument(
 //                @RequestParam("fichierDocument") MultipartFile uploadfile,
