@@ -6,7 +6,7 @@ import com.nectux.mizan.hyban.rh.carriere.dto.AffectationDTO;
 
 public interface AffectationService {
 	
-	public AffectationDTO save(Long id, Long idPersonnel, Long idPoste, String dateDebut, String dateFin, String observation);
+	public AffectationDTO save(Long id, Long idPersonnel, Long idPoste, Long idSite,Boolean present,String dateDebut, String dateFin, String observation);
 	
 	public AffectationDTO delete(Long id);
 	

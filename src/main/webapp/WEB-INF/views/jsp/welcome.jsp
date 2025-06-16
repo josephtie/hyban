@@ -26,22 +26,7 @@
 		</div>
 
 	</div>
-	 <%--<div class="col-md-3">--%>
 
-         <%--<div class="widget widget-default widget-item-icon">--%>
-             <%--<div class="widget-item-left">--%>
-                 <%--<span class="fa fa-envelope"></span>--%>
-             <%--</div>--%>
-             <%--<div class="widget-data">--%>
-                 <%--<div class="widget-int num-count">48</div>--%>
-                 <%--<div class="widget-title">Promotion</div>--%>
-                 <%--<div class="widget-subtitle"></div>--%>
-             <%--</div>--%>
-
-         <%--</div>--%>
-
-
-     <%--</div>--%>
 	<div class="col-md-3">
 		<div class="widget widget-default widget-item-icon">
 			<div class="widget-item-left">
@@ -113,10 +98,10 @@
         <!-- START LINE CHART -->
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Recrutement Sur les 5 annees anterieures</h3>
+                <h3 class="panel-title">Effectif & Masse salariale par Site</h3>
             </div>
             <div class="panel-body">
-                <canvas id="myChartEffec" style="height: 300px;"></canvas>
+                <canvas id="myChartSiteEffec" style="height: 300px;"></canvas>
             </div>
         </div>
         <!-- END LINE CHART -->
@@ -158,36 +143,90 @@
     <div class="col-md-6">
 
         <!-- START DONUT CHART -->
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Moyenne age par departement/Service</h3>
-            </div>
-            <div class="panel-body">
-                <canvas id="chartarea" width="300" height="300"></canvas>
-            </div>
-            <%--<div id="legDirection">--%>
 
-            <%--</div>--%>
+             <!-- START LINE CHART -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Recrutement Sur les 5 annees anterieures</h3>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="myChartEffec" style="height: 300px;"></canvas>
+                    </div>
+                </div>
+                <!-- END LINE CHART -->
 
-        </div>
+
         <!-- END DONUT CHART -->
 
     </div>
 </div>
+<div class="row">
+    <div class="col-md-6">
 
 
+
+    </div>
+        <div class="col-md-6">  </div>
+</div>
 <script type="text/javascript">
     jQuery(document).ready(function(){
    
         statEffectif();
+       statSiteEffectif();
         statConge();
         statRetraite();
-        statMoyenage();
+      //  statMoyenage();
         stattypcontrat();
         statMassesalariale();
 
 
     });
+
+    //function diagrameMoyenneAge(dataVal){
+            //var randomScalingFactor = function(){ return Math.round(Math.random()*10000)};
+
+           // var myObject = [];
+           // var val = {};
+          //  jQuery.each(dataVal, function(i,dataValRet){
+           //     var col = "rgb(" + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + ")";
+             //   var col1 = "rgb(" + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + ")";
+
+              //  val.value = dataValRet.i1;
+             //   val.color = col;
+           //     val.highlight = col1;
+             //   val.label = dataValRet.title1;
+
+             //   myObject.push(val);
+
+                //val = {};
+             ////   var legen = '<div>'+
+               //     '<div class="input-append color"	data-color="'+col+'" data-color-format="rgb" style="float:left;">'+
+              //      '<input type="hidden" class="span2" value="" readonly>'+
+             //       '<span class="add-on" style="margin-left: 20px;">'+
+              //      '<i style="background-color: '+col+';"></i>'+
+             //       '</span>'+
+              //      '</div>'+
+               //     '<div style="float:left;">'+
+               //     '<b>'+dataValRet.title1+'</b>'+
+                //    '</div>'+
+             //       '</div>';
+        //        jQuery('#legDirection').append(legen);
+
+
+      //      });
+
+         //   console.log(myObject);
+
+      //      var ctxLineMoyAgefrfrfrfr = document.getElementById("chartarea").getContext("2d");
+    //        window.myPie = new Chart(ctxLineMoyAgefrfrfrfr).Pie(myObject);
+
+    //        window.myPie = new Chart(ctxLineMoyAgefrfrfrfr,{
+  //              type: 'bar',
+   //             data: myObject,
+     //           responsive: true
+      //      });
+
+  //      }
     var anAff = '${anneId}';
 
     urlenv =baseUrl+"/personnels/effectifPersonnel?id="+anAff;
@@ -216,6 +255,50 @@
         }
 
     });
+
+function diagrameEffectifSite(dataVal){
+
+    var lineChartData = {
+        labels: dataVal.map(item => item.s1),
+        datasets: [
+            {
+                label: "Effectif",
+                fill: true,
+                borderColor: "#3e95cd",
+                backgroundColor: "#3e95cd",
+                data: dataVal.map(item => item.i1),
+            },
+            {
+                label: "Masse salariale",
+                fill: true,
+                borderColor: "#8e5ea2",
+                backgroundColor: "#8e5ea2",
+                data: dataVal.map(item => item.value1),
+            }
+        ]
+    };
+    var ctxLine = document.getElementById("myChartSiteEffec").getContext("2d");
+new Chart(ctxLine, {
+    type: 'line',
+    data: lineChartData,
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+
+
+
+}
+
+
+
+
     function diagrameEffectif(dataVal){
 
         var barChartData = {
@@ -248,7 +331,7 @@
 
 
         }
-
+       $('#myChartEffec').replaceWith('<canvas id="myChartEffec"></canvas>');
         var ctx = document.getElementById("myChartEffec").getContext("2d");
         window.myBart = new Chart(ctx, {
             type: 'bar',
@@ -256,6 +339,7 @@
         });
 
     }
+
     function diagrameConge(dataVal){
 
         var lineChartData = {
@@ -301,29 +385,31 @@
 
     }
     function diagrameTypecontrat(dataVal){
-          new Chart(document.getElementById("retraitebar1"), {
-        type: 'doughnut',
-        data: {
-            labels: [dataVal[0].s1, dataVal[1].s1, dataVal[2].s1, dataVal[3].s1],
-            datasets: [
-                {
-                    label: "Population (millions)",
-                    backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#ff0033"],
-                    data: [dataVal[0].i1,dataVal[1].i1,dataVal[2].i1,dataVal[3].i1]
+
+        new Chart(document.getElementById("retraitebar1"), {
+            type: 'doughnut',
+            data: {
+                labels: [dataVal[0].s1, dataVal[1].s1, dataVal[2].s1, dataVal[3].s1],
+                datasets: [
+                    {
+                        label: "Population (millions)",
+                        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#ff0033"],
+                        data: [dataVal[0].i1,dataVal[1].i1,dataVal[2].i1,dataVal[3].i1]
+                    }
+                ]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Employes par type de contrats'
                 }
-            ]
-        },
-        options: {
-            title: {
-                display: true,
-                text: 'Employes par type de contrats'
             }
-        }
-    });
+        });
 
     }
 
     function diagramemassesalariale(dataVal){
+
         new Chart(document.getElementById("retraitebar2"), {
             type: 'pie',
             data: {
@@ -390,51 +476,9 @@
             responsive: true
         });
     }
-    function diagrameMoyenneAge(dataVal){
-        var randomScalingFactor = function(){ return Math.round(Math.random()*10000)};
-
-        var myObject = [];
-        var val = {};
-        jQuery.each(dataVal, function(i,dataValRet){
-            var col = "rgb(" + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + ")";
-            var col1 = "rgb(" + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + ")";
-
-            val.value = dataValRet.i1;
-            val.color = col;
-            val.highlight = col1;
-            val.label = dataValRet.title1;
-
-            myObject.push(val);
-
-            val = {};
-            var legen = '<div>'+
-                '<div class="input-append color"	data-color="'+col+'" data-color-format="rgb" style="float:left;">'+
-                '<input type="hidden" class="span2" value="" readonly>'+
-                '<span class="add-on" style="margin-left: 20px;">'+
-                '<i style="background-color: '+col+';"></i>'+
-                '</span>'+
-                '</div>'+
-                '<div style="float:left;">'+
-                '<b>'+dataValRet.title1+'</b>'+
-                '</div>'+
-                '</div>';
-            jQuery('#legDirection').append(legen);
 
 
-        });
 
-        console.log(myObject);
-
-        var ctxLineMoyAgefrfrfrfr = document.getElementById("chartarea").getContext("2d");
-//        window.myPie = new Chart(ctxLineMoyAgefrfrfrfr).Pie(myObject);
-
-        window.myPie = new Chart(ctxLineMoyAgefrfrfrfr,{
-            type: 'bar',
-            data: myObject,
-            responsive: true
-        });
-
-    }
     function statEffectif(){
 
         var anAff = '${anneId}';
@@ -451,6 +495,39 @@
                 console.log(data);
 
                 diagrameEffectif(data);
+
+            },
+            error: function(err) {
+                console.log(err);
+                //alert("Impossible de joindre le serveur.");
+            },
+            beforeSend: function() {
+                //jQuery("#csharge").show();
+            },
+            complete: function() {
+                //jQuery("#charge").hide();
+            }
+
+        });
+    }
+
+
+   function statSiteEffectif(){
+
+        var anAff = '${anneId}';
+
+        urlenv1 =baseUrl +"/personnels/effectifparsite?id="+anAff;
+        //alert("le lien est     "+urlenv);
+        jQuery.ajax({
+            type: "GET",
+            url: urlenv1,
+            cache: false,
+            dataType: "json",
+            timeout: 9000,
+            success: function(data) {
+                console.log(data);
+
+                diagrameEffectifSite(data);
 
             },
             error: function(err) {
@@ -583,52 +660,52 @@
         });
 
     }
-    function statMoyenage(){
-    urlenv =baseUrl+"/personnels/stat/moyenAge?aid="+anAff;
-    //alert("le lien est     "+urlenv);
-    jQuery.ajax({
-        type: "GET",
-        url: urlenv,
-        cache: false,
-        dataType: "json",
-        timeout: 9000,
-        success: function(data) {
-            console.log(data);
+     //function statMoyenage(){
+      //  urlenv =baseUrl+"/personnels/stat/moyenAge?aid="+anAff;
+        //alert("le lien est     "+urlenv);
+      //   jQuery.ajax({
+       //      type: "GET",
+         //    url: urlenv,
+       //      cache: false,
+       //      dataType: "json",
+       //      timeout: 9000,
+        //     success: function(data) {
+        //         console.log(data);
 
-            diagrameMoyenneAge(data);
-        },
-        error: function(err) {
-            console.log(err);
-            //alert("Impossible de joindre le serveur.");
-        },
-        beforeSend: function() {
-            //jQuery("#csharge").show();
-        },
-        complete: function() {
-            //jQuery("#charge").hide();
-        }
+          //       diagrameMoyenneAge(data);
+         //    },
+          //   error: function(err) {
+         //        console.log(err);
+                //alert("Impossible de joindre le serveur.");
+           //  },
+            // beforeSend: function() {
+             //    //jQuery("#csharge").show();
+            // },
+           //  complete: function() {
+                //jQuery("#charge").hide();
+           //  }
 
-    });
-     }
-    new Chart(document.getElementById("retraitebar1"), {
-       type: 'doughnut',
-       data: {
-            labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
-            datasets: [
-                {
-                    label: "Population (millions)",
-                    backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-                    data: [2478,5267,734,784,433]
-               }
-            ]
-        },
-        options: {
-            title: {
-                display: true,
-                text: 'Employes par type de contrats'
-           }
-        }
-    });
+        // });
 
+         //new Chart(document.getElementById("retrait1"), {
+           // type: 'doughnut',
+           // data: {
+           //      labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+           //      datasets: [
+           //          {
+           //              label: "Population (millions)",
+             //            backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+              //           data: [2478,5267,734,784,433]
+             //       }
+              //   ]
+           //  },
+            // options: {
+            //     title: {
+             //        display: true,
+            //         text: 'Employes par type de contrats'
+              //  }
+            // }
+         //});
+     // }
 
 </script>

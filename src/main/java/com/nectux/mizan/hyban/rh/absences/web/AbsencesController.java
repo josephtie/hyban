@@ -68,9 +68,10 @@ public class AbsencesController {
 	public @ResponseBody
     AbsencesDTO saveAbsences(@RequestParam(value="id", required=false) Long id,
                              @RequestParam(value="faute", required=false) String faute,
+                             @RequestParam(value="type", required=false) String type,
                              @RequestParam(value="commentaire", required=false) String commentaire) throws Exception {
 		logger.info(">>> ENREGISTRER AFFECTATION");
-		return absenceService.save(id, faute, commentaire);
+		return absenceService.save(id, faute,type, commentaire);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)

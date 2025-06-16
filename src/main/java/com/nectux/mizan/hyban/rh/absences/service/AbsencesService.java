@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface AbsencesService {
 	
-	public AbsencesDTO save(Long id, String faute, String commentaire);
+	public AbsencesDTO save(Long id, String faute,String type, String commentaire);
 	
 	public Absences saver(String faute, String commentaire);
 	

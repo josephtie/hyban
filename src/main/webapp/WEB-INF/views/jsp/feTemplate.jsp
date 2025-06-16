@@ -39,7 +39,9 @@
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/morris/raphael-min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/morris/morris.min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/icheck/icheck.min.js"></script>
-                   <script src="${pageContext.request.contextPath}/static/back-office/js/Chart.js"></script>
+                     <script src="${pageContext.request.contextPath}/static/back-office/js/Chart.js"></script>
+                     <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/Chart.min.js"></script>-->
+                      <!--  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
                    <script src="${pageContext.request.contextPath}/static/front-end/js/jquery.datetimepicker.full.min.js"></script>
                   <script src="${pageContext.request.contextPath}/static/front-end/js/bootstrap-table.js"></script>
                    <script src="${pageContext.request.contextPath}/static/front-end/js/underscore-min.js"></script>

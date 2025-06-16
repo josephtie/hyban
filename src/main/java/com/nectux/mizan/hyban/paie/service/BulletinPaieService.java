@@ -88,4 +88,6 @@ public interface BulletinPaieService {
 	public Double[] MensuelBaseCnpsInf(PeriodePaie periodePaie);
 
 	public List<PrintLs> calculerMasseSalarialeParTypeContrat(PeriodePaie periode);
+	public List<PrintLs> calculerMasseSalarialeParSite(PeriodePaie periode);
+	public List<PrintLs> calculerEffectifParSiteAlaPaie(PeriodePaie periode);
 }

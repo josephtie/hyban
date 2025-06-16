@@ -150,4 +150,40 @@ public interface BulletinPaieRepository extends JpaRepository<BulletinPaie, Long
 	List<Object[]> getMasseSalarialeParTypeContrat(@Param("periodeId") Long periodeId);
 
 
+
+
+
+	@Query(value = """
+    SELECT COALESCE(s.libelle, 'Site par defaut') AS site, SUM(b.totalmassesalarial) AS total_masse
+    FROM cgeci_rhpaie_bulletin_paie b
+    JOIN cgeci_rhpaie_contrat_personnel c ON b.contrat_personnel_id = c.id
+    JOIN cgeci_rhpaie_personnel p ON c.personnel_id = p.id
+    LEFT JOIN cgeci_rhpaie_affectation a ON p.id = a.personnel_id AND a.statut = true
+    LEFT JOIN cgeci_rhpaie_site s ON a.site_id = s.id
+    WHERE b.periode_paie_id = :periodeId
+      AND c.statut = true
+      AND p.retrait_effect = false
+    GROUP BY COALESCE(s.libelle, 'Site par defaut')
+    """, nativeQuery = true)
+	List<Object[]> getMasseSalarialeParSite(@Param("periodeId") Long periodeId);
+
+
+
+
+	@Query(value = """
+    SELECT COALESCE(s.libelle, 'Site par defaut') AS site, COUNT(DISTINCT p.id) AS effectif
+    FROM cgeci_rhpaie_bulletin_paie b
+    JOIN cgeci_rhpaie_contrat_personnel c ON b.contrat_personnel_id = c.id
+    JOIN cgeci_rhpaie_personnel p ON c.personnel_id = p.id
+    LEFT JOIN cgeci_rhpaie_affectation a ON p.id = a.personnel_id AND a.statut = true
+    LEFT JOIN cgeci_rhpaie_site s ON a.site_id = s.id
+    WHERE b.periode_paie_id = :periodeId
+      AND c.statut = true     
+      AND p.retrait_effect = false
+    GROUP BY COALESCE(s.libelle, 'Site par defaut')
+    """, nativeQuery = true)
+	List<Object[]> getEffectifParSite(@Param("periodeId") Long periodeId);
+
+
+
 }

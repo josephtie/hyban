@@ -7,6 +7,7 @@ import java.util.List;
 import com.nectux.mizan.hyban.personnel.repository.FonctionRepository;
 import com.nectux.mizan.hyban.rh.carriere.entity.Affectation;
 import com.nectux.mizan.hyban.rh.carriere.repository.AffectationRepository;
+import com.nectux.mizan.hyban.rh.carriere.repository.SiteWorkRepository;
 import com.nectux.mizan.hyban.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ import javax.persistence.EntityNotFoundException;
 public class AffectationServiceImpl implements AffectationService {
 	
 	@Autowired private AffectationRepository affectationRepository;
+	@Autowired private SiteWorkRepository siteWorkRepository;
 	@Autowired private PersonnelRepository personneRepository;
 	@Autowired private FonctionRepository posteRepository;
 	
@@ -37,7 +39,7 @@ public class AffectationServiceImpl implements AffectationService {
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public AffectationDTO save(Long id, Long idPersonnel, Long idPoste, String dateDebut, String dateFin, String observation) {
+	public AffectationDTO save(Long id, Long idPersonnel, Long idPoste,Long idSite, Boolean present,String dateDebut, String dateFin, String observation) {
 		// TODO Auto-generated method stub
 		AffectationDTO affectationDTO = new AffectationDTO();
 		Affectation affectation;
@@ -51,7 +53,8 @@ public class AffectationServiceImpl implements AffectationService {
 				affectation.setDateModification(new Date());
 			}
 			affectation.setObservation(observation);
-			
+			affectation.setStatut(present);
+
 			if(idPersonnel == null){
 				sb = new StringBuilder();
 				erreur = new Erreur();
@@ -73,7 +76,20 @@ public class AffectationServiceImpl implements AffectationService {
 				listErreur.add(erreur);
 			} else 
 				affectation.setPoste(posteRepository.findById(idPoste) .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idPoste)));
-			
+
+			if(idSite == null){
+				sb = new StringBuilder();
+				erreur = new Erreur();
+				erreur.setCode(10);
+				erreur.setDescription("contrainte d'integrite non null non respectee");
+				sb.append("le Site est obligatoire");
+				erreur.setMessage(sb.toString());
+				listErreur.add(erreur);
+			} else
+				affectation.setSite(siteWorkRepository.findById(idSite) .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idSite)));
+
+
+
 			if(dateDebut == null || dateDebut.trim().equals("")){
 				sb = new StringBuilder();
 				erreur = new Erreur();

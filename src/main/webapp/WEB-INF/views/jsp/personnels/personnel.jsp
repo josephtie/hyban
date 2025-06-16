@@ -1186,6 +1186,7 @@
                             <div class="col-md-4">
                                 <label>Poste</label>
                                 <select class="form-control input-small" id="idPoste" name="idPoste" ng-model="posteId" ng-init="posteId=poste">
+                                   <option value="" disabled selected>-- Selectionnez --</option>
                                     <c:forEach items="${listePostes}" var="poste">
                                         <option value="${poste.id}">${poste.libelle}</option>
                                     </c:forEach>
@@ -1197,13 +1198,29 @@
                             </div>
                             <div class="col-md-4">
                                 <label>Date fin</label>
-                                <input type="text" class="form-control input-small datePicker" name="dateFin" placeholder="Date fin affectation" maxlength="10" required="required" ng-model="affectation.dFin">
+                                <input type="text" class="form-control input-small datePicker" name="dateFin" placeholder="Date fin affectation" maxlength="10" ng-model="affectation.dFin">
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="row">
-                            <div class="col-md-12">
+                             <div class="col-md-4">
+                             <label>Site de Travail</label>
+                                 <select class="form-control input-small" id="idSite" name="idSite" ng-model="siteId" ng-init="siteId=site">
+                                 <option value="" disabled selected>-- Selectionnez --</option>
+                                 <c:forEach items="${listeSites}" var="site">
+                                   <option value="${site.id}">${site.libelle}</option>
+                                  </c:forEach>
+                                 </select>
+                             </div>
+                                 <div class="col-md-3">
+                                      <label for="statut">Present ? </label>
+                                         <select class="form-control input-small" id="statutAffect" name="statutAffect" ng-change="statutAffect(affectation)" ng-model="statutpresent" ng-init="statutpresent='false'">
+                                               <option value="true" >Present</option>
+                                               <option value="false" selected="selected">Non</option>
+                                          </select>
+                                </div>
+                            <div class="col-md-5">
                                 <label>Observation</label>
                                 <textarea class="form-control" name="observation" placeholder="Observation" ng-model="affectation.observation">
                                     
@@ -1237,10 +1254,13 @@
                        data-search="true">
                     <thead>
                         <tr>
+                            <th data-field="site" data-formatter="siteFormatter">Site</th>
                             <th data-field="poste" data-formatter="posteFormatter">Poste</th>
                             <th data-field="dDebut">Date debut</th>
                             <th data-field="dFin">Date fin</th>
+                            <th data-field="statut" data-formatter="statutAffectFormatter">Statut</th>
                             <th data-field="observation">Observation</th>
+                          <th data-field="id" data-formatter="optionAffectationFormatter" data-align="center">Option</th>
                         </tr>
                     </thead>
                 </table> </div>
@@ -1297,6 +1317,7 @@
                             <div class="col-md-6">
                                 <label>Promotion</label>
                                 <select class="form-control input-small" id="idPromotion" name="idPromotion" ng-model="promotionPersonnel.promotion.id" ng-init="promotionPersonnel.promotion.id=promotion">
+                                     <option value="" disabled selected>-- Selectionnez --</option>
                                     <c:forEach items="${listePromotions}" var="promotion">
                                         <option value="${promotion.id}">${promotion.libelle}</option>
                                     </c:forEach>
@@ -1332,7 +1353,7 @@
                 <p>&nbsp;</p>
                 <div id="toolbarPromotion">
                     <div class="form-inline">
-                        <button type="button" class="btn btn-primary" title="Nouvelle affectation" id="btnAddPromotion"><span class="glyphicon glyphicon-plus"></span> Nouvelle promotion</button>
+                        <button type="button" class="btn btn-primary" title="Nouvelle promotion" id="btnAddPromotion"><span class="glyphicon glyphicon-plus"></span> Nouvelle promotion</button>
                     </div>
                 </div>  </div><div style="max-height: 300px; overflow-y: auto;">
                 <table id="tablePromotion" class="table table-info table-striped"
@@ -2032,6 +2053,7 @@ app.controller('formAjoutCtrl', function ($scope) {
     };
 }).controller('listAffectationCtrl', function ($scope) {
     $scope.poste = jQuery("#idPoste option:first").val();
+    $scope.site = jQuery("#idSite option:first").val();
     $scope.populateForm = function (personnel, affectation) {
         $scope.personnel = personnel;
         $scope.affectation = affectation;
@@ -3427,6 +3449,12 @@ function optionAbsenceFormatter(id, row, index) {
     return '<a href="#" onclick="javascript:editAbsence(' + id + ', '+index+')" title="Modifier"><span class="glyphicon glyphicon-pencil"></span></a>';
 }
 
+function optionAffectationFormatter(id, row, index) {
+    return '<a href="#" onclick="javascript:editAffection(' + id + ', '+index+')" title="Modifier"><span class="glyphicon glyphicon-pencil"></span></a>';
+}
+
+
+
 function optionDocumentFormatter(id, row, index) {
 
 
@@ -3445,11 +3473,25 @@ function editAbsence(idAbsencePersonnel, index) {
     jQuery("#actionAbsence button:submit").data("action", "update");
     jQuery("#actionAbsence button:submit").data("", index);
 }
+function editAffection(idAbsencePersonnel, index) {
+    var $scope = angular.element(document.getElementById("listAffectationModal")).scope();
+    var rows = $tableAffectation.bootstrapTable('getData');
+    var affectationPersonnel = _.findWhere(rows, {id: idAbsencePersonnel});
+    $scope.idSite=affectationPersonnel.site.id;
+    $scope.idPoste=affectationPersonnel.poste.id;
+    $scope.$apply(function () {
+        $scope.populateForm(affectationPersonnel.personnel,affectationPersonnel);
+    });
+    jQuery(".form-affectation").show(500);
+    jQuery("#actionAffectation button:submit").data("action", "update");
+    jQuery("#actionAffectation button:submit").data("", index);
+}
 
 function editDocument(idemployeDocument, index) {
     var $scope = angular.element(document.getElementById("listDocumentModal")).scope();
     var rows = $tableDocument.bootstrapTable('getData');
     var employeDocument = _.findWhere(rows, {id: idemployeDocument});
+    $scope.
     $scope.$apply(function () {
         $scope.populateForm(employeDocument.personnel,employeDocument);
     });
@@ -3494,6 +3536,13 @@ function typeContratFormatter(typeContrat) {
 
 function posteFormatter(poste) {
     return poste.libelle;
+}
+
+function siteFormatter(site) {
+    return site.libelle;
+}
+function statutAffectFormatter(statut) {
+    return statut ? '<span style="color:green;">En cours</span>' : '<span style="color:red;">Termine</span>';
 }
 
 function promotionFormatter(promotion) {

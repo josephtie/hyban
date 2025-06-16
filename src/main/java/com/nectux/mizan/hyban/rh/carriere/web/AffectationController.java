@@ -63,11 +63,13 @@ public class AffectationController {
 	public @ResponseBody AffectationDTO saveAffectation(@RequestParam(value="id", required=false) Long id, 
 												@RequestParam(value="idPersonnel", required=true) Long idPersonnel, 
 												@RequestParam(value="idPoste", required=true) Long idPoste,  
-												@RequestParam(value="dateDebut", required=false) String dateDebut,  
+												@RequestParam(value="idSite", required=true) Long idSite,
+												@RequestParam(value="statutAffect", required=false) Boolean statutAffect,
+												@RequestParam(value="dateDebut", required=false) String dateDebut,
 												@RequestParam(value="dateFin", required=false) String dateFin,  
 												@RequestParam(value="observation", required=false) String observation) throws Exception {
 		logger.info(">>> ENREGISTRER AFFECTATION");
-		return affectationService.save(id, idPersonnel, idPoste, dateDebut, dateFin, observation);
+		return affectationService.save(id, idPersonnel, idPoste,idSite ,statutAffect,dateDebut, dateFin, observation);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)

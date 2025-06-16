@@ -26,6 +26,8 @@ import com.nectux.mizan.hyban.personnel.service.FonctionService;
 import com.nectux.mizan.hyban.personnel.service.PersonnelService;
 import com.nectux.mizan.hyban.personnel.service.ServiceService;
 import com.nectux.mizan.hyban.rh.absences.service.AbsencesService;
+import com.nectux.mizan.hyban.rh.carriere.repository.AffectationRepository;
+import com.nectux.mizan.hyban.rh.carriere.repository.SiteWorkRepository;
 import com.nectux.mizan.hyban.rh.carriere.service.PosteService;
 import com.nectux.mizan.hyban.rh.carriere.service.PromotionService;
 import com.nectux.mizan.hyban.rh.carriere.service.SanctionService;
@@ -41,13 +43,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -63,8 +62,11 @@ public class PersonnelController {
 	@Autowired
 	private DocumentTypeRepository documentTypeRepository;
 	@Autowired
+	private AffectationRepository affectationRepository;
+	@Autowired
 	private StorageLocationRepository storageLocationRepository;
 	@Autowired private PersonnelRepository personnelRepository;
+	@Autowired private SiteWorkRepository siteWorkRepository;
 	@Autowired private MoisService moisService;
 	@Autowired private BulletinPaieService bulletinPaieService;
 	@Autowired private ServiceService serviceService;
@@ -106,7 +108,8 @@ public class PersonnelController {
 
 		//modelMap.addAttribute("listeSanctions", sanctionService.getSanctions()); 
 
-                modelMap.addAttribute("listePostes", fonctionService.findFonctions());
+            modelMap.addAttribute("listePostes", fonctionService.findFonctions());
+            modelMap.addAttribute("listeSites", siteWorkRepository.findAll());
             modelMap.addAttribute("listeSanctions", sanctionService.getSanctions());
             modelMap.addAttribute("listePromotions", fonctionService.findFonctions());
             modelMap.addAttribute("listeBanques", banqueService.getBanques());
@@ -477,6 +480,46 @@ public class PersonnelController {
 		}
 		return toJson(listPrintDTO);
 	}
+
+
+	@RequestMapping(value = "/effectifparsite", method = RequestMethod.GET)
+	@ResponseBody
+	public String effectifUse(@RequestParam(value="id", required=false) Long id, ModelMap modelMap) throws IOException {
+
+
+		Exercice anneeRecup = new Exercice();
+		if (id != null) {
+			try {
+				anneeRecup = exerciceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		PeriodePaie periode = periodePaieService.findPeriodeactive();
+		if (periode == null) {
+			return toJson(Collections.emptyList());
+		}
+		List<PrintLs> effectifParSite = bulletinPaieService.calculerEffectifParSiteAlaPaie(periode);
+		List<PrintLs> masseSalarialeSite = bulletinPaieService.calculerMasseSalarialeParSite(periode);
+		System.out.println(" annee :::::: " + anneeRecup.toString());
+		Map<String, PrintLs> merged = new HashMap<>();
+		for (PrintLs eff : effectifParSite) {
+			PrintLs item = new PrintLs();
+			item.setS1(eff.getS1()); // le site
+			item.setI1(eff.getI1()); // l'effectif
+			merged.put(eff.getS1(), item);
+		}
+
+		for (PrintLs masse : masseSalarialeSite) {
+			PrintLs item = merged.computeIfAbsent(masse.getS1(), k -> new PrintLs());
+			item.setS1(masse.getS1()); // le site
+			item.setValue1(Math.ceil(masse.getValue1())); // la masse salariale
+		}
+
+		return toJson(new ArrayList<>(merged.values()));
+	}
+
 
 	@RequestMapping(value = "/stat/conge", method = RequestMethod.GET)
 	@ResponseBody

@@ -85,6 +85,12 @@ public class Affectation {
 	@JoinColumn(nullable=false)
 	private Personnel personnel;
 
+	private Boolean statut;
+
+	@ManyToOne
+	@JoinColumn(name = "site_id", nullable = true)
+	private Site site;
+
 	public Affectation() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -202,13 +208,42 @@ public class Affectation {
 		this.personnel = personnel;
 	}
 
+	public Site getSite() {
+		return site;
+	}
+
+	public void setSite(Site site) {
+		this.site = site;
+	}
+
+	public Boolean getStatut() {
+		return statut;
+	}
+
+	public void setStatut(Boolean statut) {
+		this.statut = statut;
+	}
+
 	@Override
 	public String toString() {
-		return "Affectation [id=" + id + ", fileData=" + fileData + ", urlDocument=" + urlDocument + ", observation="
-				+ observation + ", dateAffectation=" + dateDebut + ", dAffectation=" + dDebut
-				+ ", dateCreation=" + dateCreation + ", dCreation=" + dCreation + ", dateModification="
-				+ dateModification + ", dModification=" + dModification + ", poste=" + poste + ", personnel="
-				+ personnel + "]";
+		return "Affectation{" +
+				"id=" + id +
+				", fileData=" + fileData +
+				", urlDocument='" + urlDocument + '\'' +
+				", observation='" + observation + '\'' +
+				", dateDebut=" + dateDebut +
+				", dDebut='" + dDebut + '\'' +
+				", dateFin=" + dateFin +
+				", dFin='" + dFin + '\'' +
+				", dateCreation=" + dateCreation +
+				", dCreation='" + dCreation + '\'' +
+				", dateModification=" + dateModification +
+				", dModification='" + dModification + '\'' +
+				", poste=" + poste +
+				", personnel=" + personnel +
+				", statut=" + statut +
+				", site=" + site +
+				'}';
 	}
 
 }

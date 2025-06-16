@@ -31,7 +31,7 @@ public class AbsencesServiceImpl implements AbsencesService {
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public AbsencesDTO save(Long id, String faute, String commentaire) {
+	public AbsencesDTO save(Long id, String faute, String type,String commentaire) {
 		// TODO Auto-generated method stub
 		AbsencesDTO absencesDTO = new AbsencesDTO();
 		Absences absence;
@@ -45,6 +45,7 @@ public class AbsencesServiceImpl implements AbsencesService {
 				absence.setDateModification(new Date());
 			}
 			absence.setFaute(faute);
+			absence.setType(type);
 			absence.setCommentaire(commentaire);
 			
 			if(faute == null){

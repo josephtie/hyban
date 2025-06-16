@@ -1124,4 +1124,40 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 	}
 
 
+	public List<PrintLs> calculerMasseSalarialeParSite(PeriodePaie periode) {
+		List<Object[]> resultats = bulletinPaieRepository.getMasseSalarialeParSite(periode.getId());
+		List<PrintLs> listPrint = new ArrayList<>();
+
+		for (Object[] row : resultats) {
+			String site = (String) row[0];
+			Double total = (Double) row[1];
+
+			PrintLs dto = new PrintLs();
+			dto.setS1(site);
+			dto.setTitle1(site ); // ex : Contractuels
+			dto.setValue1(total != null ? total : 0);
+			listPrint.add(dto);
+		}
+		return listPrint;
+	}
+
+
+	public List<PrintLs> calculerEffectifParSiteAlaPaie(PeriodePaie periode) {
+		List<Object[]> resultats = bulletinPaieRepository.getEffectifParSite(periode.getId());
+		  List<PrintLs> listPrint = new ArrayList<>();
+
+		for (Object[] row : resultats) {
+			String site = (String) row[0];
+			Long total = ((Number) row[1]).longValue();
+
+
+			PrintLs dto = new PrintLs();
+			dto.setS1(site);
+			dto.setTitle1(site ); // ex : Contractuels
+			dto.setI1(total != null ? total.intValue() : 0);
+			listPrint.add(dto);
+		}
+		return listPrint;
+	}
+
 }

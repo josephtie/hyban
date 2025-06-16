@@ -33,6 +33,8 @@ public class Absences {
 	private String faute;
 	
 	private String commentaire;
+
+	private String type;
 	
 	@JsonSerialize(using = CustomDateDeserializer.class)
 	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -113,15 +115,27 @@ public class Absences {
 		this.dModification = dModification;
 	}
 
-	@Override
-	public String toString() {
-		return "Absences [id=" + id + ", faute=" + faute + ", commentaire="
-				+ commentaire + ", dateCreation=" + dateCreation
-				+ ", dCreation=" + dCreation + ", dateModification="
-				+ dateModification + ", dModification=" + dModification + "]";
+	public String getType() {
+		return type;
 	}
 
-	
-	
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	@Override
+	public String toString() {
+		return "Absences{" +
+				"id=" + id +
+				", faute='" + faute + '\'' +
+				", commentaire='" + commentaire + '\'' +
+				", type='" + type + '\'' +
+				", dateCreation=" + dateCreation +
+				", dCreation='" + dCreation + '\'' +
+				", dateModification=" + dateModification +
+				", dModification='" + dModification + '\'' +
+				'}';
+	}
+
 
 }

@@ -52,6 +52,7 @@
                     <tr>
                         <th data-field="faute">Motif</th>
                         <th data-field="commentaire">Commentaire</th>
+                        <th data-field="type">Type absence</th>
                         <th data-field="id" data-formatter="optionFormatter" data-width="100px" data-align="center">Options</th>
                     </tr>
                 </thead>
@@ -76,6 +77,16 @@
                             <input type="text" id="faute" name="faute" ng-model="absence.faute" class="form-control" placeholder="Motif" />
                         </div>
                     </div>
+                         <div class="form-group">
+                                            <label for="typejust" class="col-md-2 control-label">Type</label>
+                                            <div class="col-md-10">
+
+                                                  <select class="form-control input-small" id="type" name="type"  ng-model="absence.type" >
+                                                    <option value="Justifiée" >OUI</option>
+                                                    <option value="Injustifiée" >NON</option>
+                                                   select>
+                                            </div>
+                                        </div>
                     <div class="form-group">
                         <label for="commentaire" class="col-md-2 control-label">Commentaire</label>
                         <div class="col-md-10">
@@ -254,7 +265,7 @@
 
         var rows = $table.bootstrapTable('getData');
         var absence = _.findWhere(rows, {id: idTypeSaction});
-
+         $scope.type=absence.type;
         $scope.$apply(function () {
             $scope.populateForm(absence);
         });
