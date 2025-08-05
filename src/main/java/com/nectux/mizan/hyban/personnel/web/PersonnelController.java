@@ -134,7 +134,7 @@ public class PersonnelController {
 	@RequestMapping(value = "/listpersonneljson", method = RequestMethod.GET)
 	public @ResponseBody PersonnelDTO getPersonnelListJSON(@RequestParam(value="limit", required=false) Integer limit, 
 															@RequestParam(value="offset", required=false) Integer offset, 
-															@RequestParam(value="search", required=false) String search, Principal principal) {
+															@RequestParam(value="search", required=false)  String search, Principal principal) {
 		
 		if(offset == null) offset = 0;
 		if(limit == null) limit = 10;
@@ -142,12 +142,14 @@ public class PersonnelController {
 		//final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "nom");
 		PageRequest pageRequest = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
 		PersonnelDTO personnelDTO = new PersonnelDTO();
-		if(search == null || search == "")
+		if(search == null )
 			personnelDTO = personnelService.loadPersonnel(pageRequest);
 		else
-			personnelDTO = personnelService.loadPersonnel(pageRequest, search,search,search);
+			personnelDTO = personnelService.loadPersonnel(pageRequest,search,search,search);
 		
 		return personnelDTO;
+		//System.out.println(" hello "+hfhfh);
+		//System.out.println("****************jour  MOIS annnee)))))))))))))))))))))"+offset+"MOIS"+limit);
 	}
 	
 	/*@ResponseStatus(HttpStatus.OK)

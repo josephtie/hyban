@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import com.nectux.mizan.hyban.personnel.entity.Fonction;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -30,7 +31,7 @@ import com.nectux.mizan.hyban.utils.DateManager;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_AFFECTATION")
 @SequenceGenerator(name="CGECI_RHPAIE_AFFECTATION_SEQUENCE", sequenceName="CGECI_RHPAIE_AFFECTATION_SEQ", initialValue=1, allocationSize=1)
-public class Affectation {
+public class Affectation extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_AFFECTATION_SEQUENCE")

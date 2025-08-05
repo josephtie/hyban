@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_BANQUE")
 @SequenceGenerator(name="CGECI_RHPAIE_BANQUE_SEQUENCE", sequenceName="CGECI_RHPAIE_BANQUE_SEQ", initialValue=1, allocationSize=1)
-public class Banque {
+public class Banque extends Auditable{
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_BANQUE_SEQUENCE")

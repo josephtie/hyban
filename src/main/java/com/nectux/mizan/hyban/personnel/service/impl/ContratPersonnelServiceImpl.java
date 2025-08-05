@@ -3,17 +3,21 @@ package com.nectux.mizan.hyban.personnel.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.nectux.mizan.hyban.paie.repository.PrimePersonnelRepository;
 import com.nectux.mizan.hyban.parametrages.entity.TypeContrat;
 import com.nectux.mizan.hyban.parametrages.repository.TypeContratRepository;
+import com.nectux.mizan.hyban.personnel.dto.CategorieDTO;
 import com.nectux.mizan.hyban.personnel.entity.Categorie;
 import com.nectux.mizan.hyban.utils.DifferenceDate;
 
+import com.nectux.mizan.hyban.utils.GenericSpecifications;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -211,6 +215,18 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 		contratPersonnelDTO.setRows(page.getContent());
 		contratPersonnelDTO.setTotal(page.getTotalElements());
 		logger.info(new StringBuilder().append(">>>>> CONTRATS PERSONNELS CHARGES AVEC SUCCES").toString());
+		return contratPersonnelDTO;
+	}
+
+	@Override
+	public ContratPersonnelDTO findAllfilter(Map<String, String> filters, Pageable pageable) {
+		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
+		Specification<ContratPersonnel> specification = GenericSpecifications.fromMap(filters);
+		Page<ContratPersonnel> page = contratPersonnelRepository.findAll(specification, pageable);
+		contratPersonnelDTO.setResult(true);
+		contratPersonnelDTO.setStatus(true);
+		contratPersonnelDTO.setRows(page.getContent());
+		contratPersonnelDTO.setTotal(page.getTotalElements());
 		return contratPersonnelDTO;
 	}
 

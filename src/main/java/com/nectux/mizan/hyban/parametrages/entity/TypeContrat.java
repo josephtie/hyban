@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @Table(name="CGECI_RHPAIE_TYPE_CONTRAT")
 @SequenceGenerator(name="CGECI_RHPAIE_TYPE_CONTRAT_SEQUENCE", sequenceName="CGECI_RHPAIE_TYPE_CONTRAT_SEQ", initialValue=1, allocationSize=1)
 
-public class TypeContrat {
+public class TypeContrat extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_TYPE_CONTRAT_SEQUENCE")

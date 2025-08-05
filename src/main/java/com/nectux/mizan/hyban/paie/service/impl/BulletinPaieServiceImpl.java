@@ -8,9 +8,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.nectux.mizan.hyban.paie.service.BulletinPaieService;
 import com.nectux.mizan.hyban.parametrages.repository.PlanningCongeRepository;
+import com.nectux.mizan.hyban.rh.absences.entity.Absences;
 import com.nectux.mizan.hyban.utils.DifferenceDate;
 import com.nectux.mizan.hyban.paie.dto.BulletinPaieDTO;
 import com.nectux.mizan.hyban.paie.dto.LivreDePaieDTO;
@@ -30,6 +32,7 @@ import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.personnel.repository.ContratPersonnelRepository;
 import com.nectux.mizan.hyban.personnel.repository.PersonnelRepository;
+import com.nectux.mizan.hyban.utils.GenericSpecifications;
 import com.nectux.mizan.hyban.utils.PrintLs;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,6 +42,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,6 +126,19 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		bulletinPaieDTO.setTotal(page.getTotalElements());
 		logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
 		return bulletinPaieDTO;
+	}
+
+	@Override
+	public BulletinPaieDTO findAllfilter(Map<String, String> filters, Pageable pageable) {
+		BulletinPaieDTO bulletinPaieDTO = new BulletinPaieDTO();
+		Specification<BulletinPaie> specification = GenericSpecifications.fromMap(filters);
+		Page<BulletinPaie> page = bulletinPaieRepository.findAll(specification, pageable);
+	//	Page<BulletinPaie> page = bulletinPaieRepository.chercherParNom(maperiode.getId(), "",pageable);
+		bulletinPaieDTO.setRows(page.getContent());
+		bulletinPaieDTO.setTotal(page.getTotalElements());
+		logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
+		return bulletinPaieDTO;
+		//return null;
 	}
 
 	/*@Override
@@ -786,6 +803,7 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 		logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
 		return bulletinPaieDTO;
 	}
+
 
 	@Override
 	public List<BulletinPaie> findBulletinByPeriodePaie(Long idPeriode) {

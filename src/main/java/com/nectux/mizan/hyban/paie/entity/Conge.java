@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 import com.nectux.mizan.hyban.utils.CustomDateDeserializer;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_CONGE")
 @SequenceGenerator(name="CGECI_RHPAIE_CONGE_SEQUENCE", sequenceName="CGECI_RHPAIE_CONGE_SEQ", initialValue=1, allocationSize=1)
-public class Conge {
+public class Conge extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_CONGE_SEQUENCE")

@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import org.springframework.context.annotation.Scope;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,7 +28,7 @@ import com.nectux.mizan.hyban.parametrages.entity.TypeDocument;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_DOCUMENT_FOURNIR")
 @SequenceGenerator(name="CGECI_RHPAIE_DOCUMENT_FOURNIR_SEQUENCE", sequenceName="CGECI_RHPAIE_DOCUMENT_FOURNIR_SEQ", initialValue=1, allocationSize=1)
-public class DocumentFournir {
+public class DocumentFournir extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_DOCUMENT_FOURNIR_SEQUENCE")

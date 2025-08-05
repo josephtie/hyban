@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_PERIODEPAIE")
 @SequenceGenerator(name="CGECI_RHPAIE_PERIODEPAIE_SEQUENCE", sequenceName="CGECI_RHPAIE_PERIODEPAIE_SEQ", initialValue=1, allocationSize=1)
-public class PeriodePaie {
+public class PeriodePaie extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_PERIODEPAIE_SEQUENCE")

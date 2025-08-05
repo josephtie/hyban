@@ -10,12 +10,14 @@ import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 import com.nectux.mizan.hyban.personnel.entity.Fonction;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 
+import com.nectux.mizan.hyban.rh.absences.entity.Absences;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
 
-public interface ContratPersonnelRepository extends CrudRepository<ContratPersonnel, Long> {
+public interface ContratPersonnelRepository extends CrudRepository<ContratPersonnel, Long> , JpaSpecificationExecutor<ContratPersonnel> {
 	
 	public List<ContratPersonnel> findAll();
 	

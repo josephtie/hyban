@@ -411,10 +411,10 @@
                                             <div class="col-md-4">
                                                 <label for="modepaiement">Mode paiement <span class="required">*</span></label> 
                                                 <select id="modepaiement" name="modepaiement" class="form-control select2">
-
                                                      <option value="" disabled selected>-- Selectionnez Mode de paiement--</option>
-                                                    <option value="Virement" selected="selected"> Virement </option>
-                                                    <option value="Cheque"> Cheque </option>
+                                                    <option value="virement-bancaire" selected="selected"> Virement </option>
+                                                    <option value="transfert-mobile-money"> Cheque </option>
+                                                    <option value="transfert-wave"> Cheque </option>
                                                     <option value="Espece"> Espece </option>
                                                 </select>
                                             </div>
@@ -3491,7 +3491,7 @@ function editDocument(idemployeDocument, index) {
     var $scope = angular.element(document.getElementById("listDocumentModal")).scope();
     var rows = $tableDocument.bootstrapTable('getData');
     var employeDocument = _.findWhere(rows, {id: idemployeDocument});
-    $scope.
+
     $scope.$apply(function () {
         $scope.populateForm(employeDocument.personnel,employeDocument);
     });

@@ -1,17 +1,19 @@
 package com.nectux.mizan.hyban.paie.repository;
 
+import com.nectux.mizan.hyban.paie.entity.BulletinPaie;
 import com.nectux.mizan.hyban.paie.entity.Conge;
 import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface CongeRepository extends CrudRepository<Conge, Long> {
+public interface CongeRepository extends CrudRepository<Conge, Long>, JpaSpecificationExecutor<Conge> {
 	
 	public List<Conge> findAll();
 	

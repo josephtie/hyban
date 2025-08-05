@@ -37,7 +37,8 @@
 									</ul>
 								</div>
 
-							</div>
+						</div>
+
 	    	<table id="table" class="table table-info table-striped"
 			       	data-toggle="table"
 			       	data-click-to-select="true"

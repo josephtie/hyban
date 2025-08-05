@@ -3,6 +3,7 @@ package com.nectux.mizan.hyban.personnel.web;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 import com.nectux.mizan.hyban.parametrages.entity.Societe;
 import com.nectux.mizan.hyban.parametrages.entity.Utilisateur;
@@ -77,7 +78,8 @@ public class CategorieController {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/listcategoriejson", method = RequestMethod.GET)
 	public @ResponseBody CategorieDTO getCategoryListJSON(@RequestParam(value="limit", required=false) Integer limit, 
-																		@RequestParam(value="offset", required=false) Integer offset, 
+																		@RequestParam(value="offset", required=false) Integer offset,
+
 																		@RequestParam(value="search", required=false) String search, Principal principal) {
 		
 		if(offset == null) offset = 0;
@@ -86,6 +88,7 @@ public class CategorieController {
 		//final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.ASC, "salaireDeBase");
 		PageRequest pageRequest = PageRequest.of(offset / 10, limit, Direction.ASC, "salaireDeBase");
 		CategorieDTO categorieDTO = new CategorieDTO();
+	   //Map<String,String> filters= search.;
 		if(search == null)
 			categorieDTO = categorieService.loadCategorie(pageRequest);
 		else

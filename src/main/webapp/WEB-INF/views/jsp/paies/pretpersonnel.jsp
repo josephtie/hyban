@@ -346,78 +346,8 @@
                </div>
 
 
-   <!-- Modification info du personnel -->
-   <%--<div class="modal  sfade" id="rhpModalPretModif" style="z-index: 2000" role="dialog" aria-labelledby="rhpModalPretModif" data-backdrop="static">--%>
-    <%--<div class="modal-dialog" >--%>
-        <%--<div class="modal-content">--%>
-           	<%--<form id="formPretmodif" action="#">--%>
-                			<%--<div class="widgetbox">                        --%>
-		                        <%--<div class="headtitle">--%>
-		                            <%--<h4 class="widgettitle">Modification Pret / Avance</h4>--%>
-		                        <%--</div>--%>
-		                        <%--<div class="widgetcontent" style="padding-bottom:0px;">--%>
-		                            <%--<div class="form-group">--%>
-				                        <%--<label for="service" class="col-md-4 control-label">Type</label>--%>
-				                        <%--<div class="col-md-8">--%>
-				                            <%--<select id="pret1" name="pret1" class="form-control select2">--%>
-				                            <%--<c:forEach items="${listPrets}" var="pret">--%>
-				                            	<%--<option value="${pret.id}">${pret.libelle}</option>--%>
-				                            <%--</c:forEach>--%>
-											<%--</select>--%>
-				                        <%--</div>--%>
-				                    <%--</div>--%>
-		                            <%--<div class="form-group">--%>
-				                        <%--<label for="montant" class="col-md-4 control-label">Montant</label>--%>
-				                        <%--<div class="col-md-8">--%>
-				                            <%--<input type="text" id="montant1" name="montant1" class="form-control" placeholder="Montant" />--%>
-				                        <%--</div>--%>
-				                    <%--</div>--%>
-		                            <%--<div class="form-group">--%>
-				                        <%--<label for="" class="col-md-4 control-label">Periode debut prelev.</label>--%>
-				                        <%--<div class="col-md-8">--%>
-				                            <%--<select id="periodepaie1" name="periodepaie1" class="form-control select2">--%>
-											<%--<c:forEach items="${listPeriodepaie}" var="periodePaie">--%>
-				                            	<%--<option value="${periodePaie.id}">${periodePaie.mois.mois} ${periodePaie.annee.annee}</option>--%>
-				                            <%--</c:forEach>--%>
-											<%--</select>--%>
-				                        <%--</div>--%>
-				                    <%--</div>--%>
-		                            <%--<div class="form-group">--%>
-				                        <%--<label for="" class="col-md-4 control-label">Date contraction</label>--%>
-				                        <%--<div class="col-md-8">--%>
-				                            <%--<input type="text" id="dEmprunt1" name="dEmprunt1" class="form-control" placeholder="Date contraction" />--%>
-				                        <%--</div>--%>
-				                    <%--</div>--%>
-		                            <%--<div class="form-group">--%>
-				                        <%--<label for="" class="col-md-4 control-label">Mensualite</label>--%>
-				                        <%--<div class="col-md-8">--%>
-				                            <%--<input type="text" id="echelonage1" name="echelonage1" class="form-control"  />--%>
-				                             <%--<input type="hidden" id="idpers1" name="idpers1" class="form-control"  />--%>
-				                          <%----%>
-				                        <%--</div>--%>
-				                    <%--</div>--%>
-		                            <%--<!-- <div class="form-group">--%>
-				                        <%--<label class="col-md-4 control-label">Pr�l�vement/P�riode</label>--%>
-				                        <%--<div class="col-md-8">--%>
-											<%--{{prelevement}}--%>
-				                        <%--</div>--%>
-				                    <%--</div> -->--%>
-				                    <%--<div class="form-group">--%>
-				                        <%--<div class="col-md-12">--%>
-				                        	<%--<!-- <span class="pull-right"> -->--%>
-				                        	 <%--<span></span>&nbsp;--%>
-				                                <%--<input type="hidden" id="idpret" name="idpret" class="form-control"  />--%>
-				                        		<%--<input class="btn btn-default" type="button" data-dismiss="modal" value="Annuler" />&nbsp;--%>
-				                            	<%--<input class="btn btn-success" type="submit" value="Valider" />--%>
-				                        	<%--<!-- </span> -->--%>
-				                        <%--</div>--%>
-				                    <%--</div>--%>
-		                        <%--</div><!--widgetcontent-->--%>
-		                    <%--</div>--%>
-		                 <%--</form>--%>
-        <%--</div>--%>
-    <%--</div>--%>
-<%--</div>--%>
+
+
 
 <div class="modal deleteModal  fade bs-delete-modal-static" style="z-index: 2000" id="rhpModalPretDel" role="dialog" data-backdrop="static">
     <div class="modal-dialog ">

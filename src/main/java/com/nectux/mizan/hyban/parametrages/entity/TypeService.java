@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @Table(name="CGECI_RHPAIE_TYPE_SERVICE")
 @SequenceGenerator(name="CGECI_RHPAIE_TYPE_SERVICE_SEQUENCE", sequenceName="CGECI_RHPAIE_TYPE_SERVICE_SEQ", initialValue=1, allocationSize=1)
 
-public class TypeService {
+public class TypeService extends Auditable{
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_TYPE_SERVICE_SEQUENCE")

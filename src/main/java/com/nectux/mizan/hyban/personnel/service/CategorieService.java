@@ -1,9 +1,12 @@
 package com.nectux.mizan.hyban.personnel.service;
 
+import com.nectux.mizan.hyban.paie.dto.BulletinPaieDTO;
 import com.nectux.mizan.hyban.personnel.entity.Categorie;
 import org.springframework.data.domain.Pageable;
 
 import com.nectux.mizan.hyban.personnel.dto.CategorieDTO;
+
+import java.util.Map;
 
 public interface CategorieService {
 	
@@ -24,5 +27,5 @@ public interface CategorieService {
 	public CategorieDTO loadCategorie(Pageable pageable);
 	
 	public CategorieDTO loadCategorie(Pageable pageable, String search);
-
+	CategorieDTO findAllfilter(Map<String,String> filters, Pageable pageable);
 }

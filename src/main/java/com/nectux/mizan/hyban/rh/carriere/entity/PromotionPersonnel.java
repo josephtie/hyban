@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import com.nectux.mizan.hyban.personnel.entity.Fonction;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.utils.CustomDateDeserializer;
@@ -28,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_PROMOTION_PERSONNEL")
 @SequenceGenerator(name="CGECI_RHPAIE_PROMOTION_PERSONNEL_SEQUENCE", sequenceName="CGECI_RHPAIE_PROMOTION_PERSONNEL_SEQ", initialValue=1, allocationSize=1)
-public class PromotionPersonnel {
+public class PromotionPersonnel extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_PROMOTION_PERSONNEL_SEQUENCE")

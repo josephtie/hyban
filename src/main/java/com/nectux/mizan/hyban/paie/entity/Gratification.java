@@ -13,6 +13,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ import com.nectux.mizan.hyban.utils.Utils;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_GRATIFICATION")
 @SequenceGenerator(name="CGECI_RHPAIE_GRATIFICATION_SEQUENCE", sequenceName="CGECI_RHPAIE_GRATIFICATION_SEQ", initialValue=1, allocationSize=1)
-public class Gratification {
+public class Gratification extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_GRATIFICATION_SEQUENCE")

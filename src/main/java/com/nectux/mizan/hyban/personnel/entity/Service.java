@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import com.nectux.mizan.hyban.parametrages.entity.TypeService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_SERVICE")
 @SequenceGenerator(name="CGECI_RHPAIE_SERVICE_SEQUENCE", sequenceName="CGECI_RHPAIE_SERVICE_SEQ", initialValue=1, allocationSize=1)
-public class Service {
+public class Service extends Auditable  {
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_SERVICE_SEQUENCE")
 	@Column(unique=true, nullable=false)

@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import com.nectux.mizan.hyban.utils.CustomDateDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.context.annotation.Scope;
@@ -26,7 +27,7 @@ import com.nectux.mizan.hyban.utils.Utils;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_ECHELONNEMENT")
 @SequenceGenerator(name="CGECI_RHPAIE_ECHELONNEMENT_SEQUENCE", sequenceName="CGECI_RHPAIE_ECHELONNEMENT_SEQ", initialValue=1, allocationSize=1)
-public class Echelonnement {
+public class Echelonnement extends Auditable {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_ECHELONNEMENT_SEQUENCE")

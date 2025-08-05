@@ -3,14 +3,17 @@ package com.nectux.mizan.hyban.rh.absences.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.nectux.mizan.hyban.rh.absences.dto.AbsencesDTO;
 import com.nectux.mizan.hyban.rh.absences.entity.Absences;
 import com.nectux.mizan.hyban.rh.absences.repository.AbsencesRepository;
 import com.nectux.mizan.hyban.utils.Erreur;
+import com.nectux.mizan.hyban.utils.GenericSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -300,6 +303,19 @@ public class AbsencesServiceImpl implements AbsencesService {
 		absencesDTO.setTotal(page.getTotalElements());
 		return absencesDTO;
 	}
+
+	@Override
+	public AbsencesDTO findAllfilter(Map<String,String> filters, Pageable pageable) {
+		AbsencesDTO absencesDTO = new AbsencesDTO();
+		Specification<Absences> specification = GenericSpecifications.fromMap(filters);
+		Page<Absences> page = absenceRepository.findAll(specification, pageable);
+		absencesDTO.setResult(true);
+		absencesDTO.setStatus(true);
+		absencesDTO.setRows(page.getContent());
+		absencesDTO.setTotal(page.getTotalElements());
+		return absencesDTO;
+	}
+
 
     @Override
     public List<Absences> getAbsences() {

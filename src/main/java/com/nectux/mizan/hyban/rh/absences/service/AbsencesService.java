@@ -1,6 +1,7 @@
 package com.nectux.mizan.hyban.rh.absences.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.nectux.mizan.hyban.rh.absences.dto.AbsencesDTO;
 import com.nectux.mizan.hyban.rh.absences.entity.Absences;
@@ -27,4 +28,6 @@ public interface AbsencesService {
 	
 	public AbsencesDTO loadAbsences(Pageable pageable, String description);
 
+
+	AbsencesDTO  findAllfilter(Map<String,String> filters, Pageable pageable);
 }

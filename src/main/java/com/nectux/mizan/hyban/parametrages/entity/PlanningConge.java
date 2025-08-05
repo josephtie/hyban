@@ -26,7 +26,7 @@ import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_PLANNING_CONGE")
 @SequenceGenerator(name="CGECI_RHPAIE_PLANNING_CONGE_SEQUENCE", sequenceName="CGECI_RHPAIE_PLANNING_CONGE_SEQ", initialValue=1, allocationSize=1)
-public class PlanningConge {
+public class PlanningConge extends Auditable{
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_PLANNING_CONGE_SEQUENCE")

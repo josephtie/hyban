@@ -1,16 +1,21 @@
 package com.nectux.mizan.hyban.personnel.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
+import com.nectux.mizan.hyban.personnel.dto.ContratPersonnelDTO;
 import com.nectux.mizan.hyban.personnel.dto.FonctionDTO;
+import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 import com.nectux.mizan.hyban.personnel.entity.Fonction;
 import com.nectux.mizan.hyban.personnel.repository.FonctionRepository;
 import com.nectux.mizan.hyban.personnel.service.FonctionService;
+import com.nectux.mizan.hyban.utils.GenericSpecifications;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,6 +92,18 @@ public class FonctionServiceImpl implements FonctionService {
 	public int count() {
 		// TODO Auto-generated method stub
 		return (int) fonctionRepository.count();
+	}
+
+	@Override
+	public FonctionDTO findAllfilter(Map<String, String> filters, Pageable pageable) {
+		FonctionDTO fonctionDTO = new FonctionDTO();
+		Specification<Fonction> specification = GenericSpecifications.fromMap(filters);
+		Page<Fonction> page = fonctionRepository.findAll(specification, pageable);
+		fonctionDTO.setResult(true);
+		fonctionDTO.setStatus(true);
+		fonctionDTO.setRows(page.getContent());
+		fonctionDTO.setTotal(page.getTotalElements());
+		return fonctionDTO;
 	}
 
 	@Override

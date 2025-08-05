@@ -3,8 +3,10 @@ package com.nectux.mizan.hyban.personnel.repository;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 
 import com.nectux.mizan.hyban.personnel.entity.Service;
+import com.nectux.mizan.hyban.rh.absences.entity.Absences;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +14,7 @@ import org.springframework.data.repository.query.Param;
 import java.sql.Date;
 import java.util.List;
 
-public interface PersonnelRepository extends CrudRepository<Personnel, Long> {
+public interface PersonnelRepository extends CrudRepository<Personnel, Long>, JpaSpecificationExecutor<Personnel> {
 	
 	public List<Personnel> findAll();
 	

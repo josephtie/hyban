@@ -13,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ import com.nectux.mizan.hyban.utils.DateManager;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_SANCTION")
 @SequenceGenerator(name="CGECI_RHPAIE_SANCTION_SEQUENCE", sequenceName="CGECI_RHPAIE_SANCTION_SEQ", initialValue=1, allocationSize=1)
-public class Sanction {
+public class Sanction extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_SANCTION_SEQUENCE")

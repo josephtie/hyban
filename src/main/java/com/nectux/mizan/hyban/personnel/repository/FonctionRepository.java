@@ -2,12 +2,14 @@ package com.nectux.mizan.hyban.personnel.repository;
 
 import com.nectux.mizan.hyban.personnel.entity.Fonction;
 
+import com.nectux.mizan.hyban.rh.absences.entity.Absences;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
-public interface FonctionRepository extends JpaRepository<Fonction, Long> {
+public interface FonctionRepository extends JpaRepository<Fonction, Long> , JpaSpecificationExecutor<Fonction> {
 	
 	public java.util.List<Fonction> findAll();
 

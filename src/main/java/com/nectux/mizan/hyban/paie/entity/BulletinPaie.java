@@ -13,6 +13,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.utils.Utils;
 import org.springframework.context.annotation.Scope;
@@ -26,7 +27,7 @@ import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_BULLETIN_PAIE")
 @SequenceGenerator(name="CGECI_RHPAIE_BULLETIN_PAIE_SEQUENCE", sequenceName="CGECI_RHPAIE_BULLETIN_PAIE_SEQ", initialValue=1, allocationSize=1)
-public class BulletinPaie {
+public class BulletinPaie extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_BULLETIN_PAIE_SEQUENCE")

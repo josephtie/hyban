@@ -1,5 +1,6 @@
 package com.nectux.mizan.hyban.personnel.service;
 
+import com.nectux.mizan.hyban.paie.dto.BulletinPaieDTO;
 import com.nectux.mizan.hyban.personnel.dto.ContratPersonnelDTO;
 import com.nectux.mizan.hyban.personnel.dto.PersonnelDTO;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface PersonnelService {
 	
@@ -50,7 +52,7 @@ public interface PersonnelService {
 
 //public int EmploySave();
 	public PersonnelDTO loadPersonnel(Pageable pageable);
-
+	PersonnelDTO  findAllfilter(Map<String,String> filters, Pageable pageable);
 	public PersonnelDTO loadPersonnel(Pageable pageable, String search, String search1, String search2);
 
 	public List<Personnel> RechercherListPersonnelParAnnee( String sexe);

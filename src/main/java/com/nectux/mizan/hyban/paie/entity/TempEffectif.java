@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.utils.CustomDateDeserializer;
@@ -26,7 +27,7 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_TEMPEFFECTIF")
 @SequenceGenerator(name="CGECI_RHPAIE_TEMPEFFECTIF_SEQUENCE", sequenceName="CGECI_RHPAIE_TEMPEFFECTIF_SEQ", initialValue=1, allocationSize=1)
-public class TempEffectif {
+public class TempEffectif extends Auditable {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_TEMPEFFECTIF_SEQUENCE")

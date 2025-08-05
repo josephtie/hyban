@@ -1,6 +1,7 @@
 package com.nectux.mizan.hyban.paie.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.paie.dto.BulletinPaieDTO;
@@ -9,6 +10,7 @@ import com.nectux.mizan.hyban.paie.entity.BulletinPaie;
 import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 
+import com.nectux.mizan.hyban.rh.absences.dto.AbsencesDTO;
 import com.nectux.mizan.hyban.utils.PrintLs;
 import org.springframework.data.domain.Pageable;
 
@@ -35,7 +37,9 @@ public interface BulletinPaieService {
 	public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode);
 	//public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode, String search);
 	public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode, String search);
-	
+
+	BulletinPaieDTO findAllfilter(Map<String,String> filters, Pageable pageable);
+
 	public Double salaireMoyenMensuel(ContratPersonnel contratPersonnel);
 
 	public Double indemniteMoyenMensuel(ContratPersonnel contratPersonnel);

@@ -14,7 +14,9 @@ import com.nectux.mizan.hyban.parametrages.repository.PeriodePaieRepository;
 import com.nectux.mizan.hyban.parametrages.repository.PlanningCongeRepository;
 import com.nectux.mizan.hyban.parametrages.repository.TypeContratRepository;
 import com.nectux.mizan.hyban.personnel.dto.ContratPersonnelDTO;
+import com.nectux.mizan.hyban.personnel.dto.FonctionDTO;
 import com.nectux.mizan.hyban.personnel.dto.PersonnelDTO;
+import com.nectux.mizan.hyban.personnel.entity.Fonction;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.personnel.entity.Service;
 import com.nectux.mizan.hyban.utils.*;
@@ -24,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -481,6 +484,18 @@ public class PersonnelServiceImpl implements PersonnelService {
 		personnelDTO.setRows(page.getContent());
 		personnelDTO.setTotal(page.getTotalElements());
 		logger.info(new StringBuilder().append(">>>>> PERSONNELS CHARGES AVEC SUCCES").toString());
+		return personnelDTO;
+	}
+
+	@Override
+	public PersonnelDTO findAllfilter(Map<String, String> filters, Pageable pageable) {
+		PersonnelDTO personnelDTO = new PersonnelDTO();
+		Specification<Personnel> specification = GenericSpecifications.fromMap(filters);
+		Page<Personnel> page = personnelRepository.findAll(specification, pageable);
+		personnelDTO.setResult(true);
+		personnelDTO.setStatus(true);
+		personnelDTO.setRows(page.getContent());
+		personnelDTO.setTotal(page.getTotalElements());
 		return personnelDTO;
 	}
 

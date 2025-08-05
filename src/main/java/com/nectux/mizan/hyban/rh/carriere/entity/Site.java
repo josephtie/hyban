@@ -1,5 +1,6 @@
 package com.nectux.mizan.hyban.rh.carriere.entity;
 
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_SITE")
 @SequenceGenerator(name="CGECI_RHPAIE_SITE_SEQUENCE", sequenceName="CGECI_RHPAIE_SITE_SEQ", initialValue=1, allocationSize=1)
-public class Site {
+public class Site  extends Auditable {
 
 
 	@Id

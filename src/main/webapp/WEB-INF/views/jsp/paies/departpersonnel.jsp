@@ -101,323 +101,177 @@
     </div>
 </div> --%>
 
-<!-- Pret -->
-<div class="modal main-popup fade" id="rhpModalPret"  role="dialog"  aria-labelledby="rhpModalPret" data-backdrop="static">
-    <div class="modal-dialog" role="document" style="width:60%;">
-        <div class="modal-content">
-            <div class="modal-header">
-            	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Pret / Avance</h4>
-			</div>
-            <div class="modal-body">
-               	<div class="row">
-               		<div class="col-sm-5">
-               			<div class="widgetbox" >                        
-	                        <div class="headtitle">
-	                            <h4 class="widgettitle">Informations personnelles</h4>
-	                        </div>
-	                        <div class="widgetcontent">
-	                            <div class="form-group">
-			                        <label class="col-md-3 control-label">Photo</label>
-			                        <div class="col-md-9">
-			                            
-			                        </div>
-			                    </div>
-	                            <div class="form-group">
-			                        <label class="col-md-3 control-label">Matricule</label>
-			                        <div class="col-md-9">
-			                         <label id="matricules" ></label>			                            
-			                        </div>
-			                    </div>
-	                            <div class="form-group">
-			                        <label class="col-md-3 control-label">Nom</label>
-			                        <div class="col-md-9">			                      
-			                           <label id="nomcomplet" ></label>	
-			                        </div>
-			                    </div>
-	                            <div class="form-group">
-			                        <label class="col-md-3 control-label">N&eacute;(e) le</label>
-			                        <div class="col-md-9">
-			                           <label id="dnaiss" ></label>	
-			                        </div>
-			                    </div>
-	                            <div class="form-group">
-			                        <label class="col-md-3 control-label">A</label>
-			                        <div class="col-md-9">
-			                           <label id="lieunaiss" ></label>	
-			                        </div>
-			                    </div>
-	                            <div class="form-group">
-			                        <label class="col-md-3 control-label">Sexe</label>
-			                        <div class="col-md-9">
-			                           <label id="sexe" ></label>	
-			                        </div>
-			                    </div>
-	                            <div class="form-group">
-			                        <label class="col-md-3 control-label" id="typeserv" ></label>
-			                        <div class="col-md-9">
-			                         <label id="serv" ></label>
-			                        </div>
-			                    </div>
-	                        </div><!--widgetcontent-->
-	                    </div>
-               		</div>
-               		<div class="col-sm-7">
-               			<form id="formPret" action="#">
-                			<div class="widgetbox">                        
-		                        <div class="headtitle">
-		                            <h4 class="widgettitle">Pret / Avance</h4>
-		                        </div>
-		                        <div class="widgetcontent" style="padding-bottom:0px;">
-		                            <div class="form-group">
-				                        <label for="service" class="col-md-4 control-label">Type</label>
-				                        <div class="col-md-8">
-				                            <select id="pret" name="pret" class="form-control select2">
-				                            <c:forEach items="${listPrets}" var="pret">
-				                            	<option value="${pret.id}">${pret.libelle}</option>
-				                            </c:forEach>
-											</select>
-				                        </div>
-				                    </div>
-		                            <div class="form-group">
-				                        <label for="montant" class="col-md-4 control-label">Montant</label>
-				                        <div class="col-md-8">
-				                            <input type="text" id="montant" name="montant" class="form-control" placeholder="Montant" />
-				                        </div>
-				                    </div>
-		                            <div class="form-group">
-				                        <label for="" class="col-md-4 control-label">Periode debut prelev.</label>
-				                        <div class="col-md-8">
-				                            <select id="periodepaie" name="periodepaie" class="form-control select2">
-											<c:forEach items="${listPeriodepaie}" var="periodePaie">
-				                            	<option value="${periodePaie.id}">${periodePaie.mois.mois} ${periodePaie.annee.annee}</option>
-				                            </c:forEach>
-											</select>
-				                        </div>
-				                    </div>
-		                            <div class="form-group">
-				                        <label for="" class="col-md-4 control-label">Date contraction</label>
-				                        <div class="col-md-8">
-				                            <input type="text" id="dEmprunt" name="dEmprunt" class="form-control" placeholder="Date contraction" />
-				                        </div>
-				                    </div>
-		                            <div class="form-group">
-				                        <label for="" class="col-md-4 control-label">Mensualite</label>
-				                        <div class="col-md-8">
-				                            <input type="text" id="echelonage" name="echelonage" class="form-control"  />
-				                             <input type="hidden" id="idpers" name="idpers" class="form-control"  />
-				                          
-				                        </div>
-				                    </div>
-		                            <!-- <div class="form-group">
-				                        <label class="col-md-4 control-label">Pr�l�vement/P�riode</label>
-				                        <div class="col-md-8">
-											{{prelevement}}
-				                        </div>
-				                    </div> -->
-				                    <div class="form-group">
-				                        <div class="col-md-12">
-				                        	<!-- <span class="pull-right"> -->
-				                        	 <span></span>&nbsp;
-				                        	
-				                        		<input class="btn btn-default" type="button" data-dismiss="modal" value="Annuler" />&nbsp;
-				                            	<input class="btn btn-success" type="submit" value="Valider" />
-				                        	<!-- </span> -->
-				                        </div>
-				                    </div>
-		                        </div><!--widgetcontent-->
-		                    </div>
-		                 </form>
-               		</div>
-               	</div>
-               	
-               	<div class="row">
-               		<div class="col-sm-12">
-                        <div class="widgetbox">                        
-	                        <div class="headtitle">
-	                            <h4 class="widgettitle">Historiques des prets</h4>
-	                        </div>
-	                        <div class="widgetcontent">
-	                            <table id="tablef" class="table table-info table-striped"
-								data-toggle="table" data-click-to-select="true"
-					data-single-select="false"
-					data-sort-name="id"
-					data-sort-order="desc"
-					data-url="${pageContext.request.contextPath}/paie/pretPersonneljson"
-					data-side-pagination="server" 
-					data-pagination="true"
-					data-page-list="[10, 20, 50, 100, 200]" 
-					data-search="true">
-									<thead>
-										<tr>
-											<th data-field="personnel" data-formatter="matrisFormatter" data-align="left" data-sortable="true">Matricule</th>
-											<th data-field="personnel" data-formatter="nomsFormatter"  data-align="left" data-sortable="true">Nom</th>
-											<th data-field="pret" data-formatter="pretFormatter" data-align="left">Pret</th>
-											<th data-field="montant" data-align="left">Montant</th>
-											<th data-field="echelonage" data-align="left">Modalites</th>
-											<th data-field="dEmprunt" data-align="center">Date</th>
-											<th data-field="periode" data-formatter="periodeFormatter" data-align="center">Periode</th>											
-											<th data-field="id" data-formatter="pretiFormatter" data-align="center"></th>
-										</tr>
-									</thead>
-								</table>
-	                        </div><!--widgetcontent-->
-	                    </div>
-                   	</div>
-                   </div>
+<!-- Solde tout comptes -->
+
+ <div class="modal main-popup fade" id="listSoldeModal" ng-controller="listSoldeCtrl" role="dialog" aria-labelledby="listSoldeModalLabel" data-backdrop="static"  >
+            <div class="modal-dialog" style="width:60%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="listSoldeModalLabel">Soldes de tous les comptes</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h3>Personnel</h3>
+                        <table>
+                            <tbody>
+                            <tr>
+                                <th style="width:150px;">Matricule</th>
+                                <td style="width:300px;">{{personnel.matricule}}</td>
+                                <th style="width:150px;">N&deg; CNPS</th>
+                                <td>{{personnel.numeroCnps}}</td>
+                            </tr>
+                            <tr>
+                                <th>Nom</th>
+                                <td>{{personnel.nomComplet}}</td>
+                                <th>Sexe</th>
+                                <td>{{personnel.sexe}}</td>
+                            </tr>
+                            <tr>
+                                <th>N&eacute;(e) le</th>
+                                <td>{{personnel.dNaissance}}</td>
+                                <th>A</th>
+                                <td>{{personnel.lieuNaissance}}</td>
+                            </tr>
+                            <tr>
+                                <th>Situation matrimoniale</th>
+                                <td>{{personnel.situationMatri}}</td>
+                                <th>T&eacute;l&eacute;phone</th>
+                                <td>{{personnel.telephone}}</td>
+                            </tr>
+
+                            </tbody>
+                        </table><div style="max-height: 500px; overflow-y: auto;">
+                        <form id="formSolde" class="form-solde" >
+                            <h3 style="margin-top: 30px;">Calcul de solde de tout compte</h3>
+                            <input type="text" class="hidden" name="idCtrat" id="idCtrat" ng-model="idCtrat"/>
+
+                            <br>
+                           <div class="form-group">
+                                                <div class="row">
+                                                <div class="col-md-4">
+                                                   <label>Salaire mensuel</label>
+                                                    <input type="number" class="form-control input-small " name="salaireMois" placeholder="Salaire" maxlength="10" required="required" ng-model="departPersonnel.dDebut">
+                                                </div>
+                                                 <div class="col-md-4">
+                                                  <label>Nombre de jours dans le mois</label>
+                                                  <input type="text" class="form-control input-small " name="dateFin" placeholder="Date retour" maxlength="10" required="required" ng-model="departPersonnel.dRet">
+                                                  </div>
+                                                    <div class="col-md-4">
+                                                        <label>Jours travaill&eacute;s</label>
+                                                    <input type="text" class="form-control input-small " name="dateDebut" placeholder="Date depart" maxlength="10" required="required" ng-model="departPersonnel.dDebut">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row">
+
+                                                  <div class="col-md-3">
+                                                     <label for="sanctionsalaire">Jours de cong&eacute;s non pris <span class="required">*</span></label>
+                                                       <input type="text" id="joursabsence" class="form-control input-default" ng-disabled="justifie" ng-model="departPersonnel.joursabsence" required="required" name="joursabsence" placeholder="30" maxlength="4">
+                                                  </div>
+                                                  <div class="col-md-3">
+                                                        <label for="statut">Pr&eacute;avis non effectu&eacute; (jours)</label>
+                                                     <input type="text" id= "heursabsence" class="form-control input-default" ng-disabled="justifie" ng-model="departPersonnel.heursabsence" name="heursabsence"  required="required" placeholder="173.33" maxlength="6">
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                        <label for="sanctionsalaire">Primes dues<span class="required">*</span> </label>
+                                                    <input type="text" id= "heursabsence" class="form-control input-default" ng-disabled="justifie" ng-model="departPersonnel.heursabsence" name="heursabsence"  required="required" placeholder="173.33" maxlength="6">
+                                                </div>
+
+
+                                               <div class="col-md-3">
+
+                                                          <label for="sexe">13e mois applicable <span class="required">*</span></label>
+                                                                                                        <div>
+                                                                                                            <label  >
+                                                                                                                <input name="sexe" id="sexeMasculin" type="radio" class="radio-inline" value="OUI">Masculin
+                                                                                                            </label>
+                                                                                                            <label  >
+                                                                                                               <input name="sexe" type="radio" id="sexeFeminin" class="radio-inline" value="NON">  Feminin
+                                                                                                            </label>
+                                                        </div>
+                                               </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                       <div class="row">
+
+                                                     <div class="col-md-3">
+                                                    <label for="sanctionsalaire">Acomptes vers&eacute;s <span class="required">*</span></label>
+                                                     <input type="text" id="joursabsence" class="form-control input-default" ng-disabled="justifie" ng-model="departPersonnel.joursabsence" required="required" name="joursabsence" placeholder="30" maxlength="4">
+                                                    </div>
+                                                   <div class="col-md-3">
+                                                     <label for="statut">Avantages en nature</label>
+                                                      <input type="text" id= "heursabsence" class="form-control input-default" ng-disabled="justifie" ng-model="departPersonnel.heursabsence" name="heursabsence"  required="required" placeholder="173.33" maxlength="6">
+                                                    </div>
+                                                   <div class="col-md-3">
+                                                     <label for="sanctionsalaire">Heures suppl&eacute;mentaires <span class="required">*</span> </label>
+                                                      <input type="text" id= "heursabsence" class="form-control input-default" ng-disabled="justifie" ng-model="departPersonnel.heursabsence" name="heursabsence"  required="required" placeholder="173.33" maxlength="6">
+                                                  </div>
+                                                 <div class="col-md-3">
+                                                     <label for="sanctionsalaire"> 13e mois applicable <span class="required">*</span></label>
+                                                   </div>
+                                                 </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <label>Observations</label>
+                                                        <textarea class="form-control" name="observation" ng-model="departPersonnel.observation" placeholder="Observation"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <div id="actionSolde" class="col-md-12 text-right">
+                                        <span></span>&nbsp;
+                                        <input type="text" name="idPersonnel" class="hidden" ng-model="departPersonnel.contratPersonnel.id"/>
+                                        <input type="text"class="hidden" ng-hide="true" name="id" ng-model="departPersonnel.id"/>
+                                        <button type="button" id="btnCancelSolde" class="btn btn-default">Annuler</button>
+                                        <button type="submit" data-action="add" data-index="-1" class="btn btn-success">Valider</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                        <p>&nbsp;</p>
+                        <div id="toolbarSolde">
+                            <div class="form-inline">
+                                <button type="button" class="btn btn-primary" title="Nouvel solde" id="btnAddSolde"><span class="glyphicon glyphicon-plus"></span> Nouvelle prime</button>
+                            </div>
+                        </div>
+                        <table id="tableSolde" class="table table-info table-striped"
+                               data-toggle="table"
+                               data-toolbar="#toolbarSolde"
+                               data-single-select="true"
+                               data-sort-order="desc"
+                               data-pagination="true"
+                               data-page-list="[5, 10, 20, 50, 100, 200]"
+                               data-search="true">
+                            <!--   data-formatter="commentaireSoldeFormatter" -->
+                            <thead>
+                            <tr>
+                                <th data-field="prime" data-formatter="primeFormatter">Prime</th>
+                                <th data-field=mtmontant>Montant</th>
+                                <th data-field="valeur">Valeur</th>
+                                <th data-field="mtnVerse" data-align="right">Montant vers&eacute;</th>
+                                <th data-field="id" data-formatter="optionFormatterPrime" data-align="center"></th>
+                            </tr>
+                            </thead>
+                        </table>
+                        <br>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="modal  fade " style="z-index: 2000" id="rhpModalPretModif" role="dialog" data-backdrop="static">
-	<div class="modal-dialog ">
-		<div class="modal-content">
-				<form id="formPretmodif" action="#">
-					<div class="widgetbox">
-							<div class="headtitle">
-							<h4 class="widgettitle">Modification Pret / Avance</h4>
-					</div>
-					<div class="widgetcontent" style="padding-bottom:0px;">
-					<div class="form-group">
-							<label for="service" class="col-md-4 control-label">Type</label>
-							<div class="col-md-8">
-							<select id="pret1" name="pret1" class="form-control select2">
-							<c:forEach items="${listPrets}" var="pret">
-							<option value="${pret.id}">${pret.libelle}</option>
-							</c:forEach>
-							</select>
-							</div>
-					</div>
-					<div class="form-group">
-							<label for="montant" class="col-md-4 control-label">Montant</label>
-							<div class="col-md-8">
-							<input type="text" id="montant1" name="montant1" class="form-control" placeholder="Montant" />
-							</div>
-					</div>
-					<div class="form-group">
-							<label for="" class="col-md-4 control-label">Periode debut prelev.</label>
-							<div class="col-md-8">
-							<select id="periodepaie1" name="periodepaie1" class="form-control select2">
-							<c:forEach items="${listPeriodepaie}" var="periodePaie">
-							<option value="${periodePaie.id}">${periodePaie.mois.mois} ${periodePaie.annee.annee}</option>
-							</c:forEach>
-							</select>
-							</div>
-					</div>
-					<div class="form-group">
-							<label for="" class="col-md-4 control-label">Date contraction</label>
-							<div class="col-md-8">
-							<input type="text" id="dEmprunt1" name="dEmprunt1" class="form-control" placeholder="Date contraction" />
-							</div>
-					</div>
-					<div class="form-group">
-							<label for="" class="col-md-4 control-label">Mensualite</label>
-								<div class="col-md-8">
-									<input type="text" id="echelonage1" name="echelonage1" class="form-control"  />
-									<input type="hidden" id="idpers1" name="idpers1" class="form-control"  />
-
-								</div>
-					</div>
-					<div class="form-group">
-							<label class="col-md-4 control-label">Prelevement/Periode</label>
-							<div class="col-md-8">
-							{{prelevement}}
-					</div>
-							</div> -->
-					<div class="form-group">
-							<div class="col-md-12">
-							<span class="pull-right">
-							<span></span>&nbsp;&ndash;%&gt;
-							<input type="hidden" id="idpret" name="idpret" class="form-control"  />
-							<input class="btn btn-default" type="button" data-dismiss="modal" value="Annuler" />&nbsp;
-							<input class="btn btn-success" type="submit" value="Valider" />
-							<!-- </span> -->
-							</div>
-					</div>
-							<%--</div><!--widgetcontent-->--%>
-		</div>
-		</form>
-       </div>
 
 
 
-                   </div>
-               </div>
-
-
-   <!-- Modification info du personnel -->
-   <%--<div class="modal  sfade" id="rhpModalPretModif" style="z-index: 2000" role="dialog" aria-labelledby="rhpModalPretModif" data-backdrop="static">--%>
-    <%--<div class="modal-dialog" >--%>
-        <%--<div class="modal-content">--%>
-           	<%--<form id="formPretmodif" action="#">--%>
-                			<%--<div class="widgetbox">                        --%>
-		                        <%--<div class="headtitle">--%>
-		                            <%--<h4 class="widgettitle">Modification Pret / Avance</h4>--%>
-		                        <%--</div>--%>
-		                        <%--<div class="widgetcontent" style="padding-bottom:0px;">--%>
-		                            <%--<div class="form-group">--%>
-				                        <%--<label for="service" class="col-md-4 control-label">Type</label>--%>
-				                        <%--<div class="col-md-8">--%>
-				                            <%--<select id="pret1" name="pret1" class="form-control select2">--%>
-				                            <%--<c:forEach items="${listPrets}" var="pret">--%>
-				                            	<%--<option value="${pret.id}">${pret.libelle}</option>--%>
-				                            <%--</c:forEach>--%>
-											<%--</select>--%>
-				                        <%--</div>--%>
-				                    <%--</div>--%>
-		                            <%--<div class="form-group">--%>
-				                        <%--<label for="montant" class="col-md-4 control-label">Montant</label>--%>
-				                        <%--<div class="col-md-8">--%>
-				                            <%--<input type="text" id="montant1" name="montant1" class="form-control" placeholder="Montant" />--%>
-				                        <%--</div>--%>
-				                    <%--</div>--%>
-		                            <%--<div class="form-group">--%>
-				                        <%--<label for="" class="col-md-4 control-label">Periode debut prelev.</label>--%>
-				                        <%--<div class="col-md-8">--%>
-				                            <%--<select id="periodepaie1" name="periodepaie1" class="form-control select2">--%>
-											<%--<c:forEach items="${listPeriodepaie}" var="periodePaie">--%>
-				                            	<%--<option value="${periodePaie.id}">${periodePaie.mois.mois} ${periodePaie.annee.annee}</option>--%>
-				                            <%--</c:forEach>--%>
-											<%--</select>--%>
-				                        <%--</div>--%>
-				                    <%--</div>--%>
-		                            <%--<div class="form-group">--%>
-				                        <%--<label for="" class="col-md-4 control-label">Date contraction</label>--%>
-				                        <%--<div class="col-md-8">--%>
-				                            <%--<input type="text" id="dEmprunt1" name="dEmprunt1" class="form-control" placeholder="Date contraction" />--%>
-				                        <%--</div>--%>
-				                    <%--</div>--%>
-		                            <%--<div class="form-group">--%>
-				                        <%--<label for="" class="col-md-4 control-label">Mensualite</label>--%>
-				                        <%--<div class="col-md-8">--%>
-				                            <%--<input type="text" id="echelonage1" name="echelonage1" class="form-control"  />--%>
-				                             <%--<input type="hidden" id="idpers1" name="idpers1" class="form-control"  />--%>
-				                          <%----%>
-				                        <%--</div>--%>
-				                    <%--</div>--%>
-		                            <%--<!-- <div class="form-group">--%>
-				                        <%--<label class="col-md-4 control-label">Pr�l�vement/P�riode</label>--%>
-				                        <%--<div class="col-md-8">--%>
-											<%--{{prelevement}}--%>
-				                        <%--</div>--%>
-				                    <%--</div> -->--%>
-				                    <%--<div class="form-group">--%>
-				                        <%--<div class="col-md-12">--%>
-				                        	<%--<!-- <span class="pull-right"> -->--%>
-				                        	 <%--<span></span>&nbsp;--%>
-				                                <%--<input type="hidden" id="idpret" name="idpret" class="form-control"  />--%>
-				                        		<%--<input class="btn btn-default" type="button" data-dismiss="modal" value="Annuler" />&nbsp;--%>
-				                            	<%--<input class="btn btn-success" type="submit" value="Valider" />--%>
-				                        	<%--<!-- </span> -->--%>
-				                        <%--</div>--%>
-				                    <%--</div>--%>
-		                        <%--</div><!--widgetcontent-->--%>
-		                    <%--</div>--%>
-		                 <%--</form>--%>
-        <%--</div>--%>
-    <%--</div>--%>
-<%--</div>--%>
+  
 
 <div class="modal deleteModal  fade bs-delete-modal-static" style="z-index: 2000" id="rhpModalPretDel" role="dialog" data-backdrop="static">
     <div class="modal-dialog ">
@@ -448,31 +302,73 @@
     </div>
 </div>
 <script type="text/javascript">
-//AngularJS
-app.controller('infoPersoCtrl', function ($scope) {
-    $scope.pupulateForm = function (contratPersonnel) {
-        $scope.personnel = contratPersonnel.personnel;
-        $scope.libelleService = contratPersonnel.libelleService;
-    };
-}).controller('formDeleteCtrl', function ($scope) {
-    $scope.pupulateForm = function (categorie) {
-    	$scope.categorie = categorie;
+app.controller('listSoldeCtrl', function ($scope) {
+    $scope.SoldeId = jQuery("#idSolde option:first").val();
+
+    $scope.populateForm = function (personnel, departPersonnel) {
+        $scope.personnel = personnel;
+        if(departPersonnel){
+         $scope.departPersonnel = departPersonnel;
+        //  $scope.absenceId = departPersonnel.contratPersonnel.id;
+         $scope.personnel = departPersonnel.personnel;
+                          //  $scope.statutAbs = absencePersonnel.statut === true ? 'true' : 'false';
+         }
+          };
+
+    $scope.initForm = function () {
+        $scope.departPersonnel = {};
     };
 
-});
-//End AngularJs
+    $scope.pupulateContrat = function (contrat) {
+      //  $scope.contrat = contrat;
+    };
+
+    $scope.populatePrime = function (soldeTouscompte) {
+      //  $scope.soldeTouscompte = soldeTouscompte;
+    };
+})
+
+.controller('formDeleteCtrl', ['$scope', function ($scope) {
+    $scope.populateForm = function (categorie) {
+        $scope.categorie = categorie;
+    };
+}]);
+
 
 var actionUrl = "/paie/enregisterlivrepaie";
 var actionDeleteUrl = "/paie/delpretIndividuel";
 var action = "ajout";
 var $table;
 jQuery(document).ready(function($) {
-	$table = jQuery('#tablef');
+$(".form-solde").hide(500);
+	$table = jQuery('#table');
+	$tableSolde = jQuery('#tableSolde');
 	jQuery( ".select2" ).select2();
 	jQuery("#dEmprunt").datepicker({
 		dateFormat: 'dd/mm/yy',
         showOtherMonths:true
     });
+
+          $("#btnAddSolde").click(function (e) {
+                    $(".form-solde").show(500);
+                    var $scope = angular.element(document.getElementById("formSolde")).scope();
+                    $scope.$apply(function () {
+                    $scope.initForm();
+                    });
+
+                     $("#actionSolde button:submit").data("action", "add");
+           });
+
+          $("#btnCancelSolde, #listSoldeModal button.close").click(function (e) {
+            $(".form-solde").hide(500);
+              jQuery("#formSolde")[0].reset();
+              var $scope = angular.element(document.getElementById("formSolde")).scope();
+              $scope.$apply(function () {
+                 $scope.initForm();
+              });
+         });
+
+
 	//Envoi des donnees
 		$("#formDelete").submit(function(e){
 		e.preventDefault();
@@ -588,7 +484,7 @@ jQuery(document).ready(function($) {
 });
 
 function optionFormatter(id, row, index) {
-	var option = '<a onclick="edit('+row.personnel.id+')" data-toggle="modal" data-target="#rhpModalPret" href="#" title="Ajouter pr�t [LIBELLE : '+row.personnel.nom+' ]">  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';
+	var option = '<a onclick="edit('+row.id+')" data-toggle="modal" data-target="#listSoldeModal" href="#" title="Ajouter pr�t [LIBELLE : '+row.personnel.nom+' ]">  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';
 	option += '&nbsp;<a data-toggle="modal" href="#" title="Suprimer bulletin [LIBELLE : '+row.libelle+' ]"> <span class="glyphicon glyphicon-trash"></span></a>';
 	
     return option;
@@ -695,40 +591,20 @@ function salcatFormatter(categorie, row, index) {
 	}
 	return row.categorie.salaireDeBase;
 }
-function edit(idFonction){
-//	var $scope = angular.element(document.getElementById("formDelete")).scope();
-	
-	var idp=idFonction;
-	//alert(idp);
-	jQuery.ajax({
-        type: "POST",
-        url: baseUrl+"/personnels/choisirpersonnelpret",
-        cache: false,
-        data: {id:idp},
-        success: function (response) {
-        	if (response != null) {
-        		console.log(response);
-        		jQuery('#matricules').html(response.matricule);
-        		jQuery('#nomcomplet').html(response.nom+' '+response.prenom);
-        		jQuery('#dnaiss').html(response.dNaissance);
-        		jQuery('#lieunaiss').html(response.lieuNaissance);
-        		jQuery('#sexe').html(response.sexe);
-        		jQuery('#typeserv').html(response.service.typeService.libelle);
-        		jQuery('#serv').html(response.service.libelle);
-        		jQuery('#idpers').val(response.id);
-        		
-				//tabledata += "";
-				/* jQuery('#typeService, #typeServicePop').html(tabledata);
-				jQuery('#typeService, #typeServicePop').val("1").trigger("change"); */
-			} else {
-				alert('Failure! An error has occurred!');
-			}
-        },
-        error: function () {
-            
-        },
-    });
-	jQuery('#tablef'). bootstrapTable ('refresh', {  url: baseUrl +'/paie/pretPersonneljson' });
+function edit(idFonction) {
+    var $scope = angular.element(document.getElementById("listSoldeModal")).scope();
+
+                 var rows = $table.bootstrapTable('getData');
+                 var departPersonnel = _.findWhere(rows, {id: idFonction});
+
+                 $scope.$apply(function () {
+                     $scope.populateForm(departPersonnel);
+                     $scope.departPersonnel=departPersonnel;
+
+                     $scope.personnel=departPersonnel.personnel;
+                 });
+
+   //jQuery(".form-solde").hide(500);
 }
 
 function editPret(idFonction){

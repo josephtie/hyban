@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_NATIONNALITE")
 @SequenceGenerator(name="CGECI_RHPAIE_NATIONNALITE_SEQUENCE", sequenceName="CGECI_RHPAIE_NATIONNALITE_SEQ", initialValue=1, allocationSize=1)
-public class Nationnalite {
+public class Nationnalite  extends Auditable  {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_NATIONNALITE_SEQUENCE")

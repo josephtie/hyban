@@ -5,10 +5,11 @@ import java.util.List;
 import com.nectux.mizan.hyban.rh.absences.entity.Absences;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
 
-public interface AbsencesRepository extends CrudRepository<Absences, Long> {
+public interface AbsencesRepository extends CrudRepository<Absences, Long> , JpaSpecificationExecutor<Absences> {
 	
 	public List<Absences> findAll();
 	

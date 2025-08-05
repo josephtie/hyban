@@ -1,14 +1,19 @@
 package com.nectux.mizan.hyban.personnel.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import com.nectux.mizan.hyban.personnel.entity.Categorie;
 import com.nectux.mizan.hyban.personnel.service.CategorieService;
+import com.nectux.mizan.hyban.rh.absences.dto.AbsencesDTO;
+import com.nectux.mizan.hyban.rh.absences.entity.Absences;
+import com.nectux.mizan.hyban.utils.GenericSpecifications;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -111,6 +116,18 @@ public class CategorieServiceImpl implements CategorieService {
 		utilisateurDTO.setTotal(page.getTotalElements());
 		logger.info(new StringBuilder().append(">>>>> CATEGORIES CHARGES AVEC SUCCES").toString());
 		return utilisateurDTO;
+	}
+
+	@Override
+	public CategorieDTO findAllfilter(Map<String, String> filters, Pageable pageable) {
+		CategorieDTO categorieDTO = new CategorieDTO();
+		Specification<Categorie> specification = GenericSpecifications.fromMap(filters);
+		Page<Categorie> page = categorieRepository.findAll(specification, pageable);
+		categorieDTO.setResult(true);
+		categorieDTO.setStatus(true);
+		categorieDTO.setRows(page.getContent());
+		categorieDTO.setTotal(page.getTotalElements());
+		return categorieDTO;
 	}
 
 }

@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Scope("prototype")
 @Table(name="CGECI_RHPAIE_SOCIETE")
 @SequenceGenerator(name="CGECI_RHPAIE_SOCIETE_SEQUENCE", sequenceName="CGECI_RHPAIE_SOCIETE_SEQ", initialValue=1, allocationSize=1)
-public class Societe {
+public class Societe  extends Auditable{
 
 	
 	@Id

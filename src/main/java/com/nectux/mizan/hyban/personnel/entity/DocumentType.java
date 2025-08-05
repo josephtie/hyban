@@ -1,9 +1,11 @@
 package com.nectux.mizan.hyban.personnel.entity;
 
+import com.nectux.mizan.hyban.parametrages.entity.Auditable;
+
 import javax.persistence.*;
 
 @Entity
-public class DocumentType {
+public class DocumentType extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
