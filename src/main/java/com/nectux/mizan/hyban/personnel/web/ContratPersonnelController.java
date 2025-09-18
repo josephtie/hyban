@@ -163,8 +163,30 @@ public class ContratPersonnelController {
 			contratPersonnelDTO = contratPersonnelService.loadContratActif(pageRequest, search);
 		
 		return contratPersonnelDTO;
-	}	
-	
+	}
+
+
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/listcontratpersonnelDepartjson", method = RequestMethod.GET)
+	public @ResponseBody ContratPersonnelDTO getContratListDepartJSON(@RequestParam(value="limit", required=false) Integer limit,
+																@RequestParam(value="offset", required=false) Integer offset,
+																@RequestParam(value="search", required=false) String search, Principal principal) {
+
+		if(offset == null) offset = 0;
+		if(limit == null) limit = 10;
+
+		//final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "id");
+		PageRequest pageRequest = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
+		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
+		if(search == null)
+			contratPersonnelDTO = contratPersonnelService.loadContratDepart(pageRequest);
+		else
+			contratPersonnelDTO = contratPersonnelService.loadContratDepart(pageRequest, search);
+
+		return contratPersonnelDTO;
+	}
+
+
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/savecontratpersonnel", method = RequestMethod.POST)
 	public @ResponseBody ContratPersonnelDTO saveContratpers(@RequestParam(value="id", required=false) Long id, 

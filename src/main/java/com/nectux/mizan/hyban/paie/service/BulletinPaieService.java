@@ -12,6 +12,7 @@ import com.nectux.mizan.hyban.personnel.entity.Personnel;
 
 import com.nectux.mizan.hyban.rh.absences.dto.AbsencesDTO;
 import com.nectux.mizan.hyban.utils.PrintLs;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 public interface BulletinPaieService {
@@ -35,6 +36,7 @@ public interface BulletinPaieService {
 	public int count();
 	public BulletinPaie findBulletinByPeriodePaieAndPersonnel(PeriodePaie periodePaie, Personnel personnel);
 	public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode);
+	public BulletinPaieDTO loadBulletinPaiechearch(Pageable pageable,String valeurarechercher);
 	//public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode, String search);
 	public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode, String search);
 
@@ -94,4 +96,8 @@ public interface BulletinPaieService {
 	public List<PrintLs> calculerMasseSalarialeParTypeContrat(PeriodePaie periode);
 	public List<PrintLs> calculerMasseSalarialeParSite(PeriodePaie periode);
 	public List<PrintLs> calculerEffectifParSiteAlaPaie(PeriodePaie periode);
+
+	BulletinPaieDTO loadBulletinPaieSearch(Pageable page, String criteria);
+
+
 }

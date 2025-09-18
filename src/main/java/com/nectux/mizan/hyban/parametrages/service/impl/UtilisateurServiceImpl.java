@@ -206,17 +206,17 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		// TODO Auto-generated method stub
 		UtilisateurDTO utilisateurDTO = new UtilisateurDTO();
 		Utilisateur utilisateur = utilisateurRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id));
-//		if(ancienMotDePasse.equals(utilisateur.getBisapp())){
-//			utilisateur.setBisapp(nouveauMotDePasse);
-//			utilisateur.setMotDePasse(nouveauMotDePasse);
-//
-//			utilisateur = utilisateurRepository.save(utilisateur);
-//			utilisateurDTO.setRow(utilisateur);
-//			utilisateurDTO.setResult("succes");
-//		} else{
-//			utilisateurDTO.setRow(utilisateur);
-//			utilisateurDTO.setResult("erreur_mdp_non_conforme");
-//		}
+		if(ancienMotDePasse.equals(utilisateur.getPassword())){
+			//utilisateur.setBisapp(nouveauMotDePasse);
+			utilisateur.setPassword(passwordEncoder.encode(nouveauMotDePasse));
+
+			utilisateur = utilisateurRepository.save(utilisateur);
+			utilisateurDTO.setRow(utilisateur);
+			utilisateurDTO.setResult("succes");
+		} else{
+			utilisateurDTO.setRow(utilisateur);
+			utilisateurDTO.setResult("erreur_mdp_non_conforme");
+		}
 		
 		return utilisateurDTO;
 	}

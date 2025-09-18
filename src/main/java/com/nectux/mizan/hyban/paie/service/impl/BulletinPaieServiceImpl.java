@@ -106,6 +106,18 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		return bulletinPaieDTO;
 	}
 
+	@Override
+	public BulletinPaieDTO loadBulletinPaiechearch(Pageable pageable, String valeurarechercher) {
+		BulletinPaieDTO bulletinPaieDTO = new BulletinPaieDTO();
+		List<BulletinPaie> firstlist=new ArrayList<BulletinPaie>();
+
+		Page<BulletinPaie> page = bulletinPaieRepository.findByContratPersonnelPersonnelNomContainingIgnoreCase(pageable,valeurarechercher);
+		bulletinPaieDTO.setRows(page.getContent());
+		bulletinPaieDTO.setTotal(page.getTotalElements());
+		logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
+		return bulletinPaieDTO;
+	}
+
 //	@Override
 //	public BulletinPaieDTO loadBulletinPaie(Pageable pageable, PeriodePaie maperiode, String search) {
 //		BulletinPaieDTO bulletinPaieDTO = new BulletinPaieDTO();
@@ -200,14 +212,14 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		  periodePaieActif=periodePaieRepository.findById(idPeriode).orElseThrow(() -> new EntityNotFoundException("ContratPersonnel not found for id " + idPeriode));
 
 		    personnelList = personnelRepository.findByStatutAndRetraitEffectOrderByNomAsc(true,false);
-		  for(int i = 0; i < personnelList.size(); i++){
+		    for(int i = 0; i < personnelList.size(); i++){
 
 			  ctratpersonnelFind=contratPersonnelRepository.findByPersonnelIdAndStatut(personnelList.get(i).getId(),true);
 			   if(ctratpersonnelFind!=null)
 			    personnelListTrt.add(ctratpersonnelFind.getPersonnel());
 			  logger.info("*****************************************personnel list******"+ctratpersonnelListTrt.toString());
 		 
-		  }
+		   }
 		  
 	        for(Personnel person : personnelListTrt){
 	        	        	
@@ -404,39 +416,106 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 			    		 	detailsbull.setMoisOfpresence((livrePaiecalR.getMoisdepresence()));
 				     }
 			     }
-			     
-			     Double cumulIgr = 0D;Double cumulits = 0D;Double cumulCn = 0D;Double cumulCnps = 0D;Double salairnet = 0D;
-							List<BulletinPaie> bulletinPaieList = bulletinPaieRepository.findByPeriodePaieAnneeIdAndClotureTrueAndContratPersonnelPersonnelId(periodePaieActif.getAnnee().getId(),ctratpersonnellz.getPersonnel().getId());
-							if(bulletinPaieList.size()>0 && (ctratpersonnellz.getTypeContrat().getId()==1L || ctratpersonnellz.getTypeContrat().getId()==2L )){
-							   for(BulletinPaie bulletinPaie : bulletinPaieList){
-								cumulIgr =0D + cumulIgr;
-								//cumulIgr = bulletinPaie.getIgr() + cumulIgr;
-								cumulits = bulletinPaie.getIts() + cumulits;
-								//cumulCn = bulletinPaie.getCn() + cumulCn;
-								cumulCn = 0D + cumulCn;
-								cumulCnps = bulletinPaie.getCnps() + cumulCnps;
-								salairnet=salairnet+bulletinPaie.getNetapayer();
+				Double cumulIgr = 0D;
+				Double cumulIts = 0D;
+				Double cumulCn = 0D;
+				Double cumulCnps = 0D;
+				Double cumulRetenuNet = 0D;
+				Double salaireNet = 0D;
 
-						       }
-						       detailsbull.setCumulCn(cumulCn);detailsbull.setCumulIgr(cumulIgr);detailsbull.setCumulIts(cumulits);detailsbull.setCumulCnpsSal(cumulCnps);
-								detailsbull.setCumulRetenueNet(cumulIgr+cumulits+cumulCn+cumulCnps);
-							}else{
-						  		 	if(detailsbull.getIts()==null)detailsbull.setCumulIts(0d); else detailsbull.setCumulIts(detailsbull.getIts());
-								    if(detailsbull.getCn()==null)detailsbull.setCumulCn(0d); else detailsbull.setCumulCn(detailsbull.getCn());
-									if(detailsbull.getIgr()==null)detailsbull.setCumulIgr(0d); else detailsbull.setCumulIgr(detailsbull.getIgr());
-								    if(detailsbull.getCnps()==null)detailsbull.setCumulCnpsSal(0d); else detailsbull.setCumulCnpsSal(detailsbull.getCnps());
-								    detailsbull.setCumulIgr(detailsbull.getIgr());
-								    detailsbull.setCumulCnpsSal(detailsbull.getCnps());
-								    System.out.println("cumulITS cumulITS cumulITS::::"+ detailsbull.getIts());
-								System.out.println("cumulCN cumulCN cumulCN::::"+ detailsbull.getCn());
-								System.out.println("cumulIGR cumulIGR cumulIGR::::"+ detailsbull.getIgr());
-								System.out.println("cumulCNPS cumulCNPS cumulCNPS::::"+ detailsbull.getCnps());
-								   Double totretenue=detailsbull.getCumulIts()+detailsbull.getCumulCnpsSal();
-								detailsbull.setCumulRetenueNet(totretenue);
-							}
+// récupération des bulletins de la période en cours et antérieurs
+				List<BulletinPaie> bulletinPaieList =
+						bulletinPaieRepository.findByContratPersonnelPersonnelIdAndPeriodePaieAnneeIdAndPeriodePaieMoisLessThanEqual(
+								ctratpersonnellz.getPersonnel().getId(),
+								periodePaieActif.getAnnee().getId(),
+								periodePaieActif.getMois()
+						);
 
-					     
-					    
+// ✅ Cas 1 : CDI ou CDD (type contrat = 1 ou 2)
+				if (!bulletinPaieList.isEmpty()
+						&& (ctratpersonnellz.getTypeContrat().getId() == 1L
+						|| ctratpersonnellz.getTypeContrat().getId() == 2L)) {
+
+					for (BulletinPaie bulletinPaie : bulletinPaieList) {
+						// cumul normal
+						cumulIgr  += (bulletinPaie.getIgr()  != null ? bulletinPaie.getIgr()  : 0D);
+						cumulIts  += (bulletinPaie.getIts()  != null ? bulletinPaie.getIts()  : 0D);
+						cumulCn   += (bulletinPaie.getCn()   != null ? bulletinPaie.getCn()   : 0D);
+						cumulCnps += (bulletinPaie.getCnps() != null ? bulletinPaie.getCnps() : 0D);
+						salaireNet += (bulletinPaie.getNetapayer() != null ? bulletinPaie.getNetapayer() : 0D);
+					}
+
+					detailsbull.setCumulIgr(cumulIgr);
+					detailsbull.setCumulIts(cumulIts);
+					detailsbull.setCumulCn(cumulCn);
+					detailsbull.setCumulCnpsSal(cumulCnps);
+					cumulRetenuNet=cumulIgr + cumulIts + cumulCn + cumulCnps;
+					detailsbull.setCumulRetenueNet(cumulRetenuNet);
+					detailsbull.setCumulSalaireNet(salaireNet);
+
+				} else {
+					// ✅ Cas 2 : autres types de contrat ou pas de bulletins
+					for (BulletinPaie bulletinPaie : bulletinPaieList) {
+						salaireNet += (bulletinPaie.getNetapayer() != null ? bulletinPaie.getNetapayer() : 0D);
+						cumulRetenuNet += (bulletinPaie.getCumulRetenueNet() != null ? bulletinPaie.getCumulRetenueNet() : 0D);
+					}
+
+					detailsbull.setCumulIts(detailsbull.getIts()  != null ? detailsbull.getIts()  : 0D);
+					detailsbull.setCumulCn(detailsbull.getCn()    != null ? detailsbull.getCn()   : 0D);
+					detailsbull.setCumulIgr(detailsbull.getIgr()  != null ? detailsbull.getIgr()  : 0D);
+					detailsbull.setCumulCnpsSal(detailsbull.getCnps() != null ? detailsbull.getCnps() : 0D);
+
+					// total retenues
+					cumulRetenuNet = detailsbull.getCumulIts() + detailsbull.getCumulCnpsSal();
+					detailsbull.setCumulRetenueNet(cumulRetenuNet);
+
+					detailsbull.setCumulSalaireNet(salaireNet);
+				}
+
+//			        Double cumulIgr = 0D;Double cumulits = 0D;Double cumulCn = 0D;Double cumulCnps = 0D;Double salairnet = 0D;
+//					List<BulletinPaie> bulletinPaieList1 = bulletinPaieRepository.findByPeriodePaieAnneeIdAndContratPersonnelPersonnelId(periodePaieActif.getAnnee().getId(),ctratpersonnellz.getPersonnel().getId());
+//				List<BulletinPaie> bulletinPaieList =
+//						bulletinPaieRepository.findByContratPersonnelPersonnelIdAndPeriodePaieAnneeIdAndPeriodePaieMoisLessThanEqual(
+//								ctratpersonnellz.getPersonnel().getId(),
+//								periodePaieActif.getAnnee().getId(),
+//								periodePaieActif.getMois()
+//						);
+//
+//					if(bulletinPaieList.size()>0 && (ctratpersonnellz.getTypeContrat().getId()==1L || ctratpersonnellz.getTypeContrat().getId()==2L )){
+//
+//								for(BulletinPaie bulletinPaie : bulletinPaieList){
+//											cumulIgr =0D + cumulIgr;
+//											//cumulIgr = bulletinPaie.getIgr() + cumulIgr;
+//											cumulits = bulletinPaie.getIts() + cumulits;
+//											//cumulCn = bulletinPaie.getCn() + cumulCn;
+//											cumulCn = 0D + cumulCn;
+//											cumulCnps = bulletinPaie.getCnps() + cumulCnps;
+//											salairnet=salairnet+bulletinPaie.getNetapayer();
+//
+//								}
+//						        detailsbull.setCumulCn(cumulCn);detailsbull.setCumulIgr(cumulIgr);detailsbull.setCumulIts(cumulits);
+//								detailsbull.setCumulCnpsSal(cumulCnps);
+//								detailsbull.setCumulRetenueNet(cumulIgr+cumulits+cumulCn+cumulCnps);
+//								detailsbull.setCumulSalaireNet(salairnet);
+//					}else{
+//
+//								for(BulletinPaie bulletinPaie : bulletinPaieList){
+//									salairnet=salairnet+bulletinPaie.getNetapayer();
+//								}
+//						  		 	if(detailsbull.getIts()==null)detailsbull.setCumulIts(0d); else detailsbull.setCumulIts(detailsbull.getIts());
+//								    if(detailsbull.getCn()==null)detailsbull.setCumulCn(0d); else detailsbull.setCumulCn(detailsbull.getCn());
+//									if(detailsbull.getIgr()==null)detailsbull.setCumulIgr(0d); else detailsbull.setCumulIgr(detailsbull.getIgr());
+//								    if(detailsbull.getCnps()==null)detailsbull.setCumulCnpsSal(0d); else detailsbull.setCumulCnpsSal(detailsbull.getCnps());
+//								    detailsbull.setCumulIgr(detailsbull.getIgr());
+//								    detailsbull.setCumulCnpsSal(detailsbull.getCnps());
+//								    System.out.println("cumulITS cumulITS cumulITS::::"+ detailsbull.getIts());
+//								System.out.println("cumulCN cumulCN cumulCN::::"+ detailsbull.getCn());
+//								System.out.println("cumulIGR cumulIGR cumulIGR::::"+ detailsbull.getIgr());
+//								System.out.println("cumulCNPS cumulCNPS cumulCNPS::::"+ detailsbull.getCnps());
+//								   Double totretenue=detailsbull.getCumulIts()+detailsbull.getCumulCnpsSal();
+//								detailsbull.setCumulSalaireNet(salairnet);
+//								//detailsbull.setCumulSalaireNet(detailsbull.getNetapayer());
+//					}
 
 			     detailsbull.setAvanceetacompte(livrePaiecalR.getAvceAcpte());
 			     detailsbull.setPretaloes(livrePaiecalR.getPretAlios());
@@ -451,7 +530,12 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 				 detailsbull.setRegularisation(livrePaiecalR.getRegularisation());
 				 detailsbull.setAutrePrelevement(livrePaiecalR.getAutrePrelevment());
 			     detailsbull.setNetapayer(livrePaiecalR.getNetPayer()); 
-			     detailsbull.setCumulSalaireNet(salairnet+livrePaiecalR.getNetPayer());
+			     detailsbull.setCumulSalaireNet(salaireNet);
+
+
+				 detailsbull.setCumulRetenueNet(cumulRetenuNet+  + (livrePaiecalR.getIts() != null ? livrePaiecalR.getIts() : 0.0)
+						 + (livrePaiecalR.getCnps() != null ? livrePaiecalR.getCnps() : 0.0));
+
 			     detailsbull.setTotalbrut(livrePaiecalR.getTotalBrut());
 			     detailsbull.setImpotSalaire(livrePaiecalR.getIs());
 			     detailsbull.setTa(livrePaiecalR.getTa()); 
@@ -1177,5 +1261,17 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 		}
 		return listPrint;
 	}
+
+	@Override
+	public BulletinPaieDTO loadBulletinPaieSearch(Pageable pageable, String criteria) {
+		BulletinPaieDTO bulletinPaieDTO = new BulletinPaieDTO();
+		//Page<BulletinPaie> page = bulletinPaieRepository.findByPeriodePaieIdAndContratPersonnelPersonnelNomIgnoreCaseContaining(pageable, maperiode.getId(), search);
+		Page<BulletinPaie> page = bulletinPaieRepository.findByContratPersonnelPersonnelNomContainingIgnoreCase( pageable, criteria);
+		bulletinPaieDTO.setRows(page.getContent());
+		bulletinPaieDTO.setTotal(page.getTotalElements());
+		logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
+		return bulletinPaieDTO;
+	}
+
 
 }

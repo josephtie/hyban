@@ -2,9 +2,10 @@ version: "3.8"
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: hyban-app
-    image: josephtie/hyban:latest
     ports:
       - "8080:8080"
     depends_on:
@@ -20,7 +21,7 @@ services:
       - hyban-network
 
   db:
-    image: postgis/postgis:13-master
+    image: postgis/postgis:15-3.3
     container_name: hyban-db
     restart: always
     environment:
@@ -28,7 +29,7 @@ services:
       POSTGRES_USER: directus
       POSTGRES_PASSWORD: directus
     healthcheck:
-      test: [ "CMD", "pg_isready", "--host=localhost", "--username=directus" ]
+      test: ["CMD-SHELL", "pg_isready -U directus -d hyban_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -40,8 +41,6 @@ services:
     volumes:
       - postgres_datav1:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-    command: >
-      postgres -c listen_addresses='*' -c hba_file=/var/lib/postgresql/data/pg_hba.conf
 
   adminer:
     image: adminer
@@ -51,6 +50,7 @@ services:
       - "8081:8081"
     networks:
       - hyban-network
+
 networks:
   hyban-network:
 

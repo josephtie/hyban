@@ -5,6 +5,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nectux.mizan.hyban.paie.repository.BulletinPaieRepository;
 import com.nectux.mizan.hyban.paie.service.BulletinPaieService;
 import com.nectux.mizan.hyban.parametrages.entity.Societe;
 import com.nectux.mizan.hyban.paie.entity.BulletinPaie;
@@ -49,6 +50,7 @@ private static final Logger logger = LogManager.getLogger(PeriodePaieController.
 	
 	@Autowired private PeriodePaieService periodePaieService;
 	@Autowired private BulletinPaieService bulletinPaieService;
+	@Autowired private BulletinPaieRepository bulletinPaieRepository;
 	@Autowired private PeriodePaieRepository PeriodePaieRepository;
 	@Autowired private PrimePersonnelRepository primePersonnelRepository;
 	@Autowired private ExerciceService exerciceService;
@@ -149,33 +151,32 @@ private static final Logger logger = LogManager.getLogger(PeriodePaieController.
 	    logger.info("###########################################################################"+listbulletin.size());
 	    if(listbulletin.size()>0){
 	    	
-	    		for(int k = 0; k < listbulletin.size(); k++){
-	    			BulletinPaie monBull= new BulletinPaie();
-	    			monBull=listbulletin.get(k);
-	    			monBull.setCloture(true);
-	    			bulletinPaieService.save(monBull);
-	    		}	
-	    		for(PrimePersonnel myprime :listprimePers){
-	    			//PrimePersonnel monBull= new PrimePersonnel();
-	    			//monBull=myprime;
-					if(myprime.getPrime().getPermanent() == true)
-					{
-						PrimePersonnel cloned = new PrimePersonnel();
+//	    		for(int k = 0; k < listbulletin.size(); k++){
+//	    			BulletinPaie monBull= new BulletinPaie();
+//	    			monBull=listbulletin.get(k);
+//	    			monBull.setCloture(true);
+//	    			bulletinPaieService.save(monBull);
+//	    		}
+			listbulletin.forEach(b -> b.setCloture(true));
+			bulletinPaieRepository.saveAll(listbulletin);
 
-						// Copier les champs nécessaires sauf l'id
-						cloned.setPrime(myprime.getPrime());
-						cloned.setContratPersonnel(myprime.getContratPersonnel());
-						cloned.setMontant(myprime.getMontant());
-						cloned.setPrime(myprime.getPrime());
-						cloned.setPeriode(maperiodenew);
-						// Ajoute d’autres champs si besoin…
+			for (PrimePersonnel myprime : listprimePers) {
+				if (Boolean.TRUE.equals(myprime.getPrime().getPermanent())) { // plus sûr que == true
+					PrimePersonnel cloned = new PrimePersonnel();
 
-						listprimePersNew.add(cloned);
+					// Copier les champs nécessaires sauf l'id
+					cloned.setPrime(myprime.getPrime());
+					cloned.setContratPersonnel(myprime.getContratPersonnel());
+					cloned.setMontant(myprime.getMontant());
+					cloned.setPeriode(maperiodenew);
 
-					}
-	    		}
-			maperiodenew.setCloture(false);
-			maperiodenew= PeriodePaieRepository.save(maperiodenew);
+					// Ajouter d’autres champs si besoin…
+
+					listprimePersNew.add(cloned);
+				}
+			}
+		maperiodenew.setCloture(false);
+		maperiodenew= PeriodePaieRepository.save(maperiodenew);
 	   primePersonnelRepository.saveAll(listprimePersNew)	;
 		maperiode.setCloture(true);
 		maperiode= PeriodePaieRepository.save(maperiode);

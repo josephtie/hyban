@@ -1,6 +1,7 @@
 package com.nectux.mizan.hyban.paie.repository;
 
 import com.nectux.mizan.hyban.paie.entity.BulletinPaie;
+import com.nectux.mizan.hyban.parametrages.entity.Mois;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 
@@ -36,6 +37,7 @@ public interface BulletinPaieRepository extends JpaRepository<BulletinPaie, Long
 	public Page<BulletinPaie> findByPeriodePaieIdAndContratPersonnelPersonnelNomIgnoreCaseContainingOrderByContratPersonnelPersonnelNomAsc(Pageable pageable,Long idperiode,String search);
 	public Page<BulletinPaie> findByPeriodePaie(Pageable pageable,PeriodePaie periodePaie);
 	public Page<BulletinPaie> findByPeriodePaieOrderByContratPersonnelPersonnelNomAsc(Pageable pageable,PeriodePaie periodePaie);
+	Page<BulletinPaie> findByContratPersonnelPersonnelNomContainingIgnoreCase(Pageable pageable,String valeurarechercher);
 	public Page<BulletinPaie> findAllOrderByContratPersonnelPersonnel(Pageable pageable,PeriodePaie periodePaie);
 
 	//public java.util.List<BulletinPaie> findByContratPersonnelAndCalculerAndClotureTrue(PeriodePaie periodePaie,boolean stat);
@@ -145,8 +147,8 @@ public interface BulletinPaieRepository extends JpaRepository<BulletinPaie, Long
     JOIN cgeci_rhpaie_contrat_personnel c ON b.contrat_personnel_id = c.id
     JOIN cgeci_rhpaie_personnel p ON c.personnel_id = p.id
     WHERE b.periode_paie_id = :periodeId
-      AND c.statut = true
-      AND p.retrait_effect = false
+    AND c.statut = true
+    AND p.retrait_effect = false
     GROUP BY type_contrat
 """, nativeQuery = true)
 	List<Object[]> getMasseSalarialeParTypeContrat(@Param("periodeId") Long periodeId);
@@ -187,5 +189,7 @@ public interface BulletinPaieRepository extends JpaRepository<BulletinPaie, Long
 	List<Object[]> getEffectifParSite(@Param("periodeId") Long periodeId);
 
 
+	List<BulletinPaie> findByPeriodePaieAnneeIdAndContratPersonnelPersonnelId(Long id, Long id1);
 
+	List<BulletinPaie> findByContratPersonnelPersonnelIdAndPeriodePaieAnneeIdAndPeriodePaieMoisLessThanEqual(Long id, Long id1, Mois mois);
 }
