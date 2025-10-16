@@ -236,8 +236,17 @@ private Double basecnps;
 	
 	@Transient
 	private String mtindemniteRespons;
-	
-	
+
+	private Double CMUPatronal;
+
+	@Transient
+	private String mtCMUPatronal;
+
+
+	private Double CMUSalarial;
+
+	@Transient
+	private String mtCMUSalarial;
 	
 	private Double indemniteTransport;
 	
@@ -1298,5 +1307,38 @@ private Double basecnps;
 
 	public void setMtregularisation(String mtregularisation) {
 		this.mtregularisation = mtregularisation;
+	}
+
+
+	public Double getCMUPatronal() {
+		return CMUPatronal;
+	}
+
+	public void setCMUPatronal(Double CMUPatronal) {
+		this.CMUPatronal = CMUPatronal;
+	}
+
+	public String getMtCMUPatronal() {
+		return mtCMUPatronal;
+	}
+
+	public void setMtCMUPatronal(String mtCMUPatronal) {
+		this.mtCMUPatronal = mtCMUPatronal;
+	}
+
+	public Double getCMUSalarial() {
+		return CMUSalarial;
+	}
+
+	public void setCMUSalarial(Double CMUSalarial) {
+		this.CMUSalarial = CMUSalarial;
+	}
+
+	public String getMtCMUSalarial() {
+		return mtCMUSalarial;
+	}
+
+	public void setMtCMUSalarial(String mtCMUSalarial) {
+		this.mtCMUSalarial = mtCMUSalarial;
 	}
 }

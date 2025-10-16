@@ -24,6 +24,7 @@ import com.nectux.mizan.hyban.parametrages.service.UtilisateurService;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -132,79 +133,150 @@ private static final Logger logger = LogManager.getLogger(PeriodePaieController.
 		    periodeDTO.setRows(listperiod);
 		return periodeDTO;
 	}
-	
+
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/cloturePeriode", method = RequestMethod.POST)
 	public @ResponseBody PeriodePaieDTO closeUserc(@RequestParam(value="id", required=true) Long id, Principal principal) {
-		
+
 		//Utilisateur currentUser = userService.findByEmail(principal.getName());
 		PeriodePaieDTO periodeDTO = new PeriodePaieDTO();
-		PeriodePaie maperiode=PeriodePaieRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id));
-		PeriodePaie maperiodenew=PeriodePaieRepository.findById(id+1L).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id+1L));
-		if(maperiode!=null){
-		 List<BulletinPaie> listbulletin = new ArrayList<BulletinPaie>();
-		 List<PrimePersonnel> listprimePers = new ArrayList<PrimePersonnel>();
-		 List<PrimePersonnel> listprimePersNew = new ArrayList<PrimePersonnel>();
-		 //List<Gratification> listgratif = new ArrayList<Gratification>();
-		 listprimePers=primePersonnelRepository.findByPeriodePaieId(maperiode.getId());
-	    listbulletin=bulletinPaieService.rechercherBulletinMoisCalculer(maperiode,true);
-	    logger.info("###########################################################################"+listbulletin.size());
-	    if(listbulletin.size()>0){
-	    	
-//	    		for(int k = 0; k < listbulletin.size(); k++){
-//	    			BulletinPaie monBull= new BulletinPaie();
-//	    			monBull=listbulletin.get(k);
-//	    			monBull.setCloture(true);
-//	    			bulletinPaieService.save(monBull);
-//	    		}
-			listbulletin.forEach(b -> b.setCloture(true));
-			bulletinPaieRepository.saveAll(listbulletin);
-
-			for (PrimePersonnel myprime : listprimePers) {
-				if (Boolean.TRUE.equals(myprime.getPrime().getPermanent())) { // plus sûr que == true
-					PrimePersonnel cloned = new PrimePersonnel();
-
-					// Copier les champs nécessaires sauf l'id
-					cloned.setPrime(myprime.getPrime());
-					cloned.setContratPersonnel(myprime.getContratPersonnel());
-					cloned.setMontant(myprime.getMontant());
-					cloned.setPeriode(maperiodenew);
-
-					// Ajouter d’autres champs si besoin…
-
-					listprimePersNew.add(cloned);
-				}
-			}
+		PeriodePaie maperiode=PeriodePaieRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Periode current not found for id " + id));
+		PeriodePaie maperiodenew=PeriodePaieRepository.findById(id+1L).orElseThrow(() -> new EntityNotFoundException("Nouvelle periode  not found for id " + id+1L));
+        System.out.println("la nouelle periode est :" + maperiodenew.toString());
 		maperiodenew.setCloture(false);
 		maperiodenew= PeriodePaieRepository.save(maperiodenew);
-	   primePersonnelRepository.saveAll(listprimePersNew)	;
 		maperiode.setCloture(true);
 		maperiode= PeriodePaieRepository.save(maperiode);
-		
+		if(maperiode!=null){
+			List<BulletinPaie> listbulletin = new ArrayList<BulletinPaie>();
+			List<PrimePersonnel> listprimePers = new ArrayList<PrimePersonnel>();
+			List<PrimePersonnel> listprimePersNew = new ArrayList<PrimePersonnel>();
+			//List<Gratification> listgratif = new ArrayList<Gratification>();
+			listprimePers=primePersonnelRepository.findByPeriodePaieId(maperiode.getId());
+			listbulletin=bulletinPaieService.rechercherBulletinMoisCalculer(maperiode,true);
+			logger.info("###########################################################################"+listbulletin.size());
+			if(listbulletin.size()>0){
 
-		
-	   
-	      if(maperiode.getMois().getId()==12L){
-	    	Exercice monexo=exerciceService.findExo(maperiode.getAnnee().getId());
-			Exercice monexonew=exerciceService.findExo(maperiode.getAnnee().getId()+1L);
-			if(monexo!=null)
-				monexo.setCloture(true);
-			   monexo= exerciceService.save(monexo);
-			
-			   monexonew.setCloture(false);
-			   monexonew= exerciceService.save(monexonew);
-	        }
-	    periodeDTO.setResult("success");
+				for(int k = 0; k < listbulletin.size(); k++){
+					BulletinPaie monBull= new BulletinPaie();
+					monBull=listbulletin.get(k);
+					monBull.setCloture(true);
+					bulletinPaieService.save(monBull);
+				}
+				for(PrimePersonnel myprime :listprimePers){
 
-	    }
-	    else{
-	    	periodeDTO.setResult("error");
-	      }
+					if(myprime.getPrime().getPermanent()==true)
+					{
+						PrimePersonnel cloned = new PrimePersonnel();
+						cloned.setPrime(myprime.getPrime());
+						cloned.setContratPersonnel(myprime.getContratPersonnel());
+						cloned.setMontant(myprime.getMontant());
+						cloned.setPeriode(maperiodenew);
+// surtout PAS cloned.setId(null)
+						listprimePersNew.add(cloned);
+					}
+				}
+
+				primePersonnelRepository.saveAll(listprimePersNew)	;
+
+
+
+
+
+				if(maperiode.getMois().getId()==12L){
+					Exercice monexo=exerciceService.findExo(maperiode.getAnnee().getId());
+					Exercice monexonew=exerciceService.findExo(maperiode.getAnnee().getId()+1L);
+					if(monexo!=null)
+						monexo.setCloture(true);
+					monexo= exerciceService.save(monexo);
+
+					monexonew.setCloture(false);
+					monexonew= exerciceService.save(monexonew);
+				}
+				periodeDTO.setResult("success");
+
+			}
+			else{
+				periodeDTO.setResult("error");
+			}
 		}
 		periodeDTO.setRow(maperiode);
 
 		return periodeDTO;
 	}
+//	@ResponseStatus(HttpStatus.OK)
+//	@RequestMapping(value = "/cloturePeriode", method = RequestMethod.POST)
+//	public @ResponseBody PeriodePaieDTO closeUserc(@RequestParam(value="id", required=true) Long id, Principal principal) {
+//
+//		//Utilisateur currentUser = userService.findByEmail(principal.getName());
+//		PeriodePaieDTO periodeDTO = new PeriodePaieDTO();
+//		PeriodePaie maperiode=PeriodePaieRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id));
+//		PeriodePaie maperiodenew=PeriodePaieRepository.findById(id+1L).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id+1L));
+//		if(maperiode!=null){
+//		 List<BulletinPaie> listbulletin = new ArrayList<BulletinPaie>();
+//		 List<PrimePersonnel> listprimePers = new ArrayList<PrimePersonnel>();
+//		 List<PrimePersonnel> listprimePersNew = new ArrayList<PrimePersonnel>();
+//		 //List<Gratification> listgratif = new ArrayList<Gratification>();
+//		 listprimePers=primePersonnelRepository.findByPeriodePaieId(maperiode.getId());
+//	    listbulletin=bulletinPaieService.rechercherBulletinMoisCalculer(maperiode,true);
+//	    logger.info("###########################################################################"+listbulletin.size());
+//	    if(listbulletin.size()>0){
+//
+////	    		for(int k = 0; k < listbulletin.size(); k++){
+////	    			BulletinPaie monBull= new BulletinPaie();
+////	    			monBull=listbulletin.get(k);
+////	    			monBull.setCloture(true);
+////	    			bulletinPaieService.save(monBull);
+////	    		}
+//			listbulletin.forEach(b -> b.setCloture(true));
+//			bulletinPaieRepository.saveAll(listbulletin);
+//			maperiode.setCloture(true);
+//			maperiode= PeriodePaieRepository.save(maperiode);
+//			for (PrimePersonnel myprime : listprimePers) {
+//				if (Boolean.TRUE.equals(myprime.getPrime().getPermanent())) { // plus sûr que == true
+//					PrimePersonnel cloned = new PrimePersonnel();
+//					BeanUtils.copyProperties(myprime, cloned, "id", "periodePaie");
+//					cloned.setPeriode(maperiodenew);
+//					// Copier les champs nécessaires sauf l'id
+////					cloned.setPrime(myprime.getPrime());
+////					cloned.setContratPersonnel(myprime.getContratPersonnel());
+////					cloned.setMontant(myprime.getMontant());
+////					cloned.setPeriode(maperiodenew);
+//
+//					// Ajouter d’autres champs si besoin…
+//
+//					listprimePersNew.add(cloned);
+//				}
+//			}
+//		maperiodenew.setCloture(false);
+//		maperiodenew= PeriodePaieRepository.save(maperiodenew);
+//	   primePersonnelRepository.saveAll(listprimePersNew)	;
+//
+//
+//
+//
+//
+//	      if(maperiode.getMois().getId()==12L){
+//	    	Exercice monexo=exerciceService.findExo(maperiode.getAnnee().getId());
+//			Exercice monexonew=exerciceService.findExo(maperiode.getAnnee().getId()+1L);
+//			if(monexo!=null)
+//				monexo.setCloture(true);
+//			   monexo= exerciceService.save(monexo);
+//
+//			   monexonew.setCloture(false);
+//			   monexonew= exerciceService.save(monexonew);
+//	        }
+//	    periodeDTO.setResult("success");
+//
+//	    }
+//	    else{
+//	    	periodeDTO.setResult("error");
+//	      }
+//		}
+//		periodeDTO.setRow(maperiode);
+//
+//		return periodeDTO;
+//	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/periodecloturee", method = RequestMethod.POST)

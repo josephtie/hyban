@@ -515,18 +515,6 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/savebullOnePersonnel", method = RequestMethod.POST)
@@ -1628,6 +1616,13 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			imprimBulletinPaieIts.setRetenue(bulletin.getIts());
 			listImprimBulletinPaie.add(imprimBulletinPaieIts);
 
+			ImprimBulletinPaie imprimBulletinPaieCMU = new ImprimBulletinPaie();
+			imprimBulletinPaieCMU.setLibelle("CMU Salarial");
+			//imprimBulletinPaieCn.setTaux(1.2D);
+			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+			imprimBulletinPaieCMU.setRetenue(bulletin.getCMUSalarial());
+			listImprimBulletinPaie.add(imprimBulletinPaieCMU);
+
 			//ImprimBulletinPaie imprimBulletinPaieIgr = new ImprimBulletinPaie();
 			////imprimBulletinPaieIgr.setLibelle("I.G.R");
 			//imprimBulletinPaieCn.setTaux(1.2D);					
@@ -1656,6 +1651,15 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());		
 			imprimBulletinPaieIS.setRetenuePatron(bulletin.getIts());
 			listImprimBulletinPaie.add(imprimBulletinPaieIS);
+
+			ImprimBulletinPaie imprimBulletinPaieCMUPATR = new ImprimBulletinPaie();
+			imprimBulletinPaieCMUPATR.setLibelle("CMU Patronal");
+			//imprimBulletinPaieCn.setTaux(1.2D);
+			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+			imprimBulletinPaieCMUPATR.setRetenuePatron(bulletin.getCMUPatronal());
+			listImprimBulletinPaie.add(imprimBulletinPaieCMUPATR);
+
+
 
 			ImprimBulletinPaie imprimBulletinPaieCnpsPATRON = new ImprimBulletinPaie();
 			imprimBulletinPaieCnpsPATRON.setLibelle("RETRAITE CNPS/PART PATRONAL ");
@@ -1750,6 +1754,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 			modelMap.addAttribute("logo", request.getSession().getServletContext().getRealPath(malist.get(0).getUrlLogo()));
 			modelMap.addAttribute("montantcumulSalaireNet", Utils.formattingAmount(bulletin.getCumulSalaireNet()));
+			modelMap.addAttribute("montantcumulIts", Utils.formattingAmount(bulletin.getCumulIts()));
 
 
 			//BulletinPaie bulletinData = getPayslipData(bulletin.getId(),bulletin);
