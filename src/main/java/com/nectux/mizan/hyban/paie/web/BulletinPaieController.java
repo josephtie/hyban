@@ -284,7 +284,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
        // final PageRequest page = new PageRequest(offset/10, limit, Direction.ASC, "id");
 		 // List<LivreDePaie> bulletinList = new ArrayList<LivreDePaie>();
        // Pageable pageable;
-		  LivredePaieDTO=bulletinPaieService.genererMois1(page,id);
+		  LivredePaieDTO = bulletinPaieService.genererOptimiseMois1(page,id);
 
 		  livredepaieList = new ArrayList<LivreDePaie>();
 		  livredepaieList=LivredePaieDTO.getRows();

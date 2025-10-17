@@ -93,6 +93,11 @@ public class LivreDePaie {
 	@Transient
 	private String mtautrePrelevment;
 
+
+	private Double autrePrelevmentMutuelle;
+	@Transient
+	private String mtautrePrelevmentMutuelle;
+
 	private Double regularisation;
 	@Transient
 	private String mtregularisation;
@@ -333,7 +338,7 @@ public class LivreDePaie {
 										for(PrimePersonnel primeImpos : listIndemniteBrut){
 											if(primeImpos.getPrime().getTaux()!=null && primeImpos.getValeur()>0)
 											{
-											autreImposable=autreImposable+(primeImpos.getMontant());
+										     	autreImposable=autreImposable+(primeImpos.getMontant());
 			//		     					  primeImpos.setMontant(primeImpos.getValeur()*(primeImpos.getMontant()+(primeImpos.getMontant()*primeImpos.getPrime().getTaux()/100)));
 			//									     if(primeImpos!=null)
 			//										primePersonnelRepository.save(primeImpos);
@@ -458,28 +463,33 @@ public class LivreDePaie {
 				this.pretAlios = Math.ceil(pretALIOS);
 		//this.indemniteTransport = Math.ceil(calculerIndemniteTransport());
 			this.totalBrut = Math.ceil(brutImposable + indemniteRepresentation+ indemniteTransport+autreNonImposable);
-			autrePrelevmentSociale=0d; double patronalcmu=0d;
-			if(listRetenueSociale.size()>0 || listRetenueSociale!=null){
+			autrePrelevmentSociale=0d; double patronalcmu=0d;double salarialcmu=0d;
+			if(listRetenueSociale != null && !listRetenueSociale.isEmpty()){
 				for(PrimePersonnel sociale : listRetenueSociale){
-					if(sociale.getPrime().getLibelle().equals("CMU Patronal")){
-						patronalcmu=sociale.getMontant();
+					if (sociale.getPrime().getPermanent()) {
+						if (sociale.getPrime().getLibelle().equals("CMU Patronal")) {
+							patronalcmu = sociale.getMontant();
+						} else if (sociale.getPrime().getLibelle().equals("CMU Salarial")) {
+							salarialcmu = sociale.getMontant();
+						} else {
+							autrePrelevmentSociale += sociale.getMontant();
+						}
 					}
-					else{
-						autrePrelevmentSociale=autrePrelevmentSociale + sociale.getMontant();}
 
 				}
 			}
-			this.CMU=autrePrelevmentSociale;
+			//this.CMU=autrePrelevmentSociale;
+			this.CMUSalarial=salarialcmu;
 			this.retenueSociiale=autrePrelevmentSociale +cnps;
             this.CMUPatronal=patronalcmu;
-			autrePrelevment=0d;
+			autrePrelevmentMutuelle=0d;
 			if(listMutuelle.size()>0 || listMutuelle!=null){
 				for(PrimePersonnel mutuell : listMutuelle){
-					autrePrelevment=autrePrelevment+mutuell.getMontant();
+					autrePrelevmentMutuelle=autrePrelevmentMutuelle+mutuell.getMontant();
 				}
 			}
 
-				this.totalRetenue = Math.ceil(totalRetenueFiscale + avceAcpte + pretAlios+autrePrelevment +retenueSociiale);
+				this.totalRetenue = Math.ceil(totalRetenueFiscale + avceAcpte + pretAlios+autrePrelevmentMutuelle +retenueSociiale);
 				regularisation=0d;
 			if(listGains.size()>0 || listGains!=null){
 				for(PrimePersonnel primeGains : listGains){
@@ -1549,6 +1559,22 @@ public class LivreDePaie {
 		this.mtfpcregul = mtfpcregul;
 	}
 
+	public String getMtautrePrelevmentMutuelle() {
+		return mtautrePrelevmentMutuelle;
+	}
+
+	public void setMtautrePrelevmentMutuelle(String mtautrePrelevmentMutuelle) {
+		this.mtautrePrelevmentMutuelle = mtautrePrelevmentMutuelle;
+	}
+
+	public Double getAutrePrelevmentMutuelle() {
+		return autrePrelevmentMutuelle;
+	}
+
+	public void setAutrePrelevmentMutuelle(Double autrePrelevmentMutuelle) {
+		this.autrePrelevmentMutuelle = autrePrelevmentMutuelle;
+	}
+
 	@Override
 	public String toString() {
 		return "LivreDePaie{" +
@@ -1582,6 +1608,8 @@ public class LivreDePaie {
 				", mtautrePrelevmentSociale='" + mtautrePrelevmentSociale + '\'' +
 				", autrePrelevment=" + autrePrelevment +
 				", mtautrePrelevment='" + mtautrePrelevment + '\'' +
+				", autrePrelevmentMutuelle=" + autrePrelevmentMutuelle +
+				", mtautrePrelevmentMutuelle='" + mtautrePrelevmentMutuelle + '\'' +
 				", regularisation=" + regularisation +
 				", mtregularisation='" + mtregularisation + '\'' +
 				", brutNonImposable=" + brutNonImposable +

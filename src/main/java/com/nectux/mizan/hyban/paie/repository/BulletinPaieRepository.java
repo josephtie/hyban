@@ -193,4 +193,6 @@ public interface BulletinPaieRepository extends JpaRepository<BulletinPaie, Long
 
 	List<BulletinPaie> findByContratPersonnelPersonnelIdAndPeriodePaieAnneeIdAndPeriodePaieMoisLessThanEqual(Long id, Long id1, Mois mois);
 	List<BulletinPaie> findByContratPersonnelPersonnelIdAndPeriodePaieAnneeId(Long id, Long id1);
+
+    List<BulletinPaie> findByPeriodePaieAnneeIdAndClotureTrue(Long id);
 }

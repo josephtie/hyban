@@ -52,4 +52,5 @@ public interface PlanningCongeRepository extends CrudRepository<PlanningConge, L
 	@Query("SELECT p FROM PlanningConge p WHERE p.periodePaie.id = :idperiode")
 	Page<PlanningConge> findByPeriodePaieId(@Param("idperiode") Long idperiode, Pageable pageable);
 
+    List<PlanningConge> findByStatutTrue();
 }

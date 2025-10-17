@@ -20,6 +20,7 @@ public interface BulletinPaieService {
 	public BulletinPaie save(BulletinPaie bulletinPaie);
 	
 	public LivreDePaieDTO   genererMois1(Pageable pageable,Long idPeriode);
+	public LivreDePaieDTO   genererOptimiseMois1(Pageable pageable,Long idPeriode);
 	public BulletinPaieDTO generateLivreDePaie(Pageable pageable);
 	
 //	public BulletinPaieDTO generateBulletinDePaie(List<LivreDePaie> monlivre);
