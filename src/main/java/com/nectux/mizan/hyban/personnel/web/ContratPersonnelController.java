@@ -212,12 +212,15 @@ public class ContratPersonnelController {
 	@RequestMapping(value = "/endcontratpersonnel", method = RequestMethod.POST)
 	public @ResponseBody ContratPersonnelDTO updateContratPersonnel(@RequestParam(value="id", required=true) Long id,
 																	@RequestParam(value="dateFin", required=true) String dateFin,
+																	@RequestParam(value="dateMod", required=true) String dateMod,
 																	@RequestParam(value="permanent", required=true) Boolean depart,
 																	@RequestParam(value="ObservCtrat", required=false) String ObservCtrat) {
 		String [] part =dateFin.split("-");
+		String [] part1 =dateMod.split("-");
 		String date=part[2]+"/"+part[1]+"/"+part[0];
+		String datemod1=part1[2]+"/"+part1[1]+"/"+part1[0];
 		System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh   "+date);
-		return contratPersonnelService.endContract(id, date,depart,ObservCtrat);
+		return contratPersonnelService.endContract(id, date,datemod1,depart,ObservCtrat);
 	}
 	
 	

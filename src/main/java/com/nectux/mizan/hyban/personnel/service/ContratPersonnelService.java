@@ -21,7 +21,7 @@ public interface ContratPersonnelService {
 	
 	public ContratPersonnelDTO save(Long id, Long idPersonnel, Long idCategorie, Long idFonction, Long idTypeContrat, String dateDebut, String dateFin, Double netAPayer, Double indemniteLogement, int ancienete, boolean statut, Double sursalaire, Double indemnitetransport, Double indemniterespons, Double indemniterepresent);
 	
-	public ContratPersonnelDTO endContract(Long id, String dateFin,Boolean depart,String ObservCtrat);
+	public ContratPersonnelDTO endContract(Long id, String dateFin,String dateMod,Boolean depart,String ObservCtrat);
 	
 	public ContratPersonnelDTO updateContractSursalaire(Long id, Double sursalaire);
 	

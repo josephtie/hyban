@@ -18,6 +18,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.carbone.ICarboneServices;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -96,6 +97,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 	@Autowired private UtilisateurService utilisateurService;
 	@Autowired private UtilisateurRoleService utilisateurRoleService;
 	@Autowired private JasperReportService jasperReportService;
+	@Autowired private  ICarboneServices carboneServices;
 	private final ResourceLoader resourceLoader;
 	MethodsShared methodsShared = new MethodsShared();
 	List<LivreDePaie> livredepaieList=null;

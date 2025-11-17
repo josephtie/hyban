@@ -367,19 +367,20 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 	}
 
 	@Override
-	public ContratPersonnelDTO endContract(Long id, String dateFin,Boolean depart,String ObservCtrat) {
+	public ContratPersonnelDTO endContract(Long id, String dateFin,String dateMod,Boolean depart,String ObservCtrat) {
 		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
 		try{
 			if(dateFin == ""){
 				throw new Exception("Date de fin du contrat invalide.");
 			}
 			ContratPersonnel contratPersonnel = contratPersonnelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id));
-			contratPersonnel.setDateMod(DateManager.stringToDate(dateFin, "dd/MM/yyyy"));
-			contratPersonnel.setStatut(false);
+			contratPersonnel.setDateMod(DateManager.stringToDate(dateMod, "dd/MM/yyyy"));
+			contratPersonnel.setDateFin(DateManager.stringToDate(dateFin, "dd/MM/yyyy"));
+
             contratPersonnel.setObservCtrat(ObservCtrat);
 			contratPersonnel.setDepart(false);
 			contratPersonnel.setSoldeCalcule(false);
-			if(depart == true){
+			if(depart){
 				contratPersonnel.setDepart(true);
 				contratPersonnel.getPersonnel().setRetraitEffect(false);
 				contratPersonnel.getPersonnel().setStatut(true);
