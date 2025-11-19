@@ -13,6 +13,7 @@ import com.nectux.mizan.hyban.personnel.entity.Personnel;
 
 import com.nectux.mizan.hyban.rh.absences.dto.AbsencesDTO;
 import com.nectux.mizan.hyban.utils.PrintLs;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 public interface BulletinPaieService {
@@ -20,6 +21,7 @@ public interface BulletinPaieService {
 	public BulletinPaie save(BulletinPaie bulletinPaie);
 	
 	public LivreDePaieDTO   genererMois1(Pageable pageable,Long idPeriode);
+	public LivreDePaieDTO   genererOptimiseMois1(Pageable pageable,Long idPeriode);
 	public BulletinPaieDTO generateLivreDePaie(Pageable pageable);
 	
 //	public BulletinPaieDTO generateBulletinDePaie(List<LivreDePaie> monlivre);
@@ -36,6 +38,7 @@ public interface BulletinPaieService {
 	public int count();
 	public BulletinPaie findBulletinByPeriodePaieAndPersonnel(PeriodePaie periodePaie, Personnel personnel);
 	public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode);
+	public BulletinPaieDTO loadBulletinPaiechearch(Pageable pageable,String valeurarechercher);
 	//public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode, String search);
 	public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode, String search);
 
@@ -96,7 +99,13 @@ public interface BulletinPaieService {
 	public List<PrintLs> calculerMasseSalarialeParSite(PeriodePaie periode);
 	public List<PrintLs> calculerEffectifParSiteAlaPaie(PeriodePaie periode);
 
+<<<<<<< HEAD
 	public BulletinPaieDTO getCurrentYearBulletins(Long personnelId,String annee) ;
 
 	BulletinPaie findbulletin(Long payrollId);
+=======
+	BulletinPaieDTO loadBulletinPaieSearch(Pageable page, String criteria);
+
+
+>>>>>>> 487700e70affa02d1b7b9f3824deaa8fd01de747
 }

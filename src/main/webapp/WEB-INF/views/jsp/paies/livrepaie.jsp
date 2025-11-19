@@ -559,14 +559,12 @@
 
                     <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
 				<table id="tableBull" class="table table-info table-striped"
-					data-toggle="table" 
-					data-click-to-select="true"
+					data-toggle="table"
 					data-single-select="false"					
 					data-show-export="true" 
 					data-click-to-select="true"
 					data-show-footer="false"
 					data-export-data-type="all"
-					data-sort-name="name"
 		        	data-url="${pageContext.request.contextPath}/paie/listbulletinMoisActif"
 					data-sort-order="desc"
 					data-show-columns="true" 

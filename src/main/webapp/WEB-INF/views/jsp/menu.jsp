@@ -22,7 +22,7 @@
                      <img src="<%= baseUrl %>${urllogo}" style="height: 90px;width: 90px" alt="John Doe"/>
                 </div>
                 <div class="profile-data">
-                    <div class="profile-data-name">${user.nomComplet} </div>
+                    <div class="profile-data-name">${user.nomComplet} / ${profile}</div>
                     <div class="profile-data-title">${user.email} </div>
                 </div>
                 <div class="profile-controls">

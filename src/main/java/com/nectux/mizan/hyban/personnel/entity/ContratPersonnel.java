@@ -37,7 +37,8 @@ public class ContratPersonnel extends Auditable {
 	private Boolean statut;
 	
 	private Boolean depart;
-	
+
+	private Boolean soldeCalcule;
 	@ManyToOne
 	@JoinColumn(nullable=false)
 	private Categorie categorie;
@@ -313,23 +314,44 @@ public Double getIndemniteRepresent() {
 		this.indemniteTranspt = indemniteTranspt;
 	}
 
+	public Boolean getSoldeCalcule() {
+		return soldeCalcule;
+	}
+
+	public void setSoldeCalcule(Boolean soldeCalcule) {
+		this.soldeCalcule = soldeCalcule;
+	}
+
 	@Override
 	public String toString() {
-		return "ContratPersonnel [id=" + id + ", statut=" + statut
-				+ ", depart=" + depart + ", categorie=" + categorie
-				+ ", personnel=" + personnel + ", fonction=" + fonction
-				+ ", typeContrat=" + typeContrat + ", dateDebut=" + dateDebut
-				+ ", dDebut=" + dDebut + ", dateFin=" + dateFin + ", dFin="
-				+ dFin + ", dateMod=" + dateMod + ", dMod=" + dMod
-				+ ", netAPayer=" + netAPayer + ", netPayer=" + netPayer
-				+ ", indemniteLogement=" + indemniteLogement
-				+ ", indemniteLogmt=" + indemniteLogmt
-				+ ", indemniteRepresent=" + indemniteRepresent
-				+ ", indemniteReprt=" + indemniteReprt + ", ObservCtrat="
-				+ ObservCtrat + ", indemniteTransport=" + indemniteTransport
-				+ ", indemniteTranspt=" + indemniteTranspt + ", sursalaire="
-				+ sursalaire + ", sursal=" + sursal + ", ancienneteInitial="
-				+ ancienneteInitial + "]";
+		return "ContratPersonnel{" +
+				"id=" + id +
+				", statut=" + statut +
+				", depart=" + depart +
+				", soldeCalcule=" + soldeCalcule +
+				", categorie=" + categorie +
+				", personnel=" + personnel +
+				", fonction=" + fonction +
+				", typeContrat=" + typeContrat +
+				", dateDebut=" + dateDebut +
+				", dDebut='" + dDebut + '\'' +
+				", dateFin=" + dateFin +
+				", dFin='" + dFin + '\'' +
+				", dateMod=" + dateMod +
+				", dMod='" + dMod + '\'' +
+				", netAPayer=" + netAPayer +
+				", netPayer='" + netPayer + '\'' +
+				", indemniteLogement=" + indemniteLogement +
+				", indemniteLogmt='" + indemniteLogmt + '\'' +
+				", indemniteRepresent=" + indemniteRepresent +
+				", indemniteReprt='" + indemniteReprt + '\'' +
+				", ObservCtrat='" + ObservCtrat + '\'' +
+				", indemniteTransport=" + indemniteTransport +
+				", indemniteTranspt='" + indemniteTranspt + '\'' +
+				", sursalaire=" + sursalaire +
+				", sursal='" + sursal + '\'' +
+				", ancienneteInitial=" + ancienneteInitial +
+				'}';
 	}
 
 	public Boolean getDepart() {

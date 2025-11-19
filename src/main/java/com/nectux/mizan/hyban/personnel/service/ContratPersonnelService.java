@@ -21,7 +21,7 @@ public interface ContratPersonnelService {
 	
 	public ContratPersonnelDTO save(Long id, Long idPersonnel, Long idCategorie, Long idFonction, Long idTypeContrat, String dateDebut, String dateFin, Double netAPayer, Double indemniteLogement, int ancienete, boolean statut, Double sursalaire, Double indemnitetransport, Double indemniterespons, Double indemniterepresent);
 	
-	public ContratPersonnelDTO endContract(Long id, String dateFin,Boolean depart,String ObservCtrat);
+	public ContratPersonnelDTO endContract(Long id, String dateFin,String dateMod,Boolean depart,String ObservCtrat);
 	
 	public ContratPersonnelDTO updateContractSursalaire(Long id, Double sursalaire);
 	
@@ -35,7 +35,9 @@ public interface ContratPersonnelService {
 	public List<ContratPersonnel> findByPersonnel(Personnel personnel);
 	
 	public ContratPersonnel findByPersonnelContratActif(Long idPers);
-	
+
+	public ContratPersonnelDTO departDefinitif(Long contratId, String dateFinEffective) throws Exception;
+
 	public List<ContratPersonnel> findByTypeContrat(TypeContrat typeContrat);
 	
 	public List<ContratPersonnel> findByCategorie(Categorie categorie);
@@ -51,7 +53,11 @@ public interface ContratPersonnelService {
 	public int count();
 
 	public ContratPersonnelDTO loadContratActif(Pageable pageable);
-	
+
+	public ContratPersonnelDTO loadContratDepart(Pageable pageable);
+
+	public ContratPersonnelDTO loadContratDepart(Pageable pageable, String search);
+
 	public ContratPersonnelDTO loadContratExpieredumois(Pageable pageable,Long IdTypctr,String  ddeb,String  dfin );
 
 	public ContratPersonnelDTO loadContratActif(Pageable pageable, String search);

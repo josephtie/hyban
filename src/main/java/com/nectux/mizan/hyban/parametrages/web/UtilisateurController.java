@@ -109,7 +109,7 @@ public class UtilisateurController {
 		if(idrole == 4){
 			utilisateur.setRoleName(RoleName.PTGE);
 		}
-		utilisateur.setRoleName(RoleName.ADMIN);
+		//utilisateur.setRoleName(RoleName.ADMIN);
 		//return utilisateurService.createUtilisateur(utilisateur);
 		return utilisateurService.save(id, idrole, nomComplet, dateNaissance, telephone, adresse, email,"123456M");
 	}

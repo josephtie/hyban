@@ -239,14 +239,14 @@ var $table;
 	            }
 	        },
 	        error: function () {
-	        	/* jQuery("#rhpModal .modal-body div.alert").alert();
+	        	 jQuery("#rhpModal .modal-body div.alert").alert();
 	        	jQuery("#rhpModal .modal-body .alert h4").html("Erreur survenue");
 	        	jQuery("#rhpModal .modal-body .alert p").html("Verifier que vous �tes connect�s au serveur.");
-	        	jQuery("#rhpModal .modal-footer span").removeClass('loader'); */
+	        	jQuery("#rhpModal .modal-footer span").removeClass('loader');
 	        },
 	        beforeSend: function () {
-	        	/* jQuery("#formAjout").attr("disabled", true);
-	        	jQuery("#rhpModal .modal-footer span").addClass('loader'); */
+	        	 jQuery("#formAjout").attr("disabled", true);
+	        	jQuery("#rhpModal .modal-footer span").addClass('loader');
 	        },
 	        complete: function () {
 	        	/* jQuery("#formGenerer").removeAttr("disabled");

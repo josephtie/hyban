@@ -2,6 +2,8 @@ package com.nectux.mizan.hyban.securite;
 
 
 
+
+
 import com.nectux.mizan.hyban.parametrages.repository.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +22,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 487700e70affa02d1b7b9f3824deaa8fd01de747
 
 @Configuration
 @EnableWebSecurity

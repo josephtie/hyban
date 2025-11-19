@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 public interface EchelonnementRepository extends CrudRepository<Echelonnement, Long> {
 	
 	
@@ -25,7 +27,7 @@ public interface EchelonnementRepository extends CrudRepository<Echelonnement, L
 	public Page<Echelonnement> findByMontantLike(Pageable pageable,String search);
 	
 	public Page<Echelonnement> findByPretPersonnelPersonnelNomLike(Pageable pageable,String search);
-	
-	
 
+
+    List<Echelonnement> findByPeriodePaieId(Long idPeriode);
 }

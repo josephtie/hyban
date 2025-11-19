@@ -407,30 +407,47 @@ new Chart(ctxLine, {
         });
 
     }
+function diagramemassesalariale(dataVal) {
+    // On filtre les éléments valides
+    const validData = dataVal.filter(item => item && item.s1 && item.i1);
 
-    function diagramemassesalariale(dataVal){
-
-        new Chart(document.getElementById("retraitebar2"), {
-            type: 'pie',
-            data: {
-                labels: [dataVal[0].s1, dataVal[1].s1, dataVal[2].s1],
-                datasets: [
-                    {
-                        label: "Population (millions)",
-                        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f"],
-                        data: [dataVal[0].i1,dataVal[1].i1,dataVal[2].i1]
-                    }
-                ]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'Masse salariale par type de contrats'
-                }
-            }
-        });
-
+    // Si aucun élément valide, on peut afficher un message ou rien
+    if (validData.length === 0) {
+        document.getElementById("retraitebar2").innerHTML = "Aucune donnée disponible";
+        return;
     }
+
+    // Préparer les labels et les valeurs
+    const labels = validData.map(item => item.s1);
+    const values = validData.map(item => item.i1);
+
+    // Définir quelques couleurs automatiques
+    const colors = ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"];
+
+    // Créer le graphique
+    new Chart(document.getElementById("retraitebar2"), {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Masse salariale",
+                    backgroundColor: colors.slice(0, validData.length),
+                    data: values
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Masse salariale par type de contrats'
+            }
+        }
+    });
+}
+
+
 
     function diagrameRetraite(dataVal){
 

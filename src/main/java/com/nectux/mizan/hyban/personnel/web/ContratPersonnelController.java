@@ -163,8 +163,30 @@ public class ContratPersonnelController {
 			contratPersonnelDTO = contratPersonnelService.loadContratActif(pageRequest, search);
 		
 		return contratPersonnelDTO;
-	}	
-	
+	}
+
+
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/listcontratpersonnelDepartjson", method = RequestMethod.GET)
+	public @ResponseBody ContratPersonnelDTO getContratListDepartJSON(@RequestParam(value="limit", required=false) Integer limit,
+																@RequestParam(value="offset", required=false) Integer offset,
+																@RequestParam(value="search", required=false) String search, Principal principal) {
+
+		if(offset == null) offset = 0;
+		if(limit == null) limit = 10;
+
+		//final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "id");
+		PageRequest pageRequest = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
+		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
+		if(search == null)
+			contratPersonnelDTO = contratPersonnelService.loadContratDepart(pageRequest);
+		else
+			contratPersonnelDTO = contratPersonnelService.loadContratDepart(pageRequest, search);
+
+		return contratPersonnelDTO;
+	}
+
+
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/savecontratpersonnel", method = RequestMethod.POST)
 	public @ResponseBody ContratPersonnelDTO saveContratpers(@RequestParam(value="id", required=false) Long id, 
@@ -190,12 +212,15 @@ public class ContratPersonnelController {
 	@RequestMapping(value = "/endcontratpersonnel", method = RequestMethod.POST)
 	public @ResponseBody ContratPersonnelDTO updateContratPersonnel(@RequestParam(value="id", required=true) Long id,
 																	@RequestParam(value="dateFin", required=true) String dateFin,
+																	@RequestParam(value="dateMod", required=true) String dateMod,
 																	@RequestParam(value="permanent", required=true) Boolean depart,
 																	@RequestParam(value="ObservCtrat", required=false) String ObservCtrat) {
 		String [] part =dateFin.split("-");
+		String [] part1 =dateMod.split("-");
 		String date=part[2]+"/"+part[1]+"/"+part[0];
+		String datemod1=part1[2]+"/"+part1[1]+"/"+part1[0];
 		System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh   "+date);
-		return contratPersonnelService.endContract(id, date,depart,ObservCtrat);
+		return contratPersonnelService.endContract(id, date,datemod1,depart,ObservCtrat);
 	}
 	
 	

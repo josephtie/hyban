@@ -2,10 +2,15 @@ version: "3.8"
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: hyban-app
+<<<<<<< HEAD
     restart: always
     image: josephtie/hyban:latest
+=======
+>>>>>>> 487700e70affa02d1b7b9f3824deaa8fd01de747
     ports:
       - "8080:8080"
     depends_on:
@@ -15,6 +20,9 @@ services:
       SPRING_DATASOURCE_USERNAME: directus
       SPRING_DATASOURCE_PASSWORD: directus
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      JAVA_TOOL_OPTIONS: "-Xms2g -Xmx6g -XX:+UseG1GC -XX:+UseStringDeduplication"
+      cpus: 4
+      mem_limit: 8g
     volumes:
       - hyban_file_storage:/uploads/documents
     networks:
@@ -29,7 +37,7 @@ services:
       POSTGRES_USER: directus
       POSTGRES_PASSWORD: directus
     healthcheck:
-      test: [ "CMD", "pg_isready", "--host=localhost", "--username=directus" ]
+      test: ["CMD-SHELL", "pg_isready -U directus -d hyban_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -41,8 +49,6 @@ services:
     volumes:
       - postgres_datav1:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-    command: >
-      postgres -c listen_addresses='*' -c hba_file=/var/lib/postgresql/data/pg_hba.conf
 
   carbone:
     image: carbone/carbone:latest
@@ -63,6 +69,22 @@ services:
       - "8081:8081"
     networks:
       - hyban-network
+
+  carbone:
+    image: carbone/carbone-ee:latest-fonts
+    container_name: carbone-server
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      - CARBONE_EE_LICENSE==test_eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIxMjc1NTkzNzU4MTEyNDA5NDUyIiwiYXVkIjoiY2FyYm9uZSIsImV4cCI6MjQyMzc3NzgyNiwiZGF0YSI6eyJ0eXBlIjoidGVzdCJ9fQ.AGHohf8qK1dRXZk6T1R_lkCOdt722zRxktwoX62w-DdjLxpXdIm81QwBYj725bH1q_SZroSIoxvLF-XaSfkEf-WeAJlwPSIHNnxaksSRQCx-dPjUDHphvN47PnKJE3E7dHPBHf36zxSPGhIvCsPG0eOQ-zElaxdbNccBbd1NkIgwWT2w
+      - CARBONE_EE_STUDIO=true                # active l'interface web
+      - CARBONE_LOG_LEVEL=info
+      - CARBONE_TEMPLATES_DIR=/app/templates
+      - CARBONE_RENDER_TIMEOUT=60000
+    volumes:
+      - ./templates:/app/templates
+      - ./report:/app/reports
 networks:
   hyban-network:
 

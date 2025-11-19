@@ -18,6 +18,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.carbone.ICarboneServices;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -96,6 +97,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 	@Autowired private UtilisateurService utilisateurService;
 	@Autowired private UtilisateurRoleService utilisateurRoleService;
 	@Autowired private JasperReportService jasperReportService;
+	@Autowired private  ICarboneServices carboneServices;
 	private final ResourceLoader resourceLoader;
 	MethodsShared methodsShared = new MethodsShared();
 	List<LivreDePaie> livredepaieList=null;
@@ -138,8 +140,9 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 	    Societe mysociete=null;
 		  List<Societe> malist=societeService.findtsmois();
 		  if(malist.size()>0)
-			{mysociete=malist.get(0);			
-			modelMap.addAttribute("urllogo",mysociete.getUrlLogo()); }
+			{ mysociete=malist.get(0);
+			 modelMap.addAttribute("urllogo",mysociete.getUrlLogo());
+			}
 			modelMap.addAttribute("bigTitle", "Livre de paie");
 		    modelMap.addAttribute("listePrimes", rubriqueService.getRubriquesActives());
 		    modelMap.addAttribute("listePrimesImp", rubriqueService.getRubriquesActivesType(1));
@@ -218,30 +221,55 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 
 	@SuppressWarnings("unused")
-	@RequestMapping(value="/chargerbulletinparperiode", method = RequestMethod.GET)
+	@RequestMapping(value = "/chargerbulletinparperiode", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody BulletinPaieDTO chargerGratificationParPeriode(@RequestParam(value="id", required=true) Long id,
-																		@RequestParam(value="search1", required=false) String search1,
-																		@RequestParam(value="limit", required=false) Integer limit,
-																		@RequestParam(value="offset", required=false) Integer offset,
-																		@RequestParam(value="search", required=false) String search) {
+	public @ResponseBody BulletinPaieDTO chargerGratificationParPeriode(
+			@RequestParam(value = "id", required = true) Long id,
+			@RequestParam(value = "search1", required = false) String search1,
+			@RequestParam(value = "limit", required = false) Integer limit,
+			@RequestParam(value = "offset", required = false) Integer offset,
+			@RequestParam(value = "search", required = false) String search) {
 
-		if(offset == null) offset = 0;
-		if(limit == null) limit = 10;
-		search=search1+search;
-		System.out.println("loup loup loup"+search);
-		//final PageRequest page = new PageRequest(offset/10, limit, Direction.ASC, "id");
-		PageRequest page = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
-		PeriodePaie	 maperiode=periodePaieService.findPeriodePaie(id);
-		BulletinPaieDTO bulletinDTO=new BulletinPaieDTO();
-		if (search != null && !search.trim().isEmpty())
+		// Valeurs par défaut
+		int pageOffset = (offset != null ? offset : 0);
+		int pageLimit  = (limit  != null ? limit  : 10);
 
-			bulletinDTO = bulletinPaieService.loadBulletinPaie(page,maperiode ,search);
-		else
-			bulletinDTO = bulletinPaieService.loadBulletinPaie(page,maperiode);
+		// Préparation de la recherche
+		String criteria = "";
+		if (search1 != null) criteria += search1.trim();
+		if (search  != null) criteria += search.trim();
 
-		return bulletinDTO ;
+		System.out.println("🔎 Critère de recherche : " + criteria);
+
+		PageRequest page = PageRequest.of(pageOffset / 10, pageLimit, Direction.DESC, "id");
+
+		// Récupération de la période
+		PeriodePaie maperiode = periodePaieService.findPeriodePaie(id);
+
+		// DTO à retourner
+		BulletinPaieDTO bulletinDTO;
+
+		if (maperiode.getId() == null) {
+			// Cas où la période n’existe pas
+			if (!criteria.isEmpty()) {
+				// On fait quand même une recherche "hors période"
+				bulletinDTO = bulletinPaieService.loadBulletinPaieSearch(page, criteria);
+			} else {
+				bulletinDTO = new BulletinPaieDTO();
+			}
+			bulletinDTO.setMessage("⚠️ Période introuvable pour l'id : " + id);
+		} else {
+			// Cas avec période existante
+			if (!criteria.isEmpty()) {
+				bulletinDTO = bulletinPaieService.loadBulletinPaie(page, maperiode, criteria);
+			} else {
+				bulletinDTO = bulletinPaieService.loadBulletinPaie(page, maperiode);
+			}
+		}
+
+		return bulletinDTO;
 	}
+
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/savebullPersonnel", method = RequestMethod.GET)
 	public @ResponseBody LivreDePaieDTO saveBullpersonnel(@RequestParam(value="id", required=true) Long id,@RequestParam(value="limit", required=false) Integer limit,
@@ -258,7 +286,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
        // final PageRequest page = new PageRequest(offset/10, limit, Direction.ASC, "id");
 		 // List<LivreDePaie> bulletinList = new ArrayList<LivreDePaie>();
        // Pageable pageable;
-		  LivredePaieDTO=bulletinPaieService.genererMois1(page,id);
+		  LivredePaieDTO = bulletinPaieService.genererOptimiseMois1(page,id);
 
 		  livredepaieList = new ArrayList<LivreDePaie>();
 		  livredepaieList=LivredePaieDTO.getRows();
@@ -483,18 +511,6 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		 return livredePaie;
 	}
 	
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1108,7 +1124,326 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		return bulletin;
 	}
 
+	@RequestMapping(value = "/jrAfficheBulletinPersonnel", method = RequestMethod.GET)
+	public @ResponseBody BulletinPaieDTO  AfficheBulletinPersonnelCV(@RequestParam(value="idbul", required=true) Long idCV) throws Exception {
 
+		String view="livrepaie";
+		List<BulletinPaie> listImprimebulletin=  new ArrayList<BulletinPaie>();
+		BulletinPaie bulletin = new BulletinPaie();
+		BulletinPaieDTO bulletinDTO =new BulletinPaieDTO();
+
+		try {
+			bulletin = bulletinPaieRepository.findById(idCV).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idCV));;
+
+			List<ImprimBulletinPaie> listImprimBulletinPaie = new ArrayList<ImprimBulletinPaie>();
+			List<ImprimBulletinPaie> listImprimBulletinPaieEngt = new ArrayList<ImprimBulletinPaie>();
+			List<ImprimBulletinPaie> listImprimBulletinPaieIndem = new ArrayList<ImprimBulletinPaie>();
+
+			if(bulletin.getId() != null) {
+
+				view = "bulletinpdf";
+				ImprimBulletinPaie imprimBulletinPaieSB = new ImprimBulletinPaie();
+				imprimBulletinPaieSB.setLibelle("SALAIRE DE BASE CATEGORIE");
+				imprimBulletinPaieSB.setTaux(bulletin.getJourTravail());
+				//calcul de la base
+				//	if(bulletin.getJourTravail() == 30){
+				imprimBulletinPaieSB.setBase(bulletin.getSalairbase());
+				imprimBulletinPaieSB.setGain(bulletin.getSalairbase());
+				listImprimBulletinPaie.add(imprimBulletinPaieSB);
+
+				ImprimBulletinPaie imprimBulletinPaieSs = new ImprimBulletinPaie();
+				imprimBulletinPaieSs.setLibelle("SURSALAIRE");
+				imprimBulletinPaieSs.setTaux(bulletin.getJourTravail());
+				imprimBulletinPaieSs.setBase(bulletin.getSursalaire());
+				imprimBulletinPaieSs.setGain(bulletin.getSursalaire());
+				listImprimBulletinPaie.add(imprimBulletinPaieSs);
+
+
+				ImprimBulletinPaie imprimBulletinPaieanc = new ImprimBulletinPaie();
+				imprimBulletinPaieanc.setLibelle("PRIME D'ANCIENNETE");
+				imprimBulletinPaieanc.setBase(bulletin.getPrimeanciennete());
+				imprimBulletinPaieanc.setGain(bulletin.getPrimeanciennete());
+				listImprimBulletinPaie.add(imprimBulletinPaieanc);
+
+				ImprimBulletinPaie imprimBulletinPaiePanc = new ImprimBulletinPaie();
+				imprimBulletinPaiePanc.setLibelle("INDEMNITE DE RESIDENCE");
+				imprimBulletinPaiePanc.setTaux(bulletin.getJourTravail());
+
+				imprimBulletinPaiePanc.setBase(bulletin.getIndemnitelogement());
+				imprimBulletinPaiePanc.setGain(bulletin.getIndemnitelogement());
+				listImprimBulletinPaie.add(imprimBulletinPaiePanc);
+
+				ImprimBulletinPaie imprimBulletinPaieLog = new ImprimBulletinPaie();
+				imprimBulletinPaieLog.setLibelle("IND. DE TRANSPORT IMP ");
+				imprimBulletinPaieLog.setTaux(bulletin.getJourTravail());
+				//calcul de la base
+				//	if(bulletin.getJourTravail() == 30){
+				imprimBulletinPaieLog.setBase(bulletin.getIndemniteTransportImp());
+				imprimBulletinPaieLog.setGain(bulletin.getIndemniteTransportImp());
+				listImprimBulletinPaie.add(imprimBulletinPaieLog);
+
+				ImprimBulletinPaie imprimBulletinPaieDivImp1 = new ImprimBulletinPaie();
+				imprimBulletinPaieDivImp1.setLibelle("PRIMES IMPOSABLES ");
+				imprimBulletinPaieDivImp1.setTaux(bulletin.getJourTravail());
+				//calcul de la base
+				//	if(bulletin.getJourTravail() == 30){
+				imprimBulletinPaieDivImp1.setBase(bulletin.getAutreIndemImposable());
+				imprimBulletinPaieDivImp1.setGain(bulletin.getAutreIndemImposable());
+				listImprimBulletinPaie.add(imprimBulletinPaieDivImp1);
+
+				List<Rubrique> listPrimeImp = new ArrayList<Rubrique>();
+				listPrimeImp = rubriqueService.getRubriquesActivesType(1);
+				for (Rubrique rubrique : listPrimeImp) {
+					List<PrimePersonnel> listprimepersonnel = new ArrayList<PrimePersonnel>();
+					listprimepersonnel = primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieIdAndPrimeId(bulletin.getContratPersonnel().getId(), bulletin.getPeriodePaie().getId(), rubrique.getId());
+					if (listprimepersonnel.size() > 0 && listprimepersonnel.get(0) != null) {
+						ImprimBulletinPaie imprimBulletinPaieDivImp = new ImprimBulletinPaie();
+						imprimBulletinPaieDivImp.setLibelle(listprimepersonnel.get(0).getPrime().getLibelle());
+						if (listprimepersonnel.get(0).getPrime().getTaux() != null)
+							imprimBulletinPaieDivImp.setTaux(listprimepersonnel.get(0).getValeur().doubleValue());
+						else
+							imprimBulletinPaieDivImp.setTaux(bulletin.getJourTravail());
+						imprimBulletinPaieDivImp.setBase(listprimepersonnel.get(0).getMontant());
+						imprimBulletinPaieDivImp.setGain(listprimepersonnel.get(0).getMontant());
+						listImprimBulletinPaie.add(imprimBulletinPaieDivImp);
+					}
+				}
+				List<Rubrique> listPrimeImp1 = new ArrayList<Rubrique>();
+				listPrimeImp1 = rubriqueService.getRubriquesActivesType(3);
+				for (Rubrique rubrique : listPrimeImp1) {
+					List<PrimePersonnel> listprimepersonnel1 = new ArrayList<PrimePersonnel>();
+					listprimepersonnel1 = primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieIdAndPrimeId(bulletin.getContratPersonnel().getId(), bulletin.getPeriodePaie().getId(), rubrique.getId());
+					if (listprimepersonnel1.size() > 0 && listprimepersonnel1.get(0) != null) {
+						ImprimBulletinPaie imprimBulletinPaieDivImp10 = new ImprimBulletinPaie();
+						imprimBulletinPaieDivImp10.setLibelle(listprimepersonnel1.get(0).getPrime().getLibelle());
+						imprimBulletinPaieDivImp10.setTaux(bulletin.getJourTravail());
+						imprimBulletinPaieDivImp10.setBase(listprimepersonnel1.get(0).getMontant() - listprimepersonnel1.get(0).getPrime().getMtExedent());
+						imprimBulletinPaieDivImp10.setGain(listprimepersonnel1.get(0).getMontant() - listprimepersonnel1.get(0).getPrime().getMtExedent());
+						listImprimBulletinPaie.add(imprimBulletinPaieDivImp10);
+					}
+				}
+
+				ImprimBulletinPaie imprimBulletinPaieBrutImpos = new ImprimBulletinPaie();
+				imprimBulletinPaieBrutImpos.setLibelle("***** Salaire Brut Imposable ******");
+				imprimBulletinPaieBrutImpos.setGain(bulletin.getBrutImposable());
+				listImprimBulletinPaie.add(imprimBulletinPaieBrutImpos);
+
+				ImprimBulletinPaie imprimBulletinPaieTransport = new ImprimBulletinPaie();
+				imprimBulletinPaieTransport.setLibelle("IND. DE TRANSPORT NON IMPOS");
+				//imprimBulletinPaieTransport.setTaux(bulletin.getJourTravail());
+				imprimBulletinPaieTransport.setGain(bulletin.getIndemniteTransport());
+				listImprimBulletinPaie.add(imprimBulletinPaieTransport);
+
+//			ImprimBulletinPaie imprimBulletinPaieRESP= new ImprimBulletinPaie();
+//			imprimBulletinPaieRESP.setLibelle("AUTRES NON IMPOSABLES ");
+//			//imprimBulletinPaieRESP.setTaux(bulletin.getJourTravail());
+//			imprimBulletinPaieRESP.setGain(bulletin.getAutreNonImposable());
+//			listImprimBulletinPaie.add(imprimBulletinPaieRESP);
+
+				List<Rubrique> listPrimeImpnon = new ArrayList<Rubrique>();
+				listPrimeImpnon = rubriqueService.getRubriquesActivesType(2);
+				for (Rubrique rubrique : listPrimeImpnon) {
+					List<PrimePersonnel> listprimepersonnel = new ArrayList<PrimePersonnel>();
+					listprimepersonnel = primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieIdAndPrimeId(bulletin.getContratPersonnel().getId(), bulletin.getPeriodePaie().getId(), rubrique.getId());
+					if (listprimepersonnel.size() > 0 && listprimepersonnel.get(0) != null) {
+						ImprimBulletinPaie imprimBulletinPaieDivImp = new ImprimBulletinPaie();
+						imprimBulletinPaieDivImp.setLibelle(listprimepersonnel.get(0).getPrime().getLibelle());
+						imprimBulletinPaieDivImp.setTaux(bulletin.getJourTravail());
+						imprimBulletinPaieDivImp.setBase(listprimepersonnel.get(0).getMontant());
+						imprimBulletinPaieDivImp.setGain(listprimepersonnel.get(0).getMontant());
+						listImprimBulletinPaie.add(imprimBulletinPaieDivImp);
+					}
+				}
+				List<Rubrique> listPrimeImp12 = new ArrayList<Rubrique>();
+				listPrimeImp12 = rubriqueService.getRubriquesActivesType(3);
+				for (Rubrique rubrique : listPrimeImp12) {
+					List<PrimePersonnel> listprimepersonnel1 = new ArrayList<PrimePersonnel>();
+					listprimepersonnel1 = primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieIdAndPrimeId(bulletin.getContratPersonnel().getId(), bulletin.getPeriodePaie().getId(), rubrique.getId());
+					if (listprimepersonnel1.size() > 0 && listprimepersonnel1.get(0) != null) {
+						ImprimBulletinPaie imprimBulletinPaieDivImp10 = new ImprimBulletinPaie();
+						imprimBulletinPaieDivImp10.setLibelle(listprimepersonnel1.get(0).getPrime().getLibelle());
+						imprimBulletinPaieDivImp10.setTaux(bulletin.getJourTravail());
+						imprimBulletinPaieDivImp10.setBase(listprimepersonnel1.get(0).getMontant() - listprimepersonnel1.get(0).getPrime().getMtExedent());
+						imprimBulletinPaieDivImp10.setGain(listprimepersonnel1.get(0).getMontant() - listprimepersonnel1.get(0).getPrime().getMtExedent());
+						listImprimBulletinPaie.add(imprimBulletinPaieDivImp10);
+					}
+				}
+
+				ImprimBulletinPaie imprimBulletinPaieSalBrutNon = new ImprimBulletinPaie();
+				imprimBulletinPaieSalBrutNon.setLibelle("***** Salaire Brut Non Imposable ******");
+				imprimBulletinPaieSalBrutNon.setTaux(bulletin.getJourTravail());
+				imprimBulletinPaieSalBrutNon.setGain(bulletin.getBrutNonImposable());
+				listImprimBulletinPaie.add(imprimBulletinPaieSalBrutNon);
+
+				List<Rubrique> listPrimeG = new ArrayList<Rubrique>();
+				listPrimeG = rubriqueService.getRubriquesActivesType(5);
+				for (Rubrique rubrique : listPrimeG) {
+					List<PrimePersonnel> listprimepersonnel = new ArrayList<PrimePersonnel>();
+					listprimepersonnel = primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieIdAndPrimeId(bulletin.getContratPersonnel().getId(), bulletin.getPeriodePaie().getId(), rubrique.getId());
+					if (listprimepersonnel.size() > 0 && listprimepersonnel.get(0) != null) {
+						ImprimBulletinPaie imprimBulletinPaieDivImp = new ImprimBulletinPaie();
+						imprimBulletinPaieDivImp.setLibelle(listprimepersonnel.get(0).getPrime().getLibelle());
+						//imprimBulletinPaieDivImp.setTaux(null);
+						imprimBulletinPaieDivImp.setBase(listprimepersonnel.get(0).getMontant());
+						imprimBulletinPaieDivImp.setGain(listprimepersonnel.get(0).getMontant());
+						listImprimBulletinPaie.add(imprimBulletinPaieDivImp);
+					}
+				}
+
+
+				ImprimBulletinPaie imprimBulletinPaieIts = new ImprimBulletinPaie();
+				imprimBulletinPaieIts.setLibelle("I.T.S (nouveau Barême)");
+				imprimBulletinPaieIts.setTaux(null);
+				imprimBulletinPaieIts.setBase(bulletin.getBrutImposable());
+				imprimBulletinPaieIts.setRetenue(bulletin.getIts());
+				listImprimBulletinPaie.add(imprimBulletinPaieIts);
+
+				//ImprimBulletinPaie imprimBulletinPaieIgr = new ImprimBulletinPaie();
+				////imprimBulletinPaieIgr.setLibelle("I.G.R");
+				//imprimBulletinPaieCn.setTaux(1.2D);
+				//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+				//imprimBulletinPaieIgr.setRetenue(bulletin.getIgr());
+				//////listImprimBulletinPaie.add(imprimBulletinPaieIgr);
+
+//			ImprimBulletinPaie imprimBulletinPaieCn = new ImprimBulletinPaie();
+//			imprimBulletinPaieCn.setLibelle("CONTRIBUTION NATIONALE");
+//			//imprimBulletinPaieCn.setTaux(1.2D);
+//			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+//			imprimBulletinPaieCn.setRetenue(bulletin.getCn());
+//			listImprimBulletinPaie.add(imprimBulletinPaieCn);
+
+
+				ImprimBulletinPaie imprimBulletinPaieCnps = new ImprimBulletinPaie();
+				imprimBulletinPaieCnps.setLibelle("RETRAITE CNPS ");
+				imprimBulletinPaieCnps.setTaux(6.30);
+				imprimBulletinPaieCnps.setBase(bulletin.getBasecnps());
+				imprimBulletinPaieCnps.setRetenue(bulletin.getCnps());
+				listImprimBulletinPaie.add(imprimBulletinPaieCnps);
+
+				ImprimBulletinPaie imprimBulletinPaieIS = new ImprimBulletinPaie();
+				imprimBulletinPaieIS.setLibelle("IMPOTS/SALAIRE LOCAL");
+				//imprimBulletinPaieCn.setTaux(1.2D);
+				//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+				imprimBulletinPaieIS.setRetenuePatron(bulletin.getIts());
+				listImprimBulletinPaie.add(imprimBulletinPaieIS);
+
+				ImprimBulletinPaie imprimBulletinPaieCnpsPATRON = new ImprimBulletinPaie();
+				imprimBulletinPaieCnpsPATRON.setLibelle("RETRAITE CNPS/PART PATRONAL ");
+				//SSSS	imprimBulletinPaieCnpsPATRON.setTauxPatron(7.70);
+				imprimBulletinPaieCnpsPATRON.setBase(bulletin.getBasecnps());
+				imprimBulletinPaieCnpsPATRON.setRetenuePatron(bulletin.getRetraite());
+				listImprimBulletinPaie.add(imprimBulletinPaieCnpsPATRON);
+
+
+				ImprimBulletinPaie imprimBulletinPaiePF = new ImprimBulletinPaie();
+				imprimBulletinPaiePF.setLibelle("PRESTATION FAMILIALE");
+				//imprimBulletinPaiePF.setTauxPatron(5.75);
+				imprimBulletinPaiePF.setBase(70000d);
+				imprimBulletinPaiePF.setRetenuePatron(bulletin.getPrestationFamiliale());
+				listImprimBulletinPaie.add(imprimBulletinPaiePF);
+
+				ImprimBulletinPaie imprimBulletinPaieAC = new ImprimBulletinPaie();
+				imprimBulletinPaieAC.setLibelle("ACCIDENT DE TRAVAIL");
+				imprimBulletinPaieAC.setTauxPatron(2.0);
+				imprimBulletinPaieAC.setBase(70000d);
+				imprimBulletinPaieAC.setRetenuePatron(bulletin.getAccidentTravail());
+				listImprimBulletinPaie.add(imprimBulletinPaieAC);
+
+				ImprimBulletinPaie imprimBulletinPaieTA = new ImprimBulletinPaie();
+				imprimBulletinPaieTA.setLibelle("FDFP -TAXE APPRENTISAGE ");
+				imprimBulletinPaieTA.setTauxPatron(0.40d);
+				imprimBulletinPaieTA.setBase(bulletin.getBrutImposable());
+				imprimBulletinPaieTA.setRetenuePatron(bulletin.getTa());
+				listImprimBulletinPaie.add(imprimBulletinPaieTA);
+
+				ImprimBulletinPaie imprimBulletinPaieFDFP = new ImprimBulletinPaie();
+				imprimBulletinPaieFDFP.setLibelle("FDFP -TAXE A LA FPC ");
+				imprimBulletinPaieFDFP.setTauxPatron(0.6D);
+				imprimBulletinPaieFDFP.setBase(bulletin.getBrutImposable());
+				imprimBulletinPaieFDFP.setRetenuePatron(bulletin.getFpc());
+				listImprimBulletinPaie.add(imprimBulletinPaieFDFP);
+
+				ImprimBulletinPaie imprimBulletinPaieFDFPRegul = new ImprimBulletinPaie();
+				imprimBulletinPaieFDFPRegul.setLibelle("FDFP -TAXE A LA FPC  REGUL");
+				imprimBulletinPaieFDFPRegul.setTauxPatron(0.6D);
+				imprimBulletinPaieFDFPRegul.setBase(bulletin.getBrutImposable());
+				imprimBulletinPaieFDFPRegul.setRetenuePatron(bulletin.getFpcregul());
+				listImprimBulletinPaie.add(imprimBulletinPaieFDFPRegul);
+
+
+				ImprimBulletinPaie imprimBulletinPaieAMAO = new ImprimBulletinPaie();
+				imprimBulletinPaieAMAO.setLibelle("AVANCES/ACOMPTES ");
+				//imprimBulletinPaieCn.setTaux(1.2D);
+				//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+				imprimBulletinPaieAMAO.setRetenue(bulletin.getAvanceetacompte());
+				listImprimBulletinPaie.add(imprimBulletinPaieAMAO);
+
+				ImprimBulletinPaie imprimBulletinPaieAMAO1 = new ImprimBulletinPaie();
+				imprimBulletinPaieAMAO1.setLibelle("AUTRES PRETS ");
+				imprimBulletinPaieAMAO1.setRetenue(bulletin.getPretaloes());
+				listImprimBulletinPaie.add(imprimBulletinPaieAMAO1);
+				List<Rubrique> listPrimeM = new ArrayList<Rubrique>();
+				listPrimeM = rubriqueService.getRubriquesActivesType(4);
+				for (Rubrique rubrique : listPrimeM) {
+					List<PrimePersonnel> listprimepersonnel = new ArrayList<PrimePersonnel>();
+					listprimepersonnel = primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieIdAndPrimeId(bulletin.getContratPersonnel().getId(), bulletin.getPeriodePaie().getId(), rubrique.getId());
+					if (listprimepersonnel.size() > 0 && listprimepersonnel.get(0) != null) {
+						ImprimBulletinPaie imprimBulletinPaieDivImp = new ImprimBulletinPaie();
+						imprimBulletinPaieDivImp.setLibelle(listprimepersonnel.get(0).getPrime().getLibelle());
+						//imprimBulletinPaieDivImp.setTaux(null);
+						//	imprimBulletinPaieDivImp.setBase(listprimepersonnel.get(0).getMontant());
+						imprimBulletinPaieDivImp.setRetenue(listprimepersonnel.get(0).getMontant());
+						listImprimBulletinPaie.add(imprimBulletinPaieDivImp);
+					}
+				}
+
+
+				bulletin.setListImprimBulletinPaie(listImprimBulletinPaie);
+
+
+				Date dateRetourDernierConge = null;
+				if (bulletin.getContratPersonnel().getPersonnel().getDateRetourcge() == null) {
+					logger.info("**********************************************g suiiiiiiiiiiiiii");
+					dateRetourDernierConge = bulletin.getContratPersonnel().getPersonnel().getDateArrivee();
+				} else {
+					dateRetourDernierConge = bulletin.getContratPersonnel().getPersonnel().getDateRetourcge();
+				}
+				int tps = ProvisionConge.calculerTempsPresence(dateRetourDernierConge, bulletin.getPeriodePaie().getDatefin());
+				bulletin.setNbcongedu(String.valueOf(bulletin.getTempsOfpresence()));
+				bulletin.setTpsdepresence(String.valueOf(bulletin.getMoisOfpresence()));
+				JRDataSource jrDatasource = null;
+
+				listImprimebulletin.add(bulletin);
+				//System.out.println("-----------nb list bull imprrrr "+listImprimebulletin.size());
+				//impressionService.imprimeListBulletinN(codeAnsco, listImprimebulletin, 1);
+				List<Societe> malist = societeService.findtsmois();
+
+				//modelMap.addAttribute("logo", request.getSession().getServletContext().getRealPath(malist.get(0).getUrlLogo()));
+				//modelMap.addAttribute("montantcumulSalaireNet", Utils.formattingAmount(bulletin.getCumulSalaireNet()));
+
+
+				//BulletinPaie bulletinData = getPayslipData(bulletin.getId(),bulletin);
+				//byte[] pdfBytes = generatePayslipPdf(bulletin,request);
+
+				//HttpHeaders headers = new HttpHeaders();
+				//headers.setContentType(MediaType.APPLICATION_PDF);
+				//headers.setContentDispositionFormData("filename", "Bulletin_Paie.pdf");
+
+			//	return ResponseEntity.ok().headers(headers).body(pdfBytes);
+				bulletinDTO.setRow(bulletin);
+				bulletinDTO.setStatus(true);
+			}
+		} catch (Exception e) {
+			e.printStackTrace(); // Remplacer par un logger
+			//return ResponseEntity.internalServerError().build();
+		}
+
+		//	System.out.println("Vue retournée : " + view);
+		//return view; //mav;
+
+
+		return bulletinDTO;
+	}
 
 	@RequestMapping(value = "/jrBulletinPersonnel", method = RequestMethod.GET)
 	public ResponseEntity<byte[]>  ImprimerBulletinPersonnelCV(ModelMap modelMap,@RequestParam(value="idbul", required=true) Long idCV, HttpServletRequest request) throws Exception {
@@ -1283,6 +1618,13 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			imprimBulletinPaieIts.setRetenue(bulletin.getIts());
 			listImprimBulletinPaie.add(imprimBulletinPaieIts);
 
+			ImprimBulletinPaie imprimBulletinPaieCMU = new ImprimBulletinPaie();
+			imprimBulletinPaieCMU.setLibelle("CMU Salarial");
+			//imprimBulletinPaieCn.setTaux(1.2D);
+			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+			imprimBulletinPaieCMU.setRetenue(bulletin.getCMUSalarial());
+			listImprimBulletinPaie.add(imprimBulletinPaieCMU);
+
 			//ImprimBulletinPaie imprimBulletinPaieIgr = new ImprimBulletinPaie();
 			////imprimBulletinPaieIgr.setLibelle("I.G.R");
 			//imprimBulletinPaieCn.setTaux(1.2D);					
@@ -1311,6 +1653,15 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());		
 			imprimBulletinPaieIS.setRetenuePatron(bulletin.getIts());
 			listImprimBulletinPaie.add(imprimBulletinPaieIS);
+
+			ImprimBulletinPaie imprimBulletinPaieCMUPATR = new ImprimBulletinPaie();
+			imprimBulletinPaieCMUPATR.setLibelle("CMU Patronal");
+			//imprimBulletinPaieCn.setTaux(1.2D);
+			//imprimBulletinPaieCn.setBase(bulletin.getBrutImposable());
+			imprimBulletinPaieCMUPATR.setRetenuePatron(bulletin.getCMUPatronal());
+			listImprimBulletinPaie.add(imprimBulletinPaieCMUPATR);
+
+
 
 			ImprimBulletinPaie imprimBulletinPaieCnpsPATRON = new ImprimBulletinPaie();
 			imprimBulletinPaieCnpsPATRON.setLibelle("RETRAITE CNPS/PART PATRONAL ");
@@ -1404,7 +1755,8 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			List<Societe> malist = societeService.findtsmois();
 
 			modelMap.addAttribute("logo", request.getSession().getServletContext().getRealPath(malist.get(0).getUrlLogo()));
-			modelMap.addAttribute("mtcumulSalnet", Utils.formattingAmount(bulletin.getCumulSalaireNet()));
+			modelMap.addAttribute("montantcumulSalaireNet", Utils.formattingAmount(bulletin.getCumulSalaireNet()));
+			modelMap.addAttribute("montantcumulIts", Utils.formattingAmount(bulletin.getCumulIts()));
 
 
 			//BulletinPaie bulletinData = getPayslipData(bulletin.getId(),bulletin);
@@ -2073,6 +2425,30 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		return BulletinPaieDTO;
 	}
 
+
+
+	//	public @ResponseBody BulletinPaieDTO chargerGratificationParPeriode(@RequestParam(value="id", required=true) Long id,
+//																		@RequestParam(value="search1", required=false) String search1,
+//																		@RequestParam(value="limit", required=false) Integer limit,
+//																		@RequestParam(value="offset", required=false) Integer offset,
+//																		@RequestParam(value="search", required=false) String search) {
+//
+//		if(offset == null) offset = 0;
+//		if(limit == null) limit = 10;
+//		search=search1+search;
+//		System.out.println("loup loup loup"+search);
+//		//final PageRequest page = new PageRequest(offset/10, limit, Direction.ASC, "id");
+//		PageRequest page = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
+//		PeriodePaie	 maperiode=periodePaieService.findPeriodePaie(id);
+//		BulletinPaieDTO bulletinDTO=new BulletinPaieDTO();
+//		if (search != null && !search.trim().isEmpty())
+//
+//			bulletinDTO = bulletinPaieService.loadBulletinPaie(page,maperiode ,search);
+//		else
+//			bulletinDTO = bulletinPaieService.loadBulletinPaie(page,maperiode);
+//
+//		return bulletinDTO ;
+//	}
 //	@RequestMapping(value={"/postVirementBulletin"}, method = RequestMethod.POST)
 //	@ResponseStatus(HttpStatus.OK)
 //	public @ResponseBody BulletinPaieDTO imprOrdreVirmt (ModelMap modelMap, @RequestParam(value="banque", required=true) Long banque , @RequestParam(value="banqueEmp", required=true) Long banqueEmp ,HttpServletRequest request) throws ParseException {

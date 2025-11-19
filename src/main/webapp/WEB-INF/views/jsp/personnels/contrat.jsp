@@ -196,9 +196,15 @@
 					<div class="form-group">
 						<label for="libelle" class="col-md-2 control-label">Date de modification</label>
 						<div class="col-md-10">
-							<input type="text" id="dateFin" name="dateFin" ng-model="contrat.dMod" data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker" placeholder="Date de modification" required="required" />
+							<input type="text" id="dateMod" name="dateMod" ng-model="contrat.dMod" data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker" placeholder="Date de modification" required="required" />
 						</div>
 					</div>
+						<div class="form-group">
+                    		<label for="libelle" class="col-md-2 control-label">Date de Fin/ dArret'</label>
+                    		<div class="col-md-10">
+                    		<input type="text" id="dateFin" name="dateFin" ng-model="contrat.dFin" data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker" placeholder="Date de fin / Arret" required="required" />
+                    			</div>
+                    		</div>
 					<div class="form-group">
 						<label for="faute" class="col-md-2 control-label">Depart</label>
 						<div class="col-md-10">
@@ -264,7 +270,7 @@
         jQuery('#tableWidgetDate').hide();
         jQuery('#tableWidget').show();
         jQuery(".select2" ).select2();
-         $("#dateFin, .datePicker, #dateDew, #dateFinw").datepicker({
+         $("#dateFin, .datePicker, #dateDew, #dateMod, #dateFinw").datepicker({
          format: 'dd/mm/yyyy',
          showOtherMonths: true
         });

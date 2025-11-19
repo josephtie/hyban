@@ -57,7 +57,7 @@
                 	</div>                	
                 	</div>
                 	</div>
-                	</div>
+
 	  <table id="table" class="table table-info table-striped"
 			         data-toggle="table"
                    data-click-to-select="true"
@@ -191,7 +191,7 @@ jQuery("#chargerbulletinParPeriode").click(function () {
 
         }
             $table.bootstrapTable('load', response.rows);
-//
+       //
         },
         error: function () {
 

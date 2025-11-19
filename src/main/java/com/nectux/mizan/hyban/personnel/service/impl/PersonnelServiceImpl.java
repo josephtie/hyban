@@ -162,6 +162,7 @@ public class PersonnelServiceImpl implements PersonnelService {
 			contratPersonnel.setAncienneteInitial(ancienneteInitial);
 			contratPersonnel.setStatut(true);
 			contratPersonnel.setDepart(false);
+			contratPersonnel.setSoldeCalcule(false);
 			contratPersonnel.setIndemniteRepresent(indemniteRepresent);
 			contratPersonnel.setIndemniteTransport(indemniteTransport);
 			//contratPersonnel.setIndemniteResp(indemniteRespons);
@@ -412,8 +413,9 @@ public class PersonnelServiceImpl implements PersonnelService {
 			personnel.setStatut(statut);
 			personnel = personnelRepository.save(personnel);
 			if(statut==false)
-			{	PeriodePaie periodePaie = periodePaieRepository.recherchperiodeCloture();
-			BulletinPaie bull= bulletinPaieRepository.findByBulletinAndPersonnel(personnel.getId(),periodePaie.getId());
+			{
+				PeriodePaie periodePaie = periodePaieRepository.recherchperiodeCloture();
+			    BulletinPaie bull= bulletinPaieRepository.findByBulletinAndPersonnel(personnel.getId(),periodePaie.getId());
 				if(bull!=null)
 					bulletinPaieRepository.delete(bull);
 			}

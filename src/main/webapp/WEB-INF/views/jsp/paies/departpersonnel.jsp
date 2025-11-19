@@ -45,7 +45,7 @@
 					data-single-select="false"
 					data-sort-name="id"
 					data-sort-order="desc"
-					data-url="${pageContext.request.contextPath}/personnels/listcontratpersonneljson"
+					data-url="${pageContext.request.contextPath}/personnels/listcontratpersonnelDepartjson"
 					data-side-pagination="server" 
 					data-pagination="true"
 					data-page-list="[10, 20, 50, 100, 200]" 
@@ -58,8 +58,8 @@
 							<th data-field="personnel" data-formatter="nomfstatutFormatterL" data-align="left" data-sortable="true">Statut</th>
 							<th data-field="personnel" data-formatter="sexeFormatter" data-align="left">Sexe</th>
 							<th data-field="personnel" data-formatter="datnaisFormatter" data-align="center">N&eacute;(e) le</th>
-							<th data-field="personnel"  data-formatter="lieunaisFormatter" data-align="left">A</th>
-							<th data-field="personnel" data-formatter="telephoneFormatter" data-align="center">T&eacute;l&eacute;phone</th>
+							<th data-field="typeContrat"  data-formatter="typeCtratFormatter" data-align="left">Type Contrat </th>
+							<th data-field="soldeCalcule" data-formatter="contratFormatter" data-align="center" data-sortable="true">Calcul&eacute;</th>
 							<th data-field="personnel" data-formatter="situaFormatter" data-align="center">Sit. Matri</th>
 							<th data-field="personnel" data-formatter="nbreenftFormatter" data-align="right">Nbre d'enfants</th>
 							<th data-field="categorie" data-formatter="salcatFormatter" data-align="right">Salaire cat&eacute;goriel</th>
@@ -270,7 +270,7 @@
 	            </div>
 	            <div class="modal-body">
 	             Etes vous sur de vouloir supprimer cet pret ?
-	            	<h4 id="labelPret"></h4>
+	            	<h4 ng-bind="categorie.info"></h4>
 	            </div>
 	            <div class="modal-footer">
                 	<input type="hidden"  id="idPretperso"  value="" name="idPretperso" >
@@ -468,8 +468,8 @@ $(".form-solde").hide(500);
 });
 
 function optionFormatter(id, row, index) {
-	var option = '<a onclick="edit('+row.id+')" data-toggle="modal" data-target="#listSoldeModal" href="#" title="Ajouter pr�t [LIBELLE : '+row.personnel.nom+' ]">  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';
-	option += '&nbsp;<a data-toggle="modal" href="#" title="Suprimer bulletin [LIBELLE : '+row.libelle+' ]"> <span class="glyphicon glyphicon-trash"></span></a>';
+	var option = '<a onclick="edit('+row.id+')" data-toggle="modal" data-target="#listSoldeModal" href="#" title="Calculer solde [LIBELLE : '+row.personnel.nom+' ]">  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';
+	option +='&nbsp;<a onclick="del('+id+')" data-toggle="modal" data-target=".deleteModal" href="#" title="Suprimer categorie [LIBELLE : '+row.libelle+' ]"> <span class="glyphicon glyphicon-trash"></span></a>';
 	
     return option;
 }
@@ -491,7 +491,7 @@ function nomfstatutFormatterL(personnel, row, index) {
 }
 function pretiFormatter(id, row, index) {
 	 var option = '<a onclick="editPret('+row.id+')" data-toggle="modal" data-target="#rhpModalPretModif" href="#" title="Ajouter pr�t [LIBELLE : '+row.personnel.nom+' ]">  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';
-	option += '&nbsp;<a onclick="delPret('+row.id+')" data-toggle="modal" data-target="#rhpModalPretDel" href="#" title="Suprimer bulletin [LIBELLE : '+row.id+' ]"> <span class="glyphicon glyphicon-trash"></span></a>'; 
+	option += '&nbsp;<a onclick="del('+row.id+')" data-toggle="modal" data-target="#rhpModalPretDel" href="#" title="Suprimer bulletin [LIBELLE : '+row.id+' ]"> <span class="glyphicon glyphicon-trash"></span></a>';
 	
     return option;
 }
@@ -507,6 +507,25 @@ function matrisFormatter(personnel, row, index) {
 	}
 	return row.personnel.matricule;
 }
+
+function contratFormatter(soldeCalcule, row, index) {
+	var optionActif = '<small class="label label-danger"><i class="fa fa-clock-o"></i> NON </small>';
+		if(soldeCalcule == true)
+			optionActif = '<small class="label label-success"><i class="fa fa-clock-o"></i> OUI </small>';
+
+		return optionActif;
+}
+
+function typeCtratFormatter(typeContrat, row, index){
+
+	if(row.typeContrat == null ){
+		return "";
+	}
+  return row.typeContrat.libelle;
+}
+
+
+
 function periodeFormatter(periode, row, index) {
 	if(row.periode.mois.mois == ''){
 		return "";
@@ -670,6 +689,17 @@ function delPret(idFonction){
             
         },
     });
-	
+
+
+	function del(id){
+    	var $scope = angular.element(document.getElementById("formDelete")).scope();
+
+    	var rows = $table.bootstrapTable('getData');
+    	var categorie = _.findWhere(rows, {id: idCategorie});
+    	categorie.info = categorie.personnel.nomComplet + " " +categorie.personnel.matricule;
+    	$scope.$apply(function () {
+            $scope.pupulateForm(categorie);
+        });
+    }
 }
 </script>

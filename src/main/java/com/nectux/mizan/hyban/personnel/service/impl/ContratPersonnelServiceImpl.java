@@ -1,5 +1,6 @@
 package com.nectux.mizan.hyban.personnel.service.impl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -308,6 +309,32 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 	}
 
 	@Override
+	public ContratPersonnelDTO loadContratDepart(Pageable pageable) {
+		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
+		try {
+			Page<ContratPersonnel> page = contratPersonnelRepository.findByStatutTrueAndDepartTrueAndSoldeCalculeFalseOrderByPersonnelNomAscPersonnelPrenomAsc(pageable);
+			contratPersonnelDTO.setRows(page.getContent());
+			contratPersonnelDTO.setTotal(page.getTotalElements());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return contratPersonnelDTO;
+	}
+
+	@Override
+	public ContratPersonnelDTO loadContratDepart(Pageable pageable, String search) {
+		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
+		try {
+			Page<ContratPersonnel> page = contratPersonnelRepository.findByStatutTrueAndDepartTrueAndSoldeCalculeFalseAndPersonnelNomIgnoreCaseContainingOrderByPersonnelNomAscPersonnelPrenomAsc(pageable,search);
+			contratPersonnelDTO.setRows(page.getContent());
+			contratPersonnelDTO.setTotal(page.getTotalElements());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return contratPersonnelDTO;
+	}
+
+	@Override
 	public ContratPersonnelDTO loadContratActif(Pageable pageable, String search) {
 		//TODO Implementer la recherche
 		/*ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
@@ -340,36 +367,40 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 	}
 
 	@Override
-	public ContratPersonnelDTO endContract(Long id, String dateFin,Boolean depart,String ObservCtrat) {
+	public ContratPersonnelDTO endContract(Long id, String dateFin,String dateMod,Boolean depart,String ObservCtrat) {
 		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
 		try{
 			if(dateFin == ""){
 				throw new Exception("Date de fin du contrat invalide.");
 			}
 			ContratPersonnel contratPersonnel = contratPersonnelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id));
-			contratPersonnel.setDateMod(DateManager.stringToDate(dateFin, "dd/MM/yyyy"));
-			contratPersonnel.setStatut(false);			
+			contratPersonnel.setDateMod(DateManager.stringToDate(dateMod, "dd/MM/yyyy"));
+			contratPersonnel.setDateFin(DateManager.stringToDate(dateFin, "dd/MM/yyyy"));
+
             contratPersonnel.setObservCtrat(ObservCtrat);
 			contratPersonnel.setDepart(false);
-			if(depart==true){
+			contratPersonnel.setSoldeCalcule(false);
+			if(depart){
 				contratPersonnel.setDepart(true);
-				contratPersonnel.getPersonnel().setRetraitEffect(true);
+				contratPersonnel.getPersonnel().setRetraitEffect(false);
+				contratPersonnel.getPersonnel().setStatut(true);
+				contratPersonnel.setSoldeCalcule(false);
 				personnelRepository.save(contratPersonnel.getPersonnel());
 			}
 			contratPersonnel = contratPersonnelRepository.save(contratPersonnel);
-			PeriodePaie myperiodde=periodePaieRepository.recherchperiodeCloture();
-		    BulletinPaie bull=	bulletinPaieRepository.findByBulletinAndPersonnel(contratPersonnel.getPersonnel().getId(), myperiodde.getId());
-		     if(bull!=null)
-		    	 bulletinPaieRepository.delete(bull);
-
-
-            List<PrimePersonnel>  primePersonnelList=primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieId(contratPersonnel.getId(),myperiodde.getId());
-           if(primePersonnelList.size()>0) {
-                 for(PrimePersonnel myprime: primePersonnelList){
-					 primePersonnelRepository.delete(myprime);
-				 }
-
-           }
+//			PeriodePaie myperiodde=periodePaieRepository.recherchperiodeCloture();
+//		    BulletinPaie bull=	bulletinPaieRepository.findByBulletinAndPersonnel(contratPersonnel.getPersonnel().getId(), myperiodde.getId());
+//		     if(bull!=null)
+//		    	 bulletinPaieRepository.delete(bull);
+//
+//
+//            List<PrimePersonnel>  primePersonnelList=primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieId(contratPersonnel.getId(),myperiodde.getId());
+//           if(primePersonnelList.size()>0) {
+//                 for(PrimePersonnel myprime: primePersonnelList){
+//					 primePersonnelRepository.delete(myprime);
+//				 }
+//
+//           }
 			contratPersonnelDTO.setRow(contratPersonnel);
 			contratPersonnelDTO.setResult("success");
 			logger.info(new StringBuilder().append(">>>>> ").append(contratPersonnel.toString()).append(" MAJ AVEC SUCCES").toString());
@@ -381,7 +412,39 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 		}
 		return contratPersonnelDTO;
 	}
-	
+
+	@Override
+	public ContratPersonnelDTO departDefinitif(Long contratId, String dateFinEffective) throws Exception {
+
+		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
+		try{
+		ContratPersonnel contrat = contratPersonnelRepository.findById(contratId)
+				.orElseThrow(() -> new RuntimeException("Contrat non trouvé"));
+
+
+		contrat.setStatut(false);
+		contrat.setDepart(true);
+		contrat.setSoldeCalcule(true);
+		contrat.getPersonnel().setStatut(false);
+		contrat.getPersonnel().setRetraitEffect(true);
+		contrat.setDateFin(Utils.stringToDate(dateFinEffective,"dd/MM/yyyy"));
+		personnelRepository.save(contrat.getPersonnel());
+			contrat=contratPersonnelRepository.save(contrat);
+		contratPersonnelDTO.setRow(contrat);
+		contratPersonnelDTO.setResult(true);
+		contratPersonnelDTO.setResult("success");
+		} catch(Exception ex){
+			contratPersonnelDTO.setResult("failed");
+			logger.error(ex.getMessage());
+			logger.error(new StringBuilder().append(">>>>>  ERREUR SUR FIN CONTRAT PERSONNEL").toString());
+			ex.getStackTrace();
+		}
+		return contratPersonnelDTO;
+
+	}
+
+
+
 	@Override
 	public ContratPersonnelDTO updateContractSursalaire(Long id,Double sursalaire) {
 		// TODO Auto-generated method stub
