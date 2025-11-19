@@ -15,9 +15,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface BulletinPaieRepository extends JpaRepository<BulletinPaie, Long>, JpaSpecificationExecutor<BulletinPaie> {
-	
-	
-	
+
+
+	List<BulletinPaie> findByContratPersonnelPersonnelIdAndPeriodePaieAnneeAnnee(Long personnelId, String currentYear);
 	public List<BulletinPaie> findAll();
 	
 	

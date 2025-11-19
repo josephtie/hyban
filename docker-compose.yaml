@@ -4,6 +4,7 @@ services:
   app:
     build: .
     container_name: hyban-app
+    restart: always
     image: josephtie/hyban:latest
     ports:
       - "8080:8080"
@@ -42,6 +43,17 @@ services:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     command: >
       postgres -c listen_addresses='*' -c hba_file=/var/lib/postgresql/data/pg_hba.conf
+
+  carbone:
+    image: carbone/carbone:latest
+    container_name: carbone
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - "4000:4000"
+    networks:
+      - hyban-network
 
   adminer:
     image: adminer

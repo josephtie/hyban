@@ -148,28 +148,12 @@
                             <input type="text" class="hidden" name="idCtrat" id="idCtrat" ng-model="idCtrat"/>
 
                             <br>
-                           <div class="form-group">
-                                                <div class="row">
-                                                <div class="col-md-4">
-                                                   <label>Salaire mensuel</label>
-                                                    <input type="number" class="form-control input-small " name="salaireMois" placeholder="Salaire" maxlength="10" required="required" ng-model="departPersonnel.dDebut">
-                                                </div>
-                                                 <div class="col-md-4">
-                                                  <label>Nombre de jours dans le mois</label>
-                                                  <input type="text" class="form-control input-small " name="dateFin" placeholder="Date retour" maxlength="10" required="required" ng-model="departPersonnel.dRet">
-                                                  </div>
-                                                    <div class="col-md-4">
-                                                        <label>Jours travaill&eacute;s</label>
-                                                    <input type="text" class="form-control input-small " name="dateDebut" placeholder="Date depart" maxlength="10" required="required" ng-model="departPersonnel.dDebut">
-                                                    </div>
 
-                                                </div>
-                                            </div>
                                             <div class="form-group">
                                                 <div class="row">
 
                                                   <div class="col-md-3">
-                                                     <label for="sanctionsalaire">Jours de cong&eacute;s non pris <span class="required">*</span></label>
+                                                     <label for="sanctionsalaire">Nnre de Jours dus de cong&eacute;s  <span class="required">*</span></label>
                                                        <input type="text" id="joursabsence" class="form-control input-default" ng-disabled="justifie" ng-model="departPersonnel.joursabsence" required="required" name="joursabsence" placeholder="30" maxlength="4">
                                                   </div>
                                                   <div class="col-md-3">

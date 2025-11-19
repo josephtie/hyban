@@ -3,6 +3,7 @@ package com.nectux.mizan.hyban.paie.service.impl;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -105,7 +106,20 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
 		return bulletinPaieDTO;
 	}
+	public BulletinPaieDTO getCurrentYearBulletins(Long personnelId,String annee) {
+		int currentYear = Year.now().getValue();
+		BulletinPaieDTO bulletinPaieDTO = new BulletinPaieDTO();
+		List<BulletinPaie> bulletins = bulletinPaieRepository
+				.findByContratPersonnelPersonnelIdAndPeriodePaieAnneeAnnee(personnelId, annee);
+		bulletinPaieDTO.setRows(bulletins);
+		bulletinPaieDTO.setTotal(bulletins.size());
+		return bulletinPaieDTO ;
+	}
 
+	@Override
+	public BulletinPaie findbulletin(Long payrollId) {
+		return bulletinPaieRepository.findById(payrollId).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + payrollId));
+	}
 //	@Override
 //	public BulletinPaieDTO loadBulletinPaie(Pageable pageable, PeriodePaie maperiode, String search) {
 //		BulletinPaieDTO bulletinPaieDTO = new BulletinPaieDTO();
@@ -338,7 +352,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		    		 		livrePaiecalR = new LivreDePaie(ctratpersonnellz.getPersonnel().getMatricule(),ctratpersonnellz.getPersonnel().getNom()+" "+ctratpersonnellz.getPersonnel().getPrenom(),nbpart, op, ctratpersonnellz.getCategorie().getSalaireDeBase(),ctratpersonnellz.getSursalaire(), ctratpersonnellz.getIndemniteLogement(),somavsAcpte, somalios,ctratpersonnellz,tpeff,periodePaieActif,listIndemniteBrut,listIndemniteNonBrut,listRetenueMutuelle,listGainsNet,listRetenueSociale);
 		    		 	}
 				
-		    		}else{
+		    	}else{
 		    			
 		    			 System.out.println("########################################### DATE D'ARRIVEE ###########################"+ctratpersonnellz.getPersonnel().getDateArrivee());
 		    			 int op1= Anciennet(ctratpersonnellz.getPersonnel().getDateArrivee()) +ctratpersonnellz.getAncienneteInitial();

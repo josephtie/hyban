@@ -1,5 +1,6 @@
 package com.nectux.mizan.hyban.paie.service;
 
+import java.time.Year;
 import java.util.List;
 import java.util.Map;
 
@@ -94,4 +95,8 @@ public interface BulletinPaieService {
 	public List<PrintLs> calculerMasseSalarialeParTypeContrat(PeriodePaie periode);
 	public List<PrintLs> calculerMasseSalarialeParSite(PeriodePaie periode);
 	public List<PrintLs> calculerEffectifParSiteAlaPaie(PeriodePaie periode);
+
+	public BulletinPaieDTO getCurrentYearBulletins(Long personnelId,String annee) ;
+
+	BulletinPaie findbulletin(Long payrollId);
 }
