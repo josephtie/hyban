@@ -6,11 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: hyban-app
-<<<<<<< HEAD
     restart: always
     image: josephtie/hyban:latest
-=======
->>>>>>> 487700e70affa02d1b7b9f3824deaa8fd01de747
     ports:
       - "8080:8080"
     depends_on:
@@ -49,17 +46,6 @@ services:
     volumes:
       - postgres_datav1:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-
-  carbone:
-    image: carbone/carbone:latest
-    container_name: carbone
-    restart: always
-    depends_on:
-      - app
-    ports:
-      - "4000:4000"
-    networks:
-      - hyban-network
 
   adminer:
     image: adminer
