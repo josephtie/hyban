@@ -22,11 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-<<<<<<< HEAD
-=======
 
-
->>>>>>> 487700e70affa02d1b7b9f3824deaa8fd01de747
 
 @Configuration
 @EnableWebSecurity

@@ -18,7 +18,12 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import io.carbone.ICarboneServices;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.nectux.mizan.hyban.paie.service.CarboneService;
+
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -97,8 +102,16 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 	@Autowired private UtilisateurService utilisateurService;
 	@Autowired private UtilisateurRoleService utilisateurRoleService;
 	@Autowired private JasperReportService jasperReportService;
-	@Autowired private  ICarboneServices carboneServices;
-	private final ResourceLoader resourceLoader;
+	//	@Autowired private  ICarboneServices carboneServices;
+	@Autowired private ResourceLoader resourceLoader;
+	@Autowired private CarboneService carboneService;
+
+	@Autowired	private ObjectMapper objectMapper;
+
+
+		// Pour gérer correctement les dates
+
+
 	MethodsShared methodsShared = new MethodsShared();
 	List<LivreDePaie> livredepaieList=null;
 	private PeriodePaie maperiode;
@@ -291,7 +304,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		  livredepaieList = new ArrayList<LivreDePaie>();
 		  livredepaieList=LivredePaieDTO.getRows();
 		  System.out.println("ppppppppppppppppppppppppppppppppppppppppppppp"+rubriqueService.getRubriquesActives().toString());
-		modelMap.addAttribute("rubriques",rubriqueService.getRubriquesActives());
+		modelMap.addAttribute("rubrique",rubriqueService.getRubriquesActives());
 		LivredePaieDTO.setResult("success");
 		 return LivredePaieDTO;
 	}
@@ -510,8 +523,29 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		 
 		 return livredePaie;
 	}
-	
 
+
+	@GetMapping(value = "/bulletin", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public ResponseEntity<byte[]> generateBulletin(@RequestParam("idbul") Long idbull) throws Exception {
+
+		// Récupérer le DTO depuis ton service
+		BulletinPaieDTO bulletinPaieDTO = bulletinPaieService.finImprimbulletin(idbull);
+
+		// Convertir en Map<String, Object> pour Carbone
+		String json = objectMapper.writeValueAsString(bulletinPaieDTO.getRow());
+		Map<String, Object> map = objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+		this.objectMapper.registerModule(new JavaTimeModule());
+		this.objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+		// Générer le fichier via Carbone
+		byte[] file = carboneService.generateBulletin(map, "docx"); // ou "pdf"
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentDispositionFormData("attachment", "bulletin_paie.docx");
+
+		return ResponseEntity.ok()
+				.headers(headers)
+				.body(file);
+	}
 
 
 
@@ -1032,7 +1066,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		List<ImprimBulletinPaie> listImprimBulletinPaie = new ArrayList<ImprimBulletinPaie>();
 		double taux = bulletin.getJourTravail();
 
-		listImprimBulletinPaie.add(ajouterImprimBulletinPaie( "SALAIRE DE BASE CATEGORIE", taux, bulletin.getSalairbase(), bulletin.getSalairbase(),0D,null,null));
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie( "SALAIRE DE BASE CATEGORIEL", taux, bulletin.getSalairbase(), bulletin.getSalairbase(),0D,null,null));
 		listImprimBulletinPaie.add(ajouterImprimBulletinPaie( "SURSALAIRE", taux, bulletin.getSursalaire(), bulletin.getSursalaire(),0D,null,null));
 		listImprimBulletinPaie.add(ajouterImprimBulletinPaie("PRIME D'ANCIENNETE", 0, bulletin.getPrimeanciennete(), bulletin.getPrimeanciennete(),0D,null,null));
 		listImprimBulletinPaie.add(ajouterImprimBulletinPaie( "INDEMNITE DE RESIDENCE", taux, bulletin.getIndemnitelogement(), bulletin.getIndemnitelogement(),0D,null,null));
@@ -1123,6 +1157,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 		return bulletin;
 	}
+
 
 	@RequestMapping(value = "/jrAfficheBulletinPersonnel", method = RequestMethod.GET)
 	public @ResponseBody BulletinPaieDTO  AfficheBulletinPersonnelCV(@RequestParam(value="idbul", required=true) Long idCV) throws Exception {

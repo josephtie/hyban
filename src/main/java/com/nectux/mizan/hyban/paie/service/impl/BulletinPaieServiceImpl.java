@@ -9,17 +9,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.nectux.mizan.hyban.paie.entity.*;
 import com.nectux.mizan.hyban.paie.service.BulletinPaieService;
+import com.nectux.mizan.hyban.parametrages.entity.Rubrique;
+import com.nectux.mizan.hyban.parametrages.entity.Societe;
 import com.nectux.mizan.hyban.parametrages.repository.PlanningCongeRepository;
-import com.nectux.mizan.hyban.rh.absences.entity.Absences;
+import com.nectux.mizan.hyban.parametrages.service.RubriqueService;
+import com.nectux.mizan.hyban.parametrages.service.SocieteService;
 import com.nectux.mizan.hyban.utils.DifferenceDate;
 import com.nectux.mizan.hyban.paie.dto.BulletinPaieDTO;
 import com.nectux.mizan.hyban.paie.dto.LivreDePaieDTO;
-import com.nectux.mizan.hyban.paie.entity.BulletinPaie;
-import com.nectux.mizan.hyban.paie.entity.Echelonnement;
-import com.nectux.mizan.hyban.paie.entity.LivreDePaie;
-import com.nectux.mizan.hyban.paie.entity.PrimePersonnel;
-import com.nectux.mizan.hyban.paie.entity.TempEffectif;
 import com.nectux.mizan.hyban.paie.repository.BulletinPaieRepository;
 import com.nectux.mizan.hyban.paie.repository.EchelonnementRepository;
 import com.nectux.mizan.hyban.paie.repository.PrimePersonnelRepository;
@@ -33,6 +32,7 @@ import com.nectux.mizan.hyban.personnel.repository.ContratPersonnelRepository;
 import com.nectux.mizan.hyban.personnel.repository.PersonnelRepository;
 import com.nectux.mizan.hyban.utils.GenericSpecifications;
 import com.nectux.mizan.hyban.utils.PrintLs;
+import com.nectux.mizan.hyban.utils.ProvisionConge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,10 +56,12 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 	@Autowired private EchelonnementRepository echelonnementRepository;
 	@Autowired private BulletinPaieRepository bulletinPaieRepository;
 	@Autowired private PrimePersonnelRepository primePersonnelRepository;
+	@Autowired private RubriqueService rubriqueService;
 	//@Autowired private LivreDePaieRepository livreDePaieRepository;
 	@Autowired private PeriodePaieRepository periodePaieRepository;
 	@Autowired private PersonnelRepository personnelRepository;
 	@Autowired private ContratPersonnelRepository contratPersonnelRepository;
+	@Autowired private SocieteService societeService;
 	@Autowired private TempEffectifRepository tempeffectifRepository;
 	@Autowired private PlanningCongeRepository planningCongeRepository;
 	
@@ -114,12 +116,142 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		return bulletinPaieDTO ;
 	}
 
-	@Override
-<<<<<<< HEAD
-	public BulletinPaie findbulletin(Long payrollId) {
-		return bulletinPaieRepository.findById(payrollId).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + payrollId));
+
+	public List<ImprimBulletinPaie> getlistImpData(BulletinPaie bulletin){
+		List<ImprimBulletinPaie> listImprimBulletinPaie = new ArrayList<ImprimBulletinPaie>();
+		double taux = bulletin.getJourTravail();
+
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie( "SALAIRE DE BASE CATEGORIEL", taux, bulletin.getSalairbase(), bulletin.getSalairbase(),0D,null,null));
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie( "SURSALAIRE", taux, bulletin.getSursalaire(), bulletin.getSursalaire(),0D,null,null));
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie("PRIME D'ANCIENNETE", 0, bulletin.getPrimeanciennete(), bulletin.getPrimeanciennete(),0D,null,null));
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie( "INDEMNITE DE RESIDENCE", taux, bulletin.getIndemnitelogement(), bulletin.getIndemnitelogement(),0D,null,null));
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie("IND. DE TRANSPORT IMP", taux, bulletin.getIndemniteTransportImp(), bulletin.getIndemniteTransportImp(),0D,null,null));
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie( "PRIMES IMPOSABLES", taux, bulletin.getAutreIndemImposable(), bulletin.getAutreIndemImposable(),0D,null,null));
+
+		List<Rubrique> listPrimeImp=new ArrayList<Rubrique>();
+		listPrimeImp=rubriqueService.getRubriquesActivesType(1);
+		for(Rubrique rubrique : listPrimeImp){
+			List<PrimePersonnel> listprimepersonnel=new ArrayList<PrimePersonnel>() ;
+			listprimepersonnel=	primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieIdAndPrimeId(bulletin.getContratPersonnel().getId(),bulletin.getPeriodePaie().getId(),rubrique.getId());
+			if(listprimepersonnel.size()>0 &&listprimepersonnel.get(0) !=null){
+				if(listprimepersonnel.get(0).getPrime().getTaux()!=null)
+					listImprimBulletinPaie.add(ajouterImprimBulletinPaie(listprimepersonnel.get(0).getPrime().getLibelle(),listprimepersonnel.get(0).getValeur().doubleValue(),listprimepersonnel.get(0).getMontant(),listprimepersonnel.get(0).getMontant(),0D,null,null));
+				else
+					listImprimBulletinPaie.add(ajouterImprimBulletinPaie(listprimepersonnel.get(0).getPrime().getLibelle(),taux,listprimepersonnel.get(0).getMontant(),listprimepersonnel.get(0).getMontant(),0D,null,null));
+			}
+		}
+
+		List<Rubrique> listPrimeImp1=new ArrayList<Rubrique>();
+		listPrimeImp1=rubriqueService.getRubriquesActivesType(3);
+		for(Rubrique rubrique : listPrimeImp1){
+			List<PrimePersonnel> listprimepersonnel1=new ArrayList<PrimePersonnel>() ;
+			listprimepersonnel1=	primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieIdAndPrimeId(bulletin.getContratPersonnel().getId(),bulletin.getPeriodePaie().getId(),rubrique.getId());
+			if(listprimepersonnel1.size()>0 &&listprimepersonnel1.get(0) !=null){
+				listImprimBulletinPaie.add(ajouterImprimBulletinPaie(listprimepersonnel1.get(0).getPrime().getLibelle(),taux,listprimepersonnel1.get(0).getMontant() -listprimepersonnel1.get(0).getPrime().getMtExedent(),listprimepersonnel1.get(0).getMontant() -listprimepersonnel1.get(0).getPrime().getMtExedent(),0D,null,null));
+			}
+		}
+
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie("***** Salaire Brut Imposable ******",0d,0d,bulletin.getBrutImposable(),0D,null,null));
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie("IND. DE TRANSPORT NON IMPOS*",0d,0d,bulletin.getIndemniteTransport(),0D,null,null));
+
+
+
+		List<Rubrique> listPrimeImpnon=new ArrayList<Rubrique>();
+		listPrimeImpnon=rubriqueService.getRubriquesActivesType(2);
+		for(Rubrique rubrique : listPrimeImpnon){
+			List<PrimePersonnel> listprimepersonnel=new ArrayList<PrimePersonnel>() ;
+			listprimepersonnel=	primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieIdAndPrimeId(bulletin.getContratPersonnel().getId(),bulletin.getPeriodePaie().getId(),rubrique.getId());
+			if(listprimepersonnel.size()>0 &&listprimepersonnel.get(0) !=null){
+				listImprimBulletinPaie.add(ajouterImprimBulletinPaie(listprimepersonnel.get(0).getPrime().getLibelle(),taux,listprimepersonnel.get(0).getMontant(),bulletin.getBrutImposable(),0D ,null,null));
+
+			}
+		}
+		List<Rubrique> listPrimeImp12=new ArrayList<Rubrique>();
+		listPrimeImp12=rubriqueService.getRubriquesActivesType(3);
+		for(Rubrique rubrique : listPrimeImp12){
+			List<PrimePersonnel> listprimepersonnel1=new ArrayList<PrimePersonnel>() ;
+			listprimepersonnel1=	primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieIdAndPrimeId(bulletin.getContratPersonnel().getId(),bulletin.getPeriodePaie().getId(),rubrique.getId());
+			if(listprimepersonnel1.size()>0 &&listprimepersonnel1.get(0) !=null){
+				listImprimBulletinPaie.add(ajouterImprimBulletinPaie(listprimepersonnel1.get(0).getPrime().getLibelle(),taux,listprimepersonnel1.get(0).getMontant()-listprimepersonnel1.get(0).getPrime().getMtExedent(),listprimepersonnel1.get(0).getMontant()-listprimepersonnel1.get(0).getPrime().getMtExedent(),0D,null,null));
+
+			}
+		}
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie("***** Salaire Brut Non Imposable ******",taux,bulletin.getBrutNonImposable(),bulletin.getBrutNonImposable(),0D,null,null));
+
+		List<Rubrique> listPrimeG=new ArrayList<Rubrique>();
+		listPrimeG=rubriqueService.getRubriquesActivesType(5);
+		for(Rubrique rubrique : listPrimeG){
+			List<PrimePersonnel> listprimepersonnel=new ArrayList<PrimePersonnel>() ;
+			listprimepersonnel=	primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieIdAndPrimeId(bulletin.getContratPersonnel().getId(),bulletin.getPeriodePaie().getId(),rubrique.getId());
+			if(listprimepersonnel.size()>0 &&listprimepersonnel.get(0) !=null){
+				listImprimBulletinPaie.add(ajouterImprimBulletinPaie(listprimepersonnel.get(0).getPrime().getLibelle(),0d,listprimepersonnel.get(0).getMontant(),listprimepersonnel.get(0).getMontant(),0D,null,null));
+			}
+		}
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie(" I.T.S ",1.2D,bulletin.getBrutImposable(),0D,bulletin.getIts(),null,null));
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie(" I.G.R ",0d,0d,0D,bulletin.getIgr(),null,null));
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie(" CONTRIBUTION NATIONALE ",0d,0d,0D,bulletin.getCn(),null,null));
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie(" RETRAITE CNPS  ",0d,bulletin.getBasecnps(),0D,bulletin.getCn(),null,null));
+		listImprimBulletinPaie.add(ajouterImprimBulletinPaie(" IMPOTS/SALAIRE LOCAL ",0d,bulletin.getBasecnps(),0D,bulletin.getCn(),null,null));
+
+		bulletin.setListImprimBulletinPaie(listImprimBulletinPaie);
+
+
+		Date dateRetourDernierConge = null;
+		if(bulletin.getContratPersonnel().getPersonnel().getDateRetourcge()==null)
+		{logger.info("**********************************************g suiiiiiiiiiiiiii");
+			dateRetourDernierConge = bulletin.getContratPersonnel().getPersonnel().getDateArrivee();}
+
+		else
+		{dateRetourDernierConge = bulletin.getContratPersonnel().getPersonnel().getDateRetourcge();}
+		int tps= ProvisionConge.calculerTempsPresence(dateRetourDernierConge, bulletin.getPeriodePaie().getDatefin());
+		bulletin.setNbcongedu(String.valueOf(bulletin.getTempsOfpresence()));
+		bulletin.setTpsdepresence(String.valueOf(bulletin.getMoisOfpresence()));
+
+
+
+
+		return listImprimBulletinPaie;
 	}
-=======
+
+	private ImprimBulletinPaie ajouterImprimBulletinPaie(String libelle,
+														 double taux, double base, Double gain,Double retenue,Double tauxPatron,Double retenuePatron) {
+		ImprimBulletinPaie imprimBulletinPaie = new ImprimBulletinPaie();
+		imprimBulletinPaie.setLibelle(libelle);
+		imprimBulletinPaie.setTaux(taux);
+		imprimBulletinPaie.setBase(base);
+		// Si gain ou retenue est null, mettre 0.0 comme valeur par défaut
+		imprimBulletinPaie.setGain((gain != null) ? gain : 0.0);
+		imprimBulletinPaie.setRetenue((retenue != null) ? retenue : 0.0);
+		imprimBulletinPaie.setTauxPatron((tauxPatron != null) ? tauxPatron : 0.0);
+		imprimBulletinPaie.setRetenuePatron((retenuePatron != null) ? retenuePatron : 0.0);
+		return imprimBulletinPaie;
+	}
+
+
+	@Override
+
+	public BulletinPaieDTO findbulletin(Long payrollId) {
+		BulletinPaieDTO response = new BulletinPaieDTO();
+
+		Optional<BulletinPaie> opt = bulletinPaieRepository.findById(payrollId);
+
+		if (!opt.isPresent()) {
+			response.setRow(null);
+			response.setTotal(0L);
+			response.setResult(false);
+			response.setStatus(false);
+			response.setMessage("Aucun bulletin trouvé pour l'id " + payrollId);
+			return response;
+		}
+
+		BulletinPaie bulletinPaie = opt.get();
+		response.setRow(bulletinPaie);
+		response.setTotal(1L);
+		response.setResult(true);
+		response.setStatus(true);
+		return response;
+	}
+
 	public BulletinPaieDTO loadBulletinPaiechearch(Pageable pageable, String valeurarechercher) {
 		BulletinPaieDTO bulletinPaieDTO = new BulletinPaieDTO();
 		List<BulletinPaie> firstlist=new ArrayList<BulletinPaie>();
@@ -131,7 +263,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		return bulletinPaieDTO;
 	}
 
->>>>>>> 487700e70affa02d1b7b9f3824deaa8fd01de747
+
 //	@Override
 //	public BulletinPaieDTO loadBulletinPaie(Pageable pageable, PeriodePaie maperiode, String search) {
 //		BulletinPaieDTO bulletinPaieDTO = new BulletinPaieDTO();
@@ -1535,6 +1667,37 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 		logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
 		return bulletinPaieDTO;
 	}
+
+	@Override
+	public BulletinPaieDTO finImprimbulletin(Long payrollId) {
+		BulletinPaieDTO response = new BulletinPaieDTO();
+
+		Optional<BulletinPaie> opt = bulletinPaieRepository.findById(payrollId);
+		java.util.List<Societe> malist=societeService.findtsmois();
+
+			if (!opt.isPresent()) {
+				response.setRow(null);
+				response.setTotal(0L);
+				response.setResult(false);
+				response.setStatus(false);
+				response.setMessage("Aucun bulletin trouvé pour l'id " + payrollId);
+				return response;
+			}
+
+		BulletinPaie bulletinPaie = opt.get();
+		 bulletinPaie.setListImprimBulletinPaie(getlistImpData(bulletinPaie));
+		response.setRow(bulletinPaie);
+		response.setTotal(1L);
+		if(malist.size()>0)
+		{
+		response.setResult(malist.get(0).getUrlLogo());
+		}else{
+			response.setResult(true);
+		}
+		response.setStatus(true);
+		return response;
+	}
+
 
 
 }

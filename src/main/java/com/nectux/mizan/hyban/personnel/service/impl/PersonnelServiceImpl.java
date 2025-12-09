@@ -188,53 +188,77 @@ public class PersonnelServiceImpl implements PersonnelService {
 				//	contratPersonnel.getPersonnel().setStage(false);
 				//}
 			 personnelRepository.save(contratPersonnel.getPersonnel());
-			//
-			PlanningConge planningConge = new PlanningConge();
-			planningConge.setStatut(true);
-			if(personnel.getDateRetourcge()!= null ){
-				planningConge.setDateDepart(DateManager.addingMonth(personnel.getDateRetourcge(), 12));
-			//	dateParts = dateRetourcg.split("/");
-			}else{
-				planningConge.setDateDepart(DateManager.addingMonth(personnel.getDateArrivee(), 12));
-				//dateParts = dateArrivee.split("/");
-			}
-			//planningConge.setDateDepart(dateDepart);
-			String sdate = null;
-			if(dateRetourcg!=null){
-				
-			     sdate=Utils.dateToString(planningConge.getDateDepart(),"dd/MM/yyyy");
-			}
-			/*else{
-			  
-			    sdate=dateArrivee;
-			    }*/
-			System.out.println("********************jourRET))))))"+dateRetourcg);
-			System.out.println("********************jourARR))))))"+dateArrivee);
-			System.out.println("********************jourARR))))))"+sdate);
-			String jour = sdate.substring(0, 2); 
-		     String mois= sdate.substring(3, 5); 
-			String annee = sdate.substring(6, 10);
-			System.out.println("****************jour  MOIS annnee)))))))))))))))))))))"+jour+"MOIS"+mois+"annee"+annee);
-			
-		   // Date dDate=Utils.stringToDate(sdate, "dd/MM/yyyy");
+				PlanningConge pc = new PlanningConge();
+				pc.setStatut(true);
 
-			List<PeriodePaie> listper=periodePaieRepository.findByAnneeAnnee(annee);
-			System.out.println("****************************************************oooooooooooooo"+listper.size());
-			PeriodePaie perPaiev=new PeriodePaie();
-			for(PeriodePaie perPaie : listper){
-				if(perPaie.getMois().getId()==Long.valueOf(mois)){
-				 perPaiev=perPaie;				
-					System.out.println("****************************************************ooooooooooooooMois"+perPaie.getMois().getId());		 
-				}
-			}
-			
-			
-			planningConge.setContratPersonnel(contratPersonnel);
-			planningConge.setPeriodePaie(perPaiev);
-			planningConge = planningCongeRepository.save(planningConge);
+				Date dateBase = personnel.getDateRetourcge() != null ?
+						personnel.getDateRetourcge() : personnel.getDateArrivee();
+
+				pc.setDateDepart(DateManager.addingMonth(dateBase, 12));
+
+				String mois = Utils.dateToString(pc.getDateDepart(), "MM");
+				String annee = Utils.dateToString(pc.getDateDepart(), "yyyy");
+
+				List<PeriodePaie> list = periodePaieRepository.findByAnneeAnnee(annee);
+
+				PeriodePaie per = list.stream()
+						.filter(x -> x.getMois().getId().equals(Long.valueOf(mois)))
+						.findFirst()
+						.orElseThrow(() ->
+								new IllegalStateException("Aucune période de paie trouvée pour " + mois + "/" + annee)
+						);
+
+				pc.setPeriodePaie(per);
+				pc.setContratPersonnel(contratPersonnel);
+
+				 planningCongeRepository.save(pc);
 			//
+//			PlanningConge planningConge = new PlanningConge();
+//			planningConge.setStatut(true);
+//			if(personnel.getDateRetourcge()!= null ){
+//				planningConge.setDateDepart(DateManager.addingMonth(personnel.getDateRetourcge(), 12));
+//			//	dateParts = dateRetourcg.split("/");
+//			}else{
+//				planningConge.setDateDepart(DateManager.addingMonth(personnel.getDateArrivee(), 12));
+//				//dateParts = dateArrivee.split("/");
+//			}
+//			//planningConge.setDateDepart(dateDepart);
+//			String sdate = null;
+//			if(dateRetourcg!=null){
+//
+//			     sdate=Utils.dateToString(planningConge.getDateDepart(),"dd/MM/yyyy");
+//			}
+//			/*else{
+//
+//			    sdate=dateArrivee;
+//			    }*/
+//			System.out.println("********************jourRET))))))"+dateRetourcg);
+//			System.out.println("********************jourARR))))))"+dateArrivee);
+//			System.out.println("********************jourARR))))))"+sdate);
+//			String jour = sdate.substring(0, 2);
+//		     String mois= sdate.substring(3, 5);
+//			String annee = sdate.substring(6, 10);
+//			System.out.println("****************jour  MOIS annnee)))))))))))))))))))))"+jour+"MOIS"+mois+"annee"+annee);
+//
+//		   // Date dDate=Utils.stringToDate(sdate, "dd/MM/yyyy");
+//
+//			List<PeriodePaie> listper=periodePaieRepository.findByAnneeAnnee(annee);
+//			System.out.println("****************************************************oooooooooooooo"+listper.size());
+//			PeriodePaie perPaiev=new PeriodePaie();
+//			for(PeriodePaie perPaie : listper){
+//				if(perPaie.getMois().getId()==Long.valueOf(mois)){
+//				 perPaiev=perPaie;
+//					System.out.println("****************************************************ooooooooooooooMois"+perPaie.getMois().getId());
+//				}
+//			}
+//
+//
+//			planningConge.setContratPersonnel(contratPersonnel);
+//			planningConge.setPeriodePaie(perPaiev);
+//			planningConge = planningCongeRepository.save(planningConge);
+
 			// calcule le sursalaire
-			 PeriodePaie	periodePaieActif=periodePaieRepository.findByClotureFalse();
+		//	 PeriodePaie	periodePaieActif=periodePaieRepository.findByClotureFalse();
 		/*	 LivreDePaie livrePaiecalY = new LivreDePaie();
 			 
 			  livrePaiecalY=calculbullFirst(contratPersonnel, periodePaieActif);			 
@@ -425,6 +449,27 @@ public class PersonnelServiceImpl implements PersonnelService {
 			ex.printStackTrace();
 			personnelDTO.setResult("echec");
 		}
+		return personnelDTO;
+	}
+
+	@Override
+	public PersonnelDTO depart(Long id) {
+		PersonnelDTO personnelDTO = new PersonnelDTO();
+		Personnel personnel = personnelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id));
+		if(personnel == null)
+			return personnelDTO;
+		//personnel.setSituationMatrimoniale(situationMatrimoniale);
+
+		personnel.setRetraitEffect(true);
+		personnel.setStatut(false);
+		personnel = personnelRepository.save(personnel);
+		ContratPersonnel contratPersonnel = contratPersonnelRepository.findTop1ByPersonnelIdAndStatutOrderByDateDebutDesc(personnel.getId(),true);
+		contratPersonnel.setDepart(true);
+		contratPersonnel.setSoldeCalcule(false);
+		contratPersonnel.setStatut(false);
+		contratPersonnelRepository.save(contratPersonnel);
+		personnelDTO.setResult(true);
+		personnelDTO.setStatus(true);
 		return personnelDTO;
 	}
 

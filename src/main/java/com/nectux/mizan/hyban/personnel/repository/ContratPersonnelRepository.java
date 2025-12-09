@@ -51,6 +51,7 @@ public interface ContratPersonnelRepository extends CrudRepository<ContratPerson
 	public Page<ContratPersonnel> findByStatut(Pageable pageable, Boolean statut);
 	
 	public ContratPersonnel findByIdAndStatut(Long idlong, Boolean statut);
+	public ContratPersonnel findTop1ByPersonnelIdAndStatutOrderByDateDebutDesc(Long idlong, Boolean statut);
 	
 //	public Page<ContratPersonnel> findByStatut(Pageable pageable, Boolean statut);
 	

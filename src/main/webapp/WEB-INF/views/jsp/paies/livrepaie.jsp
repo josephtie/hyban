@@ -126,7 +126,7 @@
 							<th data-field="anciennete"  data-align="center">Anciennet&eacute;</th>
 							<th data-field="montantSalairbase"   data-align="left">Salaire Base</th>
 							<th data-field="montantSursalaire"  data-align="center">Sursalaire</th>
-							<th data-field=montantPrimeanciennete  data-align="center">Prime. Anciennet&eacute;</th>
+							<th data-field="montantPrimeanciennete"  data-align="center">Prime. Anciennet&eacute;</th>
 							<th data-field="montantIndemnitelogement"  data-align="right">Indem logement</th>
 							<th data-field="indemniteTransportImp" data-align="right">Indem de transport Imp.</th>
 						   <th data-field="montantautreIndemImposable" data-align="right">Autres Indem Imp.</th>

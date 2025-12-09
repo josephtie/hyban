@@ -269,11 +269,11 @@
 	                </span>
 	            </div>
 	            <div class="modal-body">
-	             Etes vous sur de vouloir supprimer cet pret ?
-	            	<h4 ng-bind="categorie.info"></h4>
+	             Etes vous sur de vouloir supprimer cet Personnel ?
+	            	<h4 ng-bind="personnel.info"></h4>
 	            </div>
 	            <div class="modal-footer">
-                	<input type="hidden"  id="idPretperso"  value="" name="idPretperso" >
+                	<input type="hidden"  id="idperso"  value="" name="idperso" >
                 	<span></span>&nbsp;
                     <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-success">Valider</button>
@@ -313,18 +313,18 @@ app.controller('listSoldeCtrl', function ($scope) {
 })
 
 .controller('formDeleteCtrl', ['$scope', function ($scope) {
-    $scope.populateForm = function (categorie) {
-        $scope.categorie = categorie;
+    $scope.populateForm = function (personnel) {
+        $scope.personnel = personnel;
     };
 }]);
 
 
 var actionUrl = "/paie/enregisterlivrepaie";
-var actionDeleteUrl = "/paie/delpretIndividuel";
+var actionDeleteUrl = "/personnels/depart";
 var action = "ajout";
 var $table;
 jQuery(document).ready(function($) {
-$(".form-solde").hide(500);
+   $(".form-solde").hide(500);
 	$table = jQuery('#table');
 	$tableSolde = jQuery('#tableSolde');
 	jQuery( ".select2" ).select2();
@@ -386,7 +386,7 @@ $(".form-solde").hide(500);
             complete: function () {
             	jQuery("#formDelete").removeAttr("disabled");
                 jQuery(".deleteModal .modal-footer span").removeClass('loader');
-                jQuery('#tablef'). bootstrapTable ('refresh', {  url: baseUrl +'/paie/pretPersonneljson' });
+                jQuery('#tablef'). bootstrapTable ('refresh', {  url: baseUrl +'/personnels/listcontratpersonnelDepartjson' });
             }
         });
 	});
@@ -469,7 +469,7 @@ $(".form-solde").hide(500);
 
 function optionFormatter(id, row, index) {
 	var option = '<a onclick="edit('+row.id+')" data-toggle="modal" data-target="#listSoldeModal" href="#" title="Calculer solde [LIBELLE : '+row.personnel.nom+' ]">  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';
-	option +='&nbsp;<a onclick="del('+id+')" data-toggle="modal" data-target=".deleteModal" href="#" title="Suprimer categorie [LIBELLE : '+row.libelle+' ]"> <span class="glyphicon glyphicon-trash"></span></a>';
+	option +='&nbsp;<a onclick="delPerso('+row.id+')" data-toggle="modal" data-target=".deleteModal" href="#" title="Suprimer categorie [LIBELLE : '+row.libelle+' ]"> <span class="glyphicon glyphicon-trash"></span></a>';
 	
     return option;
 }
@@ -532,6 +532,7 @@ function periodeFormatter(periode, row, index) {
 	}
 	return row.periode.mois.mois+' '+row.periode.annee.annee ;
 }
+
 function pretFormatter(pret, row, index) {
 	if(row.pret.libelle == ''){
 		return "";
@@ -610,7 +611,7 @@ function edit(idFonction) {
    //jQuery(".form-solde").hide(500);
 }
 
-function editPret(idFonction){
+  function editPret(idFonction){
 //	var $scope = angular.element(document.getElementById("formDelete")).scope();
     //jQuery("#rhpModalPret").modal('hide');
 	var idp=idFonction;
@@ -649,57 +650,38 @@ function editPret(idFonction){
         },
     });
 	jQuery('#tablef'). bootstrapTable ('refresh', {  url: baseUrl +'/paie/pretPersonneljson' });
-}
+ }
 
-function delPret(idFonction){
-//	var $scope = angular.element(document.getElementById("formDelete")).scope();
-	jQuery('#idPretperso').val(idFonction);
-	
-	jQuery.ajax({
-        type: "POST",
-        url: baseUrl+"/paie/searchpretIndividuel",
-        cache: false,
-        data: {id:idFonction},
-        success: function (response) {
-        	if (response != null) {
-        		console.log(response);
-        		//jQuery('#pret1').html(response.matricule);
-        		jQuery("#formPretmodif")[0].reset(); 
-        		jQuery('#pret1').val(response.pret.id);
-    			jQuery("#pret1").val(response.pret.id).trigger('change');
-    			jQuery('#pret1').trigger('liszt:updated');
-        		jQuery('#montant1').val(response.montant);
-        		jQuery('#periodepaie1').val(response.periode.id);
-    			jQuery("#periodepaie1").val(response.periode.id).trigger('change');
-    			jQuery('#periodepaie1').trigger('liszt:updated');        	
-        		jQuery('#dEmprunt1').val(response.dEmprunt);
-        		jQuery('#echelonage1').val(response.echelonage);
-        		jQuery('#idpers1').val(response.personnel.id);        		
-        		jQuery('#idpret').val(response.id);
-        		jQuery('#idPretperso').val(response.id);
-        		jQuery('#labelPret').html(response.personnel.nom+' '+response.pret.libelle+' '+response.montant);
-				//tabledata += "";
-				/* jQuery('#typeService, #typeServicePop').html(tabledata);
-				jQuery('#typeService, #typeServicePop').val("1").trigger("change"); */
-			} else {
-				alert('Failure! An error has occurred!');
-			}
-        },
-        error: function () {
-            
-        },
-    });
+   function delPerso(idFonction){
 
+       // Récupère le scope de l'élément formDelete
+       var $scope = angular.element(document.getElementById("formDelete")).scope();
+
+       var rows = $table.bootstrapTable('getData');
+       var contrat = _.findWhere(rows, {id: idFonction});
+       var personnel = contrat.personnel;
+       personnel.info = contrat.personnel.nomComplet + " " + contrat.personnel.matricule;
+
+       // Met à jour le scope
+          $scope.$apply(function () {
+              // On crée directement l'objet personnel dans le scope
+              $scope.personnel = personnel;
+                 $("#idperso").val(personnel.id);
+          });
+
+          // Affiche le modal
+          //$('#rhpModalPretDel').modal('show');
+   }
 
 	function del(id){
-    	var $scope = angular.element(document.getElementById("formDelete")).scope();
+              //	var $scope = angular.element(document.getElementById("formDelete")).scope();
 
-    	var rows = $table.bootstrapTable('getData');
-    	var categorie = _.findWhere(rows, {id: idCategorie});
-    	categorie.info = categorie.personnel.nomComplet + " " +categorie.personnel.matricule;
-    	$scope.$apply(function () {
-            $scope.pupulateForm(categorie);
-        });
+            //	var rows = $table.bootstrapTable('getData');
+                //var categorie = _.findWhere(rows, {id: idCategorie});
+            //	categorie.info = categorie.personnel.nomComplet + " " +categorie.personnel.matricule;
+            //	$scope.$apply(function () {
+             //       $scope.pupulateForm(categorie);
+            //    });
     }
-}
+
 </script>

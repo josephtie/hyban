@@ -26,6 +26,8 @@ public interface PersonnelService {
                              String modePaiement, Long idbanque, String numeroCompte, String numeroGuichet, String rib, Boolean carec, String typemp, String telephone, int situationMedaill, int situationEmploie, String dateRetourcg);
 	
 	public PersonnelDTO save(Long id, int situationMatrimoniale, int nombreEnfant, Boolean statut);
+
+	public PersonnelDTO depart(Long id);
 	
 	public Boolean delete(Long id);
 	

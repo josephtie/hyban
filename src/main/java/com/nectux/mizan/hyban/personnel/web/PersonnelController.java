@@ -412,6 +412,15 @@ public class PersonnelController {
 		return personnelDTO;
 	}
 
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/depart", method = RequestMethod.POST)
+	public @ResponseBody PersonnelDTO departpersonnel(@RequestParam(value="idperso", required=true) Long id) {
+
+		PersonnelDTO personnelDTO = new PersonnelDTO();
+		//personnelDTO.setResult(personnelService.depart(id));
+		return personnelService.depart(id);
+	}
+
 //	@ResponseStatus(HttpStatus.OK)
 //	@RequestMapping(value = "/effectifPersonnel", method = RequestMethod.GET)
 //	public @ResponseBody 	PrintLsDTO effectifPersonnelCategory(@RequestParam(value="id", required=true) Long id) {
