@@ -1,9 +1,6 @@
 package com.nectux.mizan.hyban.parametrages.service.impl;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 import com.nectux.mizan.hyban.parametrages.repository.MoisRepository;
 import com.nectux.mizan.hyban.parametrages.service.MoisService;
@@ -256,9 +253,9 @@ public class PeriodePaieServiceImpl implements PeriodePaieService {
 					    }
 //					    
 					 
-//					    // pour 30 ans
+//					    // pour 3 ans
 					  
-					    for(int A = 1; A <15 ; A++){
+					    for(int A = 1; A <3 ; A++){
 				    	int ansuiv=0;
 				    	ansuiv=anneeformat+A;
 					    	 System.out.println("Annee suivante "+ ansuiv);
@@ -374,8 +371,56 @@ public class PeriodePaieServiceImpl implements PeriodePaieService {
 								
 //					    	
 					    }
-					    
-					    
+			// === Génération des périodes N-1, N-2, N-3 === //
+			for (int A = 1; A <= 4; A++) {
+
+				int anPrec = anneeformat - A;
+				System.out.println("Année précédente : " + anPrec);
+
+				Exercice exPrec;
+				List<Exercice> existList = exerciceRepository.findByAnnee(String.valueOf(anPrec));
+
+				if (existList.size() > 0) {
+					exPrec = existList.get(0);
+				} else {
+					exPrec = new Exercice();
+					exPrec.setAnnee(String.valueOf(anPrec));
+					exPrec = exerciceRepository.save(exPrec);
+				}
+
+				// Génération des 12 mois
+				for (int m = 1; m <= 12; m++) {
+
+					GregorianCalendar cal30 = new GregorianCalendar();
+					GregorianCalendar calFin = new GregorianCalendar();
+
+					cal30.set(anPrec, m - 1, 1);
+					Date dateDeb = cal30.getTime();
+
+					int lastDay = cal30.getActualMaximum(Calendar.DAY_OF_MONTH);
+					calFin.set(anPrec, m - 1, lastDay);
+					Date dateFin = calFin.getTime();
+
+					int monthIndex = cal30.get(Calendar.MONTH);
+
+					String nomMois = getMois(monthIndex);
+					Mois moisEntity = moisService.findbymois(nomMois);
+
+					PeriodePaie pp = new PeriodePaie();
+					pp.setAnnee(exPrec);
+					pp.setDatedeb(dateDeb);
+					pp.setDatefin(dateFin);
+					pp.setMois(moisEntity);
+
+					// Vérification si déjà existant
+					PeriodePaie exist = periodePaieRepository.findByAnneeIdAndMoisId(exPrec.getId(), moisEntity.getId());
+					if (exist == null) {
+						periodePaieRepository.save(pp);
+					}
+				}
+			}
+
+
 			periodepaieDTO.setRows(periodePaieRepository.findAll());
 			periodepaieDTO.setResult("success");
 			
@@ -404,16 +449,33 @@ public class PeriodePaieServiceImpl implements PeriodePaieService {
 		}
 		return periodepaie;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+	private String getMois(int month) {
+		switch(month) {
+			case 0: return "JANVIER";
+			case 1: return "FEVRIER";
+			case 2: return "MARS";
+			case 3: return "AVRIL";
+			case 4: return "MAI";
+			case 5: return "JUIN";
+			case 6: return "JUILLET";
+			case 7: return "AOUT";
+			case 8: return "SEPTEMBRE";
+			case 9: return "OCTOBRE";
+			case 10: return "NOVEMBRE";
+			case 11: return "DECEMBRE";
+		}
+		return null;
+	}
+
+
+
+
+
+
+
+
 	@Override
 	public PeriodePaie findPeriodeactive() {
 		// TODO Auto-generated method stub
