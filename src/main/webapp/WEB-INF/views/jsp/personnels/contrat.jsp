@@ -84,7 +84,7 @@
 				<br/>
 			</div>
 			<div class="col-md-3">
-                <button id="btnGenererExcell" type="button"  class="btn btn-success "  onclick="chargercontratParPeriodeExcell()"><i class="fa fa-plus"></i>Exporter Excell</button>
+                <button id="btnGenererExcellPeriode" type="button"  class="btn btn-success "  onclick="chargercontratParPeriodeExcell()"><i class="fa fa-plus"></i>Exporter Excell</button>
                <br/>
             </div></div></div>
 			<table id="tablepm" class="table table-info table-striped"
@@ -121,7 +121,7 @@
 		            <div class="row">
                     <div class="form-group">
 						<div class="col-md-3">
-								<input type="text" id="dateDebw" name="dateDebw"  data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker" placeholder="Date de debut de contrat" required="required" />
+								<input type="text" id="dateDebw" name="dateDebw"  data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker"  placeholder="Date de debut de contrat" required="required" />
 						<br/>
 						</div>
 						<div class="col-md-3">
@@ -133,7 +133,7 @@
 						<br/>
 						</div>
                  	<div class="col-md-3">
-                 		<button id="btnGenererExcell" type="button"  class="btn btn-success "  onclick="chargercontratParDateExell()"><i class="fa fa-plus"></i>Exporter Excell</button>
+                 		<button id="btnGenererExcellDate" type="button"  class="btn btn-success "  onclick="chargercontratParDateExell()"><i class="fa fa-plus"></i>Exporter Excell</button>
                  		<br/>
                  	</div>
         			</div>
@@ -202,7 +202,7 @@
 						<div class="form-group">
                     		<label for="libelle" class="col-md-2 control-label">Date de Fin/ dArret'</label>
                     		<div class="col-md-10">
-                    		<input type="text" id="dateFin" name="dateFin" ng-model="contrat.dFin" data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker" placeholder="Date de fin / Arret" required="required" />
+                    		<input type="text" id="dateFin" name="dateFin" ng-model="contrat.dFin" data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker"   placeholder="Date de fin / Arret" required="required" />
                     			</div>
                     		</div>
 					<div class="form-group">
@@ -249,236 +249,250 @@
 <script type="text/javascript">
 
     //AngularJS
-    app.controller('formAjoutCtrl', function ($scope) {
-        $scope.pupulateForm = function (contrat) {
-            $scope.contrat = contrat;
-        };
-        $scope.initForm = function () {
-            $scope.contrat = {};
-        };
-    });
+		app.controller('formAjoutCtrl', function ($scope) {
+			$scope.pupulateForm = function (contrat) {
+				$scope.contrat = contrat;
+			};
+			$scope.initForm = function () {
+				$scope.contrat = {};
+			};
+		});
     //End AngularJs
 
 
-    var actionUrl = "/personnels/endcontratpersonnel";
-    var action = "ajout";
-    var $table;
-    jQuery(document).ready(function($){
-        $table = $('#table');
-        $tableImprimer = $('#tablepm');
-        jQuery('#tableWidgethisto').hide();
-        jQuery('#tableWidgetDate').hide();
-        jQuery('#tableWidget').show();
-        jQuery(".select2" ).select2();
-         $("#dateFin, .datePicker, #dateDew, #dateMod, #dateFinw").datepicker({
-         format: 'dd/mm/yyyy',
-         showOtherMonths: true
-        });
+			var actionUrl = "/personnels/endcontratpersonnel";
+			var action = "ajout";
+			var $table;
+			jQuery(document).ready(function($){
+				$table = $('#table');
+				$tableImprimer = $('#tablepm');
+				jQuery('#tableWidgethisto').hide();
+				jQuery('#tableWidgetDate').hide();
+				jQuery('#tableWidget').show();
+				$(".select2").select2();
+				// jQuery("#dateFin,  #dateDew, #dateMod, #dateFinw").datepicker({
+				//  format: 'DD/MM/YYYY',
+				//  showOtherMonths: true
+				// });
 
-        chargerPeriodePaie();
-        //Fermeture du modal
-        $('#rhpModal').on('hidden.bs.modal', function () {
-            var $scope = angular.element(document.getElementById("formAjout")).scope();
-            $scope.$apply(function () {
-                $scope.initForm();
-            });
-            //$("#id").val(""); //Initialisation de l'id
-        });
+				$('.datepicker').datepicker({
+					format: 'dd/mm/yyyy',
+					showOtherMonths: true
+				});
 
-        //Envoi des donnees
-        $("#formAjout").submit(function(e){
-            e.preventDefault();
+				// $('.datepicker').datetimepicker({
+				// 	format: 'DD/MM/YYYY',
+				// 	useCurrent: false,
+				// 	showClear: true,
+				// 	showClose: true
+				// });
 
-            var formData = $(this).serialize();
-            $.ajax({
-                type: "POST",
-                url: baseUrl + actionUrl,
-                cache: false,
-                data: formData,
-                success: function (reponse) {
-                    if (reponse.result == "success") {
-                        $table.bootstrapTable('refresh');
-                        $("#rhpModal").modal('hide');
-                    }
-                    else if(reponse.result == "erreur_champ_obligatoire" || reponse.result == "failed"){
-                        alert("Date invalide");
-                    }
-                },
-                error: function () {
-                    $("#rhpModal .modal-body div.alert").alert();
-                    $("#rhpModal .modal-body .alert h4").html("Erreur survenue");
-                    $("#rhpModal .modal-body .alert p").html("Verifier que vous etes connectes au serveur.");
-                    $("#rhpModal .modal-footer span").removeClass('loader');
-                },
-                beforeSend: function () {
-                    $("#formAjout").attr("disabled", true);
-                    $("#rhpModal .modal-footer span").addClass('loader');
-                },
-                complete: function () {
-                    $("#formAjout").removeAttr("disabled");
-                    $("#rhpModal .modal-footer span").removeClass('loader');
-                }
-            });
-        });
-    });
+				chargerPeriodePaie();
+				//Fermeture du modal
+				$('#rhpModal').on('hidden.bs.modal', function () {
+					var $scope = angular.element(document.getElementById("formAjout")).scope();
+					$scope.$apply(function () {
+						$scope.initForm();
+					});
+					//$("#id").val(""); //Initialisation de l'id
+				});
 
-    //Functions
-    function optionFormatter(id, row, index) {
-        var option = '<a onclick="finish('+row.id+')" data-toggle="modal" data-target="#rhpModal" href="#" title="Mettre fin">  <span class="glyphicon glyphicon-pencil"></span></a>';
-        return option;
-    }
+				//Envoi des donnees
+				$("#formAjout").submit(function(e){
+					e.preventDefault();
 
-    function chargercontratParPeriode(){
+					var formData = $(this).serialize();
+					$.ajax({
+						type: "POST",
+						url: baseUrl + actionUrl,
+						cache: false,
+						data: formData,
+						success: function (reponse) {
+							if (reponse.result == "success") {
+								$table.bootstrapTable('refresh');
+								$("#rhpModal").modal('hide');
+							}
+							else if(reponse.result == "erreur_champ_obligatoire" || reponse.result == "failed"){
+								alert("Date invalide");
+							}
+						},
+						error: function () {
+							$("#rhpModal .modal-body div.alert").alert();
+							$("#rhpModal .modal-body .alert h4").html("Erreur survenue");
+							$("#rhpModal .modal-body .alert p").html("Verifier que vous etes connectes au serveur.");
+							$("#rhpModal .modal-footer span").removeClass('loader');
+						},
+						beforeSend: function () {
+							$("#formAjout").attr("disabled", true);
+							$("#rhpModal .modal-footer span").addClass('loader');
+						},
+						complete: function () {
+							$("#formAjout").removeAttr("disabled");
+							$("#rhpModal .modal-footer span").removeClass('loader');
+						}
+					});
+				});
+			});
 
-        $tableImprimer = jQuery('#tablepm');
-        $tableImprimer.bootstrapTable('removeAll');
-        $tableImprimer.bootstrapTable ('refresh', {url: baseUrl +'/personnels/listcontratpersonnelExpjson?id='+ jQuery('#periodePaieImpression').val()});
-        $tableImprimer.bootstrapTable('scrollTo', 0);
-		
+			//Functions
+			function optionFormatter(id, row, index) {
+				var option = '<a onclick="finish('+row.id+')" data-toggle="modal" data-target="#rhpModal" href="#" title="Mettre fin">  <span class="glyphicon glyphicon-pencil"></span></a>';
+				return option;
+			}
 
-    }
+			function chargercontratParPeriode(){
 
-	
-    function chargercontratParDate(){
+				$tableImprimer = jQuery('#tablepm');
+				$tableImprimer.bootstrapTable('removeAll');
+				$tableImprimer.bootstrapTable ('refresh', {url: baseUrl +'/personnels/listcontratpersonnelExpjson?id='+ jQuery('#periodePaieImpression').val()});
+				$tableImprimer.bootstrapTable('scrollTo', 0);
 
-        $tableDatew = jQuery('#tablepmDate');
-        $tableDatew.bootstrapTable('removeAll');
-        $tableDatew.bootstrapTable ('refresh', {url: baseUrl +'/personnels/listcontratpersonnelExpDatejson?dateDebw='+ jQuery('#dateDebw').val()+'&dateFinw='+ jQuery('#dateFinw').val()});
-        $tableDatew.bootstrapTable('scrollTo', 0);
-		
 
-    }
-    function chargercontratParDate(){
-    $('#tablepmDate').tableExport({
-                                type: 'excel',
-                                fileName: 'export_Contratdate',
-                                exportDataType: 'all' // 'all', 'selected' ou 'basic'
-     });
-    }
-    function chargercontratParPeriodeExcell(){
-          $('#tablepm').tableExport({
-                                        type: 'excel',
-                                        fileName: 'export_Contratmois',
-                                        exportDataType: 'all' // 'all', 'selected' ou 'basic'
-             });
-    }
+			}
 
-    function   chargercontratExcell(){
-      $('#table').tableExport({
-                                    type: 'excel',
-                                    fileName: 'export_Contrat',
-                                    exportDataType: 'all' // 'all', 'selected' ou 'basic'
-         });
-    }
-    function finish(idContrat){
-        var $scope = angular.element(document.getElementById("formAjout")).scope();
 
-        var rows = $table.bootstrapTable('getData');
-        var contrat = _.findWhere(rows, {id: idContrat});
-        contrat.info = contrat.personnel.matricule + " | " + contrat.personnel.nomComplet + " | " + contrat.fonction.libelle;
-        if (contrat.depart == true) {
-            jQuery("#permanentOui span").addClass("checked");
-            jQuery("#permanentOui :radio").attr("checked", true);
-            jQuery("#permanentNon span").removeClass("checked");
-        } else if(contrat.depart == false) {
-            jQuery("#permanentNon span").addClass("checked");
-            jQuery("#permanentNon :radio").attr("checked", true);
-            jQuery("#permanentOui span").removeClass("checked");
-        }
-        $scope.$apply(function () {
-            $scope.pupulateForm(contrat);
-        });
-    }
+			function chargercontratParDate(){
 
-    function del(idFonction){
-        var $scope = angular.element(document.getElementById("formDelete")).scope();
+				$tableDatew = jQuery('#tablepmDate');
+				$tableDatew.bootstrapTable('removeAll');
+				$tableDatew.bootstrapTable ('refresh', {url: baseUrl +'/personnels/listcontratpersonnelExpDatejson?dateDebw='+ jQuery('#dateDebw').val()+'&dateFinw='+ jQuery('#dateFinw').val()});
+				$tableDatew.bootstrapTable('scrollTo', 0);
 
-        var rows = $table.bootstrapTable('getData');
-        var fonction = _.findWhere(rows, {id: idFonction});
-        fonction.info = fonction.libelle;
-        $scope.$apply(function () {
-            $scope.pupulateForm(fonction);
-        });
-    }
 
-    function matriculeFormatter(personnel){
-        return personnel.matricule;
-    }
+			}
+			function chargercontratParDateExell(){
+			$('#tablepmDate').tableExport({
+										type: 'excel',
+										fileName: 'export_Contratdate',
+										exportDataType: 'all' // 'all', 'selected' ou 'basic'
+			 });
+			}
+			function chargercontratParPeriodeExcell(){
+				  $('#tablepm').tableExport({
+												type: 'excel',
+												fileName: 'export_Contratmois',
+												exportDataType: 'all' // 'all', 'selected' ou 'basic'
+					 });
+			}
 
-    function nomCompletFormatter(personnel){
-        return personnel.nomComplet;
-    }
+			function   chargercontratExcell(){
+			  $('#table').tableExport({
+											type: 'excel',
+											fileName: 'export_Contrat',
+											exportDataType: 'all' // 'all', 'selected' ou 'basic'
+				 });
+			}
+			function finish(idContrat){
+				var $scope = angular.element(document.getElementById("formAjout")).scope();
 
-    function sexeFormatter(personnel){
-        return personnel.sexe;
-    }
+				var rows = $table.bootstrapTable('getData');
+				var contrat = _.findWhere(rows, {id: idContrat});
+				contrat.info = contrat.personnel.matricule + " | " + contrat.personnel.nomComplet + " | " + contrat.fonction.libelle;
+				if (contrat.depart == true) {
+					jQuery("#permanentOui span").addClass("checked");
+					jQuery("#permanentOui :radio").attr("checked", true);
+					jQuery("#permanentNon span").removeClass("checked");
+				} else if(contrat.depart == false) {
+					jQuery("#permanentNon span").addClass("checked");
+					jQuery("#permanentNon :radio").attr("checked", true);
+					jQuery("#permanentOui span").removeClass("checked");
+				}
+				$scope.$apply(function () {
+					$scope.pupulateForm(contrat);
+				});
+			}
 
-    function cnpsFormatter(personnel){
-        return personnel.numeroCnps;
-    }
+			function del(idFonction){
+				var $scope = angular.element(document.getElementById("formDelete")).scope();
 
-    function situationMatrimonialeFormatter(personnel){
-        return personnel.situationMatri;
-    }
+				var rows = $table.bootstrapTable('getData');
+				var fonction = _.findWhere(rows, {id: idFonction});
+				fonction.info = fonction.libelle;
+				$scope.$apply(function () {
+					$scope.pupulateForm(fonction);
+				});
+			}
 
-    function nombreEnfantFormatter(personnel){
-        return personnel.nombrEnfant;
-    }
+			function matriculeFormatter(personnel){
+				return personnel.matricule;
+			}
 
-    function typeContratFormatter(typeContrat){
-        return typeContrat.libelle;
-    }
+			function nomCompletFormatter(personnel){
+				return personnel.nomComplet;
+			}
 
-    function fonctionFormatter(fonction){
-        return fonction.libelle;
-    }
+			function sexeFormatter(personnel){
+				return personnel.sexe;
+			}
 
-    function categorieFormatter(categorie){
-        return categorie.salaireBase;
-    }
+			function cnpsFormatter(personnel){
+				return personnel.numeroCnps;
+			}
 
-    function chargerPeriodePaie(){
-        jQuery.ajax({
-            type: "POST",
-            url: baseUrl + "/parametrages/periodeall",
-            cache: false,
-            success: function (response) {
-                if (response != null) {
-                    tabledata = '<option value="0" data-libelle="CHOISIR PERIODE PAIE" >CHOISIR PERIODE PAIE</option>';
-                    for (i = 0; i < response.length; i++) {
-                        tabledata += '<option value="'+response[i].id+'" data-libelle="'+response[i].mois.mois + ' ' + response[i].annee.annee+'" >' + response[i].mois.mois + ' ' + response[i].annee.annee + '</option>';
-                    }
-                    jQuery('#periodePaieImpression').html(tabledata);
-                    jQuery('#periodePaieImpression').select2('val', 0);
-                    //jQuery('#branch').select2('val', index);
-                } else {
-                    alert('Failure! An error has occurred!');
-                }
-            },
-            error: function () {
+			function situationMatrimonialeFormatter(personnel){
+				return personnel.situationMatri;
+			}
 
-            },
-            complete: function () {
+			function nombreEnfantFormatter(personnel){
+				return personnel.nombrEnfant;
+			}
 
-            }
-        });
-    }
+			function typeContratFormatter(typeContrat){
+				return typeContrat.libelle;
+			}
 
-    function widgetView(){
+			function fonctionFormatter(fonction){
+				return fonction.libelle;
+			}
 
-            jQuery('#tableWidget').hide('slow');
-            jQuery('#tableWidgetDate').hide('slow');
-            jQuery('#tableWidgethisto').show('slow');
+			function categorieFormatter(categorie){
+				return categorie.salaireBase;
+			}
 
-    }
-    function widgetView1(){
-    jQuery('#tableWidget').show('slow');
-    jQuery('#tableWidgethisto').hide('slow');
-    jQuery('#tableWidgetDate').hide('slow');
-    }
-        function widgetView2(){
-        jQuery('#tableWidgetDate').show('slow');
-        jQuery('#tableWidgethisto').hide('slow');
-        jQuery('#tableWidget').hide('slow');
-        }
+			function chargerPeriodePaie(){
+				jQuery.ajax({
+					type: "POST",
+					url: baseUrl + "/parametrages/periodeall",
+					cache: false,
+					success: function (response) {
+						if (response != null) {
+							tabledata = '<option value="0" data-libelle="CHOISIR PERIODE PAIE" >CHOISIR PERIODE PAIE</option>';
+							for (i = 0; i < response.length; i++) {
+								tabledata += '<option value="'+response[i].id+'" data-libelle="'+response[i].mois.mois + ' ' + response[i].annee.annee+'" >' + response[i].mois.mois + ' ' + response[i].annee.annee + '</option>';
+							}
+							jQuery('#periodePaieImpression').html(tabledata);
+							jQuery('#periodePaieImpression').select2('val', 0);
+							//jQuery('#branch').select2('val', index);
+						} else {
+							alert('Failure! An error has occurred!');
+						}
+					},
+					error: function () {
+
+					},
+					complete: function () {
+
+					}
+				});
+			}
+
+			function widgetView(){
+
+					jQuery('#tableWidget').hide('slow');
+					jQuery('#tableWidgetDate').hide('slow');
+					jQuery('#tableWidgethisto').show('slow');
+
+			}
+			function widgetView1(){
+			jQuery('#tableWidget').show('slow');
+			jQuery('#tableWidgethisto').hide('slow');
+			jQuery('#tableWidgetDate').hide('slow');
+			}
+			function widgetView2(){
+				jQuery('#tableWidgetDate').show('slow');
+				jQuery('#tableWidgethisto').hide('slow');
+				jQuery('#tableWidget').hide('slow');
+			}
+
+
 </script>

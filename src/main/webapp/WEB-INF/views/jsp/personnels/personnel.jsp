@@ -413,9 +413,10 @@
                                                 <select id="modepaiement" name="modepaiement" class="form-control select2">
                                                      <option value="" disabled selected>-- Selectionnez Mode de paiement--</option>
                                                     <option value="virement-bancaire" selected="selected"> Virement </option>
-                                                    <option value="transfert-mobile-money"> Cheque </option>
-                                                    <option value="transfert-wave"> Cheque </option>
+                                                    <option value="transfert-mobile-money"> transfert-mobile-money </option>
+                                                    <option value="transfert-wave"> transfert-wave </option>
                                                     <option value="Espece"> Espece </option>
+                                                    <option value="Cheque"> Cheque </option>
                                                 </select>
                                             </div>
                                             <div class="col-md-4">

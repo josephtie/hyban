@@ -379,6 +379,7 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 
             contratPersonnel.setObservCtrat(ObservCtrat);
 			contratPersonnel.setDepart(false);
+			contratPersonnel.setStatut(false);
 			contratPersonnel.setSoldeCalcule(false);
 			if(depart){
 				contratPersonnel.setDepart(true);
