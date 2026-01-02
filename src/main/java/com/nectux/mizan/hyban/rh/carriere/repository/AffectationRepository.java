@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.nectux.mizan.hyban.rh.carriere.entity.Affectation;
+import org.springframework.data.repository.query.Param;
 
 public interface AffectationRepository extends CrudRepository<Affectation, Long> {
 	
@@ -34,4 +35,17 @@ public interface AffectationRepository extends CrudRepository<Affectation, Long>
 			"GROUP BY a.site.libelle " +
 			"ORDER BY a.site.libelle")
 	List<SiteEffectifProjection> getEffectifParSite();
+
+
+	@Query("""
+    SELECT a FROM Affectation a
+    WHERE a.personnel.id = :idPersonnel
+      AND a.statut = true
+      AND (:id IS NULL OR a.id <> :id)
+""")
+	Affectation findActiveAffectationByPersonnel(
+			@Param("idPersonnel") Long idPersonnel,
+			@Param("id") Long id
+	);
+
 }

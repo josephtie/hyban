@@ -1,11 +1,17 @@
 package com.nectux.mizan.hyban.rh.carriere.service.impl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import com.nectux.mizan.hyban.personnel.entity.Fonction;
+import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.personnel.repository.FonctionRepository;
 import com.nectux.mizan.hyban.rh.carriere.entity.Affectation;
+import com.nectux.mizan.hyban.rh.carriere.entity.Poste;
+import com.nectux.mizan.hyban.rh.carriere.entity.Site;
 import com.nectux.mizan.hyban.rh.carriere.repository.AffectationRepository;
 import com.nectux.mizan.hyban.rh.carriere.repository.SiteWorkRepository;
 import com.nectux.mizan.hyban.utils.Utils;
@@ -54,6 +60,16 @@ public class AffectationServiceImpl implements AffectationService {
 			}
 			affectation.setObservation(observation);
 			affectation.setStatut(present);
+			if (Boolean.TRUE.equals(present)) {
+				Affectation ancienne =
+						affectationRepository.findActiveAffectationByPersonnel(idPersonnel, id);
+
+				if (ancienne != null) {
+					ancienne.setStatut(false);
+					ancienne.setDateFin(new Date());
+					affectationRepository.save(ancienne);
+				}
+			}
 
 			if(idPersonnel == null){
 				sb = new StringBuilder();
@@ -153,6 +169,130 @@ public class AffectationServiceImpl implements AffectationService {
 			affectationDTO.setErrors(listErreur);
 		}
 		return affectationDTO;
+	}
+
+
+
+	@Transactional
+	public AffectationDTO saveNew(
+			Long id,
+			Long idPersonnel,
+			Long idPoste,
+			Long idSite,
+			Boolean present,
+			String dateDebut,
+			String dateFin,
+			String observation) {
+
+		AffectationDTO dto = new AffectationDTO();
+		List<Erreur> erreurs = new ArrayList<>();
+
+		try {
+			// =========================
+			// 1. VALIDATIONS DE BASE
+			// =========================
+			if (idPersonnel == null)
+				erreurs.add(erreur("Le personnel est obligatoire"));
+
+			if (idPoste == null)
+				erreurs.add(erreur("Le poste est obligatoire"));
+
+			if (idSite == null)
+				erreurs.add(erreur("Le site est obligatoire"));
+
+			if (dateDebut == null || dateDebut.trim().isEmpty())
+				erreurs.add(erreur("La date de début est obligatoire"));
+
+			if (!erreurs.isEmpty())
+				return dtoErreur(dto, erreurs);
+
+			// =========================
+			// 2. RÉCUPÉRATION DES ENTITÉS
+			// =========================
+			Personnel personnel = personneRepository.findById(idPersonnel)
+					.orElseThrow(() -> new EntityNotFoundException("Personnel introuvable"));
+
+			Fonction poste = posteRepository.findById(idPoste)
+					.orElseThrow(() -> new EntityNotFoundException("Poste introuvable"));
+
+			Site site = siteWorkRepository.findById(idSite)
+					.orElseThrow(() -> new EntityNotFoundException("Site introuvable"));
+
+			Date debut = Utils.stringToDate(dateDebut, "dd/MM/yyyy");
+			Date fin = (dateFin != null && !dateFin.isEmpty())
+					? Utils.stringToDate(dateFin, "dd/MM/yyyy")
+					: null;
+
+			// =========================
+			// 3. CRÉATION / MODIFICATION
+			// =========================
+			Affectation affectation = (id == null)
+					? new Affectation()
+					: affectationRepository.findById(id)
+					.orElseThrow(() -> new EntityNotFoundException("Affectation introuvable"));
+
+			if (id == null)
+				affectation.setDateCreation(new Date());
+			else
+				affectation.setDateModification(new Date());
+
+			affectation.setPersonnel(personnel);
+			affectation.setPoste(poste);
+			affectation.setSite(site);
+			affectation.setObservation(observation);
+			affectation.setDateDebut(debut);
+			affectation.setDateFin(fin);
+			affectation.setStatut(Boolean.TRUE.equals(present));
+
+			// =========================
+			// 4. RÈGLE RH MAJEURE
+			// =========================
+			if (Boolean.TRUE.equals(present)) {
+
+				Affectation active =
+						affectationRepository.findActiveAffectationByPersonnel(idPersonnel, id);
+
+				if (active != null) {
+					// Clôture automatique (bonne pratique RH)
+					active.setStatut(false);
+					active.setDateFin(new Date());
+					affectationRepository.save(active);
+				}
+			}
+
+			// =========================
+			// 5. SAUVEGARDE
+			// =========================
+			Affectation saved = affectationRepository.save(affectation);
+
+			dto.setResult(true);
+			dto.setStatus(true);
+			dto.setRow(saved);
+			dto.setMessage("Affectation enregistrée avec succès");
+			dto.setErrors(Collections.emptyList());
+
+		} catch (Exception ex) {
+			erreurs.add(erreur("Erreur technique : " + ex.getMessage()));
+			return dtoErreur(dto, erreurs);
+		}
+
+		return dto;
+	}
+
+	private Erreur erreur(String message) {
+		Erreur e = new Erreur();
+		e.setCode(10);
+		e.setDescription("Violation règle métier RH");
+		e.setMessage(message);
+		return e;
+	}
+
+	private AffectationDTO dtoErreur(AffectationDTO dto, List<Erreur> erreurs) {
+		dto.setResult(false);
+		dto.setStatus(false);
+		dto.setMessage("Validation RH échouée");
+		dto.setErrors(erreurs);
+		return dto;
 	}
 
 	@Override

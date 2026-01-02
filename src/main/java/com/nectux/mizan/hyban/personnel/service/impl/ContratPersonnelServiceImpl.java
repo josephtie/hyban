@@ -80,7 +80,11 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 			contratPersonnel.setTypeContrat(typeContratRepository.findById(idTypeContrat).orElseThrow(() -> new EntityNotFoundException("Type contrat not found for id " + idTypeContrat)));
 			
 			contratPersonnel.setDateDebut(Utils.stringToDate(dateDebut, "dd/MM/yyyy"));
-			contratPersonnel.setDateFin(Utils.stringToDate(dateFin, "dd/MM/yyyy"));
+				if(contratPersonnel.getTypeContrat().getId()==1L)
+				   contratPersonnel.setDateFin(null);
+				else
+					contratPersonnel.setDateFin(Utils.stringToDate(dateFin, "dd/MM/yyyy"));
+
 			contratPersonnel.setNetAPayer(netAPayer);
 			contratPersonnel.setIndemniteLogement(indemniteLogement);
 			contratPersonnel.setIndemniteRepresent(indemniterepresent);

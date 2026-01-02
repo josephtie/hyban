@@ -158,7 +158,8 @@ public class PersonnelServiceImpl implements PersonnelService {
 			contratPersonnel.setNetAPayer(salaireNet);
 			contratPersonnel.setIndemniteLogement(indemnitelogement);
 			contratPersonnel.setTypeContrat(typeContratRepository.findById(typeContrat).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + typeContrat)));
-			
+				if(contratPersonnel.getTypeContrat().getId()==1L)
+					contratPersonnel.setDateFin(null);
 			contratPersonnel.setAncienneteInitial(ancienneteInitial);
 			contratPersonnel.setStatut(true);
 			contratPersonnel.setDepart(false);

@@ -69,7 +69,7 @@ public class AffectationController {
 												@RequestParam(value="dateFin", required=false) String dateFin,  
 												@RequestParam(value="observation", required=false) String observation) throws Exception {
 		logger.info(">>> ENREGISTRER AFFECTATION");
-		return affectationService.save(id, idPersonnel, idPoste,idSite ,statutAffect,dateDebut, dateFin, observation);
+		return affectationService.saveNew(id, idPersonnel, idPoste,idSite ,statutAffect,dateDebut, dateFin, observation);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
