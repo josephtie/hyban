@@ -43,133 +43,133 @@ public class AffectationServiceImpl implements AffectationService {
 	private Erreur erreur;
 	private List<Erreur> listErreur;
 
-	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public AffectationDTO save(Long id, Long idPersonnel, Long idPoste,Long idSite, Boolean present,String dateDebut, String dateFin, String observation) {
-		// TODO Auto-generated method stub
-		AffectationDTO affectationDTO = new AffectationDTO();
-		Affectation affectation;
-		listErreur = new ArrayList<Erreur>();
-		try{
-			if(id == null){
-				affectation = new Affectation();
-				affectation.setDateCreation(new Date());
-			} else {
-				affectation = affectationRepository.findById(id) .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id));
-				affectation.setDateModification(new Date());
-			}
-			affectation.setObservation(observation);
-			affectation.setStatut(present);
-			if (Boolean.TRUE.equals(present)) {
-				Affectation ancienne =
-						affectationRepository.findActiveAffectationByPersonnel(idPersonnel, id);
-
-				if (ancienne != null) {
-					ancienne.setStatut(false);
-					ancienne.setDateFin(new Date());
-					affectationRepository.save(ancienne);
-				}
-			}
-
-			if(idPersonnel == null){
-				sb = new StringBuilder();
-				erreur = new Erreur();
-				erreur.setCode(10);
-				erreur.setDescription("contrainte d'integrite non null non respectee");
-				sb.append("le personnel est obligatoire");
-				erreur.setMessage(sb.toString());
-				listErreur.add(erreur);
-			} else
-				affectation.setPersonnel(personneRepository.findById(idPersonnel) .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idPersonnel)));
-			
-			if(idPoste == null){
-				sb = new StringBuilder();
-				erreur = new Erreur();
-				erreur.setCode(10);
-				erreur.setDescription("contrainte d'integrite non null non respectee");
-				sb.append("le poste est obligatoire");
-				erreur.setMessage(sb.toString());
-				listErreur.add(erreur);
-			} else 
-				affectation.setPoste(posteRepository.findById(idPoste) .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idPoste)));
-
-			if(idSite == null){
-				sb = new StringBuilder();
-				erreur = new Erreur();
-				erreur.setCode(10);
-				erreur.setDescription("contrainte d'integrite non null non respectee");
-				sb.append("le Site est obligatoire");
-				erreur.setMessage(sb.toString());
-				listErreur.add(erreur);
-			} else
-				affectation.setSite(siteWorkRepository.findById(idSite) .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idSite)));
-
-
-
-			if(dateDebut == null || dateDebut.trim().equals("")){
-				sb = new StringBuilder();
-				erreur = new Erreur();
-				erreur.setCode(10);
-				erreur.setDescription("contrainte d'integrite non null non respectee");
-				sb.append("la date de debut est obligatoire");
-				erreur.setMessage(sb.toString());
-				listErreur.add(erreur);
-			} else 
-				affectation.setDateDebut(Utils.stringToDate(dateDebut, "dd/MM/yyyy"));
-			
-			if(dateFin != null && !dateFin.trim().equals(""))
-				affectation.setDateFin(Utils.stringToDate(dateFin, "dd/MM/yyyy"));
-			
-			if(id == null){
-				if(affectationRepository.findByPersonnelIdAndPosteIdAndDateDebutAndDateFin(idPersonnel, idPoste, affectation.getDateDebut(), affectation.getDateFin()) != null){
-					sb = new StringBuilder();
-					erreur = new Erreur();
-					erreur.setCode(10);
-					erreur.setDescription("contrainte de doublon non non respectee");
-					sb.append("cette affectation existe deja");
-					erreur.setMessage(sb.toString());
-					listErreur.add(erreur);
-					
-				}
-			} else{
-				
-			}
-			
-			if(listErreur.isEmpty()){
-				affectation = affectationRepository.save(affectation);
-				sb = new StringBuilder();
-				sb.append(" affectation enregistree avec succes");
-				affectationDTO.setResult(true);
-				affectationDTO.setStatus(true);
-				affectationDTO.setRow(affectation);
-				affectationDTO.setRows(null);
-				affectationDTO.setMessage(sb.toString());
-				affectationDTO.setTotal(0);
-				affectationDTO.setErrors(listErreur);
-			} else {
-				affectationDTO.setResult(false);
-				affectationDTO.setStatus(false);
-				affectationDTO.setRow(null);
-				affectationDTO.setRows(null);
-				affectationDTO.setMessage("voir liste erreur");
-				affectationDTO.setTotal(0);
-				affectationDTO.setErrors(listErreur);
-			}
-		} catch(Exception ex){
-			erreur.setCode(20);
-			erreur.setDescription("exception capturee");
-			listErreur.add(erreur);
-			ex.printStackTrace();
-			affectationDTO.setResult(false);
-			affectationDTO.setStatus(false);
-			affectationDTO.setRow(null);
-			affectationDTO.setRows(null);
-			affectationDTO.setMessage(ex.getMessage());
-			affectationDTO.setTotal(0);
-			affectationDTO.setErrors(listErreur);
-		}
-		return affectationDTO;
-	}
+//	@Override
+//	@Transactional(rollbackFor = Exception.class)
+//	public AffectationDTO save(Long id, Long idPersonnel, Long idPoste,Long idSite, Boolean present,String dateDebut, String dateFin, String observation) {
+//		// TODO Auto-generated method stub
+//		AffectationDTO affectationDTO = new AffectationDTO();
+//		Affectation affectation;
+//		listErreur = new ArrayList<Erreur>();
+//		try{
+//			if(id == null){
+//				affectation = new Affectation();
+//				affectation.setDateCreation(new Date());
+//			} else {
+//				affectation = affectationRepository.findById(id) .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id));
+//				affectation.setDateModification(new Date());
+//			}
+//			affectation.setObservation(observation);
+//			affectation.setStatut(present);
+//			if (Boolean.TRUE.equals(present)) {
+//				Affectation ancienne =
+//						affectationRepository.findActiveAffectationByPersonnel(idPersonnel, id);
+//
+//				if (ancienne != null) {
+//					ancienne.setStatut(false);
+//					ancienne.setDateFin(new Date());
+//					affectationRepository.save(ancienne);
+//				}
+//			}
+//
+//			if(idPersonnel == null){
+//				sb = new StringBuilder();
+//				erreur = new Erreur();
+//				erreur.setCode(10);
+//				erreur.setDescription("contrainte d'integrite non null non respectee");
+//				sb.append("le personnel est obligatoire");
+//				erreur.setMessage(sb.toString());
+//				listErreur.add(erreur);
+//			} else
+//				affectation.setPersonnel(personneRepository.findById(idPersonnel) .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idPersonnel)));
+//
+//			if(idPoste == null){
+//				sb = new StringBuilder();
+//				erreur = new Erreur();
+//				erreur.setCode(10);
+//				erreur.setDescription("contrainte d'integrite non null non respectee");
+//				sb.append("le poste est obligatoire");
+//				erreur.setMessage(sb.toString());
+//				listErreur.add(erreur);
+//			} else
+//				affectation.setPoste(posteRepository.findById(idPoste) .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idPoste)));
+//
+//			if(idSite == null){
+//				sb = new StringBuilder();
+//				erreur = new Erreur();
+//				erreur.setCode(10);
+//				erreur.setDescription("contrainte d'integrite non null non respectee");
+//				sb.append("le Site est obligatoire");
+//				erreur.setMessage(sb.toString());
+//				listErreur.add(erreur);
+//			} else
+//				affectation.setSite(siteWorkRepository.findById(idSite) .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idSite)));
+//
+//
+//
+//			if(dateDebut == null || dateDebut.trim().equals("")){
+//				sb = new StringBuilder();
+//				erreur = new Erreur();
+//				erreur.setCode(10);
+//				erreur.setDescription("contrainte d'integrite non null non respectee");
+//				sb.append("la date de debut est obligatoire");
+//				erreur.setMessage(sb.toString());
+//				listErreur.add(erreur);
+//			} else
+//				affectation.setDateDebut(Utils.stringToDate(dateDebut, "dd/MM/yyyy"));
+//
+//			if(dateFin != null && !dateFin.trim().equals(""))
+//				affectation.setDateFin(Utils.stringToDate(dateFin, "dd/MM/yyyy"));
+//
+//			if(id == null){
+//				if(affectationRepository.findByPersonnelIdAndPosteIdAndDateDebutAndDateFin(idPersonnel, idPoste, affectation.getDateDebut(), affectation.getDateFin()) != null){
+//					sb = new StringBuilder();
+//					erreur = new Erreur();
+//					erreur.setCode(10);
+//					erreur.setDescription("contrainte de doublon non non respectee");
+//					sb.append("cette affectation existe deja");
+//					erreur.setMessage(sb.toString());
+//					listErreur.add(erreur);
+//
+//				}
+//			} else{
+//
+//			}
+//
+//			if(listErreur.isEmpty()){
+//				affectation = affectationRepository.save(affectation);
+//				sb = new StringBuilder();
+//				sb.append(" affectation enregistree avec succes");
+//				affectationDTO.setResult(true);
+//				affectationDTO.setStatus(true);
+//				affectationDTO.setRow(affectation);
+//				affectationDTO.setRows(null);
+//				affectationDTO.setMessage(sb.toString());
+//				affectationDTO.setTotal(0);
+//				affectationDTO.setErrors(listErreur);
+//			} else {
+//				affectationDTO.setResult(false);
+//				affectationDTO.setStatus(false);
+//				affectationDTO.setRow(null);
+//				affectationDTO.setRows(null);
+//				affectationDTO.setMessage("voir liste erreur");
+//				affectationDTO.setTotal(0);
+//				affectationDTO.setErrors(listErreur);
+//			}
+//		} catch(Exception ex){
+//			erreur.setCode(20);
+//			erreur.setDescription("exception capturee");
+//			listErreur.add(erreur);
+//			ex.printStackTrace();
+//			affectationDTO.setResult(false);
+//			affectationDTO.setStatus(false);
+//			affectationDTO.setRow(null);
+//			affectationDTO.setRows(null);
+//			affectationDTO.setMessage(ex.getMessage());
+//			affectationDTO.setTotal(0);
+//			affectationDTO.setErrors(listErreur);
+//		}
+//		return affectationDTO;
+//	}
 
 
 
