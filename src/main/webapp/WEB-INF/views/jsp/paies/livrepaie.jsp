@@ -61,7 +61,7 @@
 					data-side-pagination="server" 
 					data-pagination="true"
 			        data-show-export="true"
-			        data-page-list="[10, 20, 50, 100, 200,1000]"
+			        data-page-list="[20, 50, 100, 200, 500,2000]"
                     data-export-dataType="all"
 					data-search="true">
 					<thead>
@@ -115,7 +115,7 @@
 					<%-- data-url="${pageContext.request.contextPath}/paie/savebullPersonnel"  --%>
 					data-side-pagination="server" 
 					data-pagination="true"
-					data-page-list="[ 20, 50, 100, 200,500,1000]"
+					data-page-list="[ 20, 50, 100, 200, 500,2000]"
 					data-search="true">
 					<thead>
 						<tr>
@@ -290,7 +290,7 @@
 					<%-- data-url="${pageContext.request.contextPath}/paie/savebullPersonnel"  data-show-columns="true"  --%>
 					data-side-pagination="server" 
 					data-pagination="true"
-					data-page-list="[ 25, 50, 100, 200,500,1000]"
+					data-page-list="[ 20, 50, 100, 200, 500,2000]"
 					data-show-export="true"					
 					data-export-dataType="all"
 					data-search="true">
@@ -570,7 +570,7 @@
 					data-show-columns="true" 
 					data-side-pagination="server" 
 					data-pagination="true"
-					data-page-list="[ 25, 50, 100, 200,500,1000]"
+					data-page-list="[ 20, 50, 100, 200, 500,2000]"
 					data-search="true">
 					<thead>
 						<tr>

@@ -47,7 +47,7 @@
 					data-url="${pageContext.request.contextPath}/paie/echelonnjson"
 					data-side-pagination="server" 
 					data-pagination="true"
-					data-page-list="[10, 20, 50, 100, 200]" 
+					data-page-list="[20, 50, 100, 200, 500,2000]"
 					data-search="true">
 					<thead>
 						<tr>

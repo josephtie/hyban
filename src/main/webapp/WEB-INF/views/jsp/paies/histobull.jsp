@@ -67,7 +67,7 @@
                    data-export-dataType="all"   	
                    data-pagination="true"
                    data-side-pagination="server"
-                   data-page-list="[10, 25, 100, 150, 200, 500]"
+                   data-page-list="[20, 50, 100, 200, 500,2000]"
                    data-show-export="true"
                    data-export-dataType="all"
                    data-search="true"

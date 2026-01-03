@@ -105,7 +105,7 @@
 					   data-export-dataType="all"
 					   data-export-types='["excel", "csv", "txt"]'
                        data-show-columns="true"
-                       data-page-list="[10, 20, 50, 100, 200,1000]"
+                       data-page-list="[20, 50, 100, 200, 500,2000]"
                        data-search="true">
                     <thead>
                         <tr>
@@ -2587,6 +2587,7 @@ $("#formDocument").submit(function (e) {
             success: function (reponse) {
                 if ((reponse.result && reponse.status) == true) {
                     $tableAffectation.bootstrapTable('prepend', reponse.row);
+
                     $(".form-affectation").hide(500);
                 } else if (reponse.result == false) {
                     alert("Erreur survenue, r�essayer plus tard");
