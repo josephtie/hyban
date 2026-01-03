@@ -13,6 +13,9 @@ public class Erreur {
 		// TODO Auto-generated constructor stub
 	}
 
+	public Erreur(int i, String s, String lePersonnelEstObligatoire) {
+	}
+
 	public int getCode() {
 		return code;
 	}

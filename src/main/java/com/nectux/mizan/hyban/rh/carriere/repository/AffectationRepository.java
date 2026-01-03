@@ -37,15 +37,28 @@ public interface AffectationRepository extends CrudRepository<Affectation, Long>
 	List<SiteEffectifProjection> getEffectifParSite();
 
 
+//	@Query("""
+//    SELECT a FROM Affectation a
+//    WHERE a.personnel.id = :idPersonnel
+//      AND a.statut = true
+//      AND (:id IS NULL OR a.id <> :id)
+//""")
+//	Affectation findActiveAffectationByPersonnel(
+//			@Param("idPersonnel") Long idPersonnel,
+//			@Param("id") Long id
+//	);
+
+
+
 	@Query("""
     SELECT a FROM Affectation a
     WHERE a.personnel.id = :idPersonnel
       AND a.statut = true
-      AND (:id IS NULL OR a.id <> :id)
+    ORDER BY a.dateDebut DESC
 """)
-	Affectation findActiveAffectationByPersonnel(
-			@Param("idPersonnel") Long idPersonnel,
-			@Param("id") Long id
+	List<Affectation> findActiveAffectationsByPersonnel(
+			@Param("idPersonnel") Long idPersonnel
 	);
+
 
 }

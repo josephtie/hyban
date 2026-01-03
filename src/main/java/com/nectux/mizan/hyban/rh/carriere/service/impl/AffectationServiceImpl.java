@@ -173,6 +173,7 @@ public class AffectationServiceImpl implements AffectationService {
 
 
 
+
 	@Transactional
 	public AffectationDTO saveNew(
 			Long id,
@@ -188,96 +189,120 @@ public class AffectationServiceImpl implements AffectationService {
 		List<Erreur> erreurs = new ArrayList<>();
 
 		try {
-			// =========================
-			// 1. VALIDATIONS DE BASE
-			// =========================
-			if (idPersonnel == null)
-				erreurs.add(erreur("Le personnel est obligatoire"));
-
-			if (idPoste == null)
-				erreurs.add(erreur("Le poste est obligatoire"));
-
-			if (idSite == null)
-				erreurs.add(erreur("Le site est obligatoire"));
-
-			if (dateDebut == null || dateDebut.trim().isEmpty())
-				erreurs.add(erreur("La date de début est obligatoire"));
-
-			if (!erreurs.isEmpty())
-				return dtoErreur(dto, erreurs);
 
 			// =========================
-			// 2. RÉCUPÉRATION DES ENTITÉS
+			// 1. CONTRÔLES RH DE BASE
 			// =========================
-			Personnel personnel = personneRepository.findById(idPersonnel)
-					.orElseThrow(() -> new EntityNotFoundException("Personnel introuvable"));
+			if (idPersonnel == null) {
+				erreurs.add(new Erreur(10,
+						"contrainte d'integrite non respectee",
+						"le personnel est obligatoire"));
+			}
 
-			Fonction poste = posteRepository.findById(idPoste)
-					.orElseThrow(() -> new EntityNotFoundException("Poste introuvable"));
+			if (idPoste == null) {
+				erreurs.add(new Erreur(10,
+						"contrainte d'integrite non respectee",
+						"le poste est obligatoire"));
+			}
 
-			Site site = siteWorkRepository.findById(idSite)
-					.orElseThrow(() -> new EntityNotFoundException("Site introuvable"));
+			if (idSite == null) {
+				erreurs.add(new Erreur(10,
+						"contrainte d'integrite non respectee",
+						"le site est obligatoire"));
+			}
 
-			Date debut = Utils.stringToDate(dateDebut, "dd/MM/yyyy");
-			Date fin = (dateFin != null && !dateFin.isEmpty())
-					? Utils.stringToDate(dateFin, "dd/MM/yyyy")
-					: null;
+			if (dateDebut == null || dateDebut.isBlank()) {
+				erreurs.add(new Erreur(10,
+						"contrainte d'integrite non respectee",
+						"la date de debut est obligatoire"));
+			}
+
+			if (!erreurs.isEmpty()) {
+				dto.setResult(false);
+				dto.setStatus(false);
+				dto.setErrors(erreurs);
+				dto.setMessage("voir liste erreur");
+				return dto;
+			}
 
 			// =========================
-			// 3. CRÉATION / MODIFICATION
+			// 2. CHARGEMENT OU CRÉATION
 			// =========================
-			Affectation affectation = (id == null)
-					? new Affectation()
-					: affectationRepository.findById(id)
-					.orElseThrow(() -> new EntityNotFoundException("Affectation introuvable"));
+			Affectation affectation;
 
-			if (id == null)
+			if (id == null) {
+				affectation = new Affectation();
 				affectation.setDateCreation(new Date());
-			else
+			} else {
+				affectation = affectationRepository.findById(id)
+						.orElseThrow(() -> new EntityNotFoundException("Affectation introuvable"));
 				affectation.setDateModification(new Date());
+			}
 
-			affectation.setPersonnel(personnel);
-			affectation.setPoste(poste);
-			affectation.setSite(site);
 			affectation.setObservation(observation);
-			affectation.setDateDebut(debut);
-			affectation.setDateFin(fin);
 			affectation.setStatut(Boolean.TRUE.equals(present));
 
+			affectation.setPersonnel(
+					personneRepository.findById(idPersonnel)
+							.orElseThrow(() -> new EntityNotFoundException("Personnel introuvable"))
+			);
+
+			affectation.setPoste(
+					posteRepository.findById(idPoste)
+							.orElseThrow(() -> new EntityNotFoundException("Poste introuvable"))
+			);
+
+			affectation.setSite(
+					siteWorkRepository.findById(idSite)
+							.orElseThrow(() -> new EntityNotFoundException("Site introuvable"))
+			);
+
+			affectation.setDateDebut(Utils.stringToDate(dateDebut, "dd/MM/yyyy"));
+
+			if (dateFin != null && !dateFin.isBlank()) {
+				affectation.setDateFin(Utils.stringToDate(dateFin, "dd/MM/yyyy"));
+			}
+
 			// =========================
-			// 4. RÈGLE RH MAJEURE
+			// 3. RÈGLE RH MAJEURE
 			// =========================
+			// Si on crée une affectation ACTIVE
 			if (Boolean.TRUE.equals(present)) {
 
-				Affectation active =
-						affectationRepository.findActiveAffectationByPersonnel(idPersonnel, id);
+				List<Affectation> actives =
+						affectationRepository.findActiveAffectationsByPersonnel(idPersonnel);
 
-				if (active != null) {
-					// Clôture automatique (bonne pratique RH)
-					active.setStatut(false);
-					active.setDateFin(new Date());
-					affectationRepository.save(active);
+				if (!actives.isEmpty()) {
+
+					for (Affectation a : actives) {
+						a.setStatut(false);
+						a.setDateFin(new Date());
+						affectationRepository.save(a);
+					}
 				}
 			}
 
 			// =========================
-			// 5. SAUVEGARDE
+			// 4. SAUVEGARDE
 			// =========================
-			Affectation saved = affectationRepository.save(affectation);
+			affectation = affectationRepository.save(affectation);
 
 			dto.setResult(true);
 			dto.setStatus(true);
-			dto.setRow(saved);
+			dto.setRow(affectation);
 			dto.setMessage("Affectation enregistrée avec succès");
 			dto.setErrors(Collections.emptyList());
 
 		} catch (Exception ex) {
-			erreurs.add(erreur("Erreur technique : " + ex.getMessage()));
-			return dtoErreur(dto, erreurs);
+			ex.printStackTrace();
+			dto.setResult(false);
+			dto.setStatus(false);
+			dto.setMessage(ex.getMessage());
 		}
 
 		return dto;
 	}
+
 
 	private Erreur erreur(String message) {
 		Erreur e = new Erreur();
