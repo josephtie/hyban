@@ -630,6 +630,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 			     detailsbull.setRetenueSociiale(livrePaiecalR.getRetenueSociiale());
 			     detailsbull.setCalculer(true);
 			     detailsbull.setCloture(false);
+				 detailsbull.seti
 			     detailsbull.setPeriodePaie(livrePaiecalR.getPeriodePaie());
 			     detailsbull.setContratPersonnel(livrePaiecalR.getContratPersonnel());
 			     detailsbull.setJourTravail(livrePaiecalR.getJourTravail());

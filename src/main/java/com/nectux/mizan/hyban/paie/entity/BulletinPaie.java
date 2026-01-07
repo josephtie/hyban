@@ -138,7 +138,9 @@ public class BulletinPaie extends Auditable {
 	private Double cumulCnpsSal;
 	@Transient
 	private String montantcumulCnpsSal;
-	
+
+
+	private Double isPatronal;
 	@Transient
 	private String montantIts;
 	
@@ -336,7 +338,13 @@ private Double basecnps;
 		this.nombrePart = nombrePart;
 	}
 
-	
+	public Double getIsPatronal() {
+		return isPatronal;
+	}
+
+	public void setIsPatronal(Double isPatronal) {
+		this.isPatronal = isPatronal;
+	}
 
 	public String getNbrePart() {
 		return nbrePart;
