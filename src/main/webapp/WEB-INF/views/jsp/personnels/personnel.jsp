@@ -396,7 +396,7 @@
                                             </div>
                                              <div class="col-md-3">
                                                 <label for="numerocompte">Numero de compte</label> 
-                                                <input type="text" class="form-control input-default" id="numerocompte" name="numerocompte" placeholder="Numero de Compte" maxlength="12" ng-model="personnel.numeroCompte">
+                                                <input type="text" class="form-control input-default" id="numerocompte" name="numerocompte" placeholder="Numero de Compte" maxlength="28" ng-model="personnel.numeroCompte">
                                             </div>
                                             <div class="col-md-3">
                                                 <label for="rib">RIB</label> 
