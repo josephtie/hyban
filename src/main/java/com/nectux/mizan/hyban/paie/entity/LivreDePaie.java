@@ -282,8 +282,7 @@ public class LivreDePaie {
 		super();
 		this.matricule = mat;
 		this.nomPrenom = nomPre;
-		this.nombrePart = nbrePart;
-		this.anciennete = ancien;
+
 		this.listIndemniteBrut=listIndemnite;
 		//this.listRubrique=rubriqueRepository.findByActiveTrue();
 		this.listIndemniteNonImp=listIndemniteNonImp1;
@@ -293,6 +292,8 @@ public class LivreDePaie {
 		if(ctratperso.getPersonnel().getCarec()==true){
 
 						if(tempeffect==null){
+                            this.nombrePart = nbrePart;
+                            this.anciennete = ancien;
 						   this.salaireBase = Math.ceil(salBase);
 							if(sursal==null)
 							  this.sursalaire = Math.ceil(0d);
@@ -355,7 +356,7 @@ public class LivreDePaie {
 							this.temptravail=173.33d;
 						}
 					   else
-					   {
+					   {       this.anciennete = ancien;
 							   this.salaireBase = Math.ceil(salBase*tempeffect.getJourspresence()/30);
 								if(sursal==null)
 								  this.sursalaire = Math.ceil(0d);
@@ -512,7 +513,9 @@ public class LivreDePaie {
 	    else{
 
 			///// traitement consultant et stagiaire   //////////
-			    autreImposable=0d;
+                    nombrePart = 0F;
+                    anciennete = 0;
+			       autreImposable=0d;
 			    if(listIndemniteBrut.size()>0 || listIndemniteBrut!=null){
 				  for(PrimePersonnel primeImpos : listIndemniteBrut){
 					if(primeImpos.getPrime().getTaux()!=null && primeImpos.getValeur()>0)

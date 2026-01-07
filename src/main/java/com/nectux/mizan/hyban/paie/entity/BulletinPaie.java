@@ -141,6 +141,9 @@ public class BulletinPaie extends Auditable {
 
 
 	private Double isPatronal;
+    @Transient
+    private String montantisPatronal;
+
 	@Transient
 	private String montantIts;
 	
@@ -516,7 +519,16 @@ private Double basecnps;
 		this.impotSalaire = impotSalaire;
 	}
 
-	public String getMontantIs() {
+
+    public String getMontantisPatronal() {
+        return montantisPatronal=Utils.formattingAmount(isPatronal);
+    }
+
+    public void setMontantisPatronal(String montantisPatronal) {
+        this.montantisPatronal = montantisPatronal;
+    }
+
+    public String getMontantIs() {
 		montantIs = Utils.formattingAmount(impotSalaire);
 		return montantIs;
 	}
