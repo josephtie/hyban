@@ -65,6 +65,9 @@ public class Rubrique extends Auditable {
 
 	private Boolean permanent;
 
+
+    private Boolean speciale;
+
 	public Rubrique() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -174,21 +177,29 @@ public class Rubrique extends Auditable {
 		this.permanent = permanent;
 	}
 
+    public Boolean getSpeciale() {
+        return speciale;
+    }
 
-	@Override
-	public String toString() {
-		return "Rubrique{" +
-				"id=" + id +
-				", libelle='" + libelle + '\'' +
-				", taux=" + taux +
-				", mtExedent=" + mtExedent +
-				", strmtExedent='" + strmtExedent + '\'' +
-				", etatImposition=" + etatImposition +
-				", dateCreate=" + dateCreate +
-				", dCreate='" + dCreate + '\'' +
-				", stretatimposition='" + stretatimposition + '\'' +
-				", active=" + active +
-				", permanent=" + permanent +
-				'}';
-	}
+    public void setSpeciale(Boolean speciale) {
+        this.speciale = speciale;
+    }
+
+    @Override
+    public String toString() {
+        return "Rubrique{" +
+                "id=" + id +
+                ", libelle='" + libelle + '\'' +
+                ", taux=" + taux +
+                ", mtExedent=" + mtExedent +
+                ", strmtExedent='" + strmtExedent + '\'' +
+                ", etatImposition=" + etatImposition +
+                ", dateCreate=" + dateCreate +
+                ", dCreate='" + dCreate + '\'' +
+                ", stretatimposition='" + stretatimposition + '\'' +
+                ", active=" + active +
+                ", permanent=" + permanent +
+                ", speciale=" + speciale +
+                '}';
+    }
 }

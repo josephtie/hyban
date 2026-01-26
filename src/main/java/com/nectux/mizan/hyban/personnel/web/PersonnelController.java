@@ -129,6 +129,50 @@ public class PersonnelController {
   			modelMap.addAttribute("urllogo",mysociete.getUrlLogo());}
 		return "personnels";
 	}
+
+
+
+    @RequestMapping("/membre")
+    public String viewPersonnelNonStandart(ModelMap modelMap, Principal principal) throws IOException {
+        logger.info(">>>>> Utilisateurs");
+
+        modelMap.addAttribute("activeEmployers", "active");
+        modelMap.addAttribute("blockEmployer", "block");
+        modelMap.addAttribute("activeEmployer", "active");
+        modelMap.addAttribute("user", userService.findByUsername(principal.getName()));
+        Utilisateur utilisateur=userService.findByUsername(principal.getName());
+        System.out.println("utilisateur    " +utilisateur.toString());
+
+        modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+                .map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+                .findFirst().orElse(""));
+        modelMap.addAttribute("icon", "iconfa-group");
+        modelMap.addAttribute("littleTitle", "Personnel specifique");
+        modelMap.addAttribute("bigTitle", "Personnel Specifique");
+
+        //modelMap.addAttribute("listeSanctions", sanctionService.getSanctions());
+
+        modelMap.addAttribute("listePostes", fonctionService.findFonctions());
+        modelMap.addAttribute("listeSites", siteWorkRepository.findAll());
+        modelMap.addAttribute("listeSanctions", sanctionService.getSanctions());
+        modelMap.addAttribute("listePromotions", fonctionService.findFonctions());
+        modelMap.addAttribute("listeBanques", banqueService.getBanques());
+        modelMap.addAttribute("listeAbsences", absenceService.getAbsences());
+        modelMap.addAttribute("listeDocuments",documentTypeRepository.findAll());
+        modelMap.addAttribute("listeStockages",storageLocationRepository.findAll());
+        PeriodePaie periodePaie = periodePaieService.findPeriodeactive();
+        if(periodePaie != null){
+            modelMap.addAttribute("activeMois", periodePaie.getMois().getMois()+" "+ periodePaie.getAnnee().getAnnee());
+            modelMap.addAttribute("activeMoisId", periodePaie.getId());
+            modelMap.addAttribute("periode",  periodePaie.getMois().getMois()+" "+ periodePaie.getAnnee().getAnnee());
+        }
+        Societe mysociete=null;
+        List<Societe> malist=societeService.findtsmois();
+        if(malist.size()>0)
+        {	mysociete=malist.get(0);
+            modelMap.addAttribute("urllogo",mysociete.getUrlLogo());}
+        return "membres";
+    }
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/listpersonneljson", method = RequestMethod.GET)

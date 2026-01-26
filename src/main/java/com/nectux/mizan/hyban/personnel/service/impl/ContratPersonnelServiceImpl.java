@@ -385,27 +385,16 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 			contratPersonnel.setDepart(false);
 			contratPersonnel.setStatut(false);
 			contratPersonnel.setSoldeCalcule(false);
-			if(depart){
+			if(Boolean.TRUE.equals(depart)){
 				contratPersonnel.setDepart(true);
+                contratPersonnel.setStatut(true);
 				contratPersonnel.getPersonnel().setRetraitEffect(false);
 				contratPersonnel.getPersonnel().setStatut(true);
 				contratPersonnel.setSoldeCalcule(false);
 				personnelRepository.save(contratPersonnel.getPersonnel());
 			}
 			contratPersonnel = contratPersonnelRepository.save(contratPersonnel);
-//			PeriodePaie myperiodde=periodePaieRepository.recherchperiodeCloture();
-//		    BulletinPaie bull=	bulletinPaieRepository.findByBulletinAndPersonnel(contratPersonnel.getPersonnel().getId(), myperiodde.getId());
-//		     if(bull!=null)
-//		    	 bulletinPaieRepository.delete(bull);
-//
-//
-//            List<PrimePersonnel>  primePersonnelList=primePersonnelRepository.findByContratPersonnelIdAndPeriodePaieId(contratPersonnel.getId(),myperiodde.getId());
-//           if(primePersonnelList.size()>0) {
-//                 for(PrimePersonnel myprime: primePersonnelList){
-//					 primePersonnelRepository.delete(myprime);
-//				 }
-//
-//           }
+
 			contratPersonnelDTO.setRow(contratPersonnel);
 			contratPersonnelDTO.setResult("success");
 			logger.info(new StringBuilder().append(">>>>> ").append(contratPersonnel.toString()).append(" MAJ AVEC SUCCES").toString());

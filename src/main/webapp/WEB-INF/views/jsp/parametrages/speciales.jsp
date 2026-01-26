@@ -11,7 +11,7 @@
         <div class="panel panel-warning">
             <div class="panel-heading">
                 <div class="panel-title-box">
-                    <h3>Liste des Rubriques</h3>
+                    <h3>Liste des Rubriques du personnel specifique</h3>
                     <span>de paie</span>
                 </div>
                 <ul class="panel-controls" style="margin-top: 2px;">
@@ -53,12 +53,8 @@
                 <thead>
                     <tr>
                        <th data-field="libelle" data-align="left" data-sortable="true">Libell&eacute;</th>
-			        	<th data-field="stretatimposition" data-align="left"   data-sortable="true">Type</th>
-			        	<th data-field="taux" data-align="left" data-sortable="true">Taux</th>	
-			        	<th data-field="mtExedent" data-align="left" data-sortable="true">Montant exedent</th>			        	
+
 			        	<th data-field="active" data-align="left" data-formatter="statutFormatter" data-sortable="true">Active </th>
-			        	<th data-field="permanent" data-align="left" data-formatter="permanentFormatter" data-sortable="true">Permanent </th>
-			        	<th data-field="speciale" data-align="left" data-formatter="specialeFormatter" data-sortable="true">Standard</th>
 			        	<th data-field="id" data-formatter="optionFormatter" data-width="100px" data-align="center">Options</th>
                     </tr>
                 </thead>
@@ -69,58 +65,26 @@
             </div>
         </div>
 <div class="modal fade" id="rhpModal" tabindex="-1" role="dialog" aria-labelledby="rhpModalLabel" data-backdrop="static">
-    <div class="modal-dialog" role="document" >
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form id="formAjout" class="form-horizontal" role="form" novalidate="novalidate" ng-controller="formAjoutCtrl">
                 <div class="modal-header">
-                    <!--  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
-                    <h4 class="modal-title" id="myModalLabel">Rubriques de paie (Primes)</h4>
+                    <!--                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+                    <h4 class="modal-title" id="myModalLabel">Rubriques de paie (Personnel specifique)</h4>
                 </div>
                 <div class="modal-body">
-                      <div class="form-group">
-                                             <label for="faute" class="col-md-2 control-label">Standard</label>
-                                             <div class="col-md-8">
-
-                                                 <div>
-
-                                                     <label id="specialeNon" class="radio-inline">
-                                                         <input name="speciale" type="radio" value="false"> Non
-                                                     </label>
-                                                     <label id="specialeOui" class="radio-inline">
-                                                         <input name="speciale" type="radio" value="true"> Oui
-                                                     </label>
-                                                 </div>
-                                             </div>
-                                         </div>
-                                     </div>
           
                     <div class="form-group">
                         <label for="faute" class="col-md-2 control-label">Libelle</label>
-                        <div class="col-md-8">
+                        <div class="col-md-10">
                             <input type="text" id="libelle" name="libelle"  class="form-control" placeholder="Rubrique" ng-model="rubrique.libelle" />
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="commentaire" class="col-md-2 control-label">Taux</label>
-                        <div class="col-md-8">
-                            <input class="form-control" id="taux" name="taux" placeholder="Taux" ng-model="rubrique.taux"/>
-                                
-                           
-                        </div>
-                    </div>
-                       <div class="form-group">
-                        <label for="commentaire" class="col-md-2 control-label">Montant Excedent</label>
-                        <div class="col-md-8">
-                            <input class="form-control" id="mtExedent" name="mtExedent" placeholder="Montant Excedent" ng-model="rubrique.mtExedent"/>
-                                
-                           
-                        </div>
-                    </div>
-                    
+
                     
                      <div class="form-group">
                         <label for="faute" class="col-md-2 control-label">Type d'imposition</label>
-                        <div class="col-md-8">
+                        <div class="col-md-10">
                           <!--   <input type="text" id="etatImposition" name="etatImposition" class="form-control" placeholder="Etat imposition" /> -->
                             
                               <select id="etatImposition" name="etatImposition" class="form-control select2" ng-model="rubrique.etatImposition">
@@ -137,7 +101,7 @@
                     </div>
                       <div class="form-group">
                       <label for="faute" class="col-md-2 control-label">Active</label>
-                          <div class="col-md-8">
+                          <div class="col-md-10">
                                                
                                                 <div>
                                                    
@@ -319,25 +283,6 @@
 		
 		return optionActif;
 	}
-
-
-	function permanentFormatter(permanent){
-    		var optionActif = '<small class="label label-danger"><i class="fa fa-clock-o"></i> -- Non Permanent </small>';
-    		if(permanent == true)
-    			optionActif = '<small class="label label-success"><i class="fa fa-clock-o"></i> -- Permanent </small>';
-
-    		return optionActif;
-   }
-
-	function specialeFormatter(speciale){
-    		var optionActif = '<small class="label label-danger"><i class="fa fa-clock-o"></i> -- Standard </small>';
-    		if(speciale == true)
-    			optionActif = '<small class="label label-success"><i class="fa fa-clock-o"></i> -- Non Standard </small>';
-
-    		return optionActif;
-    }
-
-
     //Functions
     function typeSanctionFormatter(typeSanction){
         return typeSanction.libelle;

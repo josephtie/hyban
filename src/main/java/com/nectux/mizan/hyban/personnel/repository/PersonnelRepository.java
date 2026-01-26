@@ -22,6 +22,13 @@ public interface PersonnelRepository extends CrudRepository<Personnel, Long>, Jp
 	//public java.util.List<Personnel> findByStatutAndRetraitEffect(boolean stat,boolean retr);
 	public Personnel findByMatricule(String matricule);
 
+    @Query(
+            value = "SELECT * FROM public.cgeci_rhpaie_personnel WHERE matricule = :matricule",
+            nativeQuery = true
+    )
+    Personnel findByMatriculeNative(@Param("matricule") String matricule);
+
+
 	List<Personnel> findByDateArriveeBetween(Date dateDebut, Date  dateFin);
 	public Personnel findByBanquekId(Long id);
 

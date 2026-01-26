@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -110,12 +111,21 @@ public class CategorieServiceImpl implements CategorieService {
 	@Override
 	public CategorieDTO loadCategorie(Pageable pageable, String search) {
 		// TODO Auto-generated method stub
-		CategorieDTO utilisateurDTO = new CategorieDTO();
-		Page<Categorie> page = categorieRepository.findByLibelleLike(pageable, search);
-		utilisateurDTO.setRows(page.getContent());
-		utilisateurDTO.setTotal(page.getTotalElements());
-		logger.info(new StringBuilder().append(">>>>> CATEGORIES CHARGES AVEC SUCCES").toString());
-		return utilisateurDTO;
+        CategorieDTO categorieDTO = new CategorieDTO();
+
+        String pattern = "%" + search + "%";
+        int limit = pageable.getPageSize();
+        int offset = (int) pageable.getOffset();
+
+        List<Categorie> content = categorieRepository.searchNative(pattern, limit, offset);
+        long total = categorieRepository.countNative(pattern);
+
+        categorieDTO.setRows(content);
+        categorieDTO.setTotal(total);
+
+        logger.info(">>>>> CATEGORIES CHARGÉES AVEC SUCCÈS");
+
+        return categorieDTO;
 	}
 
 	@Override

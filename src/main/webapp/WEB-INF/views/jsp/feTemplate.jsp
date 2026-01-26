@@ -18,6 +18,7 @@
                    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/front-end/css/rhp-style.css" rel="stylesheet" type="text/css" media="screen" />
                    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/back-office/css/mcustomscrollbar/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css" media="screen" />
                    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/back-office/css/site.css" rel="stylesheet" type="text/css" media="screen" />
+
                    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/back-office/assets/select2/select2.css" rel="stylesheet" type="text/css" media="screen" />
                    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/back-office/css/bootstrap/bootstrap-glyphicons.css" rel="stylesheet" type="text/css" media="screen" />
                     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/back-office/assets/bootstrap-table/src/bootstrap-table.css" rel="stylesheet" type="text/css" media="screen" />
@@ -27,15 +28,17 @@
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/jquery/jquery.min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/jquery/jquery-ui.min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/bootstrap/bootstrap.min.js"></script>
+                      <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/bootstrap/bootstrap-file-input.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/scrolltotop/scrolltopcontrol.js"></script>
-                   <script src="${pageContext.request.contextPath}/static/back-office/assets/select2/select2.min.js"></script>
+                   <script src="${pageContext.request.contextPath}/static/back-office/assets/select2/select2.min.js"></script>o
 
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/bootstrap/bootstrap-select.js"></script>
                   <script src="${pageContext.request.contextPath}/static/back-office/assets/bootstrap-table/dist/bootstrap-table.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/bootstrap/bootstrap-datepicker.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/assets/bootstrap-table/tableExport.min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/assets/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js"></script>
+
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/morris/raphael-min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/morris/morris.min.js"></script>
                    <script src="${pageContext.request.contextPath}/static/back-office/js/plugins/icheck/icheck.min.js"></script>

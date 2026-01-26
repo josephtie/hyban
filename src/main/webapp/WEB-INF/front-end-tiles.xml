@@ -116,6 +116,12 @@
 		<put-attribute name="title" value=" HYBAN -Personnel" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/personnels/personnel.jsp" />
 	</definition>
+
+    <definition name="membres" extends="fetemplate">
+        <put-attribute name="title" value=" HYBAN -Personnel-Non Standart" />
+        <put-attribute name="content" value="/WEB-INF/views/jsp/personnels/membre.jsp" />
+    </definition>
+
 	
 	<definition name="enfants" extends="fetemplate">
 		<put-attribute name="title" value=" HYBAN -Enfants" />
@@ -150,6 +156,12 @@
 		<put-attribute name="title" value=" HYBAN -Rubrique" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/rubrique.jsp" />
 	</definition>
+    <definition name="speciales" extends="fetemplate">
+        <put-attribute name="title" value=" HYBAN -Rubrique Speciales" />
+        <put-attribute name="content" value="/WEB-INF/views/jsp/parametrages/speciales.jsp" />
+    </definition>
+
+
 	<definition name="livrepaie" extends="fetemplate">
 		<put-attribute name="title" value=" HYBAN -Livre de paie" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/livrepaie.jsp" />
@@ -169,6 +181,7 @@
 	<put-attribute name="title" value=" HYBAN -Pret" />
 	<put-attribute name="content" value="/WEB-INF/views/jsp/paies/pretpersonnel.jsp" />
     </definition>
+
 
 	<definition name="departpersonnel" extends="fetemplate">
 		<put-attribute name="title" value=" HYBAN -Depart CDD-CDI" />

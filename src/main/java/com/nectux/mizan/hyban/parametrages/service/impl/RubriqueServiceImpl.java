@@ -29,7 +29,7 @@ public class RubriqueServiceImpl implements RubriqueService {
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public RubriqueDTO save(Long id, String libelle,Integer etatImposition, Double taux, Double mtExedent,Boolean active,Boolean permanent) {
+	public RubriqueDTO save(Long id, String libelle, Integer etatImposition, Double taux, Double mtExedent,  Boolean active, Boolean permanent, Boolean speciale) {
 		// TODO Auto-generated method stub
 		RubriqueDTO rubriqueDTO = new RubriqueDTO();
 		Rubrique rubrique;
@@ -55,6 +55,12 @@ public class RubriqueServiceImpl implements RubriqueService {
 				rubrique.setPermanent(false);
 			else
 				rubrique.setPermanent(permanent);
+
+
+            if(speciale==null  )
+                rubrique.setSpeciale(false);
+            else
+                rubrique.setSpeciale(speciale);
 			
 			if(rubrique.getLibelle() == null || rubrique.getLibelle()==""){
 				sb = new StringBuilder();
@@ -142,7 +148,9 @@ public class RubriqueServiceImpl implements RubriqueService {
 		return rubriqueDTO;
 	}
 
-	@Override
+
+
+    @Override
 	@Transactional(rollbackFor = Exception.class)
 	public RubriqueDTO delete(Long id) {
 		// TODO Auto-generated method stub

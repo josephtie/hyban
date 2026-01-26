@@ -92,7 +92,7 @@ public class CategorieController {
 		if(search == null)
 			categorieDTO = categorieService.loadCategorie(pageRequest);
 		else
-			categorieDTO = categorieService.loadCategorie(pageRequest, search);
+			categorieDTO = categorieService.loadCategorie(pageRequest,search );
 
 		System.out.println("les categories " +categorieDTO.getRows());
 		return categorieDTO;

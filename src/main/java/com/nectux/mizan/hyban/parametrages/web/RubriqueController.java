@@ -66,9 +66,11 @@ public class RubriqueController {
 														@RequestParam(value="etatImposition", required=false) Integer etatImposition, 
 														@RequestParam(value="taux", required=false) Double taux, 
 														@RequestParam(value="mtExedent", required=false) Double mtExedent, 
-														@RequestParam(value="active", required=false) Boolean active, @RequestParam(value="permanent", required=false) Boolean permanent) {
+														@RequestParam(value="active", required=false) Boolean active,
+                                                      @RequestParam(value="permanent", required=false) Boolean permanent,
+                                                      @RequestParam(value="speciale", required=false) Boolean speciale) {
 		logger.info(">>> ENREGISTRER TYPE DOCUMENT");
-		return rubriqueService.save(id,libelle,etatImposition, taux, mtExedent,active,permanent);
+		return rubriqueService.save(id,libelle,etatImposition, taux, mtExedent,active,permanent,speciale);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)

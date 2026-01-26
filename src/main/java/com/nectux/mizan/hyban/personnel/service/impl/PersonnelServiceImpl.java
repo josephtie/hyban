@@ -89,7 +89,8 @@ public class PersonnelServiceImpl implements PersonnelService {
 			if(personnelmat==null ){
 
 			if(id != null){
-				personnel = personnelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + id));;}
+				personnel = personnelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + id));;
+            }
 				
 			
 			System.out.println("############################################################################# 1 :" + personnel.toString());			
@@ -716,7 +717,7 @@ public class PersonnelServiceImpl implements PersonnelService {
 		PersonnelDTO personnelDTO = new PersonnelDTO();
 	try {
 	
-		Personnel personnel = personnelRepository.findByMatricule(matricule);
+		Personnel personnel = personnelRepository.findByMatriculeNative(matricule);
 	    personnelDTO.setRow(personnel);
 	    personnelDTO.setResult("succes");
 	} catch (Exception ex){

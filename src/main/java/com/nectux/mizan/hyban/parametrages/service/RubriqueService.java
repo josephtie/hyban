@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface RubriqueService {
 	
-	public RubriqueDTO save(Long id, String libelle, Integer etatImposition, Double taux, Double mtexedent, Boolean active,Boolean permanent);
+	public RubriqueDTO save(Long id, String libelle, Integer etatImposition, Double taux, Double mtexedent,  Boolean active, Boolean permanent, Boolean speciale);
 	
 	public RubriqueDTO delete(Long id);
 	
