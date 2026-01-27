@@ -71,8 +71,8 @@
 							<th data-field="personnel" data-formatter="nomFormatter" data-align="left" data-sortable="true">Nom</th>
 							<th data-field="personnel" data-formatter="nomfstatutFormatterL" data-align="left" data-sortable="true">Statut</th>
 							<th data-field="personnel" data-formatter="sexeFormatter" data-align="left">Sexe</th>
-							<th data-field="personnel" data-formatter="datnaisFormatter" data-align="center">N&eacute;(e) le</th>
-							<th data-field="personnel"  data-formatter="lieunaisFormatter" data-align="left">A</th>
+							<th data-field="personnel" data-formatter="compteFormatter" data-align="center">Numero Compte/tel</th>
+							<th data-field="fonction"  data-formatter="fonctionFormatter" data-align="left">Fonction/EMPLOI</th>
 							<!-- <th data-field="personnel" data-formatter="telephoneFormatter" data-align="center">T&eacute;l&eacute;phone</th> -->
 							<th data-field="personnel" data-formatter="situaFormatter" data-align="center">Sit. Matri</th>
 							<th data-field="personnel" data-formatter="nbreenftFormatter" data-align="right">Nbre d'enfants</th>							
@@ -1791,6 +1791,20 @@ function telephoneFormatter(personnel, row, index) {
 		return "";
 	}
 	return row.personnel.telephone;
+}
+
+function fonctionFormatter(fonction, row, index) {
+	if(row.fonction.libelle == ''){
+		return "";
+	}
+	return row.fonction.libelle;
+}
+
+function compteFormatter(personnel, row, index) {
+	if(row.personnel.numeroCompte == ''){
+		return row.personnel.telephone;
+	}
+	return row.personnel.numeroCompte;
 }
 
 function situaFormatter(personnel, row, index) {

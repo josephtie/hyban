@@ -33,7 +33,7 @@ public class PeriodePaieServiceImpl implements PeriodePaieService {
 	
 	
 	@Autowired private PeriodePaieRepository periodePaieRepository;
-   
+
 	@Autowired private MoisRepository moisRepository;
 	@Autowired private MoisService moisService;
 	@Autowired private ExerciceRepository exerciceRepository;
