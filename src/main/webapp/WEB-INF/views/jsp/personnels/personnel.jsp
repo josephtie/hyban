@@ -113,11 +113,12 @@
                             <th data-field="nomComplet" data-align="left">Nom</th>
                             <th data-field="sexe" data-align="left">Sexe</th>
                             <th data-field="dNaissance" data-align="center">N&eacute;(e) le</th>
-                            <th data-field="netapayer" data-align="left">Net A payer</th>
+
                             <th data-field="numeroCnps" data-align="center">Num CNPS</th>
 
                             <th data-field="situationMatri" data-align="center">Sit. Matri</th>
-
+                            <th data-field="numeroCompte" data-align="center">Compte bancaire</th>
+                            <th data-field="telephone" data-align="left">Telephone</th>
                               <th data-field="fonction" data-align="center">Emploi/fonction</th>
                             <th data-field="netapayer" data-align="left">Net A payer</th>
                             <th data-field="carec"  data-formatter="carecFormatter"data-align="center">Statut</th>
