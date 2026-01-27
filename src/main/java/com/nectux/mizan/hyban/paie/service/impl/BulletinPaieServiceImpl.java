@@ -829,6 +829,8 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 				System.out.println("########################################### Anciennete ###########################"+op1);
                 System.out.println("########################################### Personnel ###########################"+person.toString());
 				Float nbpart1=calculNbrepart(person.getNombrEnfant(),person);
+                System.out.println("########################################### Personnel nbre de part  ########################### "+nbpart1);
+
 				List<BulletinPaie> monbull=bulletinPaieRepository.findTop1ByContratPersonnelOrderByIdDesc(contrat);
 				if(monbull.size()==0){} else{
 					if ( tpeff==null){

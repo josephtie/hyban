@@ -292,7 +292,8 @@ public class LivreDePaie {
 		if(ctratperso.getPersonnel().getCarec()==true){
 
 						if(tempeffect==null){
-                            this.nombrePart = nbrePart;
+
+                            this.nombrePart = nbrePart != null ? nbrePart : 0F;
                             this.anciennete = ancien;
 						   this.salaireBase = Math.ceil(salBase);
 							if(sursal==null)
@@ -357,6 +358,8 @@ public class LivreDePaie {
 						}
 					   else
 					   {       this.anciennete = ancien;
+
+                                this.nombrePart = nbrePart != null ? nbrePart : 0F;
 							   this.salaireBase = Math.ceil(salBase*tempeffect.getJourspresence()/30);
 								if(sursal==null)
 								  this.sursalaire = Math.ceil(0d);

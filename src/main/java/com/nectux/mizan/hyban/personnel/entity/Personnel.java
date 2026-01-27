@@ -108,6 +108,7 @@ public class Personnel   extends Auditable {
 	private int nombrEnfant;
 	
 	@Transient
+
 	private Float nombrePart;
 	
 	@JsonSerialize(using = CustomDateDeserializer.class)
