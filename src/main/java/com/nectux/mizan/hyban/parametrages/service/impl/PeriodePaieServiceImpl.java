@@ -33,7 +33,7 @@ public class PeriodePaieServiceImpl implements PeriodePaieService {
 	
 	
 	@Autowired private PeriodePaieRepository periodePaieRepository;
-    @Autowired private PeriodePaieService periodePaieService;
+   
 	@Autowired private MoisRepository moisRepository;
 	@Autowired private MoisService moisService;
 	@Autowired private ExerciceRepository exerciceRepository;
@@ -486,7 +486,7 @@ public class PeriodePaieServiceImpl implements PeriodePaieService {
 	public List<PeriodePaie> listperiodesupAuPret() {
 		// TODO Auto-generated method stub
 		PeriodePaie periodeactif=new PeriodePaie();
-		periodeactif=periodePaieService.findPeriodeactive();
+		periodeactif=periodePaieRepository.recherchperiodeCloture();
 		List<PeriodePaie> malist=new ArrayList<PeriodePaie>(); 
 		List<PeriodePaie> malistretour=new ArrayList<PeriodePaie>();
 		  malist=periodePaieRepository.findAll();
