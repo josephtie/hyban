@@ -1047,7 +1047,84 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		 return livrePaiecalpm;
 	}
 
-public Float calculNbrepart( Integer nbEnfant, Personnel pers){
+    public Float calculNbrepart(Integer nbEnfant, Personnel pers) {
+
+        // Sécurité absolue
+        if (pers == null) {
+            return 0F;
+        }
+
+        Integer situation = pers.getSituationMatrimoniale();
+        if (situation == null) {
+            return 0F;
+        }
+
+        int enfants = (nbEnfant != null) ? nbEnfant : 0;
+
+        float nbPart = 0F;
+
+        // Célibataire (2), Divorcé (3), Veuf (4) sans enfant
+        if ((situation == 2 || situation == 3 || situation == 4) && enfants == 0) {
+            nbPart = 1F;
+        }
+
+        // Célibataire (2), Divorcé (3) avec enfants
+        else if ((situation == 2 || situation == 3) && enfants > 0) {
+            nbPart = 1.5F + (enfants * 0.5F);
+        }
+
+        // Marié (1) sans enfant
+        else if (situation == 1 && enfants == 0) {
+            nbPart = 2F;
+        }
+
+        // Marié (1) ou Veuf (4) avec enfants
+        else if ((situation == 1 || situation == 4) && enfants > 0) {
+            nbPart = 2F + (enfants * 0.5F);
+        }
+
+        // Plafond fiscal
+        return Math.min(nbPart, 5F);
+    }
+
+//    public Float calculNbrepart44(Integer nbEnfant, Personnel pers) {
+//
+//        if (pers == null || pers.getSituationMatrimoniale()== null) {
+//            return 0F;
+//        }
+//
+//        if (nbEnfant == null) {
+//            nbEnfant = 0;
+//        }
+//
+//        Float nbPart = 0F;
+//
+//        Integer situation = pers.getSituationMatrimoniale();
+//
+//        if ((situation == 2 || situation == 3 || situation == 4) && nbEnfant == 0) {
+//            nbPart = 1F;
+//        }
+//
+//        else if ((situation == 2 || situation == 3) && nbEnfant > 0) {
+//            nbPart = 1.5F + (nbEnfant * 0.5F);
+//        }
+//
+//        else if (situation == 1 && nbEnfant == 0) {
+//            nbPart = 2F;
+//        }
+//
+//        else if ((situation == 1 || situation == 4) && nbEnfant > 0) {
+//            nbPart = 2F + (nbEnfant * 0.5F);
+//        }
+//
+//        if (nbPart > 5F) {
+//            nbPart = 5F;
+//        }
+//
+//        return nbPart;
+//    }
+
+    public Float calculNbrepartOld( Integer nbEnfant, Personnel pers){
 
 		Float nbPart = 0F;
 			

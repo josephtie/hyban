@@ -498,7 +498,7 @@ public class Personnel   extends Auditable {
 			enSommeil = "";
 		if(statut)
 			enSommeil = "NON";
-		else 
+		else
 			enSommeil = "OUI";
 		return enSommeil;
 	}
@@ -548,7 +548,6 @@ public class Personnel   extends Auditable {
 			
 		return nombrePart;
 	}
-
 
 	
 	public void setNombrePart(Float nombrePart) {
