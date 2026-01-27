@@ -89,6 +89,8 @@ public interface ContratPersonnelRepository extends CrudRepository<ContratPerson
 
 	Page<ContratPersonnel> findByStatutTrueAndDepartTrueAndSoldeCalculeFalseAndPersonnelNomIgnoreCaseContainingOrderByPersonnelNomAscPersonnelPrenomAsc(Pageable pageable,String search);
 
-	//  List<ContratPersonnel> findByTypeContratIdAndStatutTrue(Long id);
+    ContratPersonnel findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(Long id);
+
+    //  List<ContratPersonnel> findByTypeContratIdAndStatutTrue(Long id);
 }
 

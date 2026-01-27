@@ -55,7 +55,7 @@ public interface PersonnelService {
 //public int EmploySave();
 	public PersonnelDTO loadPersonnel(Pageable pageable);
 	PersonnelDTO  findAllfilter(Map<String,String> filters, Pageable pageable);
-	public PersonnelDTO loadPersonnel(Pageable pageable, String search, String search1, String search2);
+	//public PersonnelDTO loadPersonnel(Pageable pageable, String search, String search1, String search2);
 
 	public List<Personnel> RechercherListPersonnelParAnnee( String sexe);
     PrintLsDTO RechercherListPersonnelParAnnee(Long id);
@@ -63,4 +63,9 @@ public interface PersonnelService {
 
 
 	List<Personnel> RechercherListPersonnelParDirection(Service direction);
+
+
+    public PersonnelDTO loadPersonnelop(Pageable pageable);
+
+    public PersonnelDTO loadPersonnelop(Pageable pageable, String search,  String search1, String search2);
 }

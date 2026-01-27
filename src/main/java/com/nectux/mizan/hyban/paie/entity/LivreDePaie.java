@@ -30,27 +30,27 @@ public class LivreDePaie {
 	@Autowired
 	private	PrimePersonnelRepository primePersonnelRepository;
 
-	
+
 	private String matricule;
-	
+
 	private String nomPrenom;
-	
+
 	private Float nombrePart;
-	
+
 	private int anciennete;
-	
+
 	private Double salaireBase;
-	
+
 	@Transient
 	private String mtsalaireBase;
-	
+
 	private Double autreImposable;
-	
+
 	@Transient
 	private String mtautreImposable;
-	
+
 	private Double autreIndemImposable;
-	
+
 	@Transient
 	private String mtautreIndemImposable;
 
@@ -59,28 +59,28 @@ public class LivreDePaie {
 	@Transient
 	private String mtplafondFamiliale;
 	private Double autreNonImposable;
-	
+
 	@Transient
 	private String mtautreNonImposable;
-	
+
 	private Double sursalaire;
-	
+
 	@Transient
 	private String mtsursalaire;
-	
+
 	private Double primeAnciennete;
-	
+
 	private Integer moisdepresence;
-	
+
 	private Integer tempspresence;
-	
+
 	@Transient
 	private String mtprimeAnciennete;
-	
+
 	private Double indemniteLogement;
 	@Transient
 	private String mtindemniteLogement;
-	
+
 	private Double brutImposable;
 	@Transient
 	private String mtbrutImposable;
@@ -1771,8 +1771,6 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 		
 		return tab;
 	}
-	
-
 
 
 }

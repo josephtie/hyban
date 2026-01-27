@@ -93,6 +93,15 @@ public class Personnel   extends Auditable {
 	
 	@Transient
 	private String situationMatri;
+
+    @Transient
+    private String netapayer;
+
+    @Transient
+    private String fonction;
+
+
+
 	
 	private int situationMatrimoniale; // 1 pour MARIE, 2 pour CELIBATAIRE,3 DIVORCE, 4 VEUF
 	
@@ -665,7 +674,23 @@ public class Personnel   extends Auditable {
 		return statfonct;
 	}
 
-	public void setStatfonct(String statfonct) {
+    public String getNetapayer() {
+        return netapayer;
+    }
+
+    public void setNetapayer(String netapayer) {
+        this.netapayer = netapayer;
+    }
+
+    public String getFonction() {
+        return fonction;
+    }
+
+    public void setFonction(String fonction) {
+        this.fonction = fonction;
+    }
+
+    public void setStatfonct(String statfonct) {
 		this.statfonct = statfonct;
 	}
 

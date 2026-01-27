@@ -3,6 +3,7 @@ package com.nectux.mizan.hyban.paie.service;
 import java.util.List;
 import java.util.Map;
 
+import com.nectux.mizan.hyban.paie.dto.LivreDePaieDTOV2;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.paie.dto.BulletinPaieDTO;
 import com.nectux.mizan.hyban.paie.dto.LivreDePaieDTO;
@@ -25,7 +26,7 @@ public interface BulletinPaieService {
 //	public List<BulletinPaie>   genererMois1Personnel(Long idPeriode,Long idPersonnel);
 	public List<BulletinPaie>   rechercherBulletinMois(PeriodePaie periodePaie);
 	public List<BulletinPaie>   rechercherBulletinMoisCalculer(PeriodePaie periodePaie,boolean etat);
-	
+    public LivreDePaieDTOV2 genererOptimiseMoisVersion2(Pageable pageable, Long idPeriode);
 	public List<BulletinPaie>   rechercherBulletinAnneeCalculer(Long idanne,boolean etat);
 	public List<BulletinPaie>   rechercherBulletinAnnuel(Long anneeId,Long Idpers);
 	public List<BulletinPaie>   rechercherBulletinAnnuelglobal(Long anneeId);

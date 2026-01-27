@@ -5,6 +5,7 @@ import com.nectux.mizan.hyban.parametrages.entity.Mois;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.nectux.mizan.hyban.rh.absences.entity.Absences;
@@ -195,4 +196,6 @@ public interface BulletinPaieRepository extends JpaRepository<BulletinPaie, Long
 	List<BulletinPaie> findByContratPersonnelPersonnelIdAndPeriodePaieAnneeId(Long id, Long id1);
 
     List<BulletinPaie> findByPeriodePaieAnneeIdAndClotureTrue(Long id);
+
+    List<BulletinPaie> findByPeriodePaieBefore(PeriodePaie periode);
 }

@@ -187,9 +187,9 @@ public class PersonnelController {
 		PageRequest pageRequest = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
 		PersonnelDTO personnelDTO = new PersonnelDTO();
 		if(search == null )
-			personnelDTO = personnelService.loadPersonnel(pageRequest);
+			personnelDTO = personnelService.loadPersonnelop(pageRequest);
 		else
-			personnelDTO = personnelService.loadPersonnel(pageRequest,search,search,search);
+			personnelDTO = personnelService.loadPersonnelop(pageRequest,search,search,search);
 		
 		return personnelDTO;
 		//System.out.println(" hello "+hfhfh);

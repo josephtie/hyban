@@ -46,7 +46,8 @@ public interface PersonnelRepository extends CrudRepository<Personnel, Long>, Jp
 	public Page<Personnel> findByNomIgnoreCaseContainingOrPrenomIgnoreCaseContainingOrMatriculeIgnoreCaseContaining(Pageable pageable, String matricule, String matricule1, String matricule2);
 
 	public Page<Personnel> findByRetraitEffectFalseAndNomIgnoreCaseContainingOrPrenomIgnoreCaseContainingOrMatriculeIgnoreCaseContaining(Pageable pageable, String matricule, String matricule1, String matricule2);
-	
+	//public Page<Personnel> findByRetraitEffectFalseAndNomIgnoreCaseContainingOrPrenomIgnoreCaseContainingOrMatriculeIgnoreCaseContaining(Pageable pageable);
+
 	@Query("SELECT c FROM Personnel c where c.retraitEffect=false GROUP BY c ORDER BY  c.nom ASC,c.prenom ASC ")
 	Page<Personnel> chearchOrdreAsc(Pageable pageable);
 
@@ -74,4 +75,13 @@ public interface PersonnelRepository extends CrudRepository<Personnel, Long>, Jp
     List<Personnel> findByRetraitEffectFalseAndCarecTrue();
 
 	int countByRetraitEffectFalse();
+
+    @Query("SELECT p FROM Personnel p " +
+            "WHERE p.retraitEffect = false " +
+            "AND (LOWER(p.nom) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "     OR LOWER(p.prenom) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "     OR LOWER(p.matricule) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<Personnel> searchPersonnel(@Param("search") String search, Pageable pageable);
+
+
 }

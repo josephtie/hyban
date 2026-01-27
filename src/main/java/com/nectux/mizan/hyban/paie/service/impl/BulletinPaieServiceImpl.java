@@ -9,6 +9,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.nectux.mizan.hyban.paie.dto.LivreDePaieDTOV2;
+import com.nectux.mizan.hyban.paie.dto.LivreDePaieV2;
 import com.nectux.mizan.hyban.paie.entity.*;
 import com.nectux.mizan.hyban.paie.service.BulletinPaieService;
 import com.nectux.mizan.hyban.parametrages.entity.Rubrique;
@@ -46,6 +48,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+
+import static com.nectux.mizan.hyban.utils.CalculRICF.getRICF;
+import static com.nectux.mizan.hyban.utils.ITSCalculator.calculerITS;
 
 @Transactional
 @Service("bulletinPaieService")
@@ -986,7 +991,406 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		return livreDEPaieList;
 	}
 
-	// 🔹 Méthode utilitaire pour éviter les nulls
+    @Transactional
+    public LivreDePaieDTOV2 genererOptimiseMoisVersion2(Pageable pageable, Long idPeriode) {
+
+        long start = System.currentTimeMillis();
+
+        LivreDePaieDTOV2 dto = new LivreDePaieDTOV2();
+        List<LivreDePaieV2> livres = new ArrayList<>();
+
+        PeriodePaie periode = periodePaieRepository.findById(idPeriode)
+                .orElseThrow(() -> new EntityNotFoundException("Période introuvable"));
+
+        // 🔹 Personnel actif
+        List<Personnel> personnelList =
+                personnelRepository.findByStatutAndRetraitEffectOrderByNomAsc(true, false);
+
+        // 🔹 Contrats
+        Map<Long, ContratPersonnel> contratParPersonnel =
+                contratPersonnelRepository.findByStatutTrue()
+                        .stream()
+                        .collect(Collectors.toMap(
+                                c -> c.getPersonnel().getId(),
+                                c -> c
+                        ));
+
+        // 🔹 Primes
+        Map<Long, List<PrimePersonnel>> primesParPersonnel =
+                primePersonnelRepository.findByPeriodePaieId(idPeriode)
+                        .stream()
+                        .collect(Collectors.groupingBy(
+                                p -> p.getContratPersonnel().getPersonnel().getId()
+                        ));
+
+        // 🔹 Échelonnements (prêts / avances)
+        Map<Long, List<Echelonnement>> echelsParPersonnel =
+                echelonnementRepository.findByPeriodePaieId(idPeriode)
+                        .stream()
+                        .collect(Collectors.groupingBy(
+                                e -> e.getPretPersonnel().getPersonnel().getId()
+                        ));
+
+        // 🔹 Temps effectif
+        Map<Long, TempEffectif> tempEffectifParPersonnel =
+                tempeffectifRepository.findByPeriodePaieId(idPeriode)
+                        .stream()
+                        .collect(Collectors.toMap(
+                                t -> t.getPersonnel().getId(),
+                                t -> t
+                        ));
+
+        // 🔹 Congés
+        Map<Long, PlanningConge> planningParContrat =
+                planningCongeRepository.findByStatutTrue()
+                        .stream()
+                        .collect(Collectors.toMap(
+                                p -> p.getContratPersonnel().getId(),
+                                p -> p
+                        ));
+
+        // 🔹 Bulletins précédents (CUMUL)
+        Map<Long, List<BulletinPaie>> bulletinsParPersonnel =
+                bulletinPaieRepository.findByPeriodePaieBefore(periode)
+                        .stream()
+                        .collect(Collectors.groupingBy(
+                                b -> b.getContratPersonnel().getId()
+                        ));
+
+        // ================== BOUCLE PAIE ==================
+        for (Personnel person : personnelList) {
+
+            ContratPersonnel contrat = contratParPersonnel.get(person.getId());
+            if (contrat == null) continue;
+
+            LivreDePaieV2 livre = construireLivreDePaie(
+                    person,
+                    contrat,
+                    periode,
+                    primesParPersonnel.getOrDefault(person.getId(), Collections.emptyList()),
+                    echelsParPersonnel.getOrDefault(person.getId(), Collections.emptyList()),
+                    tempEffectifParPersonnel.get(person.getId()),
+                    planningParContrat.get(contrat.getId()),
+                    bulletinsParPersonnel.getOrDefault(person.getId(), Collections.emptyList())
+            );
+
+            livres.add(livre);
+        }
+
+        // 🔹 Pagination
+        int startRow = (int) pageable.getOffset();
+        int endRow = Math.min(startRow + pageable.getPageSize(), livres.size());
+        Page<LivreDePaieV2> page =
+                new PageImpl<>(livres.subList(startRow, endRow), pageable, livres.size());
+
+        dto.setRows(page.getContent());
+        dto.setTotal(page.getTotalElements());
+
+        logger.info("Paie générée en {} ms", System.currentTimeMillis() - start);
+        return dto;
+    }
+
+
+
+    private LivreDePaieV2 construireLivreDePaie(
+            Personnel person,
+            ContratPersonnel contrat,
+            PeriodePaie periode,
+            List<PrimePersonnel> primesPers,
+            List<Echelonnement> echelsPers,
+            TempEffectif tpeff,
+            PlanningConge plconge,
+            List<BulletinPaie> bulletinsPrec) {
+
+        LivreDePaieV2 livre = new LivreDePaieV2();
+        final int JOURS_OUVRABLES_MOIS = 26;
+        livre.setMatricule(person.getMatricule());
+        livre.setNomPrenom(person.getNom() + " " + person.getPrenom());
+        livre.setPeriodePaie(periode);
+        livre.setContratPersonnel(contrat);
+
+        // ================== ANCIENNETÉ ==================
+        int anciennete = (int) ChronoUnit.YEARS.between(
+                person.getDateArrivee().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                LocalDate.now()
+        ) + contrat.getAncienneteInitial();
+        livre.setAnciennete(Math.max(0, anciennete));
+
+        // ================== NOMBRE DE PARTS ==================
+        livre.setNombrePart(calculNbrepart(person.getNombrEnfant(), person));
+
+        // ================== TEMPS EFFECTIF ==================
+        //int joursPresence = tpeff != null ?  tpeff.getJourspresence() : JOURS_OUVRABLES_MOIS;
+        int joursPresence = tpeff != null ? (int) Math.ceil(tpeff.getJourspresence()) : JOURS_OUVRABLES_MOIS;
+        livre.setJourTravail(joursPresence);
+        livre.setTemptravail(joursPresence);
+
+        livre.setMoisdepresence(
+                ProvisionConge.calculerTempsPresence(
+                        person.getDateRetourcge(),
+                        periode.getDatefin()
+                )
+        );
+
+        // ================== SALAIRE DE BASE PRORATISÉ ==================
+        double salaireBase = Math.ceil(
+                contrat.getCategorie().getSalaireDeBase() * joursPresence / JOURS_OUVRABLES_MOIS
+        );
+        livre.setSalaireBase(salaireBase);
+
+        // ================== PRIMES ==================
+        classerPrimes(primesPers, livre);
+
+        // ================== PRÊTS / AVANCES ==================
+        double somAvance = 0D;
+        double somPretAlios = 0D;
+        for (Echelonnement e : echelsPers) {
+            long pretId = e.getPretPersonnel().getPret().getId();
+            if (pretId == 2L) { // AVANCE
+                somAvance += e.getMontant();
+                e.setPaye(true);
+            } else if (pretId == 1L || pretId == 3L) { // PRET ALOES
+                somPretAlios += e.getMontant();
+                e.setPaye(true);
+            }
+        }
+        livre.setAvance(somAvance);
+        livre.setPretAlios(somPretAlios);
+       // calculerEchelonnements(echelsPers, livre);
+
+        // ================== BRUT & RETENUES ==================
+        double brutImposable = calculerBrutImposable(livre);
+        double totalRetenue = calculerTotalRetenue(livre);
+
+        livre.setBrutImposable(brutImposable);
+        livre.setBrutNonImposable(calculerBrutNonImposable(livre) );
+
+        livre.setTotalRetenue(totalRetenue);
+
+        // ================== TYPE EMPLOYÉ ==================
+        boolean estSalarie = Boolean.TRUE.equals(contrat.getPersonnel().getCarec());
+
+        if (estSalarie) {
+            calculerChargesSalariales(livre);
+            calculerChargesPatronales(livre);
+        } else {
+            annulerCharges(livre);
+        }
+
+        // ================== NET À PAYER ==================
+        double regularisation = 0D;
+        livre.setNetPayer(Math.ceil(
+                brutImposable
+                        + sommeIndemnites(livre)
+                        + regularisation
+                        - totalRetenue
+        ));
+
+        // ================== CUMUL ==================
+        calculerCumuls(bulletinsPrec, livre);
+
+        // ================== MASSE SALARIALE ==================
+        livre.setTotalMasseSalariale(Math.ceil(
+                brutImposable + sommeIndemnites(livre) + livre.getTotalPatronal()
+        ));
+
+        return livre;
+    }
+
+    private void annulerCharges(LivreDePaieV2 livre) {
+
+        livre.setTotalRetenue(0D);
+        //livre.setTotalEchelonnement(0D);
+        livre.setTotalPatronal(0D);
+        livre.setNetPayer(0);
+    }
+    private void calculerChargesPatronales(LivreDePaieV2 livre) {
+
+        double base = livre.getBrutImposable();
+
+        livre.setTa(Math.ceil(base * 0.4 / 100));
+        livre.setFpc(Math.ceil(base * 0.6 / 100));
+        livre.setRetraite(Math.ceil(base * 7.7 / 100));
+
+        livre.setTotalPatronal(
+                livre.getTa()
+                        + livre.getFpc()
+                        + livre.getRetraite()
+                        + livre.getPrestationFamiliale()
+                        + livre.getAccidentTravail()
+        );
+    }
+    private void calculerChargesSalariales(LivreDePaieV2 livre) {
+
+        double base = livre.getBrutImposable(); // ⚠️ UNIQUEMENT imposable
+
+        livre.setCnpsSalariale(Math.ceil(calculCNPS(base)));
+        Double ricf = getRICF(livre.getNombrePart());
+        double itsbrut =Math.ceil(calculerITS(base,true));
+        livre.setIts(Math.max(0, itsbrut - ricf / 12));
+
+    }
+    private double calculerBrutNonImposable(LivreDePaieV2 livre) {
+
+        double total = 0;
+
+        for (PrimePersonnel p : livre.getIndemniteNonBrut()) {
+            total += safeDouble(p.getMontant());
+        }
+        return Math.ceil(total);
+
+    }
+    private void classerPrimes(List<PrimePersonnel> primes, LivreDePaieV2 livre) {
+
+        List<PrimePersonnel> brut = new ArrayList<>();
+        List<PrimePersonnel> nonBrut = new ArrayList<>();
+        List<PrimePersonnel> retenue = new ArrayList<>();
+        List<PrimePersonnel> gainsNet = new ArrayList<>();
+
+        for (PrimePersonnel p : primes) {
+            switch (p.getPrime().getEtatImposition()) {
+                case 1 -> brut.add(p);
+                case 2 -> nonBrut.add(p);
+                case 3 -> { brut.add(p); nonBrut.add(p); }
+                case 4 -> retenue.add(p);
+                case 5 -> gainsNet.add(p);
+            }
+        }
+
+        livre.setIndemniteBrut(brut);
+        livre.setIndemniteNonBrut(nonBrut);
+        livre.setRetenueMutuelle(retenue);
+        livre.setGainsNet(gainsNet);
+    }
+//    private double calculerBrutImposable(LivreDePaieV2 livre) {
+//        return livre.getSalaireBase()
+//                + sommePrimes(livre.getIndemniteBrut());
+//    }
+    private double calculerBrutImposable(LivreDePaieV2 livre) {
+
+        double brut = 0D;
+
+        // Salaire de base
+        brut += livre.getSalaireBase();
+
+        // Sur-salaire
+        brut += livre.getSurSalaire();
+
+        // Indemnité logement
+        brut += livre.getIndemniteLogement();
+        // Indemnité de representation
+        brut += livre.getIndemniteRepresentation();
+        // Indemnités brutes
+        if (livre.getIndemniteBrut() != null) {
+            brut += livre.getIndemniteBrut()
+                    .stream()
+                    .mapToDouble(PrimePersonnel::getMontant)
+                    .sum();
+        }
+
+        return Math.ceil(brut);
+    }
+    private double calculerTotalRetenue(LivreDePaieV2 livre) {
+        return safeDouble(livre.getIts())
+                + safeDouble(livre.getCnpsSalariale())
+                + sommePrimes(livre.getRetenueMutuelle());
+    }
+    private double sommeIndemnites(LivreDePaieV2 livre) {
+        return sommePrimes(livre.getIndemniteNonBrut())
+                + sommePrimes(livre.getGainsNet());
+    }
+
+    private void calculerCumuls(List<BulletinPaie> prec, LivreDePaieV2 livre) {
+
+        double cumulNet = prec.stream().mapToDouble(b -> safeDouble(b.getNetapayer())).sum();
+        cumulNet += safeDouble(livre.getNetPayer());
+
+        livre.setCumulNet(cumulNet);
+    }
+
+    private double sommePrimes(List<PrimePersonnel> primes) {
+
+        if (primes == null || primes.isEmpty()) {
+            return 0D;
+        }
+
+        double total = 0D;
+
+        for (PrimePersonnel pp : primes) {
+
+            if (pp == null || pp.getMontant() == null) continue;
+
+            double montant = pp.getMontant();
+            double valeur = pp.getValeur() != null ? pp.getValeur() : 1D;
+
+            // 🔹 Prime avec taux (%)
+            if (pp.getPrime() != null && pp.getPrime().getTaux() != null) {
+                total += valeur * (montant + (montant * pp.getPrime().getTaux() / 100));
+            }
+
+            // 🔹 Prime avec plafond exonéré
+            else if (pp.getPrime() != null && pp.getPrime().getMtExedent() != null) {
+                total += Math.max(0, montant - pp.getPrime().getMtExedent());
+            }
+
+            // 🔹 Prime simple
+            else {
+                total += valeur * montant;
+            }
+        }
+
+        return Math.ceil(total);
+    }
+
+
+
+    public int countnbreJrdu(Date dateRetourDernierConge, Date dateDepartConge, ContratPersonnel Contratp) {
+        // TODO Auto-generated method stub
+
+        int tps=ProvisionConge.calculerTempsPresence(dateRetourDernierConge,dateDepartConge);
+        int rf=(int) (tps*2.2*1.25);
+        Double[]ancienete= calculAnciennete(Contratp.getCategorie().getSalaireDeBase(),Contratp.getPersonnel().getDateArrivee());
+        double newancienete;
+        if(Contratp.getAncienneteInitial()!=0) {
+            newancienete=ancienete[1] +Contratp.getAncienneteInitial();
+        }else{
+            newancienete=ancienete[1];
+        }
+        double anc=(int)newancienete ;
+
+        int jourSuppAnc=0; int jourSuppDam = 0;int jourSuppMed = 0;
+
+        if(anc>5 && anc<=10)  jourSuppAnc=1;
+        if(anc>10 && anc<=15) jourSuppAnc=2;
+        if(anc>15 && anc<=20) jourSuppAnc=3;
+        if(anc>20 && anc<=25) jourSuppAnc=5;
+        if(anc>25 && anc<=30) jourSuppAnc=7;
+        if(anc>30) jourSuppAnc=8;
+
+        Double age= DifferenceDate.valAge(new Date(), Contratp.getPersonnel().getDateNaissance());
+        if(Contratp.getPersonnel().getSexe().equals("Feminin") && age<=21 && Contratp.getPersonnel().getNombrEnfant()>0){
+            jourSuppDam=2*Contratp.getPersonnel().getNombrEnfant();
+        }
+        if(Contratp.getPersonnel().getSexe().equals("Feminin") && age>21 && Contratp.getPersonnel().getNombrEnfant()>0){
+
+            if(Contratp.getPersonnel().getNombrEnfant()>=4)jourSuppDam=2*1;
+            if(Contratp.getPersonnel().getNombrEnfant()>=5)jourSuppDam=2*2;
+            if(Contratp.getPersonnel().getNombrEnfant()>=6)jourSuppDam=2*3;
+            if(Contratp.getPersonnel().getNombrEnfant()>=7)jourSuppDam=2*4;
+            if(Contratp.getPersonnel().getNombrEnfant()>=8)jourSuppDam=2*5;
+            if(Contratp.getPersonnel().getNombrEnfant()>=9)jourSuppDam=2*6;
+        }
+
+        if(Contratp.getPersonnel().getSituationMedaille()==1 ){
+            jourSuppMed=1;
+        }
+        int rfp=(int) (jourSuppAnc+jourSuppDam+jourSuppMed);
+        return (int) rfp+rf;
+    }
+
+
+
+    // 🔹 Méthode utilitaire pour éviter les nulls
 	private double safeDouble(Double val) {
 		return val != null ? val : 0D;
 	}
@@ -1089,6 +1493,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
         // Plafond fiscal
         return Math.min(nbPart, 5F);
     }
+
 
 //    public Float calculNbrepart44(Integer nbEnfant, Personnel pers) {
 //
@@ -1296,15 +1701,22 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 			igr = 0.0;
 		return igr;
 	}
-
-	public Double calculCNPS(double brutImposable,double indemniteRepresentation){
-		Double cnps = (brutImposable + indemniteRepresentation);
-		if(cnps < 1647315.0)
-			cnps = (brutImposable + indemniteRepresentation) * 6.3 / 100;
-		else 
-			cnps = 1647315 * 6.3 / 100;
-		return cnps;
-	}
+    public Double calculCNPS(Double basecnps){
+        Double cnps = (basecnps ); //3000000
+        if(cnps < 3375000.0)
+            cnps = (basecnps ) * 6.3 / 100;
+        else
+            cnps = 3375000.0 * 6.3 / 100;
+        return cnps;
+    }
+//	public Double calculCNPS(double brutImposable,double indemniteRepresentation){
+//		Double cnps = (brutImposable + indemniteRepresentation);
+//		if(cnps < 1647315.0)
+//			cnps = (brutImposable + indemniteRepresentation) * 6.3 / 100;
+//		else
+//			cnps = 1647315 * 6.3 / 100;
+//		return cnps;
+//	}
 
 	@Override
 	public List<BulletinPaie> rechercherBulletinMois(PeriodePaie periodePaie) {

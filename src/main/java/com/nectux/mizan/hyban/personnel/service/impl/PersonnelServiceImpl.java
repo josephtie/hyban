@@ -55,6 +55,8 @@ public class PersonnelServiceImpl implements PersonnelService {
 	@Autowired private ExerciceRepository exerciceRepository;
 	@Autowired private FonctionRepository fonctionRepository;
 	@Autowired private PersonnelRepository personnelRepository;
+
+
 	@Autowired private CategorieRepository categorieRepository;
 	@Autowired private TypeContratRepository typeContratRepository;
 	@Autowired private NationnaliteRepository nationnaliteRepository;
@@ -535,7 +537,34 @@ public class PersonnelServiceImpl implements PersonnelService {
 		logger.info(new StringBuilder().append(">>>>> PERSONNELS CHARGES AVEC SUCCES").toString());
 		return personnelDTO;
 	}
+    @Override
+    public PersonnelDTO loadPersonnelop(Pageable pageable) {
+        PersonnelDTO personnelDTO = new PersonnelDTO();
 
+        // recherche par nom/prenom/matricule
+        Page<Personnel> page = personnelRepository
+                .chearchOrdreAsc(
+                        pageable
+                );
+
+        // pour chaque personnel, récupérer le contrat actif et remplir netapayer + fonction
+        List<Personnel> personnelsWithContract = page.getContent().stream().map(p -> {
+            ContratPersonnel contrat = contratPersonnelRepository
+                    .findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(p.getId());
+
+            if (contrat != null) {
+                p.setNetapayer(String.valueOf(contrat.getNetAPayer()));
+                p.setFonction(contrat.getFonction().getLibelle());
+            }
+            return p;
+        }).toList();
+
+        personnelDTO.setRows(personnelsWithContract);
+        personnelDTO.setTotal(page.getTotalElements());
+
+        logger.info(">>>>> PERSONNELS CHARGES AVEC SUCCES");
+        return personnelDTO;
+    }
 	@Override
 	public PersonnelDTO findAllfilter(Map<String, String> filters, Pageable pageable) {
 		PersonnelDTO personnelDTO = new PersonnelDTO();
@@ -548,18 +577,48 @@ public class PersonnelServiceImpl implements PersonnelService {
 		return personnelDTO;
 	}
 
-	@Override
-	public PersonnelDTO loadPersonnel(Pageable pageable, String search, String search1, String search2) {
-		// TODO Auto-generated method stub
-		PersonnelDTO personnelDTO = new PersonnelDTO();
-		Page<Personnel> page = personnelRepository.findByRetraitEffectFalseAndNomIgnoreCaseContainingOrPrenomIgnoreCaseContainingOrMatriculeIgnoreCaseContaining(pageable, search,search,search);
-		personnelDTO.setRows(page.getContent());
-		personnelDTO.setTotal(page.getTotalElements());
-		logger.info(new StringBuilder().append(">>>>> PERSONNELS CHARGES AVEC SUCCES").toString());
-		return personnelDTO;
-	}
+//	@Override
+//	public PersonnelDTO loadPersonnel(Pageable pageable, String search, String search1, String search2) {
+//		// TODO Auto-generated method stub
+//		PersonnelDTO personnelDTO = new PersonnelDTO();
+//		Page<Personnel> page = personnelRepository.findByRetraitEffectFalseAndNomIgnoreCaseContainingOrPrenomIgnoreCaseContainingOrMatriculeIgnoreCaseContaining(pageable, search,search,search);
+//		personnelDTO.setRows(page.getContent());
+//		personnelDTO.setTotal(page.getTotalElements());
+//		logger.info(new StringBuilder().append(">>>>> PERSONNELS CHARGES AVEC SUCCES").toString());
+//		return personnelDTO;
+//	}
 
-	@Override
+    @Override
+    public PersonnelDTO loadPersonnelop(Pageable pageable,  String search, String search1, String search2) {
+        PersonnelDTO personnelDTO = new PersonnelDTO();
+
+        // recherche par nom/prenom/matricule
+        Page<Personnel> page = personnelRepository
+                .searchPersonnel(
+                       search,  pageable
+                );
+
+        // pour chaque personnel, récupérer le contrat actif et remplir netapayer + fonction
+        List<Personnel> personnelsWithContract = page.getContent().stream().map(p -> {
+            ContratPersonnel contrat = contratPersonnelRepository
+                    .findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(p.getId());
+
+            if (contrat != null) {
+                p.setNetapayer(String.valueOf(contrat.getNetAPayer()));
+                p.setFonction(contrat.getFonction().getLibelle());
+            }
+            return p;
+        }).toList();
+
+        personnelDTO.setRows(personnelsWithContract);
+        personnelDTO.setTotal(page.getTotalElements());
+
+        logger.info(">>>>> PERSONNELS CHARGES AVEC SUCCES");
+        return personnelDTO;
+    }
+
+
+    @Override
 	public PrintLsDTO RechercherListPersonnelParAnnee(Long id) {
 		return null;
 	}
