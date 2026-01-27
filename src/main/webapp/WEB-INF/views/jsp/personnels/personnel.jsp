@@ -117,6 +117,7 @@
                             <th data-field="numeroCnps" data-align="center">Num CNPS</th>
 
                             <th data-field="situationMatri" data-align="center">Sit. Matri</th>
+                            <th data-field="modePaiement" data-align="center">Mode paiement</th>
                             <th data-field="numeroCompte" data-align="center">Compte bancaire</th>
                             <th data-field="telephone" data-align="left">Telephone</th>
                               <th data-field="fonction" data-align="center">Emploi/fonction</th>
