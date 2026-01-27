@@ -218,10 +218,10 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 																		@RequestParam(value="search", required=false) String search) {
 		
 		if(offset == null) offset = 0;
-		if(limit == null) limit = 10;
+		if(limit == null) limit = 50;
 		
 		 //final PageRequest page = new PageRequest(offset/10, limit, Direction.DESC, "id");
-		PageRequest page = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
+		PageRequest page = PageRequest.of(offset / 50, limit, Direction.DESC, "id");
 	     PeriodePaie	 maperiode=periodePaieService.findPeriodePaie(idperiod);
 		BulletinPaieDTO bulletinDTO = new BulletinPaieDTO();
 		if(search == null || search == "" )
@@ -245,7 +245,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 		// Valeurs par défaut
 		int pageOffset = (offset != null ? offset : 0);
-		int pageLimit  = (limit  != null ? limit  : 10);
+		int pageLimit  = (limit  != null ? limit  : 50);
 
 		// Préparation de la recherche
 		String criteria = "";
@@ -254,7 +254,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 		System.out.println("🔎 Critère de recherche : " + criteria);
 
-		PageRequest page = PageRequest.of(pageOffset / 10, pageLimit, Direction.DESC, "id");
+		PageRequest page = PageRequest.of(pageOffset / 50, pageLimit, Direction.DESC, "id");
 
 		// Récupération de la période
 		PeriodePaie maperiode = periodePaieService.findPeriodePaie(id);
@@ -294,8 +294,8 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			id=maperiode.getId();
 		}
         if(offset == null) offset = 0;
-        if(limit == null) limit = 10;
-		PageRequest page = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
+        if(limit == null) limit = 100;
+		PageRequest page = PageRequest.of(offset / 100, limit, Direction.DESC, "id");
        // final PageRequest page = new PageRequest(offset/10, limit, Direction.ASC, "id");
 		 // List<LivreDePaie> bulletinList = new ArrayList<LivreDePaie>();
        // Pageable pageable;

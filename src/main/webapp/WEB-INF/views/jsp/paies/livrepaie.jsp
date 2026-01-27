@@ -455,7 +455,7 @@
                 	<div class="form-group">
                         <label for="libelle" class="col-md-4 control-label">Nombre de jours</label>
                         <div class="col-md-8">
-                            <input type="text" id="jourTravail"  name="jourTravail" class="form-control" required="required" placeholder="30" />
+                            <input type="text" id="jourTravail"  name="jourTravail" class="form-control" required="required" placeholder="26" />
                         </div>
                     </div>
                     	<div class="form-group">
@@ -720,7 +720,7 @@ jQuery(document).ready(function($) {
 	jQuery("#jourTravail").blur(function(){
 		var nbjou;
 		nbjou = $("#jourTravail").val();
-		jQuery("#temptravail").val((nbjou*173.33)/30);
+		jQuery("#temptravail").val((nbjou*173.33)/26);
 		
 	});
 	function download(){
@@ -731,7 +731,7 @@ jQuery(document).ready(function($) {
 	jQuery("#temptravail").blur(function(){
 		var nbheu;
 		nbheu = $("#temptravail").val();
-		jQuery("#jourTravail").val((nbheu*30)/173.33);
+		jQuery("#jourTravail").val((nbheu*26)/173.33);
 		
 	});
 	jQuery("#formModificationBulletin").submit(function(e){

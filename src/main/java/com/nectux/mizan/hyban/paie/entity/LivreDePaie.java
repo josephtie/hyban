@@ -282,6 +282,7 @@ public class LivreDePaie {
 		super();
 		this.matricule = mat;
 		this.nomPrenom = nomPre;
+        final int JOURS_OUVRABLES_MOIS = 26;
 
 		this.listIndemniteBrut=listIndemnite;
 		//this.listRubrique=rubriqueRepository.findByActiveTrue();
@@ -353,18 +354,18 @@ public class LivreDePaie {
 									}
 								}
 
-							 this.jourTravail=30d;
+							 this.jourTravail=26d;
 							this.temptravail=173.33d;
 						}
 					   else
 					   {       this.anciennete = ancien;
 
                                 this.nombrePart = nbrePart != null ? nbrePart : 0F;
-							   this.salaireBase = Math.ceil(salBase*tempeffect.getJourspresence()/30);
+							   this.salaireBase = Math.ceil(salBase*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
 								if(sursal==null)
 								  this.sursalaire = Math.ceil(0d);
 								   else
-								 this.sursalaire = Math.ceil(sursal*tempeffect.getJourspresence()/30);
+								 this.sursalaire = Math.ceil(sursal*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
 
 								if(ancien>= 2)
 								  this.primeAnciennete = Math.ceil((salaireBase) * ancien / 100);
@@ -374,16 +375,16 @@ public class LivreDePaie {
 								if(indemLog==null)
 								   this.indemniteLogement = Math.ceil(0);
 								else
-									this.indemniteLogement = Math.ceil(indemLog*tempeffect.getJourspresence()/30);
+									this.indemniteLogement = Math.ceil(indemLog*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
 
 							   if(ctratperso.getIndemniteTransport()==null)
 								{  this.indemniteTransportImp=Math.ceil(0);
 								  this.indemniteTransport=Math.ceil(0);
 
 								}else{
-								  if(ctratperso.getIndemniteTransport() > 25000){
-									 this.indemniteTransportImp=(ctratperso.getIndemniteTransport()-25000)*tempeffect.getJourspresence()/30;
-									this.indemniteTransport=25000d;
+								  if(ctratperso.getIndemniteTransport() > 30000){
+									 this.indemniteTransportImp=(ctratperso.getIndemniteTransport()-30000)*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
+									this.indemniteTransport=30000d;
 									 }else{
 									  this.indemniteTransportImp=0d;
 										this.indemniteTransport=ctratperso.getIndemniteTransport();
@@ -403,13 +404,13 @@ public class LivreDePaie {
 							   for(PrimePersonnel primeImpos : listIndemniteBrut){
 								   if(primeImpos.getPrime().getTaux()!=null && primeImpos.getValeur()>0)
 								  {
-									 autreImposable=autreImposable+(primeImpos.getValeur()*(primeImpos.getMontant()+(primeImpos.getMontant()*primeImpos.getPrime().getTaux()/100))*tempeffect.getJourspresence()/30);
+									 autreImposable=autreImposable+(primeImpos.getValeur()*(primeImpos.getMontant()+(primeImpos.getMontant()*primeImpos.getPrime().getTaux()/100))*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
 								  }else{
 
 									   if(primeImpos.getPrime().getMtExedent()!=null)
-										autreImposable=autreImposable+(primeImpos.getMontant()-primeImpos.getPrime().getMtExedent())*tempeffect.getJourspresence()/30;
+										autreImposable=autreImposable+(primeImpos.getMontant()-primeImpos.getPrime().getMtExedent())*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
 										 else
-									   autreImposable=autreImposable+primeImpos.getMontant()*tempeffect.getJourspresence()/30;
+									   autreImposable=autreImposable+primeImpos.getMontant()*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
 								  }
 							   }
 							 }
@@ -450,9 +451,9 @@ public class LivreDePaie {
   				}else{
   					
   					 if(primeImpos.getPrime().getMtExedent()!=null)
-    					   autreNonImposable=autreNonImposable+primeImpos.getPrime().getMtExedent()*tempeffect.getJourspresence()/30;
+    					   autreNonImposable=autreNonImposable+primeImpos.getPrime().getMtExedent()*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
     					 else    						
-  					       autreNonImposable=autreNonImposable+(primeImpos.getMontant()*tempeffect.getJourspresence()/30);
+  					       autreNonImposable=autreNonImposable+(primeImpos.getMontant()*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
   				}
   				//}
   			}	
@@ -547,9 +548,9 @@ public class LivreDePaie {
 						}else{
 
 							if(primeImpos.getPrime().getMtExedent()!=null)
-								autreNonImposable=autreNonImposable+primeImpos.getPrime().getMtExedent()*tempeffect.getJourspresence()/30;
+								autreNonImposable=autreNonImposable+primeImpos.getPrime().getMtExedent()*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
 							else
-								autreNonImposable=autreNonImposable+(primeImpos.getMontant()*tempeffect.getJourspresence()/30);
+								autreNonImposable=autreNonImposable+(primeImpos.getMontant()*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
 						}
 						//}
 					}
