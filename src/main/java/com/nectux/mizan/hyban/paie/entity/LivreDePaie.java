@@ -282,7 +282,7 @@ public class LivreDePaie {
 		super();
 		this.matricule = mat;
 		this.nomPrenom = nomPre;
-        final int JOURS_OUVRABLES_MOIS = 26;
+        final int JOURS_OUVRABLES_MOIS = 30;
 
 		this.listIndemniteBrut=listIndemnite;
 		//this.listRubrique=rubriqueRepository.findByActiveTrue();

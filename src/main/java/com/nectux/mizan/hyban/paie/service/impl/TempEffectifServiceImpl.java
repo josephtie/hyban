@@ -109,7 +109,7 @@ public class TempEffectifServiceImpl implements TempEffectifService {
 				tempeffectif.setHeurspresence(temptravail);
 
 			if(jourtravail == null  )
-				tempeffectif.setJourspresence(26d);
+				tempeffectif.setJourspresence(30d);
 			else
 			tempeffectif.setJourspresence(jourtravail);
 
