@@ -553,7 +553,7 @@ public class PersonnelServiceImpl implements PersonnelService {
                     .findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(p.getId());
 
             if (contrat != null) {
-                p.setNetapayer(String.valueOf(contrat.getNetAPayer()));
+                p.setNetapayer(contrat.getNetAPayer());
                 p.setFonction(contrat.getFonction().getLibelle());
             }
             return p;
@@ -604,7 +604,7 @@ public class PersonnelServiceImpl implements PersonnelService {
                     .findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(p.getId());
 
             if (contrat != null) {
-                p.setNetapayer(String.valueOf(contrat.getNetAPayer()));
+                p.setNetapayer(contrat.getNetAPayer());
                 p.setFonction(contrat.getFonction().getLibelle());
             }
             return p;

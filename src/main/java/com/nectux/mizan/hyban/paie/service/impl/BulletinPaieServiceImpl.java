@@ -1187,7 +1187,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
         ));
 
         // ================== CUMUL ==================
-        calculerCumuls(bulletinsPrec, livre);
+        calculerCumuls(bulletinsPrec, livre,livre.getPeriodePaie().getDatefin().getYear());
 
         // ================== MASSE SALARIALE ==================
         livre.setTotalMasseSalariale(Math.ceil(
@@ -1196,6 +1196,80 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 
         return livre;
     }
+
+    private BulletinPaie chargerBulletinDepuisLivre(
+            LivreDePaieV2 livre,
+            double cumulIgr,
+            double cumulIts,
+            double cumulCn,
+            double cumulCnps,
+            double cumulNet
+    ) {
+
+        BulletinPaie bull = new BulletinPaie();
+
+        // 🔹 Cumuls annuels (année civile uniquement)
+        bull.setCumulIgr(cumulIgr);
+        bull.setCumulIts(cumulIts);
+        bull.setCumulCn(cumulCn);
+        bull.setCumulCnpsSal(cumulCnps);
+        bull.setCumulSalaireNet(cumulNet);
+        bull.setCumulRetenueNet(cumulIgr + cumulIts + cumulCn + cumulCnps);
+
+        // 🔹 Avances & prêts
+        bull.setAvanceetacompte(livre.getAvance());
+        bull.setPretaloes(livre.getPretAlios());
+
+        // 🔹 Indemnités
+        bull.setIndemniteRepresentation(livre.getIndemniteRepresentation());
+        bull.setIndemniteTransport(livre.getIndemniteTransport());
+//        bull.setIndemniteTransportImp(livre.getIndemniteTransportImp());
+//        bull.setIndemniteRespons(livre.getIndemniteResponsabilte());
+//        bull.setAutreNonImposable(livre.getAutreNonImposable());
+//        bull.setBrutNonImposable(livre.getBrutNonImposable());
+//        bull.setRegularisation(livre.getRegularisation());
+//
+//        // 🔹 Bruts / nets
+//        bull.setTotalbrut(livre.getTotalBrut());
+//        bull.setTotalretenue(livre.getTotalRetenue());
+//        bull.setNetapayer(livre.getNetPayer());
+//
+//        // 🔹 Charges salariales
+//        bull.setImpotSalaire(livre.getIs());
+//        bull.setRetenueSociiale(livre.getRetenueSociiale());
+//        bull.setCnps(livre.getCnpsSalariale());
+
+        // 🔹 Charges patronales
+        bull.setTa(livre.getTa());
+        bull.setFpc(livre.getFpc());
+        bull.setFpcregul(livre.getFpcregul());
+        bull.setPrestationFamiliale(livre.getPrestationFamiliale());
+        bull.setAccidentTravail(livre.getAccidentTravail());
+        bull.setRetraite(livre.getRetraite());
+        bull.setTotalpatronal(livre.getTotalPatronal());
+        bull.setTotalmassesalarial(livre.getTotalMasseSalariale());
+
+        // 🔹 Temps de travail
+//        bull.setJourTravail(livre.getJourTravail());
+//        bull.setTemptravail(livre.getTemptravail());
+//
+//        // 🔹 CAREC / CMU (sécurisé)
+//       // bull.setCarec(livre.);
+//        bull.setCMUPatronal(livre.getCarec() ? livre.getCMUPatronal() : 0D);
+//        bull.setCMUSalarial(livre.getCarec() ? livre.getCMUSalarial() : 0D);
+
+        // 🔹 Métadonnées
+        bull.setCalculer(true);
+        bull.setCloture(false);
+        bull.setPeriodePaie(livre.getPeriodePaie());
+        bull.setContratPersonnel(livre.getContratPersonnel());
+
+        // 🔹 Liaison bidirectionnelle
+        livre.setBullpaie(bull);
+
+        return bull;
+    }
+
 
     private void annulerCharges(LivreDePaieV2 livre) {
 
@@ -1300,13 +1374,101 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
                 + sommePrimes(livre.getGainsNet());
     }
 
-    private void calculerCumuls(List<BulletinPaie> prec, LivreDePaieV2 livre) {
+//    private void calculerCumuls(List<BulletinPaie> prec, LivreDePaieV2 livre) {
+//
+//        double cumulNet = prec.stream().mapToDouble(b -> safeDouble(b.getNetapayer())).sum();
+//        cumulNet += safeDouble(livre.getNetPayer());
+//
+//        livre.setCumulNet(cumulNet);
+//    }
+//    private void calculerCumuls(List<BulletinPaie> prec, LivreDePaieV2 livre) {
+//
+//        double cumulNet = 0D;
+//        double cumulIts = 0D;
+//        double cumulCnpsSalariale = 0D;
+//        double cumulBrutImposable = 0D;
+//        double cumulCnpsPatronale= 0D;
+//
+//        List<BulletinPaie> bulletinsAnnee = tousLesBulletins.stream()
+//                .filter(b -> b.getDatePaie() != null)
+//                .filter(b -> b.getDatePaie().getYear() == anneeCourante)
+//                .collect(Collectors.toList());
+//
+//        if (prec != null && !prec.isEmpty()) {
+//
+//            cumulNet = prec.stream()
+//                    .mapToDouble(b -> safeDouble(b.getNetapayer()))
+//                    .sum();
+//
+//            cumulIts = prec.stream()
+//                    .mapToDouble(b -> safeDouble(b.getIts()))
+//                    .sum();
+//
+//            cumulCnpsSalariale = prec.stream()
+//                    .mapToDouble(b -> safeDouble(b.getCnps()))
+//                    .sum();
+//
+//            cumulBrutImposable = prec.stream()
+//                    .mapToDouble(b -> safeDouble(b.getBrutImposable()))
+//                    .sum();
+//
+//            cumulCnpsPatronale = prec.stream()
+//                    .mapToDouble(b -> safeDouble(b.getCnps()))
+//                    .sum();
+//
+//
+//        }
+//
+//        // 🔹 Ajouter le mois courant
+//        cumulNet += safeDouble(livre.getNetPayer());
+//        cumulIts += safeDouble(livre.getIts());
+//        cumulCnpsSalariale += safeDouble(livre.getCnpsSalariale());
+//        cumulBrutImposable+= safeDouble(livre.getBrutImposable());
+//        // 🔹 Affectation au livre
+//        livre.setCumulNet(cumulNet);
+//        livre.setCumulIts(cumulIts);
+//        livre.setCumulCnpsSalariale(cumulCnpsSalariale);
+//        livre.setCumulCnpsPatronale();
+//        livre.setCumulBrutImposable();
+//    }
 
-        double cumulNet = prec.stream().mapToDouble(b -> safeDouble(b.getNetapayer())).sum();
+    private void calculerCumuls(
+            List<BulletinPaie> tousLesBulletins,
+            LivreDePaieV2 livre,
+            int anneeCourante
+    ) {
+
+        double cumulNet = 0D;
+        double cumulIts = 0D;
+        double cumulCnpsSalariale = 0D;
+
+        List<BulletinPaie> bulletinsAnnee = tousLesBulletins.stream()
+                .filter(b -> b.getCloture() == true)
+                .filter(b -> b.getPeriodePaie().getDatefin().getYear() == anneeCourante)
+                .collect(Collectors.toList());
+
+        cumulNet = bulletinsAnnee.stream()
+                .mapToDouble(b -> safeDouble(b.getNetapayer()))
+                .sum();
+
+        cumulIts = bulletinsAnnee.stream()
+                .mapToDouble(b -> safeDouble(b.getIts()))
+                .sum();
+
+        cumulCnpsSalariale = bulletinsAnnee.stream()
+                .mapToDouble(b -> safeDouble(b.getCnps()))
+                .sum();
+
+        // 🔹 Ajouter le bulletin courant
         cumulNet += safeDouble(livre.getNetPayer());
+        cumulIts += safeDouble(livre.getIts());
+        cumulCnpsSalariale += safeDouble(livre.getCnpsSalariale());
 
         livre.setCumulNet(cumulNet);
+        livre.setCumulIts(cumulIts);
+        livre.setCumulCnpsSalariale(cumulCnpsSalariale);
     }
+
 
     private double sommePrimes(List<PrimePersonnel> primes) {
 

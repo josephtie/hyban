@@ -718,9 +718,11 @@ jQuery(document).ready(function($) {
     
 	
 	jQuery("#jourTravail").blur(function(){
-		var nbjou;
-		nbjou = $("#jourTravail").val();
-		jQuery("#temptravail").val((nbjou*173.33)/26);
+	    var nbjou = parseFloat($("#jourTravail").val()) || 0;
+
+        var heures = Math.ceil((nbjou * 173.33) / 26);
+
+        $("#temptravail").val(heures);
 		
 	});
 	function download(){
@@ -728,10 +730,13 @@ jQuery(document).ready(function($) {
 	 	var url = contexPath + jQuery("#valtab").val();
 	 	window.open(url, '_blank');
 	}
+
 	jQuery("#temptravail").blur(function(){
-		var nbheu;
-		nbheu = $("#temptravail").val();
-		jQuery("#jourTravail").val((nbheu*26)/173.33);
+		 var nbheu = parseFloat($("#temptravail").val()) || 0;
+
+            var jours = Math.ceil((nbheu * 26) / 173.33);
+
+            $("#jourTravail").val(jours);
 		
 	});
 	jQuery("#formModificationBulletin").submit(function(e){

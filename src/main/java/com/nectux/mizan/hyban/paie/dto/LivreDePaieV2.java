@@ -17,7 +17,8 @@ public class LivreDePaieV2 {
     private double salaireBase;
     private double surSalaire;
     private double indemniteLogement;
-    private Double indemniteRepresentation;
+    private double indemniteRepresentation;
+    private double indemniteTransport;
 
     private double avance;
     private double pretAlios;
@@ -39,6 +40,7 @@ public class LivreDePaieV2 {
     private double totalPatronal;
     private double totalMasseSalariale;
     private double cumulNet;
+    private double cumulIts;
 
     private int temptravail;
     private int moisdepresence;
@@ -56,6 +58,8 @@ public class LivreDePaieV2 {
 
     @Transient
     private String mtindemniteRepresentation;
+    private double cumulCnpsSalariale;
+
     // constructeur complet
     public LivreDePaieV2() {}
 
@@ -371,6 +375,34 @@ public class LivreDePaieV2 {
 
     public double getCumulNet() {
         return cumulNet;
+    }
+
+    public void setCumulIts(double cumulIts) {
+        this.cumulIts = cumulIts;
+    }
+
+    public double getCumulIts() {
+        return cumulIts;
+    }
+
+    public void setCumulCnpsSalariale(double cumulCnpsSalariale) {
+        this.cumulCnpsSalariale = cumulCnpsSalariale;
+    }
+
+    public double getCumulCnpsSalariale() {
+        return cumulCnpsSalariale;
+    }
+
+    public void setIndemniteRepresentation(double indemniteRepresentation) {
+        this.indemniteRepresentation = indemniteRepresentation;
+    }
+
+    public double getIndemniteTransport() {
+        return indemniteTransport;
+    }
+
+    public void setIndemniteTransport(double indemniteTransport) {
+        this.indemniteTransport = indemniteTransport;
     }
 }
 

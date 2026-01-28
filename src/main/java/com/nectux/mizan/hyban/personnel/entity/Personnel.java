@@ -95,7 +95,7 @@ public class Personnel   extends Auditable {
 	private String situationMatri;
 
     @Transient
-    private String netapayer;
+    private Double netapayer;
 
     @Transient
     private String fonction;
@@ -674,11 +674,11 @@ public class Personnel   extends Auditable {
 		return statfonct;
 	}
 
-    public String getNetapayer() {
+    public Double getNetapayer() {
         return netapayer;
     }
 
-    public void setNetapayer(String netapayer) {
+    public void setNetapayer(Double netapayer) {
         this.netapayer = netapayer;
     }
 
