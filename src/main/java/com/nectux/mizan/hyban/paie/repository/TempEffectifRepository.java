@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Optional;
+
 public interface TempEffectifRepository extends CrudRepository<TempEffectif, Long> {
 	
 	
@@ -27,7 +29,7 @@ public interface TempEffectifRepository extends CrudRepository<TempEffectif, Lon
 	public TempEffectif findByPersonnelAndPeriodePaie(Personnel idpers, PeriodePaie idperiode);
 	
 	public Page<TempEffectif> findByPersonnelNomLike(Pageable pageable,String search);
-	
-	
 
+
+    Optional<TempEffectif> findFirstByPersonnelIdAndPeriodePaieId(Long idPers, Long idPeriodDep);
 }

@@ -40,7 +40,7 @@ public interface BulletinPaieService {
 	//public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode, String search);
 	public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode, String search);
 
-	BulletinPaieDTO findAllfilter(Map<String,String> filters, Pageable pageable);
+	//BulletinPaieDTO findAllfilter(Map<String,String> filters, Pageable pageable);
 
 	public Double salaireMoyenMensuel(ContratPersonnel contratPersonnel);
 

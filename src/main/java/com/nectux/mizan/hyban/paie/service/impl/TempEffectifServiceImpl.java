@@ -10,6 +10,7 @@ import com.nectux.mizan.hyban.paie.repository.TempEffectifRepository;
 import com.nectux.mizan.hyban.paie.service.TempEffectifService;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.parametrages.repository.PeriodePaieRepository;
+import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.personnel.repository.PersonnelRepository;
 
 import org.apache.logging.log4j.LogManager;
@@ -92,43 +93,74 @@ public class TempEffectifServiceImpl implements TempEffectifService {
 		return tempEffectifDTO;
 	}
 
-	@Override
-	public TempEffectifDTO saver(Double temptravail, Double jourtravail,Long idPers, Long idPeriodDep) {
-		// TODO Auto-generated method stub
-		TempEffectifDTO tempeffectifDTO = new TempEffectifDTO();
-		TempEffectif tempeffectif = new TempEffectif();
-		List<TempEffectif> listtempeffectif = new ArrayList<TempEffectif>();
-		try{
-			//if(id != null)
-			listtempeffectif = tempEffectifRepository.findByPersonnelIdAndPeriodePaieId(idPers, idPeriodDep);
-			if(listtempeffectif.size()>0)
-				tempeffectif.setId(listtempeffectif.get(0).getId());
-			if(temptravail == null  )
-				tempeffectif.setHeurspresence(173.33d);
-			else
-				tempeffectif.setHeurspresence(temptravail);
+    @Override
+    @Transactional
+    public TempEffectifDTO saver(Double temptravail,
+                                 Double jourtravail,
+                                 Long idPers,
+                                 Long idPeriodDep) {
 
-			if(jourtravail == null  )
-				tempeffectif.setJourspresence(30d);
-			else
-			tempeffectif.setJourspresence(jourtravail);
+        TempEffectifDTO dto = new TempEffectifDTO();
+        Personnel personnel=new Personnel();
+        PeriodePaie periodePaie=new PeriodePaie();
+
+        try {
+            final double JOURS_LEGAUX = 30d;
+            final double HEURES_LEGALES = 173.33d;
+
+             personnel = personnelRepository.findById(idPers)
+                    .orElseThrow(() -> new EntityNotFoundException("Personnel introuvable"));
+
+            periodePaie = periodePaieRepository.findById(idPeriodDep)
+                    .orElseThrow(() -> new EntityNotFoundException("Période introuvable"));
+
+            TempEffectif tempeffectif =
+                    tempEffectifRepository
+                            .findFirstByPersonnelIdAndPeriodePaieId(idPers, idPeriodDep)
+                            .orElse(new TempEffectif());
+
+            tempeffectif.setPersonnel(personnel);
+            tempeffectif.setPeriodePaie(periodePaie);
+            tempeffectif.setDatedesaisie(new Date());
+
+            double jours;
+            double heures;
+
+            if (jourtravail != null) {
+                jours = jourtravail;
+                heures = (jours * HEURES_LEGALES) / JOURS_LEGAUX;
+            }
+            else if (temptravail != null) {
+                heures = temptravail;
+                jours = (heures * JOURS_LEGAUX) / HEURES_LEGALES;
+            }
+            else {
+                jours = JOURS_LEGAUX;
+                heures = HEURES_LEGALES;
+            }
+
+            // Arrondis métier
+            jours = Math.ceil(jours);
+            heures = Math.ceil(heures * 100) / 100;
+
+            tempeffectif.setJourspresence(jours);
+            tempeffectif.setHeurspresence(heures);
+
+            tempeffectif = tempEffectifRepository.save(tempeffectif);
+
+            dto.setRow(tempeffectif);
+            dto.setResult("success");
+
+        } catch (Exception e) {
+            dto.setResult("erreur");
+            e.printStackTrace();
+        }
+
+        return dto;
+    }
 
 
-			tempeffectif.setDatedesaisie(new Date());
-			tempeffectif.setPersonnel(personnelRepository.findById(idPers)  .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idPers)));
-			tempeffectif.setPeriodePaie(periodePaieRepository.findById(idPeriodDep)  .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idPeriodDep)));
-			tempeffectif = tempEffectifRepository.save(tempeffectif);
-			tempeffectifDTO.setRow(tempeffectif);
-			tempeffectifDTO.setResult("success");
-		} catch(Exception ex){
-			tempeffectifDTO.setResult("erreur");
-		
-			ex.printStackTrace();
-		}
-		return tempeffectifDTO;
-	}
-
-	@Override
+    @Override
 	public TempEffectif findtempeffectif(Long idpret) {
 	
 		return tempEffectifRepository.findById(idpret)  .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idpret));

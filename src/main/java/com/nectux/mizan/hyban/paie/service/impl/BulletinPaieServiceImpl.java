@@ -32,7 +32,7 @@ import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.personnel.repository.ContratPersonnelRepository;
 import com.nectux.mizan.hyban.personnel.repository.PersonnelRepository;
-import com.nectux.mizan.hyban.utils.GenericSpecifications;
+//import com.nectux.mizan.hyban.utils.GenericSpecifications;
 import com.nectux.mizan.hyban.utils.PrintLs;
 import com.nectux.mizan.hyban.utils.ProvisionConge;
 import org.apache.logging.log4j.LogManager;
@@ -291,18 +291,18 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		return bulletinPaieDTO;
 	}
 
-	@Override
-	public BulletinPaieDTO findAllfilter(Map<String, String> filters, Pageable pageable) {
-		BulletinPaieDTO bulletinPaieDTO = new BulletinPaieDTO();
-		Specification<BulletinPaie> specification = GenericSpecifications.fromMap(filters);
-		Page<BulletinPaie> page = bulletinPaieRepository.findAll(specification, pageable);
-	//	Page<BulletinPaie> page = bulletinPaieRepository.chercherParNom(maperiode.getId(), "",pageable);
-		bulletinPaieDTO.setRows(page.getContent());
-		bulletinPaieDTO.setTotal(page.getTotalElements());
-		logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
-		return bulletinPaieDTO;
-		//return null;
-	}
+//	@Override
+//	public BulletinPaieDTO findAllfilter(Map<String, String> filters, Pageable pageable) {
+//		BulletinPaieDTO bulletinPaieDTO = new BulletinPaieDTO();
+//		Specification<BulletinPaie> specification = GenericSpecifications.fromMap(filters);
+//		Page<BulletinPaie> page = bulletinPaieRepository.findAll(specification, pageable);
+//	//	Page<BulletinPaie> page = bulletinPaieRepository.chercherParNom(maperiode.getId(), "",pageable);
+//		bulletinPaieDTO.setRows(page.getContent());
+//		bulletinPaieDTO.setTotal(page.getTotalElements());
+//		logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
+//		return bulletinPaieDTO;
+//		//return null;
+//	}
 
 	/*@Override
 	public List<BulletinPaie> findAllBulletinByPeriodePaieForLivrePaieforBanque(Long idPeriodePaie, boolean idBanque) {
