@@ -858,6 +858,8 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 
 			// 🔹 Bulletin
 			BulletinPaie detailsBull = new BulletinPaie();
+			detailsBull.setJourTravail(livrePaiecalR.getJourTravail());
+			detailsBull.setTemptravail(livrePaiecalR.getTemptravail());
 			detailsBull.setAnciennete(livrePaiecalR.getAnciennete());
 			detailsBull.setSalairbase(livrePaiecalR.getSalaireBase());
 			detailsBull.setSursalaire(livrePaiecalR.getSursalaire());

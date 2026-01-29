@@ -299,6 +299,7 @@
 							<tr>
 							<th data-field="matricule"  data-align="left" data-sortable="true" style="height: 65px">Matricule</th>
 							<th data-field="nomPrenom"  data-align="left" data-sortable="true">Nom  &   Prenoms  </th>
+							<th data-field="jourTravail"  data-align="left" data-sortable="true">Nbre de jrs trv mois </th>
 								<%--<th data-field="contratPersonnel" data-formatter="nomstatutFormatter" data-align="left" data-sortable="true">Statut</th>--%>
 							<th data-field="nombrePart"  data-align="left">Nbre part</th>
 							<th data-field="anciennete"  data-align="center">Anciennet&eacute;</th>
@@ -579,6 +580,7 @@
 							<th data-field="contratPersonnel" data-formatter="nomfstatutFormatter" data-align="left" data-sortable="true">Statut</th>
 							<th data-field="nombrePart"  data-align="left">Nbre part</th>
 							<th data-field="anciennete"  data-align="center">Anciennete</th>
+							<th data-field="jourTravail"  data-align="center">Nbre de jrs du mois</th>
 							<th data-field="salairbase"   data-align="left" >Salaire Base</th>
 							<th data-field="sursalaire"  data-align="center">Sursalaire</th>
 							<th data-field=primeanciennete  data-align="center">Prime. Anciennete</th>

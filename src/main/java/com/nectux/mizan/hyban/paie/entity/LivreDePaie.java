@@ -314,37 +314,30 @@ public class LivreDePaie {
 
 
 							 if(ctratperso.getIndemniteTransport()==null)
-							 {  this.indemniteTransportImp=Math.ceil(0);
-							   this.indemniteTransport=Math.ceil(0);
-
+							 {
+                                 this.indemniteTransportImp=Math.ceil(0);
+							     this.indemniteTransport=Math.ceil(0);
 							 }else{
-								if(ctratperso.getIndemniteTransport() > 30000){
+
+							    if(ctratperso.getIndemniteTransport() > 30000){
 									 this.indemniteTransportImp=ctratperso.getIndemniteTransport()-30000;
-									this.indemniteTransport=30000d;
-								 }else{
-									  this.indemniteTransportImp=Math.ceil(0);
+									 this.indemniteTransport=30000d;
+								}else{
+									    this.indemniteTransportImp=Math.ceil(0);
 										this.indemniteTransport=ctratperso.getIndemniteTransport();
-								 }
+								}
 							 }
 
-			//		   			if(ctratperso.getIndemniteRepresent()==null)
-			//			   		ctratperso.setIndemniteRepresent(0d);
-								this.autreIndemImposable=0d;
 
-			//		  			 if((indemniteTransport+ctratperso.getIndemniteRepresent())<(salaireBase+primeAnciennete+indemniteLogement+sursalaire+ctratperso.getIndemniteRepresent()+indemniteTransport)*10/100)
-			//			  			 autreIndemImposable=0d;
-			//			  		 	else
-			//						autreIndemImposable=Math.ceil((indemniteTransport+ctratperso.getIndemniteRepresent()-((salaireBase+primeAnciennete+indemniteLogement+sursalaire+ctratperso.getIndemniteRepresent()+indemniteTransport)*10/100)));
+								     this.autreIndemImposable=0d;
 
-									 autreImposable=0d;
+									       autreImposable=0d;
 									if(listIndemniteBrut.size()>0 || listIndemniteBrut!=null){
 										for(PrimePersonnel primeImpos : listIndemniteBrut){
 											if(primeImpos.getPrime().getTaux()!=null && primeImpos.getValeur()>0)
 											{
 										     	autreImposable=autreImposable+(primeImpos.getMontant());
-			//		     					  primeImpos.setMontant(primeImpos.getValeur()*(primeImpos.getMontant()+(primeImpos.getMontant()*primeImpos.getPrime().getTaux()/100)));
-			//									     if(primeImpos!=null)
-			//										primePersonnelRepository.save(primeImpos);
+
 											}else{
 												   if(primeImpos.getPrime().getMtExedent()!=null)
 													   autreImposable=autreImposable+primeImpos.getMontant()-primeImpos.getPrime().getMtExedent();
@@ -354,7 +347,7 @@ public class LivreDePaie {
 									}
 								}
 
-							 this.jourTravail=26d;
+							 this.jourTravail=30d;
 							this.temptravail=173.33d;
 						}
 					   else
