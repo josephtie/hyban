@@ -14,7 +14,9 @@ import com.nectux.mizan.hyban.rh.absences.entity.Absences;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 
 public interface ContratPersonnelRepository extends CrudRepository<ContratPersonnel, Long> , JpaSpecificationExecutor<ContratPersonnel> {
@@ -92,5 +94,18 @@ public interface ContratPersonnelRepository extends CrudRepository<ContratPerson
     ContratPersonnel findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(Long id);
 
     //  List<ContratPersonnel> findByTypeContratIdAndStatutTrue(Long id);
+
+
+    @Query("SELECT p FROM ContratPersonnel p " +
+            "JOIN p.personnel cp "+
+            "WHERE p.statut = true " +
+            "AND p.depart = false " +
+            "AND cp.retraitEffect = false " +
+            "AND (LOWER(cp.nom) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "     OR LOWER(cp.prenom) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "     OR LOWER(cp.matricule) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<ContratPersonnel> searchContrat(@Param("search") String search, Pageable pageable);
+
+
 }
 

@@ -575,7 +575,7 @@ public class LivreDePaie {
 				this.retraite = Math.ceil(0);
 				this.plafondFamiliale = Math.ceil(0);
 
-				avceAcpte=Math.ceil(0); pretAlios=Math.ceil(0);
+				avceAcpte=Math.ceil(avanceEtAccompte); pretAlios=Math.ceil(pretALIOS);
 					autrePrelevment=0d;
 					if(listMutuelle.size()>0 || listMutuelle!=null){
 						for(PrimePersonnel mutuell : listMutuelle){

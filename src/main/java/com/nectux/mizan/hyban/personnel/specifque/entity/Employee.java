@@ -31,6 +31,7 @@ public class Employee extends Auditable {
     private String sexe;
     private String situationMatrimoniale;
     private String lieuHabitation;
+    private String commentaire;
 
 
     @JsonSerialize(using = CustomDateDeserializer.class)
@@ -203,6 +204,14 @@ public class Employee extends Auditable {
         this.nationnalite = nationnalite;
     }
 
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
+    }
+
     @Override
     public String toString() {
         return "Employee{" +
@@ -214,12 +223,14 @@ public class Employee extends Auditable {
                 ", sexe='" + sexe + '\'' +
                 ", situationMatrimoniale='" + situationMatrimoniale + '\'' +
                 ", lieuHabitation='" + lieuHabitation + '\'' +
+                ", commentaire='" + commentaire + '\'' +
                 ", dateofbrid=" + dateofbrid +
                 ", dofbrid='" + dofbrid + '\'' +
                 ", piece=" + piece +
                 ", nuperopiece='" + nuperopiece + '\'' +
                 ", numeroCompte='" + numeroCompte + '\'' +
                 ", categorieSpeciale=" + categorieSpeciale +
+                ", nationnalite=" + nationnalite +
                 ", actif=" + actif +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 '}';

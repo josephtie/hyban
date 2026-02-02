@@ -2,6 +2,7 @@ package com.nectux.mizan.hyban.personnel.specifque.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nectux.mizan.hyban.parametrages.entity.Auditable;
+import com.nectux.mizan.hyban.personnel.entity.Fonction;
 import com.nectux.mizan.hyban.personnel.specifque.enums.SpecialContractType;
 import com.nectux.mizan.hyban.utils.CustomDateDeserializer;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,7 +28,13 @@ public class SpecialContract extends Auditable {
     private SpecialContractType typeContrat;
 
     private String modepaiement;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "fonction_id")
+    private Fonction fonction;
+
     private String paiementNumber;
+
     @JsonSerialize(using = CustomDateDeserializer.class)
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern="dd/MM/yyyy")
@@ -140,6 +147,13 @@ public class SpecialContract extends Auditable {
         this.actif = actif;
     }
 
+    public Fonction getFonction() {
+        return fonction;
+    }
+
+    public void setFonction(Fonction fonction) {
+        this.fonction = fonction;
+    }
 
     @Override
     public String toString() {

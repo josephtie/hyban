@@ -334,7 +334,20 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="form-group">
+                                                        <label class="col-md-4 col-xs-5 control-label">Emploi</label>
+                                                         <div class="col-md-8 col-xs-7">
 
+                                                        </select>
+                                                         <select id="fonction" name="fonction" class="form-control input-small select2" ng-model="speccontrat.fonction.id"     ng-init="speccontrat.fonction.id=fonction">
+                                                              <option value="" disabled selected>-- Selectionnez fonction/emploi--</option>
+                                                          </select>
+
+                                                        <div ng-show="formAjout.fonction.$invalid && formAjout.fonction.$error.required">
+                                                              <div style="color:red;">fonction est obligatoire.</div>
+                                                         </div>
+                                                       </div>
+                                                </div>
                                                 <div class="form-group">
                                                     <label class="col-md-4 col-xs-5 control-label">Date debut</label>
                                                     <div class="col-md-8 col-xs-7">
@@ -489,6 +502,7 @@ jQuery(document).ready(function($){
             format: 'dd/mm/yyyy',
             showOtherMonths: true
         });
+    loadFonction();
 	//Fermeture du modal
 	$('#rhpModal').on('hidden.bs.modal', function () {
 		var $scope = angular.element(document.getElementById("formAjout")).scope();
@@ -600,7 +614,30 @@ function nationaliteFormatter(nationnalite) {
 }
 
 
+//Chargement des fonctions
+function loadFonction() {
+    jQuery.ajax({
+        type: "GET",
+        url: baseUrl + "/personnels/listfonction",
+        cache: false,
+        success: function (response) {
+            console.log(response);
+            if (response != null) {
+                tabledata = '';
+                for (i = 0; i < response.length; i++) {
+                    tabledata += '<option value="' + response[i].id + '" >' + response[i].libelle + '</option>';
+                }
+                //tabledata += "";
+                jQuery('#fonction, #fonctionPop').html(tabledata);
+            } else {
+                alert('Failure! An error has occurred!');
+            }
+        },
+        error: function () {
 
+        },
+    });
+}
 function edit(idCategorie){
 	var $scope = angular.element(document.getElementById("formAjout")).scope();
     

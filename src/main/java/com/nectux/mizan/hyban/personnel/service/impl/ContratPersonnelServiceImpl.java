@@ -349,10 +349,10 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 		return contratPersonnelDTO;*/
 		
 		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();Page<ContratPersonnel> pageImpianto=null;
-		List<ContratPersonnel> myList=new ArrayList<ContratPersonnel>();List<ContratPersonnel> myList2=new ArrayList<ContratPersonnel>();
+        ;List<ContratPersonnel> myList2=new ArrayList<ContratPersonnel>();
 
-		 myList=contratPersonnelRepository.findByStatutTrueAndDepartFalseAndPersonnelNomIgnoreCaseContaining(search);
-		for(ContratPersonnel contrtpersonnel : myList){
+        Page<ContratPersonnel> page =contratPersonnelRepository.searchContrat(search,pageable);
+	/*	for(ContratPersonnel contrtpersonnel : myList){
 			if(contrtpersonnel.getPersonnel().getRetraitEffect()==false && contrtpersonnel.getDepart()==false && contrtpersonnel.getStatut()==true)
 			{
                 myList2.add(contrtpersonnel);
@@ -362,10 +362,10 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 		int start = (int)pageable.getOffset();
 		int end = (start + (int) pageable.getPageSize()) > myList2.size() ? myList2.size() : (start + pageable.getPageSize());
 		pageImpianto=new PageImpl<ContratPersonnel>(myList2.subList(start, end), pageable,myList2.size());
-		//pageImpianto = new PageImpl<ContratPersonnel>(myList2);
+		//pageImpianto = new PageImpl<ContratPersonnel>(myList2);*/
 
-		contratPersonnelDTO.setRows(pageImpianto.getContent());
-		contratPersonnelDTO.setTotal(pageImpianto.getTotalElements());
+		contratPersonnelDTO.setRows(page.getContent());
+		contratPersonnelDTO.setTotal(page.getTotalElements());
 		//logger.info(new StringBuilder().append(">>>>> CATEGORIES CHARGES AVEC SUCCES").toString());
 		return contratPersonnelDTO;
 	}

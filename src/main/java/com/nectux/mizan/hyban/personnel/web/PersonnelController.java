@@ -153,13 +153,7 @@ public class PersonnelController {
         //modelMap.addAttribute("listeSanctions", sanctionService.getSanctions());
 
         modelMap.addAttribute("listePostes", fonctionService.findFonctions());
-        modelMap.addAttribute("listeSites", siteWorkRepository.findAll());
-        modelMap.addAttribute("listeSanctions", sanctionService.getSanctions());
-        modelMap.addAttribute("listePromotions", fonctionService.findFonctions());
-        modelMap.addAttribute("listeBanques", banqueService.getBanques());
-        modelMap.addAttribute("listeAbsences", absenceService.getAbsences());
-        modelMap.addAttribute("listeDocuments",documentTypeRepository.findAll());
-        modelMap.addAttribute("listeStockages",storageLocationRepository.findAll());
+
         PeriodePaie periodePaie = periodePaieService.findPeriodeactive();
         if(periodePaie != null){
             modelMap.addAttribute("activeMois", periodePaie.getMois().getMois()+" "+ periodePaie.getAnnee().getAnnee());
