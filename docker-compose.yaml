@@ -17,9 +17,9 @@ services:
       SPRING_DATASOURCE_USERNAME: directus
       SPRING_DATASOURCE_PASSWORD: directus
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      JAVA_TOOL_OPTIONS: "-Xms2g -Xmx6g -XX:+UseG1GC -XX:+UseStringDeduplication"
+      JAVA_TOOL_OPTIONS: "-Xms4g -Xmx10g -XX:+UseG1GC -XX:+UseStringDeduplication"
       cpus: 4
-      mem_limit: 8g
+      mem_limit: 10g
     volumes:
       - hyban_file_storage:/uploads/documents
     networks:

@@ -25,5 +25,6 @@ COPY --from=builder /app/target/*.war hyban.war
 # 9️⃣ Exposer le port 8080
 EXPOSE 8080
 
+
 # 🔟 Démarrer Tomcat
 CMD ["catalina.sh", "run"]
