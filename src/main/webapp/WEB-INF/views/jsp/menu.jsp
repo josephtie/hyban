@@ -76,6 +76,7 @@
                         <ul>
                             <li class="${activeLend}"><a href="${contextPath}paie/primespersonnel"><span class="fa fa-align-justify"></span> Saisie des elements</a></li>
                             <li class="${activePayrollBook}"><a href="${contextPath}paie/livrepaie"><span class="fa fa-align-justify"></span> Livre de paie</a></li>
+                            <li class="${activePayrollBook}"><a href="${contextPath}paie/livrespeciale"><span class="fa fa-align-justify"></span> Special Livre de paie</a></li>
                             <li class="${activePayrollBook}"><a href="${contextPath}paie/histobull"><span class="fa fa-align-justify"></span> Historique Bulletin</a></li>
                             <!--  <li class="${activeRappelBook}"><a href="${contextPath}rappel/livrerappel"><span class="fa fa-list-alt"></span>Rappel</a></li>-->
                             <li class="${activeDepartBook}"><a href="${contextPath}histpaie/departpersonnel"><span class="fa fa-list-alt"></span>Depart CDD</a></li>

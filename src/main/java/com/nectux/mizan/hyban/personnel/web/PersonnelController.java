@@ -172,18 +172,20 @@ public class PersonnelController {
 	@RequestMapping(value = "/listpersonneljson", method = RequestMethod.GET)
 	public @ResponseBody PersonnelDTO getPersonnelListJSON(@RequestParam(value="limit", required=false) Integer limit, 
 															@RequestParam(value="offset", required=false) Integer offset, 
-															@RequestParam(value="search", required=false)  String search, Principal principal) {
+															@RequestParam(value="search", required=false)  String search,
+															@RequestParam(value="filterCarec", required=false)  String filterCarec,
+                                                           Principal principal) {
 		
 		if(offset == null) offset = 0;
 		if(limit == null) limit = 10;
 		
 		//final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "nom");
-		PageRequest pageRequest = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
+		PageRequest pageRequest = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
 		PersonnelDTO personnelDTO = new PersonnelDTO();
 		if(search == null )
-			personnelDTO = personnelService.loadPersonnelop(pageRequest);
+			personnelDTO = personnelService.loadPersonnelopfilter(pageRequest,filterCarec);
 		else
-			personnelDTO = personnelService.loadPersonnelop(pageRequest,search,search,search);
+			personnelDTO = personnelService.loadPersonnelopfilter(pageRequest,search,filterCarec);
 		
 		return personnelDTO;
 		//System.out.println(" hello "+hfhfh);

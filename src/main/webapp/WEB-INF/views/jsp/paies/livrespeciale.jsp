@@ -2,13 +2,12 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
 <div class="row" >
 	<div class="col-md-12">
 		<div class="panel panel-warning">
 			<div class="panel-heading">
 				<div class="panel-title-box">
-					<h3>Liste du employee Speciale</h3>
+					<h3>Liste du personnel</h3>
 					<span></span>
 				</div>
 				<ul class="panel-controls" style="margin-top: 2px;">
@@ -32,36 +31,50 @@
 								<div class="btn-group">
 									<a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Action <span class="caret"></span></a>
 									<ul class="dropdown-menu" role="menu">
-										<%--<li role="presentation" class="dropdown-header">Dropdown header</li>--%>
-										<li><a href="#" data-toggle="modal" data-target="#rhpModal">Nouveau</a></li>
+											<li><a href="#" onclick="widgetView('new')">Livre de paie</a></li>
+											<%--<li class="divider"></li>--%>
+											<%--<li><a href="#" onclick="widgetView('histo')">Historique Bulletins</a></li>--%>
 									</ul>
 								</div>
 
-						</div>
+							</div>
+						<br>
 
-	    	<table id="table" class="table table-info table-striped"
-			       	data-toggle="table"
-			       	data-click-to-select="true"
-			       	data-single-select="true"
-			       	data-sort-name="flag" data-sort-order="desc"
-				   data-url="<%=request.getContextPath()%>/personnels/specifique/listemployeejson"
-			       	data-side-pagination="server"
-			       	data-pagination="true"
-			       	data-page-list="[5, 10, 20, 50, 100, 200]"
-			       	data-search="true">
-			    <thead>
-			        <tr>
-			        	<th data-field="matricule" data-align="left" data-sortable="true">Matricule</th>
-			        	<th data-field="nomComplet" data-align="left" data-sortable="true">Nom & Prenom</th>
-			        	<th data-field="categorieSpeciale" data-align="left" data-sortable="true">Categ Speciale</th>
-			        	<th data-field="nationnalite" data-align="right" data-formatter="nationaliteFormatter" data-sortable="true">Nationalite</th>
-			        	<th data-field="fonction" data-align="left"  data-sortable="true">Fonction</th>
-			        	<th data-field="netapayer" data-align="left"  data-sortable="true">Net a payer</th>
-			        	<th data-field="id" data-formatter="optionFormatter" data-width="100px" data-align="center">Options</th>
-			        </tr>
-			    </thead>
-			</table>
-	    </div><!--widgetcontent-->
+
+               <div id="tableWidget" class="widgetcontent">
+                <div id="toolbar1">
+                    <div class="form-inline">
+                     <button id="btnGenerer" type="submit" data-toggle="modal" data-target="#rhpModal" title="Cocher les employes mis en sommeil" class="btn btn-success "><i class="fa fa-plus"></i>Generer livre de paie</button>
+                    <button id="btnGenerer" type="button" data-toggle="modal" data-target="#rhpModalImprimer" class="btn btn-success "  onclick="chargerBull()"><i class="fa fa-plus"></i>Imprimer bulletin</button>
+                    <button id="btnVrmt" type="button" data-toggle="modal" data-target="#rhpModalVirmt" class="btn btn-success "><i class="fa fa-plus"></i>Ordre de virement</button>
+                    <button id="btnGenererNet" type="submit" title="Prise en compte Net apayer" class="btn btn-info "><i class="fa fa-plus"></i>Net à payer regul</button>
+                    </div>
+                </div>
+		    	<form action="#" id="formList">
+		<table id="table" class="table table-info table-striped"
+        			       	data-toggle="table"
+        			       	data-click-to-select="true"
+        			       	data-single-select="true"
+        			       	data-sort-name="flag" data-sort-order="desc"
+        				   data-url="<%=request.getContextPath()%>/personnels/specifique/special-contracts/listcontratspecjson"
+        			       	data-side-pagination="server"
+        			       	data-pagination="true"
+        			       	data-page-list="[ 20, 50, 100, 200,500]"
+        			       	data-search="true">
+        			    <thead>
+        			        <tr>
+        			        	<th data-field="employee" data-formatter="matriFormatter" data-align="left" data-sortable="true">Matricule</th>
+        			        	<th data-field="employee" data-formatter="nomFormatter" data-align="left" data-sortable="true">Nom & Prenom</th>
+        			        	<th data-field="typeContrat"   data-align="left" data-sortable="true">Categ Speciale</th>
+        			        	<th data-field="fonction" data-formatter="fonctionFormatter"data-align="left"  data-sortable="true">Fonction</th>
+        			        	<th data-field="remunerationForfaitaire" data-align="left"  data-sortable="true">Net a payer</th>
+        			        	<th data-field="modepaiement" data-align="left"  data-sortable="true">Mode de paiement</th>
+        			        	<th data-field="id" data-formatter="optionFormatter" data-width="100px" data-align="center">Options</th>
+        			        </tr>
+        			    </thead>
+        			</table>
+			</form>
+		</div>
     </div><!--widgetbox-->
 </div><!-- widgetcontent-->
 </div>
@@ -444,7 +457,7 @@
 
                 <!-- FOOTER -->
                 <div class="modal-footer">
-                    <input type="hidden" id="idEmpl" name="idEmpl" ng-model="employee.id">
+                    <input type="hidden" id="id" name="id" ng-model="employee.id">
                     <button type="button" class="btn btn-default" onclick="resetEditForm()" data-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-success" ng-disabled="formAjout.$invalid" >Valider</button>
                 </div>
@@ -458,9 +471,153 @@
 
 
 
+<!-- Modification info du personnel -->
+<div class="modal fade" id="rhpModalModiftemps"  role="dialog" aria-labelledby="rhpModalModiftemps" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="formModificationPersonneltemps" class="form-horizontal" role="form" novalidate="novalidate">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Modification du temps de travail du personnel (<span id="infoPersonnelmo">Information du personnel</span>)</h4>
+				</div>
+                <div class="modal-body">
+                	<div class="form-group">
+                        <label for="libelle" class="col-md-4 control-label">Nombre de jours</label>
+                        <div class="col-md-8">
+                            <input type="text" id="jourTravail"  name="jourTravail" class="form-control" required="required" placeholder=""30" />
+                        </div>
+                    </div>
+                    	<div class="form-group">
+                        <label for="libelle" class="col-md-4 control-label">Temps travail</label>
+                        <div class="col-md-8">
+                            <input type="text" id="temptravail"  name="temptravail" required="required" class="form-control" placeholder="173.33"/>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" value="" id="matricule" name="matricule">
+                    <input type="hidden" value="" id="idpers" name="idpers">
+                     <input type="hidden" value="" id="idperiod" name="idperiod">
+                	<span></span>&nbsp;
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">Valider</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modification info du personnel -->
+<div class="modal fade" id="rhpModalModiftemps"  role="dialog" aria-labelledby="rhpModalModiftemps" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="formModificationPersonneltemps" class="form-horizontal" role="form" novalidate="novalidate">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Modification du temps de travail du personnel (<span id="infoPersonnelmo">Information du personnel</span>)</h4>
+				</div>
+                <div class="modal-body">
+                	<div class="form-group">
+                        <label for="libelle" class="col-md-4 control-label">Nombre de jours</label>
+                        <div class="col-md-8">
+                            <input type="text" id="jourTravail"  name="jourTravail" class="form-control" required="required" placeholder=""30" />
+                        </div>
+                    </div>
+                    	<div class="form-group">
+                        <label for="libelle" class="col-md-4 control-label">Temps travail</label>
+                        <div class="col-md-8">
+                            <input type="text" id="temptravail"  name="temptravail" required="required" class="form-control" placeholder="173.33"/>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" value="" id="matricule" name="matricule">
+                    <input type="hidden" value="" id="idpers" name="idpers">
+                     <input type="hidden" value="" id="idperiod" name="idperiod">
+                	<span></span>&nbsp;
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">Valider</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal  fade "  id="rhpModalPretModif" role="dialog" data-backdrop="static">
+	<div class="modal-dialog ">
+		<div class="modal-content">
+				<form id="formPretmodif" action="#">
+					<div class="widgetbox">
+							<div class="headtitle">
+							<h4 class="widgettitle">Modification Pret / Avance</h4>
+					</div>
+					<div class="widgetcontent" style="padding-bottom:0px;">
+					<div class="form-group">
+							<label for="service" class="col-md-4 control-label">Type</label>
+							<div class="col-md-8">
+							<select id="pret1" name="pret1" class="form-control select2">
+							<c:forEach items="${listPrets}" var="pret">
+							<option value="${pret.id}">${pret.libelle}</option>
+							</c:forEach>
+							</select>
+							</div>
+					</div>
+					<div class="form-group">
+							<label for="montant" class="col-md-4 control-label">Montant</label>
+							<div class="col-md-8">
+							<input type="text" id="montant1" name="montant1" class="form-control" placeholder="Montant" />
+							</div>
+					</div>
+					<div class="form-group">
+							<label for="" class="col-md-4 control-label">Periode debut prelev.</label>
+							<div class="col-md-8">
+							<select id="periodepaie1" name="periodepaie1" class="form-control select2">
+							<c:forEach items="${listPeriodepaie}" var="periodePaie">
+							<option value="${periodePaie.id}">${periodePaie.mois.mois} ${periodePaie.annee.annee}</option>
+							</c:forEach>
+							</select>
+							</div>
+					</div>
+					<div class="form-group">
+							<label for="" class="col-md-4 control-label">Date contraction</label>
+							<div class="col-md-8">
+							<input type="text" id="dEmprunt1" name="dEmprunt1" class="form-control" placeholder="Date contraction" />
+							</div>
+					</div>
+					<div class="form-group">
+							<label for="" class="col-md-4 control-label">Mensualite</label>
+								<div class="col-md-8">
+									<input type="text" id="echelonage1" name="echelonage1" class="form-control"  />
+									<input type="hidden" id="idpers1" name="idpers1" class="form-control"  />
+
+								</div>
+					</div>
+					<div class="form-group">
+							<label class="col-md-4 control-label">Prelevement/Periode</label>
+							<div class="col-md-8">
+							{{prelevement}}
+					</div>
+							</div> -->
+					<div class="form-group">
+							<div class="col-md-12">
+							<span class="pull-right">
+							<span></span>&nbsp;&ndash;%&gt;
+							<input type="hidden" id="idpret" name="idpret" class="form-control"  />
+							<input class="btn btn-default" type="button" data-dismiss="modal" value="Annuler" />&nbsp;
+							<input class="btn btn-success" type="submit" value="Valider" />
+							<!-- </span> -->
+							</div>
+					</div>
+							<%--</div><!--widgetcontent-->--%>
+		</div>
+		</form>
+       </div>
 
 
 
+    </div>
+   </div>
 <div class="modal deleteModal  fade bs-delete-modal-static" role="dialog" data-backdrop="static">
     <div class="modal-dialog ">
         <div class="modal-content">
@@ -469,14 +626,14 @@
 	                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	                <span class="circle bg-danger">
 	                    <i class="fa fa-question-circle"></i>
-	                    Etes vous sur de vouloir supprimer ?
+	                    Etes vous s�r de vouloir supprimer ?
 	                </span>
 	            </div>
 	            <div class="modal-body">
-	            	<h4 ng-bind="employee.info"></h4>
+	            	<h4 ng-bind="employe.info"></h4>
 	            </div>
 	            <div class="modal-footer">
-                	<input type="text" class="hidden" ng-hide="true" value="" name="idemp"  id="idemp" ng-model="employe.id">
+                	<input type="text" class="hidden" ng-hide="true" value="" name="id" ng-model="employe.id">
                 	<span></span>&nbsp;
                     <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-success">Valider</button>
@@ -508,7 +665,7 @@ app.controller('formAjoutCtrl', function ($scope) {
 //End AngularJs
 
 var actionUrl = "/personnels/specifique/enregisteremployee";
-var actionDeleteUrl = "/personnels/specifique/deactivate";
+var actionDeleteUrl = "/personnels/supprimeremployee";
 var action = "ajout";
 var $table;
 jQuery(document).ready(function($){
@@ -619,17 +776,46 @@ jQuery(document).ready(function($){
 	//$( ".select2" ).select2();
 });
 
+
 function optionFormatter(id, row, index) {
-	var option = '<a onclick="edit('+id+')" data-toggle="modal" data-target="#rhpModal" href="#" title="Modifier categorie [LIBELLE : '+row.libelle+' ]">  <span class="glyphicon glyphicon-file"></span></a>&nbsp;';
-	option += '&nbsp;<a onclick="del('+id+')" data-toggle="modal" data-target=".deleteModal" href="#" title="Suprimer categorie [LIBELLE : '+row.libelle+' ]"> <span class="glyphicon glyphicon-trash"></span></a>';
-	
+	/*var option = '<a onclick="selectPersInfo('+id+','+row.id+')" data-toggle="modal" data-target="#rhpModalModif" href="#" title="Modifier personnel [LIBELLE : '+row.employee.matricule+' ]">  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';*/
+	var option = '<a onclick="cherch2('+row.id+')" data-toggle="modal" data-target="#rhpModalModiftemps" href="#" title="Modifier personnel [LIBELLE : '+row.employee.matricule+' ]">  <span class="glyphicon glyphicon-list"></span></a>&nbsp;';
+	option += '<a onclick="cherch2('+row.id+')" data-toggle="modal" data-target="#rhpModalModiftemps" href="#" title="Modifier personnel [LIBELLE : '+row.employee.matricule+' ]">  <span class="glyphicon glyphicon-list"></span></a>&nbsp;';
+	option += '&nbsp;<a onclick="cherch('+row.employee.id+')" data-toggle="modal" data-target="#rhpModalPretModif" href="#" title="Calcul a lenvers bulletin [LIBELLE : '+row.employee.matricule+' ]"> <span class="glyphicon glyphicon-pencil"></span></a>';
+	/* option += '<a onclick="listMouvementConge('+id+','+row.employee.id+')" data-toggle="modal" data-target="#listPrimesDiversModal" href="#" title="Modifier personnel [LIBELLE : '+row.employee.matricule+' ]">  <span class="glyphicon glyphicon-briefcase"></span></a>&nbsp;'; */
+
     return option;
 }
+
 function nationaliteFormatter(nationnalite) {
     return nationnalite.libelle;
 }
 
+function matriFormatter(employee, row, index) {
+	if(row.employee.matricule == ''){
+		return "";
+	}
+	return row.employee.matricule;
+}
+function specialFormatter(employee, row, index) {
+	if(row.employee.typeContrat == ''){
+		return "";
+	}
+	return row.employee.typeContrat;
+}
 
+function nomFormatter(employee, row, index) {
+	if(row.employee.nom == ''){
+		return "";
+	}
+	return row.employee.nomComplet;
+}
+function fonctionFormatter(fonction, row, index) {
+	if(row.fonction.libelle == ''){
+		return "";
+	}
+	return row.fonction.libelle;
+}
 //Chargement des fonctions
 function loadFonction() {
     jQuery.ajax({
@@ -693,7 +879,6 @@ function edit(idCategorie){
       //  jQuery(".sectionContrat input, .sectionContrat select").attr("disabled", "disabled");
        jQuery("#paiementNumber").removeAttr("disabled");
         jQuery("#modepaiement").removeAttr("disabled");
-        jQuery("#idEmpl").val(employee.id);
         updateComboAndRadioEmployee(employee)
         loadContratActifEmploye(employee);
 }
@@ -769,6 +954,5 @@ function del(idCategorie){
 	$scope.$apply(function () {
         $scope.pupulateForm(employee);
     });
-  jQuery("#idemp").val(employee.id)          ;
 }
 </script>

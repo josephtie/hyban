@@ -19,7 +19,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/personnels")
+@RequestMapping("/personnels/specifique")
 public class EmployeeController {
 
     private final EmployeeService service;
@@ -33,21 +33,23 @@ public class EmployeeController {
     public @ResponseBody SpecialContractDTO saveEmployeeWithContract(
 
             // ========= EMPLOYEE =========
-            @RequestParam(value = "id", required = false) Long employeeId,
+            @RequestParam(value = "idEmpl", required = false) Long employeeId,
             @RequestParam("matricule") String matricule,
             @RequestParam("nom") String nom,
             @RequestParam("prenom") String prenom,
             @RequestParam("sexe") String sexe,
-            @RequestParam("situationMatrimoniale") String situationMatrimoniale,
+            @RequestParam("situationMatrimoniale") Integer situationMatrimoniale,
             @RequestParam("nationalite") Long  nationalite,
             @RequestParam(value = "lieuHabitation", required = false) String lieuHabitation,
-            @RequestParam("dofbrid") String dateNaissance,
+            @RequestParam(value = "dofbrid", required = false) String dateNaissance,
             @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
 
             // ========= CONTRAT =========
             @RequestParam("typeContrat") SpecialContractType typeContrat,
             @RequestParam("dDeb") String dateDebut,
-            @RequestParam("dFin") String dateFin,
+            @RequestParam(value = "dFin", required = false) String dateFin,
+            @RequestParam("fonction") Long fonction,
+            @RequestParam("site") Long site,
             @RequestParam("modepaiement") String modePaiement,
             @RequestParam("paiementNumber") String paiementNumber,
             @RequestParam("netpayer") BigDecimal netAPayer
@@ -58,12 +60,14 @@ public class EmployeeController {
                 nom,
                 prenom,
                 sexe,
-                situationMatrimoniale,nationalite,
+                situationMatrimoniale,
+                nationalite,
                 lieuHabitation,
                 dateNaissance,
                 phoneNumber,
-                true,
                 typeContrat,
+                fonction,
+                site,
                 dateDebut,
                 dateFin,
                 modePaiement,
@@ -80,10 +84,10 @@ public class EmployeeController {
                                                            @RequestParam(value="search", required=false)  String search, Principal principal) {
 
         if(offset == null) offset = 0;
-        if(limit == null) limit = 10;
+        if(limit == null) limit = 20;
 
         //final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "nom");
-        PageRequest pageRequest = PageRequest.of(offset / 20, limit, Sort.Direction.DESC, "id");
+        PageRequest pageRequest = PageRequest.of(offset / limit, limit, Sort.Direction.DESC, "id");
         EmployeeDTO employeeDTO = new EmployeeDTO();
         if(search == null )
             employeeDTO = service.loadPersonnel(pageRequest);
@@ -91,8 +95,7 @@ public class EmployeeController {
             employeeDTO = service.loadPersonnel(pageRequest,search,search);
 
         return employeeDTO;
-        //System.out.println(" hello "+hfhfh);
-        //System.out.println("****************jour  MOIS annnee)))))))))))))))))))))"+offset+"MOIS"+limit);
+
     }
 
     @GetMapping
@@ -105,8 +108,17 @@ public class EmployeeController {
         return service.findById(id);
     }
 
-    @DeleteMapping("/{id}")
-    public void deactivate(@PathVariable Long id) {
-        service.deactivate(id);
+//    @PostMapping()
+//    public void deactivate(@RequestParam(value="id", required=true)  Long id ){
+//        service.deactivate(id);
+//    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/deactivate", method = RequestMethod.POST)
+    public @ResponseBody EmployeeDTO deactivate(@RequestParam(value="idemp", required=true) Long id) {
+
+        EmployeeDTO categorieDTO = new EmployeeDTO();
+        categorieDTO.setResult(service.deactivate(id));
+        return categorieDTO;
     }
 }

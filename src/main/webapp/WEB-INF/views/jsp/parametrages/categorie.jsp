@@ -8,7 +8,7 @@
 		<div class="panel panel-warning">
 			<div class="panel-heading">
 				<div class="panel-title-box">
-					<h3>Liste des Fonctions/Emplois</h3>
+					<h3>Liste des Categories Professionnelles</h3>
 					<span></span>
 				</div>
 				<ul class="panel-controls" style="margin-top: 2px;">

@@ -4,12 +4,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import com.nectux.mizan.hyban.personnel.entity.Fonction;
 import com.nectux.mizan.hyban.personnel.specifque.enums.SpecialContractType;
+import com.nectux.mizan.hyban.rh.carriere.entity.Poste;
+import com.nectux.mizan.hyban.rh.carriere.entity.Site;
 import com.nectux.mizan.hyban.utils.CustomDateDeserializer;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -32,6 +33,11 @@ public class SpecialContract extends Auditable {
     @ManyToOne(optional = false)
     @JoinColumn(name = "fonction_id")
     private Fonction fonction;
+
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "site_id")
+    private Site site;
 
     private String paiementNumber;
 
@@ -155,6 +161,14 @@ public class SpecialContract extends Auditable {
         this.fonction = fonction;
     }
 
+    public Site getSite() {
+        return site;
+    }
+
+    public void setSite(Site site) {
+        this.site = site;
+    }
+
     @Override
     public String toString() {
         return "SpecialContract{" +
@@ -162,6 +176,8 @@ public class SpecialContract extends Auditable {
                 ", employee=" + employee +
                 ", typeContrat=" + typeContrat +
                 ", modepaiement='" + modepaiement + '\'' +
+                ", fonction=" + fonction +
+                ", site=" + site +
                 ", paiementNumber='" + paiementNumber + '\'' +
                 ", dateDebut=" + dateDebut +
                 ", dDeb='" + dDeb + '\'' +

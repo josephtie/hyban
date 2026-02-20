@@ -71,6 +71,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 	@Autowired private PlanningCongeRepository planningCongeRepository;
 	
 	List<LivreDePaie> livredepaieList=null;
+	List<LivreDePaieV2> livredepaieListV2=null;
 	List<BulletinPaie> bulletinpaieList;
 	
 	@Override
@@ -738,6 +739,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 
 		// 7️⃣ Traiter chaque personnel
 		for (Personnel person : personnelList) {
+
 			ContratPersonnel contrat = contratParPersonnel.get(person.getId());
 			if (contrat == null) continue;
 
@@ -999,7 +1001,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
         long start = System.currentTimeMillis();
 
         LivreDePaieDTOV2 dto = new LivreDePaieDTOV2();
-        List<LivreDePaieV2> livres = new ArrayList<>();
+        livredepaieListV2 = new ArrayList<>();
 
         PeriodePaie periode = periodePaieRepository.findById(idPeriode)
                 .orElseThrow(() -> new EntityNotFoundException("Période introuvable"));
@@ -1075,19 +1077,19 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
                     planningParContrat.get(contrat.getId()),
                     bulletinsParPersonnel.getOrDefault(person.getId(), Collections.emptyList())
             );
-
-            livres.add(livre);
+            livre.setBullpaie(chargerBulletinDepuisLivre(livre));
+            livredepaieListV2.add(livre);
         }
 
         // 🔹 Pagination
         int startRow = (int) pageable.getOffset();
-        int endRow = Math.min(startRow + pageable.getPageSize(), livres.size());
+        int endRow = Math.min(startRow + pageable.getPageSize(), livredepaieListV2.size());
         Page<LivreDePaieV2> page =
-                new PageImpl<>(livres.subList(startRow, endRow), pageable, livres.size());
+                new PageImpl<>(livredepaieListV2.subList(startRow, endRow), pageable, livredepaieListV2.size());
 
         dto.setRows(page.getContent());
         dto.setTotal(page.getTotalElements());
-
+        dto.setResult("success");
         logger.info("Paie générée en {} ms", System.currentTimeMillis() - start);
         return dto;
     }
@@ -1105,7 +1107,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
             List<BulletinPaie> bulletinsPrec) {
 
         LivreDePaieV2 livre = new LivreDePaieV2();
-        final int JOURS_OUVRABLES_MOIS = 26;
+        final int JOURS_OUVRABLES_MOIS = 30;
         livre.setMatricule(person.getMatricule());
         livre.setNomPrenom(person.getNom() + " " + person.getPrenom());
         livre.setPeriodePaie(periode);
@@ -1135,11 +1137,39 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
         );
 
         // ================== SALAIRE DE BASE PRORATISÉ ==================
-        double salaireBase = Math.ceil(
-                contrat.getCategorie().getSalaireDeBase() * joursPresence / JOURS_OUVRABLES_MOIS
-        );
-        livre.setSalaireBase(salaireBase);
+        double salaireCategorie = Optional.ofNullable(contrat.getCategorie())
+                .map(c -> c.getSalaireDeBase())
+                .orElse(0D);
 
+//        if (salaireCategorie <= 0) {
+//            throw new IllegalStateException(
+//                    "Salaire de base non défini pour le contrat : " + contrat.getId()
+//            );
+//        }
+
+        double salaireBase = Math.ceil(
+                salaireCategorie * joursPresence / JOURS_OUVRABLES_MOIS
+        );
+
+        livre.setSalaireBase(salaireBase);
+        double sursalaire = Optional.ofNullable(contrat.getSursalaire()).orElse(0D);
+
+        double sarsalaire = Math.ceil(
+                sursalaire * joursPresence / JOURS_OUVRABLES_MOIS
+        );
+
+        livre.setSurSalaire(sarsalaire);
+
+        double transport = Optional.ofNullable(contrat.getIndemniteTransport()).orElse(0D);
+
+        double transportImposable = Math.ceil(
+                transport * joursPresence / JOURS_OUVRABLES_MOIS
+        );
+
+        livre.setIndemniteTransportImposable(transportImposable);
+
+
+        livre.setPrimeAnciennete(salaireBase*livre.getAnciennete()/100);
         // ================== PRIMES ==================
         classerPrimes(primesPers, livre);
 
@@ -1199,24 +1229,20 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
         return livre;
     }
 
+
     private BulletinPaie chargerBulletinDepuisLivre(
-            LivreDePaieV2 livre,
-            double cumulIgr,
-            double cumulIts,
-            double cumulCn,
-            double cumulCnps,
-            double cumulNet
+            LivreDePaieV2 livre
     ) {
 
         BulletinPaie bull = new BulletinPaie();
 
         // 🔹 Cumuls annuels (année civile uniquement)
-        bull.setCumulIgr(cumulIgr);
-        bull.setCumulIts(cumulIts);
-        bull.setCumulCn(cumulCn);
-        bull.setCumulCnpsSal(cumulCnps);
-        bull.setCumulSalaireNet(cumulNet);
-        bull.setCumulRetenueNet(cumulIgr + cumulIts + cumulCn + cumulCnps);
+        bull.setCumulIgr(livre.getCumulIgr());
+        bull.setCumulIts(livre.getCumulIts());
+        bull.setCumulCn(livre.getCumulCn());
+        bull.setCumulCnpsSal(livre.getCumulCnpsSalariale());
+        bull.setCumulSalaireNet(livre.getCumulSalaireNet());
+        bull.setCumulRetenueNet(bull.getCumulIts() + bull.getCumulCnpsSal());
 
         // 🔹 Avances & prêts
         bull.setAvanceetacompte(livre.getAvance());
@@ -1225,22 +1251,31 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
         // 🔹 Indemnités
         bull.setIndemniteRepresentation(livre.getIndemniteRepresentation());
         bull.setIndemniteTransport(livre.getIndemniteTransport());
-//        bull.setIndemniteTransportImp(livre.getIndemniteTransportImp());
-//        bull.setIndemniteRespons(livre.getIndemniteResponsabilte());
-//        bull.setAutreNonImposable(livre.getAutreNonImposable());
-//        bull.setBrutNonImposable(livre.getBrutNonImposable());
-//        bull.setRegularisation(livre.getRegularisation());
-//
-//        // 🔹 Bruts / nets
-//        bull.setTotalbrut(livre.getTotalBrut());
-//        bull.setTotalretenue(livre.getTotalRetenue());
-//        bull.setNetapayer(livre.getNetPayer());
-//
-//        // 🔹 Charges salariales
-//        bull.setImpotSalaire(livre.getIs());
-//        bull.setRetenueSociiale(livre.getRetenueSociiale());
-//        bull.setCnps(livre.getCnpsSalariale());
+        bull.setIndemniteTransportImp(livre.getIndemniteTransportImposable());
+        bull.setIndemniteRespons(livre.getIndemniteResponsabilite());
+        bull.setAutreNonImposable(livre.getAutreNonImposable());
+        bull.setBrutNonImposable(livre.getBrutNonImposable());
+        bull.setRegularisation(livre.getRegularisation());
+        bull.setSalairbase(livre.getSalaireBase());
+        bull.setSursalaire(livre.getSurSalaire());
+        bull.setPrimeanciennete(livre.getPrimeAnciennete());
+        bull.setIndemnitelogement(livre.getIndemniteLogement());
+        bull.setIndemniteRepresentation(livre.getIndemniteRepresentation());
+        bull.setAutreIndemImposable(livre.getAutreIndemImposable());
+        bull.setBrutImposable(livre.getBrutImposable());
+        // 🔹 Bruts / nets
+        bull.setTotalbrut(livre.getTotalBrut());
+        bull.setTotalretenue(livre.getTotalRetenue());
+        bull.setNetapayer(livre.getNetPayer());
 
+        // 🔹 Charges salariales
+        bull.setImpotSalaire(livre.getIs());
+        bull.setIts(livre.getIts());
+        bull.setTotalretenuefiscal(livre.getTotalRetenueFiscale());
+        bull.setBasecnps(livre.getBaseCnps());
+        bull.setRetenueSociiale(livre.getRetenueSociiale());
+        bull.setCnps(livre.getCnpsSalariale());
+        bull.setTotalretenue(livre.getTotalRetenue());
         // 🔹 Charges patronales
         bull.setTa(livre.getTa());
         bull.setFpc(livre.getFpc());
@@ -1254,9 +1289,9 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
         // 🔹 Temps de travail
 //        bull.setJourTravail(livre.getJourTravail());
 //        bull.setTemptravail(livre.getTemptravail());
-//
-//        // 🔹 CAREC / CMU (sécurisé)
-//       // bull.setCarec(livre.);
+
+        // 🔹 CAREC / CMU (sécurisé)
+        bull.setCarec(livre.getCarec());
 //        bull.setCMUPatronal(livre.getCarec() ? livre.getCMUPatronal() : 0D);
 //        bull.setCMUSalarial(livre.getCarec() ? livre.getCMUSalarial() : 0D);
 
@@ -1271,7 +1306,6 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 
         return bull;
     }
-
 
     private void annulerCharges(LivreDePaieV2 livre) {
 
@@ -1356,6 +1390,9 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
         brut += livre.getIndemniteLogement();
         // Indemnité de representation
         brut += livre.getIndemniteRepresentation();
+
+        // Indemnité de representation
+        brut += livre.getIndemniteTransportImposable();
         // Indemnités brutes
         if (livre.getIndemniteBrut() != null) {
             brut += livre.getIndemniteBrut()
@@ -1902,19 +1939,22 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 		// TODO Auto-generated method stub
 		BulletinPaieDTO bulletinDTO = new BulletinPaieDTO();
 		List<BulletinPaie> bullList = new ArrayList<BulletinPaie>();
-		for(LivreDePaie livre : livredepaieList){
-			BulletinPaie bull=  bulletinPaieRepository.findByBulletinAndPersonnelCalcultrue(livre.getContratPersonnel().getPersonnel().getId(),livre.getPeriodePaie().getId());
-			if(bull==null){
-				
-			}else{
-				if(!bull.getContratPersonnel().getPersonnel().getStatut())
-						bulletinPaieRepository.delete(bull);
-				else
-						livre.getBullpaie().setId(bull.getId());
-			}
+//		for(LivreDePaieV2 livre : livredepaieListV2)
 
-		 bullList.add(livre.getBullpaie());
-		}
+            for(LivreDePaie livre : livredepaieList){
+                BulletinPaie bull=  bulletinPaieRepository.findByBulletinAndPersonnelCalcultrue(livre.getContratPersonnel().getPersonnel().getId(),livre.getPeriodePaie().getId());
+                if(bull==null){
+
+                }else{
+                    if(!bull.getContratPersonnel().getPersonnel().getStatut())
+                        bulletinPaieRepository.delete(bull);
+                    else
+                        livre.getBullpaie().setId(bull.getId());
+                }
+
+                bullList.add(livre.getBullpaie());
+            }
+
         bulletinPaieRepository.saveAll(bullList);
 		int start =(int) pageable.getOffset();Page<BulletinPaie> pageImpianto=null;
 		int end = (start + (int) pageable.getPageSize()) > bullList.size() ? bullList.size() : (start + pageable.getPageSize());

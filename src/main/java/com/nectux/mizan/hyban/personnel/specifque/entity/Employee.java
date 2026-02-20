@@ -15,11 +15,12 @@ import java.util.Date;
 
 @Entity
 @Table(name = "employees")
-
+@SequenceGenerator(name="CGECI_RHPAIE_EMPLOYEE_SEQUENCE", sequenceName="CGECI_RHPAIE_EMPLOYEE_SEQ", initialValue=1, allocationSize=1)
 public class Employee extends Auditable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CGECI_RHPAIE_EMPLOYEE_SEQUENCE")
+    @Column(unique=true, nullable=false)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -29,10 +30,10 @@ public class Employee extends Auditable {
     private String prenom;
     private String nomComplet;
     private String sexe;
-    private String situationMatrimoniale;
+    private int situationMatrimoniale;
     private String lieuHabitation;
     private String commentaire;
-
+    private Integer  nombrEnfant;
 
     @JsonSerialize(using = CustomDateDeserializer.class)
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -63,7 +64,15 @@ public class Employee extends Auditable {
     private String phoneNumber;
 
     // getters & setters
+    @Transient
+    private String situationMatri;
 
+
+    @Transient
+    private String netapayer;
+
+    @Transient
+    private String fonction;
 
     public Long getId() {
         return id;
@@ -151,11 +160,11 @@ public class Employee extends Auditable {
         this.sexe = sexe;
     }
 
-    public String getSituationMatrimoniale() {
+    public int getSituationMatrimoniale() {
         return situationMatrimoniale;
     }
 
-    public void setSituationMatrimoniale(String situationMatrimoniale) {
+    public void setSituationMatrimoniale(int situationMatrimoniale) {
         this.situationMatrimoniale = situationMatrimoniale;
     }
 
@@ -212,6 +221,46 @@ public class Employee extends Auditable {
         this.commentaire = commentaire;
     }
 
+    public Integer getNombrEnfant() {
+        return nombrEnfant;
+    }
+
+    public void setNombrEnfant(Integer nombrEnfant) {
+        this.nombrEnfant = nombrEnfant;
+    }
+
+    public String getSituationMatri() {
+        if(situationMatrimoniale == 1)
+            situationMatri = "MARIE";
+        else if(situationMatrimoniale == 2)
+            situationMatri = "CELIBATAIRE";
+        else if(situationMatrimoniale == 3)
+            situationMatri = "DIVORCE";
+        else if(situationMatrimoniale == 4)
+            situationMatri = "VEUF";
+        return situationMatri;
+    }
+
+    public void setSituationMatri(String situationMatri) {
+        this.situationMatri = situationMatri;
+    }
+
+    public String getNetapayer() {
+        return netapayer;
+    }
+
+    public void setNetapayer(String netapayer) {
+        this.netapayer = netapayer;
+    }
+
+    public String getFonction() {
+        return fonction;
+    }
+
+    public void setFonction(String fonction) {
+        this.fonction = fonction;
+    }
+
     @Override
     public String toString() {
         return "Employee{" +
@@ -224,6 +273,7 @@ public class Employee extends Auditable {
                 ", situationMatrimoniale='" + situationMatrimoniale + '\'' +
                 ", lieuHabitation='" + lieuHabitation + '\'' +
                 ", commentaire='" + commentaire + '\'' +
+                ", nombrEnfant=" + nombrEnfant +
                 ", dateofbrid=" + dateofbrid +
                 ", dofbrid='" + dofbrid + '\'' +
                 ", piece=" + piece +

@@ -166,6 +166,11 @@
 		<put-attribute name="title" value=" HYBAN -Livre de paie" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/livrepaie.jsp" />
 	</definition>
+
+    <definition name="livrespeciale" extends="fetemplate">
+		<put-attribute name="title" value=" HYBAN -Livre de paie special" />
+		<put-attribute name="content" value="/WEB-INF/views/jsp/paies/livrespeciale.jsp" />
+	</definition>
 	
 	<definition name="livrepaiegratification" extends="fetemplate">
 		<put-attribute name="title" value=" HYBAN -Livre de paie" />

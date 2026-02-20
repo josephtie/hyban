@@ -94,10 +94,29 @@
             <button id="exportExcel" class="btn btn-success" style="margin-bottom: 10px;">
                 Exporter en Excel
             </button>
+            <div class="row" style="margin-bottom:15px;">
+
+                <div class="col-md-4">
+                    <select id="filterCarec" class="form-control" name="filterCarec">
+                        <option value="">-- Tous les statuts --</option>
+                        <option value="CDI">CDI</option>
+                        <option value="CDD">CDD</option>
+                        <option value="CONSULTANT">Consultant</option>
+                   </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn btn-primary" id="btnFilter">
+                        Filtrer
+                    </button>
+                </div>
+
+            </div>
                 <table id="table" class="table table-info table-striped"
                        data-toggle="table" 
                        data-click-to-select="true"
                        data-single-select="true"
+                       data-query-params="queryParams"
                        data-url="${pageContext.request.contextPath}/personnels/listpersonneljson"
                        data-side-pagination="server" 
                        data-pagination="true"
@@ -420,7 +439,7 @@
                                                     <option value="transfert-mobile-money"> transfert-mobile-money </option>
                                                     <option value="transfert-wave"> transfert-wave </option>
                                                     <option value="Espece"> Espece </option>
-                                                    <option value="Cheque"> Cheque </option>
+
                                                 </select>
                                             </div>
                                             <div class="col-md-4">
@@ -3325,7 +3344,9 @@ function loadTypeContrat() {
         },
     });
 }
-
+$('#btnFilter').click(function () {
+    $('#table').bootstrapTable('refresh');
+});
 //Chargement des fonctions
 function loadFonction() {
     jQuery.ajax({
@@ -3506,6 +3527,11 @@ function editDocument(idemployeDocument, index) {
     jQuery("#actionDocument button:submit").data("", index);
 }
 
+
+function queryParams(params) {
+    params.filterCarec = $('#filterCarec').val();
+    return params;
+}
 function downDocument(idemployeDocument, index) {
 
     var $scope = angular.element(document.getElementById("listDocumentModal")).scope();

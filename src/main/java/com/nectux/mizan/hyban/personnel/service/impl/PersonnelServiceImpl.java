@@ -151,6 +151,8 @@ public class PersonnelServiceImpl implements PersonnelService {
 			contratPersonnel.setFonction(fonctionRepository.findById(fonction).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + fonction)));
 
 			contratPersonnel.setDateDebut(Utils.stringToDate(dateDebut, "dd/MM/yyyy"));
+
+
 				if (dateFin != null && !dateFin.trim().isEmpty()) {
 					contratPersonnel.setDateFin(Utils.stringToDate(dateFin, "dd/MM/yyyy"));
 				} else {
@@ -161,8 +163,8 @@ public class PersonnelServiceImpl implements PersonnelService {
 			contratPersonnel.setNetAPayer(salaireNet);
 			contratPersonnel.setIndemniteLogement(indemnitelogement);
 			contratPersonnel.setTypeContrat(typeContratRepository.findById(typeContrat).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + typeContrat)));
-				if(contratPersonnel.getTypeContrat().getId()==1L)
-					contratPersonnel.setDateFin(null);
+			if(contratPersonnel.getTypeContrat().getId()==1L)contratPersonnel.setDateFin(null);
+
 			contratPersonnel.setAncienneteInitial(ancienneteInitial);
 			contratPersonnel.setStatut(true);
 			contratPersonnel.setDepart(false);
@@ -565,6 +567,53 @@ public class PersonnelServiceImpl implements PersonnelService {
         logger.info(">>>>> PERSONNELS CHARGES AVEC SUCCES");
         return personnelDTO;
     }
+    @Override
+    public PersonnelDTO loadPersonnelopfilter(Pageable pageable, String filter) {
+
+        PersonnelDTO personnelDTO = new PersonnelDTO();
+
+        Boolean carecFilter = null;
+
+
+        if (filter != null && !filter.isBlank()) {
+            if ("CONSULTANT".equalsIgnoreCase(filter)) {
+                carecFilter = false;
+            } else {
+                carecFilter = true;
+            }
+        }
+
+
+        Page<Personnel> page;
+
+        if (carecFilter != null) {
+            page = personnelRepository.findByCarec(carecFilter, pageable);
+        } else {
+            page = personnelRepository.chearchOrdreAsc(pageable);
+        }
+
+        List<Personnel> personnelsWithContract = page.getContent().stream().map(p -> {
+            ContratPersonnel contrat = contratPersonnelRepository
+                    .findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(p.getId());
+
+            if (contrat != null) {
+                p.setNetapayer(contrat.getNetAPayer());
+                p.setFonction(contrat.getFonction().getLibelle());
+            }
+            return p;
+        }).toList();
+
+        personnelDTO.setRows(personnelsWithContract);
+        personnelDTO.setTotal(page.getTotalElements());
+
+        logger.info(">>>>> PERSONNELS CHARGES AVEC SUCCES");
+
+        return personnelDTO;
+    }
+
+
+
+
 	@Override
 	public PersonnelDTO findAllfilter(Map<String, String> filters, Pageable pageable) {
 		PersonnelDTO personnelDTO = new PersonnelDTO();
@@ -614,6 +663,56 @@ public class PersonnelServiceImpl implements PersonnelService {
         personnelDTO.setTotal(page.getTotalElements());
 
         logger.info(">>>>> PERSONNELS CHARGES AVEC SUCCES");
+        return personnelDTO;
+    }
+
+    @Override
+    public PersonnelDTO loadPersonnelopfilter(
+            Pageable pageable,
+            String cherch1,
+            String filter) {
+
+        PersonnelDTO personnelDTO = new PersonnelDTO();
+
+        Boolean carecFilter = null;
+
+        if (filter != null && !filter.isBlank()) {
+            if ("CONSULTANT".equalsIgnoreCase(filter)) {
+                carecFilter = false;
+            } else {
+                carecFilter = true;
+            }
+        }
+
+        // Nettoyer la recherche vide
+        if (cherch1 != null && cherch1.isBlank()) {
+            cherch1 = null;
+        }
+
+        Page<Personnel> page = personnelRepository
+                .searchWithCarec(carecFilter, cherch1, pageable);
+
+        List<Personnel> personnelsWithContract = page.getContent()
+                .stream()
+                .map(p -> {
+
+                    ContratPersonnel contrat =
+                            contratPersonnelRepository
+                                    .findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(p.getId());
+
+                    if (contrat != null) {
+                        p.setNetapayer(contrat.getNetAPayer());
+                        p.setFonction(contrat.getFonction().getLibelle());
+                    }
+
+                    return p;
+                }).toList();
+
+        personnelDTO.setRows(personnelsWithContract);
+        personnelDTO.setTotal(page.getTotalElements());
+
+        logger.info(">>>>> PERSONNELS CHARGES AVEC SUCCES");
+
         return personnelDTO;
     }
 

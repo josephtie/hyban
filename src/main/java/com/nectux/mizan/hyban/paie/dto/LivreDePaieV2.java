@@ -59,6 +59,43 @@ public class LivreDePaieV2 {
     @Transient
     private String mtindemniteRepresentation;
     private double cumulCnpsSalariale;
+    private double primeAnciennete;
+    private double baseCnps;
+    private double cn;
+    private double igr;
+    private double totalRetenueFiscale;
+    private double cnps;
+
+    private double autreIndemImposable;
+    private double autreImposable;
+
+    private double cmuPatronal;
+    private double cmuSalarial;
+    private double carec;
+
+    private double autreNonImposable;
+
+    private double indemniteResponsabilite;
+    private double indemniteTransportImposable;
+
+    private double regularisation;
+    private double autrePrelevement;
+
+    private double totalBrut;
+
+    private double retenueSociiale;
+
+    private double cumulIgr;
+    private double cumulCn;
+    private double cumulCnpsSal;
+    private double cumulSalaireNet;
+    private double cumulRetenueNet;
+
+    private boolean congeAc;
+    private boolean calculer;
+    private boolean cloture;
+
+    private double isPatronal;
 
     // constructeur complet
     public LivreDePaieV2() {}
@@ -403,6 +440,222 @@ public class LivreDePaieV2 {
 
     public void setIndemniteTransport(double indemniteTransport) {
         this.indemniteTransport = indemniteTransport;
+    }
+
+    public double getPrimeAnciennete() {
+        return primeAnciennete;
+    }
+
+    public void setPrimeAnciennete(double primeAnciennete) {
+        this.primeAnciennete = primeAnciennete;
+    }
+
+    public double getBaseCnps() {
+        return baseCnps;
+    }
+
+    public void setBaseCnps(double baseCnps) {
+        this.baseCnps = baseCnps;
+    }
+
+    public double getCn() {
+        return cn;
+    }
+
+    public void setCn(double cn) {
+        this.cn = cn;
+    }
+
+    public double getIgr() {
+        return igr;
+    }
+
+    public void setIgr(double igr) {
+        this.igr = igr;
+    }
+
+    public double getTotalRetenueFiscale() {
+        return totalRetenueFiscale;
+    }
+
+    public void setTotalRetenueFiscale(double totalRetenueFiscale) {
+        this.totalRetenueFiscale = totalRetenueFiscale;
+    }
+
+    public double getCnps() {
+        return cnps;
+    }
+
+    public void setCnps(double cnps) {
+        this.cnps = cnps;
+    }
+
+    public double getAutreIndemImposable() {
+        return autreIndemImposable;
+    }
+
+    public void setAutreIndemImposable(double autreIndemImposable) {
+        this.autreIndemImposable = autreIndemImposable;
+    }
+
+    public double getAutreImposable() {
+        return autreImposable;
+    }
+
+    public void setAutreImposable(double autreImposable) {
+        this.autreImposable = autreImposable;
+    }
+
+    public double getCmuPatronal() {
+        return cmuPatronal;
+    }
+
+    public void setCmuPatronal(double cmuPatronal) {
+        this.cmuPatronal = cmuPatronal;
+    }
+
+    public double getCmuSalarial() {
+        return cmuSalarial;
+    }
+
+    public void setCmuSalarial(double cmuSalarial) {
+        this.cmuSalarial = cmuSalarial;
+    }
+
+    public double getCarec() {
+        return carec;
+    }
+
+    public void setCarec(double carec) {
+        this.carec = carec;
+    }
+
+    public double getAutreNonImposable() {
+        return autreNonImposable;
+    }
+
+    public void setAutreNonImposable(double autreNonImposable) {
+        this.autreNonImposable = autreNonImposable;
+    }
+
+    public double getIndemniteResponsabilite() {
+        return indemniteResponsabilite;
+    }
+
+    public void setIndemniteResponsabilite(double indemniteResponsabilite) {
+        this.indemniteResponsabilite = indemniteResponsabilite;
+    }
+
+    public double getIndemniteTransportImposable() {
+        return indemniteTransportImposable;
+    }
+
+    public void setIndemniteTransportImposable(double indemniteTransportImposable) {
+        this.indemniteTransportImposable = indemniteTransportImposable;
+    }
+
+    public double getRegularisation() {
+        return regularisation;
+    }
+
+    public void setRegularisation(double regularisation) {
+        this.regularisation = regularisation;
+    }
+
+    public double getAutrePrelevement() {
+        return autrePrelevement;
+    }
+
+    public void setAutrePrelevement(double autrePrelevement) {
+        this.autrePrelevement = autrePrelevement;
+    }
+
+    public double getTotalBrut() {
+        return totalBrut;
+    }
+
+    public void setTotalBrut(double totalBrut) {
+        this.totalBrut = totalBrut;
+    }
+
+    public double getRetenueSociiale() {
+        return retenueSociiale;
+    }
+
+    public void setRetenueSociiale(double retenueSociiale) {
+        this.retenueSociiale = retenueSociiale;
+    }
+
+    public double getCumulIgr() {
+        return cumulIgr;
+    }
+
+    public void setCumulIgr(double cumulIgr) {
+        this.cumulIgr = cumulIgr;
+    }
+
+    public double getCumulCn() {
+        return cumulCn;
+    }
+
+    public void setCumulCn(double cumulCn) {
+        this.cumulCn = cumulCn;
+    }
+
+    public double getCumulCnpsSal() {
+        return cumulCnpsSal;
+    }
+
+    public void setCumulCnpsSal(double cumulCnpsSal) {
+        this.cumulCnpsSal = cumulCnpsSal;
+    }
+
+    public double getCumulSalaireNet() {
+        return cumulSalaireNet;
+    }
+
+    public void setCumulSalaireNet(double cumulSalaireNet) {
+        this.cumulSalaireNet = cumulSalaireNet;
+    }
+
+    public double getCumulRetenueNet() {
+        return cumulRetenueNet;
+    }
+
+    public void setCumulRetenueNet(double cumulRetenueNet) {
+        this.cumulRetenueNet = cumulRetenueNet;
+    }
+
+    public boolean isCongeAc() {
+        return congeAc;
+    }
+
+    public void setCongeAc(boolean congeAc) {
+        this.congeAc = congeAc;
+    }
+
+    public boolean isCalculer() {
+        return calculer;
+    }
+
+    public void setCalculer(boolean calculer) {
+        this.calculer = calculer;
+    }
+
+    public boolean isCloture() {
+        return cloture;
+    }
+
+    public void setCloture(boolean cloture) {
+        this.cloture = cloture;
+    }
+
+    public double getIsPatronal() {
+        return isPatronal;
+    }
+
+    public void setIsPatronal(double isPatronal) {
+        this.isPatronal = isPatronal;
     }
 }
 

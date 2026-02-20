@@ -22,6 +22,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.nectux.mizan.hyban.paie.dto.LivreDePaieDTOV2;
+import com.nectux.mizan.hyban.paie.dto.LivreDePaieV2;
 import com.nectux.mizan.hyban.paie.service.CarboneService;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -114,6 +116,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 	MethodsShared methodsShared = new MethodsShared();
 	List<LivreDePaie> livredepaieList=null;
+	List<LivreDePaieV2> livredepaieListV2=null;
 	private PeriodePaie maperiode;
 	private String promotion;
 
@@ -169,6 +172,52 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		return "livrepaie";
 	}
 
+
+
+    @RequestMapping("/livrespeciale")
+    public String viewAccountTypespeciale(ModelMap modelMap, Principal principal) throws IOException {
+        logger.info(">>>>> Utilisateurs");
+        Utilisateur utilisateur=userService.findByUsername(principal.getName());
+        System.out.println("utilisateur    " +utilisateur.toString());
+
+        modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+                .map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+                .findFirst().orElse(""));
+        //modelMap.addAttribute("profil", utilisateurRoleService.findByUtilisateur(utilisateurService.findByEmail(principal.getName())).get(0).getRole());
+        modelMap.addAttribute("activePayroll", "active");
+        modelMap.addAttribute("blockPayroll", "block");
+        modelMap.addAttribute("activePayrollBook", "active");
+        modelMap.addAttribute("user", userService.findByEmail(principal.getName()));
+        modelMap.addAttribute("icon", "iconfa-home");
+        modelMap.addAttribute("littleTitle", "Paie");
+        //modelMap.addAttribute("bigTitle", "RH PAIE - CGECI");
+
+        maperiode=periodePaieService.findPeriodeactive();
+        if(maperiode==null){}
+        else{
+            modelMap.addAttribute("activeMois", maperiode.getMois().getMois()+" "+ maperiode.getAnnee().getAnnee());
+            modelMap.addAttribute("activeMoisId", maperiode.getId());
+            modelMap.addAttribute("periode",  maperiode.getMois().getMois()+" "+ maperiode.getAnnee().getAnnee());
+        }
+
+        Societe mysociete=null;
+        List<Societe> malist=societeService.findtsmois();
+        if(malist.size()>0)
+        { mysociete=malist.get(0);
+            modelMap.addAttribute("urllogo",mysociete.getUrlLogo());
+        }
+        modelMap.addAttribute("bigTitle", "Livre de paie speciale");
+//        modelMap.addAttribute("listePrimes", rubriqueService.getRubriquesActives());
+//        modelMap.addAttribute("listePrimesImp", rubriqueService.getRubriquesActivesType(1));
+//        modelMap.addAttribute("listePrimesNonImpos", rubriqueService.getRubriquesActivesType(2));
+//        modelMap.addAttribute("listePrimesImposetNon", rubriqueService.getRubriquesActivesType(3));
+//        modelMap.addAttribute("listePrimesMutuelle", rubriqueService.getRubriquesActivesType(4));
+//        modelMap.addAttribute("listePrimesSociale", rubriqueService.getRubriquesActivesType(6));
+//        modelMap.addAttribute("listePrimesGains", rubriqueService.getRubriquesActivesType(5));
+
+
+        return "livrespeciale";
+    }
 	@RequestMapping("/histobull")
 	public String viewAccountTypehisto(ModelMap modelMap, Principal principal) throws IOException {
 		logger.info(">>>>> Utilisateurs");
@@ -308,6 +357,32 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		LivredePaieDTO.setResult("success");
 		 return LivredePaieDTO;
 	}
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/savelivrePersonnel", method = RequestMethod.GET)
+    public @ResponseBody LivreDePaieDTOV2 genererLivrepaiepersonnel(@RequestParam(value="id", required=true) Long id,@RequestParam(value="limit", required=false) Integer limit,
+                                                          @RequestParam(value="offset", required=false) Integer offset,
+                                                          Principal principal,ModelMap modelMap) {
+        LivreDePaieDTOV2 LivredePaieDTO = new LivreDePaieDTOV2();
+        if(id==null ){
+            PeriodePaie maperiode=periodePaieService.findPeriodeactive();
+            id=maperiode.getId();
+        }
+        if(offset == null) offset = 0;
+        if(limit == null) limit = 100;
+        PageRequest page = PageRequest.of(offset / 100, limit, Direction.DESC, "id");
+        // final PageRequest page = new PageRequest(offset/10, limit, Direction.ASC, "id");
+        // List<LivreDePaie> bulletinList = new ArrayList<LivreDePaie>();
+        // Pageable pageable;
+        LivredePaieDTO = bulletinPaieService.genererOptimiseMoisVersion2(page,id);
+
+        livredepaieListV2 = new ArrayList<LivreDePaieV2>();
+        livredepaieListV2=LivredePaieDTO.getRows();
+        System.out.println("ppppppppppppppppppppppppppppppppppppppppppppp"+rubriqueService.getRubriquesActives().toString());
+        modelMap.addAttribute("rubrique",rubriqueService.getRubriquesActives());
+        LivredePaieDTO.setResult("success");
+        return LivredePaieDTO;
+    }
+
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/calculalenvers-liste", method = RequestMethod.POST)
@@ -568,7 +643,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 	
 	
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/savelivrepaie", method = RequestMethod.GET)
+	@RequestMapping(value = "/saveBulletinlivrepaie", method = RequestMethod.GET)
 	public @ResponseBody BulletinPaieDTO enregistrerLivredePaie(@RequestParam(value="limit", required=false) Integer limit,
                                                                 @RequestParam(value="offset", required=false) Integer offset) {
         if(offset == null) offset = 0;
@@ -974,6 +1049,23 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 			Sheet sheet = workbook.getSheetAt(0); // première feuille
 
 			List<BulletinPaie> bulletins = bulletinPaieRepository.findByPeriodePaieIdAndCalculerTrue(maperiode.getId());
+            bulletins.sort(Comparator.comparing(b -> {
+                String mode = b.getContratPersonnel()
+                        .getPersonnel()
+                        .getModePaiement()
+                        .toLowerCase();
+
+                switch (mode) {
+                    case "virement-bancaire":
+                        return 1;
+                    case "transfert-mobile-money":
+                        return 2;
+                    case "transfert-wave":
+                        return 3;
+                    default:
+                        return 4; // autres modes à la fin
+                }
+            }));
 			int rowNum = 1; // ligne 2
 
 			for (BulletinPaie bulletin : bulletins) {

@@ -20,13 +20,14 @@ public interface EmployeeService {
             String nom,
             String prenom,
             String sexe,
-            String situationMatrimoniale,
+            Integer situationMatrimoniale,
             Long nationalite,
             String lieuHabitation,
             String dateNaissance,
             String phoneNumber,
-            Boolean actif,
             SpecialContractType typeContrat,
+            Long fonction,
+            Long site,
             String dateDebut,
             String dateFin,
             String modePaiement,
@@ -41,7 +42,7 @@ public interface EmployeeService {
 
     List<Employee> findPersonnelSpecifique();
 
-    void deactivate(Long id);
+    public Boolean deactivate(Long id);
 
     EmployeeDTO loadPersonnel( Pageable pageable);
 

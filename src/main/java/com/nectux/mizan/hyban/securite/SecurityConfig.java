@@ -41,7 +41,8 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/auth/**").permitAll() // login/register API ouverts
+                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()// login/register API ouverts
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -60,7 +61,7 @@ public class SecurityConfig {
                         "/", "/home", "/login", "/register",
                         "/resources/**", "/resources/reports/**", "/resources/uploads/**",
                         "/static/**", "/js/**", "/css/**", "/images/**", "/img/**", "/logo/**", "/WEB-INF/**",
-                        "/views/**"
+                        "/views/**",  "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()

@@ -2,11 +2,15 @@ package com.nectux.mizan.hyban.parametrages.dto;
 
 import lombok.Data;
 
+import java.util.List;
+import java.util.Set;
+
 @Data
 public class ProfileDto {
     private String username;
     private String email;
     private String nomComplet;
+    private List<String> role;
 
     public String getUsername() {
         return username;

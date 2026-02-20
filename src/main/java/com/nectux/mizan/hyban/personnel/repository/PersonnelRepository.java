@@ -61,6 +61,9 @@ public interface PersonnelRepository extends CrudRepository<Personnel, Long>, Jp
 	public List<Personnel> RechListPersonnelParAn(@Param("sexe") String sexe);
 
 
+    Page<Personnel> findByCarec(Boolean carec, Pageable pageable);
+
+
 
 
 	List<Personnel> findByServiceLibelle(Service direction);
@@ -82,6 +85,24 @@ public interface PersonnelRepository extends CrudRepository<Personnel, Long>, Jp
             "     OR LOWER(p.prenom) LIKE LOWER(CONCAT('%', :search, '%')) " +
             "     OR LOWER(p.matricule) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Personnel> searchPersonnel(@Param("search") String search, Pageable pageable);
+
+
+
+    @Query("""
+SELECT p FROM Personnel p
+WHERE (:carec IS NULL OR p.carec = :carec)
+AND (
+    :search IS NULL OR
+    LOWER(p.nom) LIKE LOWER(CONCAT('%', :search, '%')) OR
+    LOWER(p.prenom) LIKE LOWER(CONCAT('%', :search, '%')) OR
+    LOWER(p.matricule) LIKE LOWER(CONCAT('%', :search, '%'))
+)
+ORDER BY p.nom ASC
+""")
+    Page<Personnel> searchWithCarec(
+            @Param("carec") Boolean carec,
+            @Param("search") String search,
+            Pageable pageable);
 
 
 }

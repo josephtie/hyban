@@ -22,6 +22,8 @@ public class Site  extends Auditable {
 	@Column(unique=true, nullable=false)
 	private String libelle;
 
+    private String description;
+
 	public Site() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -43,11 +45,20 @@ public class Site  extends Auditable {
 		this.libelle = libelle;
 	}
 
-	@Override
-	public String toString() {
-		return "SiteWork{" +
-				"id=" + id +
-				", libelle='" + libelle + '\'' +
-				'}';
-	}
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Site{" +
+                "id=" + id +
+                ", libelle='" + libelle + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

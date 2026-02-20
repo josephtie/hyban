@@ -42,17 +42,17 @@
 						<br>
 							
 
-		<div id="tableWidget" class="widgetcontent">
-			<div id="toolbar1">
-			    <div class="form-inline">
-			     <button id="btnGenerer" type="submit" data-toggle="modal" data-target="#rhpModal" title="Cocher les employes mis en sommeil" class="btn btn-success "><i class="fa fa-plus"></i>Generer livre de paie</button>
-			    <button id="btnGenerer" type="button" data-toggle="modal" data-target="#rhpModalImprimer" class="btn btn-success "  onclick="chargerBull()"><i class="fa fa-plus"></i>Imprimer bulletin</button>
-			    <button id="btnVrmt" type="button" data-toggle="modal" data-target="#rhpModalVirmt" class="btn btn-success "><i class="fa fa-plus"></i>Ordre de virement</button>
-			    <button id="btnGenererNet" type="submit" title="Prise en compte Net apayer" class="btn btn-info "><i class="fa fa-plus"></i>Net à payer regul</button>
-			    </div>
-			</div>
-			<form action="#" id="formList">
-				<table id="table" class="table table-info table-striped"
+               <div id="tableWidget" class="widgetcontent">
+                <div id="toolbar1">
+                    <div class="form-inline">
+                     <button id="btnGenerer" type="submit" data-toggle="modal" data-target="#rhpModal" title="Cocher les employes mis en sommeil" class="btn btn-success "><i class="fa fa-plus"></i>Generer livre de paie</button>
+                    <button id="btnGenerer" type="button" data-toggle="modal" data-target="#rhpModalImprimer" class="btn btn-success "  onclick="chargerBull()"><i class="fa fa-plus"></i>Imprimer bulletin</button>
+                    <button id="btnVrmt" type="button" data-toggle="modal" data-target="#rhpModalVirmt" class="btn btn-success "><i class="fa fa-plus"></i>Ordre de virement</button>
+                    <button id="btnGenererNet" type="submit" title="Prise en compte Net apayer" class="btn btn-info "><i class="fa fa-plus"></i>Net à payer regul</button>
+                    </div>
+                </div>
+		    	<form action="#" id="formList">
+				    <table id="table" class="table table-info table-striped"
 					data-toggle="table" data-click-to-select="true"
 					data-single-select="false"
 					data-sort-name="id"
@@ -287,7 +287,7 @@
 					data-pagination="true"
 					data-sort-order="desc"
 					data-show-footer="false"
-					<%-- data-url="${pageContext.request.contextPath}/paie/savebullPersonnel"  data-show-columns="true"  --%>
+					<%-- data-url="${pageContext.request.contextPath}/paie/savelivrePersonnel"  data-show-columns="true"  --%>
 					data-side-pagination="server" 
 					data-pagination="true"
 					data-page-list="[ 20, 50, 100, 200, 500,2000]"
@@ -689,7 +689,7 @@ app.controller('modificationPersonnelCtrl', function ($scope) {
 
 //End AngularJs
 var contextPath = "<%=request.getContextPath() %>";
-var actionUrl = "/paie/savebullPersonnel";
+var actionUrl = "/paie/savelivrePersonnel";
 var action = "ajout";
 var $table; var  $tableConge;
 jQuery(document).ready(function($) {
@@ -1067,7 +1067,7 @@ function genererLivreDePaie(){
 
 	jQuery.ajax({
         type: "GET",
-        url: baseUrl+"/paie/savelivrepaie",
+        url: baseUrl+"/paie/saveBulletinlivrepaie",
         cache: false,
 		success: function (response) {
         	if (response != null) {

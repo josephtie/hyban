@@ -290,6 +290,10 @@ public class LivreDePaie {
 		this.listRetenueSociale =listRetenueSociale;
 		this.listRetenueMutuellt=listMutuelle;
 		this.listGainsNet=listGains;
+
+
+
+
 		if(ctratperso.getPersonnel().getCarec()==true){
 
 						if(tempeffect==null){
@@ -329,10 +333,10 @@ public class LivreDePaie {
 							 }
 
 
-								     this.autreIndemImposable=0d;
+							 this.autreIndemImposable=0d;
 
 									       autreImposable=0d;
-									if(listIndemniteBrut.size()>0 || listIndemniteBrut!=null){
+                                if (listIndemniteBrut != null && !listIndemniteBrut.isEmpty()) {
 										for(PrimePersonnel primeImpos : listIndemniteBrut){
 											if(primeImpos.getPrime().getTaux()!=null && primeImpos.getValeur()>0)
 											{
@@ -348,10 +352,11 @@ public class LivreDePaie {
 								}
 
 							 this.jourTravail=30d;
-							this.temptravail=173.33d;
+							 this.temptravail=173.33d;
 						}
 					   else
-					   {       this.anciennete = ancien;
+					   {
+                                this.anciennete = ancien;
 
                                 this.nombrePart = nbrePart != null ? nbrePart : 0F;
 							   this.salaireBase = Math.ceil(salBase*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
@@ -391,37 +396,37 @@ public class LivreDePaie {
 			//				      autreIndemImposable=0d;
 			//					  else
 			//					   autreIndemImposable=Math.ceil((indemniteTransport+ctratperso.getIndemniteRepresent()-((salaireBase+primeAnciennete+indemniteLogement+sursalaire+ctratperso.getIndemniteRepresent()+indemniteTransport)*10/100)));
-			//		     //*tempeffect.getJourspresence()/30
+			//		           //*tempeffect.getJourspresence()/30
 								autreImposable=0d;
-								if(listIndemniteBrut.size()>0 || listIndemniteBrut!=null){
-							   for(PrimePersonnel primeImpos : listIndemniteBrut){
-								   if(primeImpos.getPrime().getTaux()!=null && primeImpos.getValeur()>0)
-								  {
-									 autreImposable=autreImposable+(primeImpos.getValeur()*(primeImpos.getMontant()+(primeImpos.getMontant()*primeImpos.getPrime().getTaux()/100))*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
-								  }else{
+                               if (listIndemniteBrut != null && !listIndemniteBrut.isEmpty()) {
+                                       for(PrimePersonnel primeImpos : listIndemniteBrut){
+                                           if(primeImpos.getPrime().getTaux()!=null && primeImpos.getValeur()>0)
+                                          {
+                                             autreImposable=autreImposable+(primeImpos.getValeur()*(primeImpos.getMontant()+(primeImpos.getMontant()*primeImpos.getPrime().getTaux()/100))*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
+                                          }else{
 
-									   if(primeImpos.getPrime().getMtExedent()!=null)
-										autreImposable=autreImposable+(primeImpos.getMontant()-primeImpos.getPrime().getMtExedent())*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
-										 else
-									   autreImposable=autreImposable+primeImpos.getMontant()*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
-								  }
+                                               if(primeImpos.getPrime().getMtExedent()!=null)
+                                                autreImposable=autreImposable+(primeImpos.getMontant()-primeImpos.getPrime().getMtExedent())*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
+                                                 else
+                                               autreImposable=autreImposable+primeImpos.getMontant()*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
+                                          }
+                                       }
 							   }
-							 }
-							this.jourTravail=tempeffect.getJourspresence();
-							 this.temptravail=tempeffect.getHeurspresence();
+							   this.jourTravail=tempeffect.getJourspresence();
+							   this.temptravail=tempeffect.getHeurspresence();
 					   }
 		
-			this.brutImposable = Math.ceil(salaireBase + sursalaire + primeAnciennete + indemniteLogement+indemniteTransportImp+autreIndemImposable+autreImposable);
-			Double ricf = getRICF(nombrePart);
-			double itsbrut =Math.ceil(calculerITS(brutImposable,true));
-			this.its = Math.max(0, itsbrut - ricf / 12);
-		   this.cn = 0d;
-		    this.igr = 0d;
-		    this.totalRetenueFiscale = Math.ceil(its );//+ cn + igr);
-	     	if(ctratperso.getIndemniteRepresent()==null)
-			this.indemniteRepresentation = Math.ceil(0);
-			else
-			this.indemniteRepresentation = Math.ceil(ctratperso.getIndemniteRepresent());
+                this.brutImposable = Math.ceil(salaireBase + sursalaire + primeAnciennete + indemniteLogement+indemniteTransportImp+autreIndemImposable+autreImposable);
+                Double ricf = getRICF(nombrePart);
+                double itsbrut =Math.ceil(calculerITS(brutImposable,true));
+                this.its = Math.max(0, itsbrut - ricf / 12);
+               this.cn = 0d;
+                this.igr = 0d;
+                this.totalRetenueFiscale = Math.ceil(its );//+ cn + igr);
+                if(ctratperso.getIndemniteRepresent()==null)
+                this.indemniteRepresentation = Math.ceil(0);
+                else
+                this.indemniteRepresentation = Math.ceil(ctratperso.getIndemniteRepresent());
 
 
 //		if(ctratperso.getIndemniteResp()==null)
@@ -430,27 +435,27 @@ public class LivreDePaie {
 //			this.indemniteResponsabilte = Math.ceil(ctratperso.getIndemniteResp());
 
 			autreNonImposable=0d;
-			if(listIndemniteNonImp.size()>0 || listIndemniteNonImp!=null){
-  			for(PrimePersonnel primeImpos : listIndemniteNonImp){	
-  				/*if(primeImpos.getPrime().getTaux()!=null && primeImpos.getValeur()>0)
-  				{
-  					autreNonImposable=autreNonImposable+(primeImpos.getMontant()*primeImpos.getPrime().getTaux()*primeImpos.getValeur())*tempeffect.getJourspresence()/30;
-  				}else{*/
-  				if(tempeffect==null){
-  					 if(primeImpos.getPrime().getMtExedent()!=null)
-  					   autreNonImposable=autreNonImposable+primeImpos.getPrime().getMtExedent();
-  					 else
-  						autreNonImposable=autreNonImposable+primeImpos.getMontant(); 
-  				}else{
-  					
-  					 if(primeImpos.getPrime().getMtExedent()!=null)
-    					   autreNonImposable=autreNonImposable+primeImpos.getPrime().getMtExedent()*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
-    					 else    						
-  					       autreNonImposable=autreNonImposable+(primeImpos.getMontant()*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
-  				}
-  				//}
-  			}	
-  			}
+               if (listIndemniteNonImp != null && !listIndemniteNonImp.isEmpty()) {
+                    for(PrimePersonnel primeImpos : listIndemniteNonImp){
+                        /*if(primeImpos.getPrime().getTaux()!=null && primeImpos.getValeur()>0)
+                        {
+                            autreNonImposable=autreNonImposable+(primeImpos.getMontant()*primeImpos.getPrime().getTaux()*primeImpos.getValeur())*tempeffect.getJourspresence()/30;
+                        }else{*/
+                        if(tempeffect==null){
+                             if(primeImpos.getPrime().getMtExedent()!=null)
+                               autreNonImposable=autreNonImposable+primeImpos.getPrime().getMtExedent();
+                             else
+                                autreNonImposable=autreNonImposable+primeImpos.getMontant();
+                        }else{
+
+                             if(primeImpos.getPrime().getMtExedent()!=null)
+                                   autreNonImposable=autreNonImposable+primeImpos.getPrime().getMtExedent()*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
+                                 else
+                                   autreNonImposable=autreNonImposable+(primeImpos.getMontant()*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
+                        }
+                        //}
+                    }
+  			   }
 
 				this.brutNonImposable=indemniteRepresentation+indemniteTransport+autreNonImposable;
 		//this.indemniteRepresentation = Math.ceil(calculerIndemniterRepresentation());
@@ -460,40 +465,42 @@ public class LivreDePaie {
 				this.avceAcpte = Math.ceil(avanceEtAccompte);
 				this.pretAlios = Math.ceil(pretALIOS);
 		//this.indemniteTransport = Math.ceil(calculerIndemniteTransport());
-			this.totalBrut = Math.ceil(brutImposable + indemniteRepresentation+ indemniteTransport+autreNonImposable);
-			autrePrelevmentSociale=0d; double patronalcmu=0d;double salarialcmu=0d;
-			if(listRetenueSociale != null && !listRetenueSociale.isEmpty()){
-				for(PrimePersonnel sociale : listRetenueSociale){
-					if (sociale.getPrime().getPermanent()) {
-						if (sociale.getPrime().getLibelle().equals("CMU Patronal")) {
-							patronalcmu = sociale.getMontant();
-						} else if (sociale.getPrime().getLibelle().equals("CMU Salarial")) {
-							salarialcmu = sociale.getMontant();
-						} else {
-							autrePrelevmentSociale += sociale.getMontant();
-						}
-					}
+			   this.totalBrut = Math.ceil(brutImposable + indemniteRepresentation+ indemniteTransport+autreNonImposable);
+			   autrePrelevmentSociale=0d; double patronalcmu=0d;double salarialcmu=0d;
+		    	if(listRetenueSociale != null && !listRetenueSociale.isEmpty()){
 
-				}
-			}
+                    for(PrimePersonnel sociale : listRetenueSociale){
+                        if (sociale.getPrime().getPermanent()) {
+                            if (sociale.getPrime().getLibelle().equals("CMU Patronal")) {
+                                patronalcmu = sociale.getMontant();
+                            } else if (sociale.getPrime().getLibelle().equals("CMU Salarial")) {
+                                salarialcmu = sociale.getMontant();
+                            } else {
+                                autrePrelevmentSociale += sociale.getMontant();
+                            }
+                        }
+
+                    }
+			   }
 			//this.CMU=autrePrelevmentSociale;
-			this.CMUSalarial=salarialcmu;
-			this.retenueSociiale=autrePrelevmentSociale +cnps;
-            this.CMUPatronal=patronalcmu;
-			autrePrelevmentMutuelle=0d;
-			if(listMutuelle.size()>0 || listMutuelle!=null){
-				for(PrimePersonnel mutuell : listMutuelle){
-					autrePrelevmentMutuelle=autrePrelevmentMutuelle+mutuell.getMontant();
-				}
-			}
+                this.CMUSalarial=salarialcmu;
+                this.retenueSociiale=autrePrelevmentSociale +cnps;
+                this.CMUPatronal=patronalcmu;
+                autrePrelevmentMutuelle=0d;
+                if (listMutuelle != null && !listMutuelle.isEmpty()) {
+
+                    for(PrimePersonnel mutuell : listMutuelle){
+                        autrePrelevmentMutuelle=autrePrelevmentMutuelle+mutuell.getMontant();
+                    }
+                }
 
 				this.totalRetenue = Math.ceil(totalRetenueFiscale + avceAcpte + pretAlios+autrePrelevmentMutuelle +retenueSociiale);
 				regularisation=0d;
-			if(listGains.size()>0 || listGains!=null){
-				for(PrimePersonnel primeGains : listGains){
-					regularisation=regularisation+primeGains.getMontant();
-				}
-			}
+                if(listGains != null && listGains.isEmpty()){
+                    for(PrimePersonnel primeGains : listGains){
+                        regularisation=regularisation+primeGains.getMontant();
+                    }
+                }
 				this.netPayer = Math.ceil((brutImposable + indemniteRepresentation + indemniteTransport+autreNonImposable)+ regularisation -autreIndemImposable- totalRetenue);
 				this.is = its;
 				this.ta = Math.ceil(brutImposable * 0.4 / 100);
