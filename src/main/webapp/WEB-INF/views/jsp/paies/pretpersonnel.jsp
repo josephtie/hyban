@@ -540,8 +540,8 @@ function nomfstatutFormatterL(personnel, row, index) {
     //return row.contratPersonnel.personnel.statfonct;
 }
 function pretiFormatter(id, row, index) {
-	 var option = '<a onclick="editPret('+row.id+')" data-toggle="modal" data-target="#rhpModalPretModif" href="#" title="Ajouter pr�t [LIBELLE : '+row.personnel.nom+' ]">  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';
-	option += '&nbsp;<a onclick="delPret('+row.id+')" data-toggle="modal" data-target="#rhpModalPretDel" href="#" title="Suprimer bulletin [LIBELLE : '+row.id+' ]"> <span class="glyphicon glyphicon-trash"></span></a>'; 
+	 var option = '<a onclick="editPret('+row.id+')" data-toggle="modal" data-target="#rhpModalPretModif" href="#" >  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';
+	option += '&nbsp;<a onclick="delPret('+row.id+')" data-toggle="modal" data-target="#rhpModalPretDel" href="#" > <span class="glyphicon glyphicon-trash"></span></a>';
 	
     return option;
 }
@@ -551,11 +551,17 @@ function matriFormatter(personnel, row, index) {
 	}
 	return row.personnel.matricule;
 }
-function matrisFormatter(personnel, row, index) {
-	if(row.personnel.matricule == ''){
-		return "";
-	}
-	return row.personnel.matricule;
+function matrisFormatter(value, row, index) {
+
+    if (row.personnel != null) {
+        return row.personnel.matricule;
+    }
+
+    if (row.employee != null) {
+        return row.employee.matricule;
+    }
+
+    return "";
 }
 function periodeFormatter(periode, row, index) {
 	if(row.periode.mois.mois == ''){
@@ -575,11 +581,18 @@ function nomFormatter(personnel, row, index) {
 	}
 	return row.personnel.nom+" "+row.personnel.prenom;
 }
-function nomsFormatter(personnel, row, index) {
-	if(row.personnel.nom == ''){
-		return "";
-	}
-	return row.personnel.nom+" "+row.personnel.prenom;
+
+function nomsFormatter(value, row, index) {
+
+    if (row.personnel != null) {
+        return row.personnel.nom + " " + row.personnel.prenom;
+    }
+
+    if (row.employee != null) {
+        return row.employee.nomComplet;
+    }
+
+    return "";
 }
 function sexeFormatter(personnel, row, index) {
 	if(row.personnel.sexe == ''){
@@ -685,7 +698,15 @@ function editPret(idFonction){
     			jQuery('#periodepaie1').trigger('liszt:updated');        	
         		jQuery('#dEmprunt1').val(response.dEmprunt);
         		jQuery('#echelonage1').val(response.echelonage);
-        		jQuery('#idpers1').val(response.personnel.id);        		
+                var ids = '';
+
+                if (response.personnel && response.personnel.id) {
+                    ids = response.personnel.id;
+                } else if (response.employee && response.employee.id) {
+                    ids = response.employee.id;
+                }
+
+        		jQuery('#idpers1').val(ids);
         		jQuery('#idpret').val(response.id);
         		
 				//tabledata += "";

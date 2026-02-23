@@ -15,6 +15,8 @@ import com.nectux.mizan.hyban.paie.service.PretPersonnelService;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.personnel.repository.PersonnelRepository;
+import com.nectux.mizan.hyban.personnel.specifque.entity.Employee;
+import com.nectux.mizan.hyban.personnel.specifque.repository.EmployeeRepository;
 import com.nectux.mizan.hyban.utils.DateManager;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,6 +40,7 @@ public class PretPersonnelServiceImpl implements PretPersonnelService {
 	
 	@Autowired private PretRepository pretRepository;
 	@Autowired private PersonnelRepository personnelRepository;
+	@Autowired private EmployeeRepository employeeRepository;
 	@Autowired private com.nectux.mizan.hyban.parametrages.repository.PeriodePaieRepository PeriodePaieRepository;
 	@Autowired private EchelonnementService echelonnementService;
 	@Autowired private EchelonnementRepository echelonnementRepository;
@@ -126,7 +129,181 @@ public class PretPersonnelServiceImpl implements PretPersonnelService {
 		return null;
 	}
 
-	@Override
+    @Override
+    public PretPersonnelDTO saverEmp(Double montant, Long echelonage, Long idPret, String idPers, String dEmprunt, Long idPeriodDep) {
+        // TODO Auto-generated method stub
+        PretPersonnelDTO pretpersoDTO = new PretPersonnelDTO();
+        try{
+            List<PretPersonnel> personnelpretList = new ArrayList<PretPersonnel>();
+            PretPersonnel pretperso = new PretPersonnel();
+
+            pretperso.setMontant(montant);
+            pretperso.setDateEmprunt(DateManager.stringToDate(dEmprunt,"dd/MM/yyyy"));
+            pretperso.setEchelonage(echelonage);
+            pretperso.setPeriode(PeriodePaieRepository.findById(idPeriodDep) .orElseThrow(() -> new EntityNotFoundException("PeriodePaie not found for id " + idPeriodDep)));
+            pretperso.setEmployee(employeeRepository.findById(Long.valueOf(idPers))
+                    .orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + idPers)));
+
+            pretperso.setPret(pretRepository.findById(idPret)
+                    .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idPret)));
+            personnelpretList.add(pretperso);
+            pretperso=pretPersonnelRepository.save(pretperso);
+            pretpersoDTO.setRow(pretperso);
+            pretpersoDTO.setRows(personnelpretList);
+            pretpersoDTO.setResult("success");
+
+            if(pretperso.getId() != null){
+
+                //Calcul du montant en fonction de l'echellonnage
+                Double montEchell = (double) 0;
+                try {
+                    montEchell = (pretperso.getMontant())/pretperso.getEchelonage();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                PeriodePaie periodePaieDepart = new PeriodePaie();
+                try {
+
+                    periodePaieDepart = PeriodePaieRepository.findById(idPeriodDep).orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + idPeriodDep));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //listDoc.add(docu);
+
+                Echelonnement pretEchelle = new Echelonnement();
+                pretEchelle.setPeriodePaie(periodePaieDepart);
+                pretEchelle.setPretPersonnel(pretperso);
+                pretEchelle.setPaye(false);
+                pretEchelle.setMontant(montEchell);
+
+                //Enregistrement
+                pretEchelle= echelonnementService.save(pretEchelle);
+                for(int i = 1; i < pretperso.getEchelonage(); i++){
+
+                    PeriodePaie periodePaieRech = new PeriodePaie();
+                    periodePaieRech = PeriodePaieRepository.findById(periodePaieDepart.getId()+i).orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + idPers));
+                    //listDoc.add(docu);
+
+                    Echelonnement pretEcheller = new Echelonnement();
+                    pretEcheller.setPeriodePaie(periodePaieRech);
+                    pretEcheller.setPretPersonnel(pretperso);
+                    pretEcheller.setPaye(false);
+                    pretEcheller.setMontant(montEchell);
+
+                    //Enregistrement
+                    pretEcheller= echelonnementService.save(pretEcheller);
+
+
+
+
+                }
+
+            }
+
+
+            logger.info(new StringBuilder().append(">>>>> ").append(pretperso.toString()).append(" ENREGISTRE AVEC SUCCES").toString());
+        } catch(Exception ex){
+            pretpersoDTO.setResult("failed");
+            logger.error(ex.getMessage());
+            logger.error(new StringBuilder().append(">>>>>  ERREUR SUR ENREGISTREMENT PRETPERSONNEL [NOM : ").append(montant).toString());
+            ex.getStackTrace();
+        }
+        return pretpersoDTO;
+    }
+
+    @Override
+    public PretPersonnelDTO updateEmployee(Long idpret, Double montant, Long echelonage, Long idPret, String idPers, String dEmprunt, Long idPeriodDep) {
+        // TODO Auto-generated method stub
+        PretPersonnelDTO pretpersoDTO = new PretPersonnelDTO();
+        try {
+            PretPersonnel pretperso = new PretPersonnel();
+            pretperso = pretPersonnelRepository.findById(idpret).orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + idpret));
+            List<PretPersonnel> personnelpretList = new ArrayList<PretPersonnel>();
+            Employee employee=employeeRepository.findByMatricule(idPers)
+                    .orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + idPers));
+            List<Echelonnement> listregle=echelonnementService.reglerModalite(employee.getId(), pretperso.getPeriode().getId());
+            if(listregle.size()>0){
+                pretpersoDTO.setResult("Impossible de modifier ce pret:reglement en cours");
+            } else{
+
+                pretperso.setMontant(montant);
+                pretperso.setDateEmprunt(DateManager.stringToDate(dEmprunt,"dd/MM/yyyy"));
+                pretperso.setEchelonage(echelonage);
+                pretperso.setPeriode(PeriodePaieRepository.findById(idPeriodDep)
+                        .orElseThrow(() -> new EntityNotFoundException("PeriodePaie not found for id " + idPeriodDep)));
+
+                pretperso.setEmployee(employeeRepository.findByMatricule(idPers)
+                        .orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + idPers)));
+
+                pretperso.setPret(pretRepository.findById(idPret)
+                        .orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idPret)));
+
+                personnelpretList.add(pretperso);
+                pretperso=pretPersonnelRepository.save(pretperso);
+                pretpersoDTO.setRow(pretperso);
+                pretpersoDTO.setRows(personnelpretList);
+                pretpersoDTO.setResult("success");
+
+                if(pretperso.getId() != null){
+
+                    //Calcul du montant en fonction de l'echellonnage
+                    Double montEchell =  (double)0;
+                    try {
+                        montEchell = (pretperso.getMontant())/pretperso.getEchelonage();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    PeriodePaie periodePaieDepart = new PeriodePaie();
+                    try {
+
+                        periodePaieDepart = PeriodePaieRepository.findById(idPeriodDep) .orElseThrow(() -> new EntityNotFoundException("PeriodePaie not found for id " + idPeriodDep));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    //listDoc.add(docu);
+                    List<Echelonnement> listupregle=echelonnementRepository.findByPretPersonnelId(pretperso.getId());
+                    echelonnementRepository.deleteAll(listupregle);
+
+                    Echelonnement pretEchelle = new Echelonnement();
+                    pretEchelle.setPeriodePaie(periodePaieDepart);
+                    pretEchelle.setPretPersonnel(pretperso);
+                    pretEchelle.setPaye(false);
+                    pretEchelle.setMontant(montEchell);
+
+                    pretEchelle= echelonnementService.save(pretEchelle);
+                    for(int i = 1; i < pretperso.getEchelonage(); i++){
+
+                        PeriodePaie periodePaieRech = new PeriodePaie();
+                        periodePaieRech = PeriodePaieRepository.findById(periodePaieDepart.getId()+i) .orElseThrow(() -> new EntityNotFoundException("PeriodePaie not found for id " + idPeriodDep));
+                        //listDoc.add(docu);
+
+                        Echelonnement pretEcheller = new Echelonnement();
+                        pretEcheller.setPeriodePaie(periodePaieRech);
+                        pretEcheller.setPretPersonnel(pretperso);
+                        pretEcheller.setPaye(false);
+                        pretEcheller.setMontant(montEchell);
+
+                        //Enregistrement
+                        pretEcheller= echelonnementService.save(pretEcheller);
+
+
+
+
+                    }
+
+                }
+
+            }
+
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        return pretpersoDTO;
+    }
+
+    @Override
 	public PretPersonnelDTO saver(Double montant, Long echelonage,Long idPret, Long idPers, String dEmprunt,Long idPeriodDep) {
 		// TODO Auto-generated method stub
 		PretPersonnelDTO pretpersoDTO = new PretPersonnelDTO();
@@ -234,7 +411,14 @@ public class PretPersonnelServiceImpl implements PretPersonnelService {
 		return  pretPersonnelRepository.findById(idPret).orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + idPret));
 	}
 
-	@Override
+    @Override
+    public PretPersonnel findpretEmp(String idPret) {
+        Employee employee =employeeRepository.findByMatricule(idPret).orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + idPret));
+        PretPersonnel pretPersonnel=  pretPersonnelRepository.findById(employee.getId()).orElseThrow(() -> new EntityNotFoundException("Personnel not found for id " + idPret));
+        return null;
+    }
+
+    @Override
 	public PretPersonnelDTO update(Long idPretpers,Double montant, Long echelonage,Long idPret, Long idPers, String dEmprunt, Long idPeriodDep) {
 		// TODO Auto-generated method stub
 		PretPersonnelDTO pretpersoDTO = new PretPersonnelDTO();

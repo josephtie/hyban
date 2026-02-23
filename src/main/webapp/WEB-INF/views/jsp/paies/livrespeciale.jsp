@@ -44,9 +44,9 @@
                <div id="tableWidget" class="widgetcontent">
                 <div id="toolbar1">
                     <div class="form-inline">
-                     <button id="btnGenerer" type="submit" data-toggle="modal" data-target="#rhpModal" title="Cocher les employes mis en sommeil" class="btn btn-success "><i class="fa fa-plus"></i>Generer livre de paie</button>
-                    <button id="btnGenerer" type="button" data-toggle="modal" data-target="#rhpModalImprimer" class="btn btn-success "  onclick="chargerBull()"><i class="fa fa-plus"></i>Imprimer bulletin</button>
-                    <button id="btnVrmt" type="button" data-toggle="modal" data-target="#rhpModalVirmt" class="btn btn-success "><i class="fa fa-plus"></i>Ordre de virement</button>
+                     <button id="btnGenerer" type="submit" data-toggle="modal" data-target="#rhpModal" title="Cocher les employes mis en sommeil" class="btn btn-info "><i class="fa fa-plus"></i>Generer livre de paie</button>
+                    <button id="btnGenerer" type="button" data-toggle="modal" data-target="#rhpModalImprimer" class="btn btn-info "  onclick="chargerBull()"><i class="fa fa-plus"></i>Imprimer bulletin</button>
+                    <button id="btnVrmt" type="button" data-toggle="modal" data-target="#rhpModalVirmt" class="btn btn-info "><i class="fa fa-plus"></i>Ordre de virement</button>
                     <button id="btnGenererNet" type="submit" title="Prise en compte Net apayer" class="btn btn-info "><i class="fa fa-plus"></i>Net à payer regul</button>
                     </div>
                 </div>
@@ -80,396 +80,33 @@
 </div>
 </div>
 
+
+
+
+<!-- Generation des bulletins -->
 <div class="modal fade" id="rhpModal" tabindex="-1" role="dialog" aria-labelledby="rhpModalLabel" data-backdrop="static">
-    <div class="modal-dialog modal-dialog-scrollable" style="width:60%;">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form id="formAjout" name="formAjout" class="form-horizontal" novalidate="novalidate" role="form" ng-controller="formAjoutCtrl">
-
-                <!-- HEADER -->
+            <form id="formGenerer" class="form-horizontal" role="form" novalidate="novalidate">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Employes non standard</h4>
+<!--                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+                    <h4 class="modal-title" id="myModalLabel">Generation du livre de paie (Personnel Specifique)</h4>
+				</div>
+                <div class="modal-body">
+                	<h3>Vous etes sur le point de generer le livre de paie de la periode de <span id="periodePaie" class="danger">Mars 2016</span> du personnel Speciale.</h3>
+                	<br/>
+                	<h4>En cliquant sur le bouton "Valider", le proccessus sera lanc&eacute;.</h4>
                 </div>
-
-                <!-- BODY -->
-                <div class="modal-body" style="height: 600px; overflow-y: scroll">
-
-                    <div class="panel panel-default tabs">
-
-                        <!-- NAV TABS -->
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li class="active">
-                                <a href="#tab-first" role="tab" data-toggle="tab">Information personnelle</a>
-                            </li>
-                            <li>
-                                <a href="#tab-second" role="tab" data-toggle="tab">Contrat specifique</a>
-                            </li>
-                        </ul>
-
-                        <!-- TAB CONTENT -->
-                        <div class="panel-body tab-content">
-
-                            <!-- TAB 1 -->
-                            <div class="tab-pane fade in active" id="tab-first">
-                                <div class="row">
-
-                                    <!-- COL 1 -->
-                                    <div class="col-md-3 col-sm-4 col-xs-5">
-                                        <div class="panel panel-default">
-                                            <div class="panel-body form-horizontal form-group-separated">
-                                                <h3 id="nomcplet"><span class="fa fa-user"></span></h3>
-                                                <p id="fnction"></p>
-                                                <div class="text-center profile-mini" id="user_image">
-                                                    <img id="defImg" style="width:133px;height:171px" class="img-thumbnail"/>
-                                                </div>
-                                                <br>
-                                               <!--  <div class="form-group">
-                                                    <div class="col-md-12 col-xs-12">
-                                                        <input type="file" id="imag" onchange="javascript:verifier();" name="files[]" multiple/>
-                                                        <label class="control-label" id="error" style="color:#ff0033"></label>
-                                                    </div>
-                                                </div>-->
-                                            </div>
-
-                                            <div class="panel-body form-group-separated">
-                                                <div class="form-group">
-                                                    <div class="col-md-12 col-xs-12">
-                                                        <input type="text" id="lieuHabitation" name="lieuHabitation"
-                                                               onkeyup="this.value=this.value.toUpperCase()"
-                                                               class="form-control"
-                                                               placeholder="Habitation" ng-model="employee.lieuHabitation"/>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <div class="col-md-12 col-xs-12">
-                                                        <input type="text" class="form-control datePicker" id="dofbrid"
-                                                               name="dofbrid" placeholder="Date de naissance"
-                                                                 ng-model="employee.dofbrid"/>
-                                                                 <div ng-show="formAjout.dofbrid.$invalid && formAjout.dofbrid.$error.required">
-                                                                 <div style="color:red;">Date de naissance est obligatoire.</div>
-                                                                 </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- COL 2 -->
-                                    <div class="col-md-6 col-sm-8 col-xs-7">
-                                        <div class="panel panel-default">
-                                            <div class="panel-body">
-                                                <h3><span class="fa fa-pencil"></span> Informations generales</h3>
-                                            </div>
-
-                                            <div class="panel-body form-group-separated">
-
-                                                <div class="form-group">
-                                                    <label class="col-md-3 col-xs-5 control-label">Matricule</label>
-                                                    <div class="col-md-9 col-xs-7">
-                                                        <div class="pull-right verif-matricule">
-                                                            <img src="<%=request.getContextPath() %>/static/front-end/images/loaders/loader27.gif"/>
-                                                        </div>
-                                                        <input type="text" id="matricule" name="matricule"
-                                                               ng-required="true" class="form-control"
-                                                               ng-model="employee.matricule" placeholder="Matricule"
-                                                               onkeyup="this.value=this.value.toUpperCase()"/>
-                                                        <div ng-show="formAjout.matricule.$invalid && formAjout.matricule.$error.required">
-                                                            <div style="color:red;">Matricule est obligatoire.</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label class="col-md-3 col-xs-5 control-label">Nom</label>
-                                                    <div class="col-md-9 col-xs-7">
-                                                        <input type="text" id="nom" name="nom" class="form-control"
-                                                               ng-required="true" ng-model="employee.nom"
-                                                               placeholder="Nom" onkeyup="this.value=this.value.toUpperCase()"/>
-                                                        <div ng-show="formAjout.nom.$invalid && formAjout.nom.$error.required">
-                                                            <div style="color:red;">Nom est obligatoire.</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label class="col-md-3 col-xs-5 control-label">Prenom</label>
-                                                    <div class="col-md-9 col-xs-7">
-                                                        <input type="text" id="prenom" name="prenom" class="form-control"
-                                                               ng-required="true" ng-model="employee.prenom"
-                                                               placeholder="Prénom" onkeyup="this.value=this.value.toUpperCase()"/>
-                                                        <div ng-show="formAjout.prenom.$invalid && formAjout.prenom.$error.required">
-                                                            <div style="color:red;">Prenom est obligatoire.</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label class="col-md-3 col-xs-5 control-label">Sexe</label>
-                                                    <div class="col-md-9 col-xs-7">
-                                                        <label>
-                                                            <input name="sexe" id="sexeMasculin" type="radio"
-                                                                   class="radio-inline" value="Masculin"
-                                                                   ng-model="employee.sexe" ng-required="true"/> Masculin
-                                                        </label>
-                                                        <label>
-                                                            <input name="sexe" id="sexeFeminin" type="radio"
-                                                                   class="radio-inline" value="Feminin"
-                                                                   ng-model="employee.sexe" ng-required="true"/> Féminin
-                                                        </label>
-                                                        <div ng-show="formAjout.sexe.$invalid && formAjout.sexe.$error.required">
-                                                            <div style="color:red;">Sexe est obligatoire.</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label class="col-md-3 col-xs-5 control-label">Sit. Matri</label>
-                                                    <div class="col-md-9 col-xs-7">
-                                                        <select id="situationMatrimoniale" name="situationMatrimoniale"
-                                                                class="form-control select2"
-                                                                ng-model="employee.situationMatrimoniale"
-                                                                ng-required="true">
-                                                            <option value="0">AUCUN</option>
-                                                            <option value="1">MARIE(E)</option>
-                                                            <option value="2">CELIBATAIRE</option>
-                                                            <option value="3">DIVORCE(E)</option>
-                                                            <option value="4">VEUF(VE)</option>
-                                                        </select>
-                                                        <div ng-show="formAjout.situationMatrimoniale.$invalid && formAjout.situationMatrimoniale.$error.required">
-                                                            <div style="color:red;">Situation matrimoniale est obligatoire.</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label class="col-md-3 col-xs-5 control-label">Nombre d''enfants</label>
-                                                    <div class="col-md-9 col-xs-7">
-                                                        <input type="number" id="nbreEnft" name="nbreEnft"
-                                                               class="form-control" ng-model="employee.nbreEnft"
-                                                               placeholder="Nombre enfants"/>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- COL 3 -->
-                                    <div class="col-md-3">
-                                        <div class="panel panel-default">
-                                            <div class="panel-body">
-                                                <h3><span class="fa fa-cog"></span> Parametres</h3>
-                                            </div>
-
-                                            <div class="panel-body form-horizontal form-group-separated">
-                                                <div class="form-group">
-                                                    <label class="col-md-8 col-xs-8 control-label">Actif</label>
-                                                    <div class="col-md-4 col-xs-4">
-                                                        <label class="switch">
-                                                            <input type="checkbox" name="actif" ng-model="employee.actif"/>
-                                                            <span></span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <div class="col-md-12 col-xs-12">
-                                                    <input type="text" id="phoneNumber" name="phoneNumber"
-                                                           class="form-control" ng-model="employee.phoneNumber"
-                                                           placeholder="Téléphone"/>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <div class="col-md-12 col-xs-12">
-                                                    <input type="text" id="email" name="email"
-                                                           class="form-control" ng-model="employee.email"
-                                                           placeholder="Email"/>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <div class="col-md-12 col-xs-12">
-                                                    <label for="nationalite">Nationalite <span class="required">*</span></label>
-                                                    <select id="nationalite" name="nationalite"  ng-model="employee.nationalite"
-                                                            class="form-control select2" ng-required="true">
-                                                        <option value="0">AUCUN</option>
-                                                        <option value="1">IVOIRIENNE</option>
-                                                        <option value="2">BURKINABE</option>
-                                                        <option value="3">CAMEROUNAISE</option>
-                                                        <option value="4">CENTRAFRICAINE</option>
-                                                        <option value="5">GUINEE</option>
-                                                        <option value="6">ITALIENNE</option>
-                                                        <option value="7">BENINOISE</option>
-                                                        <option value="8">MALIENNE</option>
-                                                        <option value="9">NIGERIENNE</option>
-                                                        <option value="10">SENEGALAISE</option>
-                                                        <option value="11">TOGOLAISE</option>
-                                                        <option value="12">TUNISIENNE</option>
-                                                        <option value="13">TURC</option>
-                                                    </select>
-                                                    <div ng-show="formAjout.nationalite.$invalid && formAjout.nationalite.$error.required">
-                                                        <div style="color:red;">Nationalite est obligatoire.</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <!-- TAB 2 -->
-                            <div class="tab-pane fade sectionContrat" id="tab-second">
-                                <div class="row">
-                                    <div class="col-md-10 col-sm-8 col-xs-7">
-                                        <div class="panel panel-default">
-                                            <div class="panel-body">
-                                                <h3><span class="fa fa-pencil"></span> Contrat specifique</h3>
-                                            </div>
-
-                                            <div class="panel-body form-group-separated">
-
-                                                <div class="form-group">
-                                                    <label class="col-md-4 col-xs-5 control-label">Type de contrat</label>
-                                                    <div class="col-md-8 col-xs-7">
-                                                        <select id="typeContrat" name="typeContrat"
-                                                                class="form-control select2"
-                                                                ng-model="speccontrat.typeContrat" ng-required="true">
-                                                            <option value="0">AUCUN</option>
-                                                            <option value="STAFF_PDG">STAFF_PDG</option>
-                                                            <option value="DOZO">DOZO</option>
-                                                            <option value="STAGE">STAGE</option>
-                                                            <option value="AGENT_SECURITE">AGENT_SECURITE</option>
-                                                        </select>
-                                                        <div ng-show="formAjout.typeContrat.$invalid && formAjout.typeContrat.$error.required">
-                                                            <div style="color:red;">Type de contrat est obligatoire.</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                        <label class="col-md-4 col-xs-5 control-label">Emploi</label>
-                                                         <div class="col-md-8 col-xs-7">
-
-                                                        </select>
-                                                         <select id="fonction" name="fonction" class="form-control input-small select2" ng-model="speccontrat.fonction.id"     ng-init="speccontrat.fonction.id=fonction">
-                                                              <option value="" disabled selected>-- Selectionnez fonction/emploi--</option>
-                                                          </select>
-
-                                                        <div ng-show="formAjout.fonction.$invalid && formAjout.fonction.$error.required">
-                                                              <div style="color:red;">fonction est obligatoire.</div>
-                                                         </div>
-                                                       </div>
-                                                </div>
-                                                   <div class="form-group">
-                                                          <label class="col-md-4 col-xs-5 control-label">Site</label>
-                                                          <div class="col-md-8 col-xs-7">
-
-                                                             </select>
-                                                             <select id="site" name="site" class="form-control input-small select2" ng-model="speccontrat.site.id"     ng-init="speccontrat.site.id=site">
-                                                               <option value="" disabled selected>-- Selectionnez Site/emploi--</option>
-                                                              </select>
-
-                                                               <div ng-show="formAjout.site.$invalid && formAjout.site.$error.required">
-                                                                <div style="color:red;">Site est obligatoire.</div>
-                                                               </div>
-                                                          </div>
-                                                  </div>
-                                                <div class="form-group">
-                                                    <label class="col-md-4 col-xs-5 control-label">Date debut</label>
-                                                    <div class="col-md-8 col-xs-7">
-                                                        <input type="text" id="dDeb" name="dDeb"
-                                                               class="form-control datePicker"
-                                                               ng-model="speccontrat.dDeb"
-                                                               placeholder="Date de debut"/>
-                                                        <div ng-show="formAjout.dDeb.$invalid && formAjout.dDeb.$error.required">
-                                                            <div style="color:red;">Date de debut est obligatoire.</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label class="col-md-4 col-xs-5 control-label">Date de fin</label>
-                                                 <div class="col-md-8 col-xs-7">
-                                                            <input type="text" id="dFin" name="dFin"
-                                                            class="form-control datePicker"
-                                                             ng-model="speccontrat.dFin"
-                                                              placeholder="Date de fin"/>
-                                                            <div ng-show="formAjout.dFin.$invalid && formAjout.dFin.$error.required">
-                                                             <div style="color:red;">Date de fin est obligatoire.</div>
-                                                              </div>
-                                                           </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label class="col-md-4 col-xs-5 control-label">Mode de paiement</label>
-                                                    <div class="col-md-8 col-xs-7">
-                                                        <select id="modepaiement" name="modepaiement"
-                                                                class="form-control select2"
-                                                                ng-model="speccontrat.modepaiement" ng-required="true">
-                                                            <option value="" disabled selected>-- Sélectionnez --</option>
-                                                            <option value="virement-bancaire">Virement</option>
-                                                            <option value="transfert-mobile-money">Mobile Money</option>
-                                                            <option value="transfert-wave">Wave</option>
-                                                        </select>
-                                                        <div ng-show="formAjout.modepaiement.$invalid && formAjout.modepaiement.$error.required">
-                                                            <div style="color:red;">Mode de paiement est obligatoire.</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label class="col-md-4 col-xs-5 control-label">Numero de compte /Telephone</label>
-                                                    <div class="col-md-8 col-xs-7">
-                                                        <input type="text" id="paiementNumber" name="paiementNumber"
-                                                               class="form-control" ng-required="true"
-                                                               ng-model="speccontrat.paiementNumber"
-                                                               placeholder="Compte bancaire ou mobile"/>
-                                                        <div ng-show="formAjout.paiementNumber.$invalid && formAjout.paiementNumber.$error.required">
-                                                            <div style="color:red;">Numero de compte est obligatoire.</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label class="col-md-4 col-xs-5 control-label">Net a payer</label>
-                                                    <div class="col-md-8 col-xs-7">
-                                                        <input type="text" id="netpayer" name="netpayer"
-                                                               class="form-control" ng-required="true"
-                                                               ng-model="speccontrat.remunerationForfaitaire"
-                                                               placeholder="Net à payer"/>
-                                                        <div ng-show="formAjout.netpayer.$invalid && formAjout.netpayer.$error.required">
-                                                            <div style="color:red;">Net a payer est obligatoire.</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div> <!-- END TAB CONTENT -->
-                    </div>
-                </div>
-
-                <!-- FOOTER -->
                 <div class="modal-footer">
-                    <input type="hidden" id="id" name="id" ng-model="employee.id">
-                    <button type="button" class="btn btn-default" onclick="resetEditForm()" data-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-success" ng-disabled="formAjout.$invalid" >Valider</button>
+                	<span></span>&nbsp;
+                	<input type="hidden"  id="idPeriode" name="id">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">Valider</button>
                 </div>
-
             </form>
         </div>
     </div>
 </div>
-
-
-
-
 
 <!-- Modification info du personnel -->
 <div class="modal fade" id="rhpModalModiftemps"  role="dialog" aria-labelledby="rhpModalModiftemps" data-backdrop="static">
@@ -543,16 +180,167 @@
         </div>
     </div>
 </div>
+
+<!-- Livre de paie -->
+<div class="modal fade" id="rhpModalValider"  role="dialog" aria-labelledby="rhpModalLabel" data-backdrop="static" >
+    <div class="modal-dialog" role="document" style="width:80%;"  >
+        <div class="modal-content">
+            <form id="formGenererValidBull" class="form-horizontal" >
+                <div class="modal-header">
+                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Valider les bulletins de paie de ${periode}</h4>
+				</div>
+                <div class="modal-body">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+					<button type="submit" onclick="genererLivreDePaie()" class="btn btn-info">Valider</button>
+					 <button id="exportExcelLiv" class="btn btn-info" > Exporter en Excel</button>
+
+
+
+                <!-- <div id="toolbar">
+			    <div class="form-inline">
+			        <button id="btnGenerer5" type="submit" data-toggle="modal" data-target="#rhpModal5 " title="Cocher les employ�s mis en sommeil" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i>G�n�rer tous les bulletins</button>
+			    </div>
+			   </div> -->
+
+              <%-- <form action="#" id="formList"> --%>
+
+				<div class="table-responsive"  style="max-height: 500px; overflow-y: auto;">
+				<table id="tableliv" class="table table-info table-striped table-responsive" style="overflow:auto"
+					data-toggle="table" data-click-to-select="true"
+					data-single-select="false"
+					data-sort-name="name"
+					data-pagination="true"
+					data-sort-order="desc"
+					data-show-footer="false"
+					<%-- data-url="${pageContext.request.contextPath}/paie/savelivrePersonnel"  data-show-columns="true"  --%>
+					data-side-pagination="server"
+					data-pagination="true"
+					data-page-list="[ 20, 50, 100, 200, 500,2000]"
+					data-show-export="true"
+					data-export-dataType="all"
+					data-search="true">
+					<thead>
+
+							<tr>
+							<th data-field="matricule"  data-align="left" data-sortable="true" style="height: 65px">Matricule</th>
+							<th data-field="nomPrenom"  data-align="left" data-sortable="true">Nom  &   Prenoms  </th>
+							<th data-field="jourTravail"  data-align="left" data-sortable="true">Nbre de jrs trv mois </th>
+								<%--<th data-field="contratPersonnel" data-formatter="nomstatutFormatter" data-align="left" data-sortable="true">Statut</th>--%>
+
+
+
+							<th data-field="mtavceAcpte"   data-align="left">Avance & Acompte</th>
+							<th data-field="mtpretAlios"  data-align="center">Pret</th>
+
+							<th data-field="mtregularisation"  data-align="center">Regularisation</th>
+							<th data-field="mtnetPayer"  data-align="center">Net a payer</th>
+
+							<th data-field="mttotalMasseSalariale" data-align="right">Total masse salariale</th>
+
+
+							<!-- <th data-field="id" data-formatter="optionFormatter1" data-align="center">Options</th>  -->
+
+						   </tr>
+
+					</thead>
+				</table>
+
+						</div>
+
+                </div>
+                <div class="modal-footer">
+                	<span></span>&nbsp;
+
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="rhpModalImprimer"  role="dialog" aria-labelledby="rhpModalLabel" data-backdrop="static" >
+    <div class="modal-dialog" role="document" style="width:80%;" >
+        <div class="modal-content">
+            <form id="formImrimBull" class="form-horizontal" >
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Imprimer les bulletins de paie de  ${periode}</h4>
+
+				</div>
+                <div class="modal-body">
+					<br>
+                  <button id="exportExcelBull" class="btn btn-info" style="margin-bottom: 10px;">
+                                    Exporter en Excel
+                                </button>
+
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+				<table id="tableBull" class="table table-info table-striped"
+					data-toggle="table"
+					data-single-select="false"
+					data-show-export="true"
+					data-click-to-select="true"
+					data-show-footer="false"
+					data-export-data-type="all"
+		        	data-url="${pageContext.request.contextPath}/paie/listbulletinSpecialMoisActif"
+					data-sort-order="desc"
+					data-show-columns="true"
+					data-side-pagination="server"
+					data-pagination="true"
+					data-page-list="[ 50, 100, 200, 500,2000]"
+					data-search="true">
+					<thead>
+						<tr>
+							<th data-field="matricule"  data-align="left" data-sortable="true" style="height: 65px">Matricule</th>
+                        	<th data-field="nomPrenom"  data-align="left" data-sortable="true">Nom  &   Prenoms  </th>
+                        	<th data-field="jourTravail"  data-align="left" data-sortable="true">Nbre de jrs trv mois </th>
+                        	<th data-field="specialcontract" data-formatter="typecontratFormatter" data-align="left" data-sortable="true">Statut</th>--%>
+                        	<th data-field="specialcontract" data-formatter="renumerationFormatter" data-align="left" data-sortable="true">Renumeration</th>--%>
+
+
+
+                        	<th data-field="avceAcpte"   data-align="left">Avance & Acompte</th>
+                        	<th data-field="pretAlios"  data-align="center">Pret</th>
+
+                        	<th data-field="regularisation"  data-align="center">Regularisation</th>
+                        	<th data-field="netPayer"  data-align="center">Net a payer</th>
+
+
+
+
+							<th data-field="id" data-formatter="optionFormatter2" data-align="center">Options</th>
+
+						</tr>
+					</thead>
+				</table>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                	<span></span>&nbsp;
+                	<!-- <input type="hidden"  id="idPeriode1" name="id"> -->
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                  <!--  <button type="submit" class="btn btn-success">Imprimer</button>-->
+                    <button id="julayaExp" type="button" class="btn btn-info">Export julaya</button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
 
 <div class="modal  fade "  id="rhpModalPretModif" role="dialog" data-backdrop="static">
 	<div class="modal-dialog ">
 		<div class="modal-content">
-				<form id="formPretmodif" action="#">
-					<div class="widgetbox">
-							<div class="headtitle">
-							<h4 class="widgettitle">Modification Pret / Avance</h4>
-					</div>
-					<div class="widgetcontent" style="padding-bottom:0px;">
+			<form id="formPretmodif" action="#">
+				  <div class="modal-header">
+                      <h4 class="modal-title" id="myModalLabel">Ajout de pret ou Avance du personnel specifique (<span id="infoPersonnel">Information du personnel</span>)</h4>
+                	</div>
+                  <div class="modal-body">
 					<div class="form-group">
 							<label for="service" class="col-md-4 control-label">Type</label>
 							<div class="col-md-8">
@@ -598,26 +386,24 @@
 							<div class="col-md-8">
 							{{prelevement}}
 					</div>
-							</div> -->
-					<div class="form-group">
+				 </div>
+                 <div class="modal-footer">
+
 							<div class="col-md-12">
 							<span class="pull-right">
 							<span></span>&nbsp;&ndash;%&gt;
 							<input type="hidden" id="idpret" name="idpret" class="form-control"  />
-							<input class="btn btn-default" type="button" data-dismiss="modal" value="Annuler" />&nbsp;
+							<input class="btn btn-default" type="button" data-dismiss="modal" value="Annuler" />
 							<input class="btn btn-success" type="submit" value="Valider" />
-							<!-- </span> -->
-							</div>
-					</div>
+                 <div>
 							<%--</div><!--widgetcontent-->--%>
 		</div>
-		</form>
+	  </form>
        </div>
-
-
-
     </div>
-   </div>
+ </div>
+
+
 <div class="modal deleteModal  fade bs-delete-modal-static" role="dialog" data-backdrop="static">
     <div class="modal-dialog ">
         <div class="modal-content">
@@ -663,28 +449,38 @@ app.controller('formAjoutCtrl', function ($scope) {
 
 });
 //End AngularJs
-
+var contextPath = "<%=request.getContextPath() %>";
 var actionUrl = "/personnels/specifique/enregisteremployee";
 var actionDeleteUrl = "/personnels/supprimeremployee";
 var action = "ajout";
 var $table;
 jQuery(document).ready(function($){
 	$table = $('#table');
-	$("#datenaissance, .datePicker, #dateNaissanceEnfant, #datearrivee, #datedebut, #datefin,  #dDeb, #dFin,#datedebutPop, #datefinPop,#dateDepot").datepicker({
+	$("#datenaissance, .datePicker, #dateNaissanceEnfant, #datearrivee, #datedebut, #datefin,  #dDeb, #dFin,#datedebutPop, #datefinPop,#dateDepot,#dEmprunt1").datepicker({
             format: 'dd/mm/yyyy',
             showOtherMonths: true
         });
-     loadFonction();
-     loadSite();
+        	var periode='';var periodeID='';
+        	chargerPeriodePaie()
+        	periode='${activeMois}';
+        	  $tableConge = $('#tableConge');
+        	periodeID='${activeMoisId}';
+        	jQuery('#idPeriode1').val(periodeID);
+        	jQuery('#idperiod').val(periodeID);
+        	$table = $('#table');
+        	$tablebull = $('#tableBull');
+        //	alert(periode);
+        	//alert(periodeID);
+        	jQuery('#periodePaie').html(periode);
+        	jQuery('#idPeriode').val(periodeID);
+
 	//Fermeture du modal
-	$('#rhpModal').on('hidden.bs.modal', function () {
-		var $scope = angular.element(document.getElementById("formAjout")).scope();
-		$scope.$apply(function () {
-            $scope.initForm();
-        });
-		//$("#id").val(""); //Initialisation de l'id
-	});
-	
+$('#rhpModal').on('hidden.bs.modal', function () {
+    var $scope = angular.element(document.getElementById("formAjout")).scope();
+
+
+});
+
 	//Envoi des donnees
 	$("#formAjout").submit(function(e){
 		e.preventDefault();
@@ -732,7 +528,54 @@ jQuery(document).ready(function($){
             }
         });
 	});
-	
+
+	jQuery("#formGenerer").submit(function(e){
+    	//alert('bonjour');
+    	e.preventDefault();
+    	periodeID='${activeMoisId}';
+    	jQuery('#idPeriode').val(periodeID);
+    	jQuery('#idPeriode1').val(periodeID);
+    	jQuery('#idperiod').val(periodeID);
+
+    	jQuery.ajax({
+            type: "GET",
+            url: contextPath + "/paie/savebullEmployee",
+            cache: false,
+            data: {id: '${activeMoisId}'},
+            success: function (response) {
+                if (response.result == "success") {
+
+                	jQuery("#rhpModal").modal('hide');
+                	jQuery("#rhpModalValider").modal();
+                //	jQuery ('#tableliv').bootstrapTable ('refresh', {  url: baseUrl +'/paie/savebullPersonnel?id='+ jQuery('#idPeriode').val()});
+                }
+                else if(response.result == "erreur_champ_obligatoire"){
+                	alert("Saisie invalide");
+                }
+            },
+            error: function () {
+            	jQuery("#rhpModal .modal-body div.alert").alert();
+            	jQuery("#rhpModal .modal-body .alert h4").html("Erreur survenue");
+            	jQuery("#rhpModal .modal-body .alert p").html("Verifier que vous etes connectes au serveur.");
+            	jQuery("#rhpModal .modal-footer span").removeClass('loader');
+            },
+            beforeSend: function () {
+            	jQuery("#formAjout").attr("disabled", true);
+            	jQuery("#rhpModal .modal-footer span").addClass('loader');
+            },
+            complete: function () {
+            	jQuery("#formGenerer").removeAttr("disabled");
+            	jQuery("#rhpModal .modal-footer span").removeClass('loader');
+           	jQuery('#tableliv').bootstrapTable('refresh', {  url: baseUrl +'/paie/savebullEmployee?id='+ jQuery('#idPeriode').val()});
+           //	location.reload();
+
+            }
+        });
+    });
+
+
+
+
 	$("#formDelete").submit(function(e){
 		e.preventDefault();
         var formData = $(this).serialize();
@@ -776,12 +619,152 @@ jQuery(document).ready(function($){
 	//$( ".select2" ).select2();
 });
 
+	jQuery("#jourTravail").blur(function(){
+	    var nbjou = parseFloat($("#jourTravail").val()) || 0;
 
+        var heures = nbjou * 173.33 / 30;
+
+        $("#temptravail").val(Math.round(heures * 100) / 100);
+
+	});
+
+	function cherch2(matricule){
+    // alert(idFonction);
+    	jQuery('#matricule').val(matricule);
+
+    	jQuery('#infoPersonnelmo').html(matricule);
+    	jQuery('#idpers').val(matricule);
+
+    	jQuery.ajax({
+            type: "GET",
+            url: baseUrl+"/paie/cherchtempeffectifEmp",
+            data: {idPersonnel: jQuery('#idpers').val(),
+            	idPeriodDep:jQuery('#idperiod').val()},
+            cache: false,
+    		success: function (response) {
+            	if (response != null) {
+            		//alert(response.result);
+            		jQuery('#jourTravail').val(response.jourspresence);
+            		jQuery('#temptravail').val(response.heurspresence);
+            		jQuery('#idperiod').val(response.periodePaie.id);
+            		jQuery('#idpers').val(response.employee.matricule);
+
+    			} else {
+    				alert('Impossible de charger cet objet');
+    			}
+            },
+            error: function () {
+
+            },
+            complete: function () {
+            //	jQuery("#formGenerer").removeAttr("disabled");
+            //	jQuery("#rhpModal .modal-footer span").removeClass('loader');
+        //   	$tablebull.bootstrapTable('refresh', {url: baseUrl +'/paie/bulletinperiodeactifjson?id='+ jQuery('#idPeriode').val()});
+            }
+        });
+
+    }
+
+jQuery("#formModificationPersonneltemps").submit(function(e){
+	e.preventDefault();
+	//alert();
+    var formData = jQuery(this).serialize();
+    console.log("form", formData);
+    jQuery.ajax({
+        type: "POST",
+        url: baseUrl + "/paie/savetempeffectifEmp",
+        cache: false,
+        data: { temptravail:jQuery('#temptravail').val(),
+        	   jourtravail:jQuery('#jourTravail').val(),
+        	   idPers: $('#idpers').val(),
+              idPeriodDep:jQuery('#idperiod').val()},
+        success: function (reponse) {
+            if (reponse.result == "success") {
+            	//$table.bootstrapTable('refresh');
+            	jQuery("#formModificationPersonneltemps")[0].reset(); //Initialisation du formulaire
+            	jQuery("#rhpModalModiftemps").modal('hide');
+        		alert('Operation effectuee avec succes');
+            }
+            else if(reponse.result == "erreur_champ_obligatoire"){
+            	alert("Saisie invalide");
+            }
+        },
+        error: function () {
+        	/* jQuery("#rhpModalModiftemps div.alert").alert();
+        	jQuery("#rhpModalModiftemps .alert h4").html("Erreur survenue");
+        	jQuery("#rhpModalModiftemps .alert p").html("Verifier que vous �tes connect�s au serveur."); */
+        	//$("#formModificationPersonneltemps span.load").removeClass('loader');
+        },
+        beforeSend: function () {
+        	/* jQuery("#formModificationPersonneltemps").attr("disabled", true);
+            jQuery("#formModificationPersonneltemps span.load").addClass('loader'); */
+        },
+        complete: function () {
+        /* 	jQuery("#formModificationPersonneltemps").removeAttr("disabled");
+            //$("#formModificationPersonneltemps span.load").removeClass('loader');*/
+            $table.bootstrapTable ('refresh', {  url: baseUrl +'/personnels/specifique/special-contracts/listcontratspecjson' });
+        }
+    });
+
+});
+    $('#exportExcelBull').click(function () {
+                $('#tableBull').tableExport({
+                    type: 'excel',
+                    fileName: 'export_bulletinpaie',
+                    exportDataType: 'all' // 'all', 'selected' ou 'basic'
+                });
+            });
+	$("#formPretmodif").submit(function(e){
+		e.preventDefault();
+        var formData = $(this).serialize();
+        console.log("form", formData);
+        jQuery.ajax({
+            type: "POST",
+            url: baseUrl + "/paie/savepretEmployee",
+            cache: false,
+            data: formData,
+            success: function (reponse) {
+                if (reponse.result == "success") {
+                	$table.bootstrapTable('refresh');
+                	jQuery("#formPretmodif")[0].reset(); //Initialisation du formulaire
+                	jQuery("#rhpModalPretModif").modal('hide');
+                	alert(reponse.result);
+                }
+                else if(reponse.result == "erreur_champ_obligatoire"){
+                	alert("Saisie invalide");
+                }
+            },
+            error: function () {
+            	jQuery("#rhpModalPret div.alert").alert();
+            	jQuery("#rhpModalPret .alert h4").html("Erreur survenue");
+            	jQuery("#rhpModalPret .alert p").html("Verifier que vous etes connectes au serveur.");
+            	//$("#formPret span.load").removeClass('loader');
+            },
+            beforeSend: function () {
+            	jQuery("#formPret").attr("disabled", true);
+                jQuery("#formPret span.load").addClass('loader');
+            },
+            complete: function () {
+            	jQuery("#formPretmodif").removeAttr("disabled");
+                //$("#formPret span.load").removeClass('loader');
+                jQuery('#tablef'). bootstrapTable ('refresh', {  url: baseUrl +'/paie/pretPersonneljson' });
+            }
+        });
+	});
+
+	$('#julayaExp').click(function () {
+
+                  window.location.href = contextPath + "/paie/exportSeciale";
+     });
 function optionFormatter(id, row, index) {
 	/*var option = '<a onclick="selectPersInfo('+id+','+row.id+')" data-toggle="modal" data-target="#rhpModalModif" href="#" title="Modifier personnel [LIBELLE : '+row.employee.matricule+' ]">  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';*/
-	var option = '<a onclick="cherch2('+row.id+')" data-toggle="modal" data-target="#rhpModalModiftemps" href="#" title="Modifier personnel [LIBELLE : '+row.employee.matricule+' ]">  <span class="glyphicon glyphicon-list"></span></a>&nbsp;';
-	option += '<a onclick="cherch2('+row.id+')" data-toggle="modal" data-target="#rhpModalModiftemps" href="#" title="Modifier personnel [LIBELLE : '+row.employee.matricule+' ]">  <span class="glyphicon glyphicon-list"></span></a>&nbsp;';
-	option += '&nbsp;<a onclick="cherch('+row.employee.id+')" data-toggle="modal" data-target="#rhpModalPretModif" href="#" title="Calcul a lenvers bulletin [LIBELLE : '+row.employee.matricule+' ]"> <span class="glyphicon glyphicon-pencil"></span></a>';
+	/*var option = '<a onclick="cherch2(' +row.employee.matricule+ ')" data-toggle="modal" data-target="#rhpModalModiftemps" href="#" title="Modifier personnel [LIBELLE : '+row.employee.matricule+' ]">  <span class="glyphicon glyphicon-list"></span></a>&nbsp;';*/
+var option = '<a onclick="cherch2(\'' + row.employee.matricule + '\')" ' +
+             'data-toggle="modal" data-target="#rhpModalModiftemps" href="#" ' +
+             'title="Modifier personnel [LIBELLE : ' + row.employee.matricule + ' ]">' +
+             '<span class="glyphicon glyphicon-list"></span></a>&nbsp;';
+   option += '<a onclick="editPret('+row.employee.id+')" data-toggle="modal" data-target="#rhpModalPretModif" href="#" title="Ajouter pr�t [LIBELLE : '+row.employee.nom+' ]">  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';
+	/*option += '&nbsp;<a onclick="editPret(\'' + row.employee.matricule + '\')" '+'data-toggle="modal" data-target="#rhpModalPretModif" href="#" title="Pret & Avance [LIBELLE : '+row.employee.matricule+' ]"> <span class="glyphicon glyphicon-pencil"></span></a>';*/
 	/* option += '<a onclick="listMouvementConge('+id+','+row.employee.id+')" data-toggle="modal" data-target="#listPrimesDiversModal" href="#" title="Modifier personnel [LIBELLE : '+row.employee.matricule+' ]">  <span class="glyphicon glyphicon-briefcase"></span></a>&nbsp;'; */
 
     return option;
@@ -803,7 +786,72 @@ function specialFormatter(employee, row, index) {
 	}
 	return row.employee.typeContrat;
 }
+function typecontratFormatter(specialContract, row, index) {
+	if(row.specialContract.typeContrat == ''){
+		return "";
+	}
+	return row.specialContract.typeContrat;
+}
 
+function renumerationFormatter(specialContract, row, index) {
+	if(row.specialContract.remunerationForfaitaire == ''){
+		return "";
+	}
+	return row.specialContract.remunerationForfaitaire;
+}
+
+function chargerPeriodePaie(){
+		jQuery.ajax({
+	        type: "POST",
+	        url: baseUrl + "/parametrages/periodeall",
+	        cache: false,
+	        success: function (response) {
+	        	if (response != null) {
+	        		tabledata = '<option value="0" data-libelle="CHOISIR PERIODE PAIE" >CHOISIR PERIODE PAIE</option>';
+	        		for (i = 0; i < response.length; i++) {
+						tabledata += '<option value="'+response[i].id+'" data-libelle="'+response[i].mois.mois + ' ' + response[i].annee.annee+'" >' + response[i].mois.mois + ' ' + response[i].annee.annee + '</option>';
+					}
+					jQuery('#periodePaieImpression').html(tabledata);
+					jQuery('#periodePaieImpression').select2('val', 0);
+					//jQuery('#branch').select2('val', index);
+				} else {
+					alert('Failure! An error has occurred!');
+				}
+	        },
+	        error: function () {
+
+	        },
+	        complete: function () {
+
+	        }
+	    });
+	}
+
+
+	function genererLivreDePaie(){
+	periodeID='${activeMoisId}';
+         	jQuery.ajax({
+                 type: "POST",
+                 url: baseUrl+"/paie/saveBulletinEmplivrepaie",
+                 cache: false,
+         		success: function (response) {
+                 	if (response != null) {
+                 		//alert(response.result);
+                 		jQuery("#rhpModalValider").modal('hide');
+                 		$tablebull.bootstrapTable('refresh', { url: baseUrl +'/paie/bulletinSpecialeperiodeactifjson?id='+ periodeID});
+         			} else {
+         				alert('Impossible de charger cet objet');
+         			}
+                 },
+                 error: function () {
+
+                 },
+                 complete: function () {
+                	$tablebull.bootstrapTable('refresh', {  url: baseUrl +'/paie/bulletinSpecialeperiodeactifjson?id='+ periodeID});
+              //   location.reload();
+                 }
+             });
+         }
 function nomFormatter(employee, row, index) {
 	if(row.employee.nom == ''){
 		return "";
@@ -882,7 +930,12 @@ function edit(idCategorie){
         updateComboAndRadioEmployee(employee)
         loadContratActifEmploye(employee);
 }
+function editPret(idFonction){
+//	var $scope = angular.element(document.getElementById("formDelete")).scope();
+    //jQuery("#rhpModalPret").modal('hide');
+    	jQuery('#idpers1').val(idFonction);
 
+}
 
 // Chargement du contrat spécial de l'employé
 function loadContratActifEmploye(employee) {

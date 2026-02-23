@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.nectux.mizan.hyban.paie.dto.TempEffectifDTO;
 import com.nectux.mizan.hyban.paie.entity.TempEffectif;
@@ -17,6 +18,8 @@ import com.nectux.mizan.hyban.parametrages.service.UtilisateurService;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.personnel.repository.PersonnelRepository;
 
+import com.nectux.mizan.hyban.personnel.specifque.entity.Employee;
+import com.nectux.mizan.hyban.personnel.specifque.repository.EmployeeRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,7 @@ private static final Logger logger = LogManager.getLogger(TempeffectifController
 	@Autowired private PeriodePaieService periodePaieService;
 	@Autowired private PeriodePaieRepository PeriodePaieRepository;
 	@Autowired private PersonnelRepository personnelRepository;
+	@Autowired private EmployeeRepository employeeRepository;
 	@Autowired private TempEffectifRepository tempffectifRepository;
 	@Autowired private TempEffectifService tempeffectifService;
 	 
@@ -132,15 +136,24 @@ private static final Logger logger = LogManager.getLogger(TempeffectifController
 		
 		return tempeffectifService.saver(temptravail,jourtravail,idPers,idPeriodDep);
 	}
-	
-	
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/savetempeffectifEmp", method = RequestMethod.POST)
+    public @ResponseBody TempEffectifDTO savetempeffectifEmp(@RequestParam(value="temptravail", required=true) Double temptravail,
+                                                          @RequestParam(value="jourtravail", required=true) Double jourtravail,
+                                                          @RequestParam(value="idPers", required=true) String idPers,
+                                                          @RequestParam(value="idPeriodDep", required=true) Long idPeriodDep,
+                                                          Principal principal) {
+
+        return tempeffectifService.saverEmp(temptravail,jourtravail,idPers,idPeriodDep);
+    }
 	
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/cherchtempeffectif", method = RequestMethod.GET)
-	public @ResponseBody TempEffectif activetempeffectif(@RequestParam(value="idPersonnel", required=true) Long idPers,										
+	public @ResponseBody TempEffectif activetempeffectif(@RequestParam(value="idPersonnel", required=true) Long idPers,
 			@RequestParam(value="idPeriodDep", required=true) Long idPeriodDep, Principal principal) {
-		
+
 		//EchelonnementDTO periodeDTO = new EchelonnementDTO();
 		Personnel personnel = new Personnel();
 		  PeriodePaie periodpaie = PeriodePaieRepository.findById(idPeriodDep).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + idPeriodDep));
@@ -148,7 +161,29 @@ private static final Logger logger = LogManager.getLogger(TempeffectifController
 		//tempsDTO.setRow();
 		return tempffectifRepository.findByPersonnelAndPeriodePaie(personnel, periodpaie);
 	}
-	
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/cherchtempeffectifEmp", method = RequestMethod.GET)
+    public @ResponseBody TempEffectif activetempeffectifEmp(
+            @RequestParam(value="idPersonnel", required=true) String idPers,
+			@RequestParam(value="idPeriodDep", required=true) Long idPeriodDep,
+            Principal principal) {
+
+        PeriodePaie periodpaie = PeriodePaieRepository.findById(idPeriodDep)
+                .orElseThrow(() -> new EntityNotFoundException("Période introuvable : " + idPeriodDep));
+
+
+
+        // 2️⃣ Sinon chercher côté Employee
+        Optional<Employee> employeeOpt = employeeRepository.findByMatricule(idPers);
+
+        if (employeeOpt.isPresent()) {
+            return tempffectifRepository
+                    .findByEmployeeAndPeriodePaie(employeeOpt.get(), periodpaie);
+        }
+
+        throw new EntityNotFoundException("Aucune personne trouvée avec id : " + idPers);
+    }
 
 	
 

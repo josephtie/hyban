@@ -3,10 +3,8 @@ package com.nectux.mizan.hyban.paie.service;
 import java.util.List;
 import java.util.Map;
 
-import com.nectux.mizan.hyban.paie.dto.LivreDePaieDTOV2;
+import com.nectux.mizan.hyban.paie.dto.*;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
-import com.nectux.mizan.hyban.paie.dto.BulletinPaieDTO;
-import com.nectux.mizan.hyban.paie.dto.LivreDePaieDTO;
 import com.nectux.mizan.hyban.paie.entity.BulletinPaie;
 import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
@@ -20,8 +18,10 @@ public interface BulletinPaieService {
 	
 	public LivreDePaieDTO   genererMois1(Pageable pageable,Long idPeriode);
 	public LivreDePaieDTO   genererOptimiseMois1(Pageable pageable,Long idPeriode);
+	public LivreDePaieSpecialeDTO   genererOptimiseEmployeeMois1(Pageable pageable, Long idPeriode);
 	public BulletinPaieDTO generateLivreDePaie(Pageable pageable);
-	
+	public BulletinSpecialeDTO generateEmployeLivreDePaie(Pageable pageable);
+
 //	public BulletinPaieDTO generateBulletinDePaie(List<LivreDePaie> monlivre);
 //	public List<BulletinPaie>   genererMois1Personnel(Long idPeriode,Long idPersonnel);
 	public List<BulletinPaie>   rechercherBulletinMois(PeriodePaie periodePaie);
@@ -32,6 +32,7 @@ public interface BulletinPaieService {
 	public List<BulletinPaie>   rechercherBulletinAnnuelglobal(Long anneeId);
 	public List<BulletinPaie>   findBulletinByPeriodePaie(Long idPeriode);
 	public BulletinPaieDTO   BulletinMoisCalculer(Pageable pageable,PeriodePaie periodePaie);
+	public BulletinSpecialeDTO   BulletinMoisSpecialeCalculer(Pageable pageable,PeriodePaie periodePaie);
 	public Boolean delete(Long id);
 	public int count();
 	public BulletinPaie findBulletinByPeriodePaieAndPersonnel(PeriodePaie periodePaie, Personnel personnel);
@@ -39,6 +40,8 @@ public interface BulletinPaieService {
 	public BulletinPaieDTO loadBulletinPaiechearch(Pageable pageable,String valeurarechercher);
 	//public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode, String search);
 	public BulletinPaieDTO loadBulletinPaie(Pageable pageable,PeriodePaie maperiode, String search);
+	public BulletinSpecialeDTO loadBulletinSpeciale(Pageable pageable,PeriodePaie maperiode, String search);
+	public BulletinSpecialeDTO loadBulletinSpeciale(Pageable pageable,PeriodePaie maperiode);
 
 	//BulletinPaieDTO findAllfilter(Map<String,String> filters, Pageable pageable);
 

@@ -9,22 +9,20 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.nectux.mizan.hyban.paie.dto.LivreDePaieDTOV2;
-import com.nectux.mizan.hyban.paie.dto.LivreDePaieV2;
+import com.nectux.mizan.hyban.paie.dto.*;
 import com.nectux.mizan.hyban.paie.entity.*;
+import com.nectux.mizan.hyban.paie.repository.*;
 import com.nectux.mizan.hyban.paie.service.BulletinPaieService;
 import com.nectux.mizan.hyban.parametrages.entity.Rubrique;
 import com.nectux.mizan.hyban.parametrages.entity.Societe;
 import com.nectux.mizan.hyban.parametrages.repository.PlanningCongeRepository;
 import com.nectux.mizan.hyban.parametrages.service.RubriqueService;
 import com.nectux.mizan.hyban.parametrages.service.SocieteService;
+import com.nectux.mizan.hyban.personnel.specifque.entity.Employee;
+import com.nectux.mizan.hyban.personnel.specifque.entity.SpecialContract;
+import com.nectux.mizan.hyban.personnel.specifque.repository.EmployeeRepository;
+import com.nectux.mizan.hyban.personnel.specifque.repository.SpecialContractRepository;
 import com.nectux.mizan.hyban.utils.DifferenceDate;
-import com.nectux.mizan.hyban.paie.dto.BulletinPaieDTO;
-import com.nectux.mizan.hyban.paie.dto.LivreDePaieDTO;
-import com.nectux.mizan.hyban.paie.repository.BulletinPaieRepository;
-import com.nectux.mizan.hyban.paie.repository.EchelonnementRepository;
-import com.nectux.mizan.hyban.paie.repository.PrimePersonnelRepository;
-import com.nectux.mizan.hyban.paie.repository.TempEffectifRepository;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.parametrages.entity.PlanningConge;
 import com.nectux.mizan.hyban.parametrages.repository.PeriodePaieRepository;
@@ -60,17 +58,21 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 	
 	@Autowired private EchelonnementRepository echelonnementRepository;
 	@Autowired private BulletinPaieRepository bulletinPaieRepository;
+	@Autowired private BulletinSpecialeRepository bulletinSpecialeRepository;
 	@Autowired private PrimePersonnelRepository primePersonnelRepository;
 	@Autowired private RubriqueService rubriqueService;
 	//@Autowired private LivreDePaieRepository livreDePaieRepository;
 	@Autowired private PeriodePaieRepository periodePaieRepository;
 	@Autowired private PersonnelRepository personnelRepository;
+	@Autowired private EmployeeRepository employeeRepository;
 	@Autowired private ContratPersonnelRepository contratPersonnelRepository;
+	@Autowired private SpecialContractRepository specialContractRepository;
 	@Autowired private SocieteService societeService;
 	@Autowired private TempEffectifRepository tempeffectifRepository;
 	@Autowired private PlanningCongeRepository planningCongeRepository;
 	
 	List<LivreDePaie> livredepaieList=null;
+    List<LivreDePaieSpeciale> livreDePaieSpeciales=null;
 	List<LivreDePaieV2> livredepaieListV2=null;
 	List<BulletinPaie> bulletinpaieList;
 	
@@ -291,6 +293,28 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
 		return bulletinPaieDTO;
 	}
+
+    @Override
+    public BulletinSpecialeDTO loadBulletinSpeciale(Pageable pageable, PeriodePaie maperiode, String search) {
+        BulletinSpecialeDTO bulletinPaieDTO = new BulletinSpecialeDTO();
+        Page<BulletinSpeciale> page = bulletinSpecialeRepository.findByPeriodePaieIdAndSpecialContractEmployeeNomCompletIgnoreCaseContaining(pageable, maperiode.getId(), search);
+        //Page<BulletinPaie> page = bulletinPaieRepository.chercherParNom(maperiode.getId(), "",pageable);
+        bulletinPaieDTO.setRows(page.getContent());
+        bulletinPaieDTO.setTotal(page.getTotalElements());
+        logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
+        return bulletinPaieDTO;
+    }
+
+    @Override
+    public BulletinSpecialeDTO loadBulletinSpeciale(Pageable pageable, PeriodePaie maperiode) {
+        BulletinSpecialeDTO bulletinPaieDTO = new BulletinSpecialeDTO();
+        Page<BulletinSpeciale> page = bulletinSpecialeRepository.findByPeriodePaieId(pageable, maperiode.getId());
+        //Page<BulletinPaie> page = bulletinPaieRepository.chercherParNom(maperiode.getId(), "",pageable);
+        bulletinPaieDTO.setRows(page.getContent());
+        bulletinPaieDTO.setTotal(page.getTotalElements());
+        logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
+        return bulletinPaieDTO;
+    }
 
 //	@Override
 //	public BulletinPaieDTO findAllfilter(Map<String, String> filters, Pageable pageable) {
@@ -994,6 +1018,165 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 
 		return livreDEPaieList;
 	}
+
+    @Override
+    public LivreDePaieSpecialeDTO genererOptimiseEmployeeMois1(Pageable pageable, Long idPeriode) {
+        logger.info(">>>>> DÉBUT DE GÉNÉRATION DU BULLETIN [PÉRIODE : {}]", idPeriode);
+        long startTime = System.currentTimeMillis();
+
+        LivreDePaieSpecialeDTO livreDEPaieList = new LivreDePaieSpecialeDTO();
+        livreDePaieSpeciales = new ArrayList<LivreDePaieSpeciale>();
+
+        // 1️⃣ Précharger la période
+        PeriodePaie periodePaieActif = periodePaieRepository.findById(idPeriode)
+                .orElseThrow(() -> new EntityNotFoundException("PériodePaie not found: " + idPeriode));
+
+        // 2️⃣ Précharger tout le Personnel standart actif
+        List<Employee> personnelList = employeeRepository.findByActifOrderByNomCompletAsc(true);
+
+        // 3️⃣ Précharger tous les contrats actifs
+        List<SpecialContract> contrats = specialContractRepository.findByActifTrue();
+        Map<Long, SpecialContract> contratParPersonnel = contrats.stream()
+                .collect(Collectors.toMap(c -> c.getEmployee().getId(), c -> c));
+
+        // 4️⃣ Précharger les primes
+//        List<PrimePersonnel> primes = primePersonnelRepository.findByPeriodePaieId(idPeriode);
+//        Map<Long, List<PrimePersonnel>> primesParPersonnel = primes.stream()
+//                .collect(Collectors.groupingBy(p -> p.getContratPersonnel().getPersonnel().getId()));
+
+        // 5️⃣ Précharger les echelonnements
+        List<Echelonnement> echelonnements = echelonnementRepository.findByPeriodePaieId(idPeriode);
+        Map<Long, List<Echelonnement>> echelParPersonnel = echelonnements.stream()
+                .collect(Collectors.groupingBy(e -> e.getPretPersonnel().getEmployee().getId()));
+
+
+        // 7️⃣ Précharger les temps effectifs
+        List<TempEffectif> allTempEffectif = tempeffectifRepository.findByPeriodePaieId(idPeriode);
+        Map<Long, TempEffectif> tempEffectifParPersonnel = allTempEffectif.stream()
+                .collect(Collectors.toMap(t -> t.getEmployee().getId(), t -> t));
+
+
+
+        for (Employee person : personnelList) {
+
+            SpecialContract contrat = contratParPersonnel.get(person.getId());
+            if (contrat == null) continue;
+
+            LivreDePaieSpeciale livrePaie = new LivreDePaieSpeciale();
+
+
+            // 🔹 Echelonnements
+            List<Echelonnement> echelsPers = echelParPersonnel.getOrDefault(person.getId(), Collections.emptyList());
+            double somAvance = 0D;
+            double somPretAlios = 0D;
+
+            // Marquer les échelonnements comme payés directement en mémoire
+            for (Echelonnement e : echelsPers) {
+                long pretId = e.getPretPersonnel().getPret().getId();
+                if (pretId == 2L) { // AVANCE
+                    somAvance += e.getMontant();
+                    e.setPaye(true);
+                } else if (pretId == 1L || pretId == 3L) { // PRET ALOES
+                    somPretAlios += e.getMontant();
+                    e.setPaye(true);
+                }
+            }
+            if (!echelsPers.isEmpty()) {
+                echelonnementRepository.saveAll(echelsPers);
+            }
+            int countbull=0;
+            countbull=bulletinPaieRepository.findNbrebulletinTrueCount(contrat.getId());
+            TempEffectif tpeff=tempEffectifParPersonnel.get(person.getId());
+
+
+            BulletinSpeciale	 bulletinpaiePrec=new BulletinSpeciale();
+            //  bulletinpaiePrec=bulletinPaieRepository.findByBulletinAndPersonnelCloture(contrat.getEmployee().getId(), periodePaieActif.getId()-1L);
+
+            LivreDePaieSpeciale livrePaiecalR = new LivreDePaieSpeciale();
+
+
+
+            // Float nbpart=calculNbrepart(person.getNombrEnfant(),person);
+
+          //  livrePaiecalR = new LivreDePaieSpeciale(contrat.getEmployee().getMatricule(),contrat.getEmployee().getNomComplet(),somAvance,somPretAlios,contrat,tpeff,periodePaieActif);
+
+            if ( tpeff==null){
+                livrePaiecalR = new LivreDePaieSpeciale(contrat.getEmployee().getMatricule(),contrat.getEmployee().getNomComplet(),somAvance,somPretAlios,contrat,null,periodePaieActif);
+            }else{
+                livrePaiecalR = new LivreDePaieSpeciale(contrat.getEmployee().getMatricule(),contrat.getEmployee().getNomComplet(),somAvance,somPretAlios,contrat,tpeff,periodePaieActif);
+            }
+
+
+            livrePaiecalR.setPeriodePaie(periodePaieActif);
+
+            livrePaiecalR.setContratPersonnel(contrat);
+            livrePaiecalR.setJourTravail(livrePaiecalR.getJourTravail());
+            livrePaiecalR.setTemptravail(livrePaiecalR.getTemptravail());
+
+            // 🔹 Bulletin
+            BulletinSpeciale detailsBull = new BulletinSpeciale();
+            detailsBull= toBulletinSpeciale(livrePaiecalR);
+//            detailsBull.setJourTravail(livrePaiecalR.getJourTravail());
+//            detailsBull.setTemptravail(livrePaiecalR.getTemptravail());
+//
+//
+//
+//            detailsBull.setAvceAcpte(somAvance);
+//            detailsBull.setPretAlios(somPretAlios);
+
+            // 🔹 Cumul des bulletins précédents
+            //List<BulletinSpeciale> bulletinsPers = bulletinsParPersonnel.getOrDefault(person.getId(), Collections.emptyList());
+
+            //   double cumulNet = bulletinsPers.stream().mapToDouble(b -> safeDouble(b.getNetPayer())).sum();
+
+            // 🔹 Ajouter le mois courant
+
+
+            //   cumulNet += safeDouble(livrePaiecalR.getNetPayer());
+
+//            detailsBull.setMatricule(livrePaiecalR.getMatricule());
+//            detailsBull.setNomPrenom(livrePaiecalR.getNomPrenom());
+//            detailsBull.setRegularisation(livrePaiecalR.getRegularisation());
+//
+//            detailsBull.setNetPayer(livrePaiecalR.getNetPayer());
+//
+//            detailsBull.setJourTravail(livrePaiecalR.getJourTravail());
+//            detailsBull.setTemptravail(livrePaiecalR.getTemptravail());
+
+            detailsBull.setCalculer(true);
+            detailsBull.setCloture(false);
+            detailsBull.setPeriodePaie(livrePaiecalR.getPeriodePaie());
+            detailsBull.setSpecialContract(livrePaiecalR.getContratPersonnel());
+//            detailsBull.setJourTravail(livrePaiecalR.getJourTravail());
+//            livrePaiecalR.setBulletinSpeciale(detailsBull);
+           // livrePaie.setBulletinSpeciale(detailsBull);
+            //monechel=echelonnementRepository.findById(monEchelonnment.get(k).getId()).orElseThrow(() -> new EntityNotFoundException("monEchelonnment not found for id " + monEchelonnment.get(finalK1).getId()));
+            //monechel.setPaye(true);
+            //monechel=echelonnementRepository.save(monechel);
+            livrePaie = livrePaiecalR;
+            livrePaie.setBulletinSpeciale(detailsBull);
+            livreDePaieSpeciales.add(livrePaie);
+        }
+
+        // 8️⃣ Pagination
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), livreDePaieSpeciales.size());
+        Page<LivreDePaieSpeciale> pageResult = new PageImpl<>(livreDePaieSpeciales.subList(start, end), pageable, livreDePaieSpeciales.size());
+
+        livreDEPaieList.setRows(pageResult.getContent());
+        livreDEPaieList.setTotal(pageResult.getTotalElements());
+
+        long endTime = System.currentTimeMillis();
+        logger.info("✅ GÉNÉRATION TERMINÉE EN {} secondes", (endTime - startTime) / 1000.0);
+
+        return livreDEPaieList;
+
+
+    }
+
+
+
+
 
     @Transactional
     public LivreDePaieDTOV2 genererOptimiseMoisVersion2(Pageable pageable, Long idPeriode) {
@@ -1968,7 +2151,40 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 		return bulletinDTO;
 	}
 
-	@Override
+    @Override
+    public BulletinSpecialeDTO generateEmployeLivreDePaie(Pageable pageable) {
+        BulletinSpecialeDTO bulletinDTO = new BulletinSpecialeDTO();
+        List<BulletinSpeciale> bullList = new ArrayList<BulletinSpeciale>();
+//		for(LivreDePaieV2 livre : livredepaieListV2)
+
+        for(LivreDePaieSpeciale livre : livreDePaieSpeciales){
+            BulletinSpeciale bull=  bulletinSpecialeRepository.findByBulletinAndPersonnelCalcultrue(livre.getContratPersonnel().getEmployee()             .getId(),livre.getPeriodePaie().getId());
+            if(bull==null){
+
+            }else{
+                if(!bull.getSpecialContract().getActif())
+                    bulletinSpecialeRepository.delete(bull);
+                else
+                    livre.getBulletinSpeciale().setId(bull.getId());
+            }
+
+            bullList.add(livre.getBulletinSpeciale());
+        }
+
+        bulletinSpecialeRepository.saveAll(bullList);
+        int start =(int) pageable.getOffset();Page<BulletinSpeciale> pageImpianto=null;
+        int end = (start + (int) pageable.getPageSize()) > bullList.size() ? bullList.size() : (start + pageable.getPageSize());
+        pageImpianto=new PageImpl<BulletinSpeciale>(bullList.subList(start, end), pageable,bullList.size());
+
+        bulletinDTO.setRows(pageImpianto.getContent());
+        bulletinDTO.setTotal(pageImpianto.getTotalElements());
+
+
+        bulletinDTO.setResult("Bulletin generes avec succes");
+        return bulletinDTO;
+    }
+
+    @Override
 	public BulletinPaieDTO BulletinMoisCalculer(Pageable pageable,PeriodePaie periodePaie) {
 		// TODO Auto-generated method stub
 		BulletinPaieDTO bulletinPaieDTO = new BulletinPaieDTO();
@@ -1980,8 +2196,19 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 		return bulletinPaieDTO;
 	}
 
+    @Override
+    public BulletinSpecialeDTO BulletinMoisSpecialeCalculer(Pageable pageable, PeriodePaie periodePaie) {
+        BulletinSpecialeDTO bulletinPaieDTO = new BulletinSpecialeDTO();
+        Page<BulletinSpeciale> page = bulletinSpecialeRepository.findByPeriodePaieAndCalculerTrue(pageable,periodePaie);
+        bulletinPaieDTO.setRows(page.getContent());
+        bulletinPaieDTO.setTotal(page.getTotalElements());
+        if(page.getTotalElements()>0){bulletinPaieDTO.setResult("success");}else{bulletinPaieDTO.setResult("errors");}
+        logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
+        return bulletinPaieDTO;
+    }
 
-	@Override
+
+    @Override
 	public List<BulletinPaie> findBulletinByPeriodePaie(Long idPeriode) {
 		// TODO Auto-generated method stub
 		return bulletinPaieRepository.findByPeriodePaieId(idPeriode);
@@ -2299,6 +2526,36 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 	}
 
 
+
+
+    public BulletinSpeciale toBulletinSpeciale(LivreDePaieSpeciale source) {
+
+        if (source == null) {
+            return null;
+        }
+
+        BulletinSpeciale target = new BulletinSpeciale();
+
+        target.setMatricule(source.getMatricule());
+        target.setNomPrenom(source.getNomPrenom());
+
+        target.setAvceAcpte(source.getAvceAcpte());
+        target.setPretAlios(source.getPretAlios());
+        target.setRegularisation(source.getRegularisation());
+
+        target.setJourTravail(source.getJourTravail());
+        target.setTemptravail(source.getTemptravail());
+
+        target.setNetPayer(source.getNetPayer());
+
+        target.setSpecialContract(source.getContratPersonnel());
+        target.setPeriodePaie(source.getPeriodePaie());
+
+        // si tu veux aussi garder la relation
+        // target.setBulletinSpeciale(source.getBulletinSpeciale());
+
+        return target;
+    }
 
 	public List<PrintLs> calculerMasseSalarialeParTypeContrat(PeriodePaie periode) {
 		List<Object[]> resultats = bulletinPaieRepository.getMasseSalarialeParTypeContrat(periode.getId());

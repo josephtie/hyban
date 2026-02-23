@@ -3,6 +3,7 @@ package com.nectux.mizan.hyban.paie.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import com.nectux.mizan.hyban.paie.dto.TempEffectifDTO;
 import com.nectux.mizan.hyban.paie.entity.TempEffectif;
@@ -13,6 +14,8 @@ import com.nectux.mizan.hyban.parametrages.repository.PeriodePaieRepository;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.personnel.repository.PersonnelRepository;
 
+import com.nectux.mizan.hyban.personnel.specifque.entity.Employee;
+import com.nectux.mizan.hyban.personnel.specifque.repository.EmployeeRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,7 @@ public class TempEffectifServiceImpl implements TempEffectifService {
 	
 	@Autowired private PeriodePaieRepository periodePaieRepository;
 	@Autowired private PersonnelRepository personnelRepository;
+	@Autowired private EmployeeRepository employeeRepository;
 	@Autowired private TempEffectifRepository tempEffectifRepository;
 
 	@Override
@@ -92,6 +96,8 @@ public class TempEffectifServiceImpl implements TempEffectifService {
 		logger.info(new StringBuilder().append(">>>>> UTILISATEURS CHARGES AVEC SUCCES").toString());
 		return tempEffectifDTO;
 	}
+
+
 
     @Override
     @Transactional
@@ -159,6 +165,90 @@ public class TempEffectifServiceImpl implements TempEffectifService {
         return dto;
     }
 
+    @Override
+    @Transactional
+    public TempEffectifDTO saverEmp(Double temptravail,
+                                 Double jourtravail,
+                                 String idPersonne,
+                                 Long idPeriodDep) {
+
+        TempEffectifDTO dto = new TempEffectifDTO();
+
+        try {
+
+            final double JOURS_LEGAUX = 30d;
+            final double HEURES_LEGALES = 173.33d;
+
+            PeriodePaie periodePaie = periodePaieRepository.findById(idPeriodDep)
+                    .orElseThrow(() -> new EntityNotFoundException("Période introuvable"));
+
+            // ==========================
+            // 1️⃣ Identifier le type
+            // ==========================
+
+          //  Optional<Personnel> personnelOpt = personnelRepository.findById(idPersonne);
+            Optional<Employee> employeeOpt = employeeRepository.findByMatricule(idPersonne);
+
+
+            TempEffectif tempeffectif =new TempEffectif();
+
+            // ==========================
+            // 2️⃣ Charger existant ou créer
+            // ==========================
+
+            if (employeeOpt.isPresent()) {
+
+
+                tempeffectif = tempEffectifRepository
+                        .findFirstByEmployeeIdAndPeriodePaieId(employeeOpt.get().getId(), idPeriodDep)
+                        .orElse(new TempEffectif());
+
+                tempeffectif.setEmployee(employeeOpt.get());
+                tempeffectif.setPersonnel(null);
+            }
+
+            tempeffectif.setPeriodePaie(periodePaie);
+            tempeffectif.setDatedesaisie(new Date());
+
+            // ==========================
+            // 3️⃣ Calcul métier
+            // ==========================
+
+            double jours;
+            double heures;
+
+            if (jourtravail != null) {
+                jours = jourtravail;
+                heures = (jours * HEURES_LEGALES) / JOURS_LEGAUX;
+            }
+            else if (temptravail != null) {
+                heures = temptravail;
+                jours = (heures * JOURS_LEGAUX) / HEURES_LEGALES;
+            }
+            else {
+                jours = JOURS_LEGAUX;
+                heures = HEURES_LEGALES;
+            }
+
+            // Arrondis
+            jours = Math.ceil(jours);
+            heures = Math.ceil(heures * 100) / 100;
+
+            tempeffectif.setJourspresence(jours);
+            tempeffectif.setHeurspresence(heures);
+
+            tempeffectif = tempEffectifRepository.save(tempeffectif);
+
+            dto.setRow(tempeffectif);
+            dto.setResult("success");
+
+        } catch (Exception e) {
+            dto.setResult("erreur");
+            e.printStackTrace();
+        }
+
+        return dto;
+    }
 
     @Override
 	public TempEffectif findtempeffectif(Long idpret) {

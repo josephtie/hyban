@@ -52,7 +52,7 @@ public class EmployeeController {
             @RequestParam("site") Long site,
             @RequestParam("modepaiement") String modePaiement,
             @RequestParam("paiementNumber") String paiementNumber,
-            @RequestParam("netpayer") BigDecimal netAPayer
+            @RequestParam("netpayer") Double netAPayer
     )  {
         return service.saveEmployeeWithContract(
                 employeeId,

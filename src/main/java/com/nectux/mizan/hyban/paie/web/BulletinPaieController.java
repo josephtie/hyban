@@ -22,29 +22,26 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.nectux.mizan.hyban.paie.dto.LivreDePaieDTOV2;
-import com.nectux.mizan.hyban.paie.dto.LivreDePaieV2;
+import com.nectux.mizan.hyban.paie.dto.*;
+import com.nectux.mizan.hyban.paie.entity.*;
+import com.nectux.mizan.hyban.paie.repository.BulletinSpecialeRepository;
 import com.nectux.mizan.hyban.paie.service.CarboneService;
 
+import com.nectux.mizan.hyban.paie.service.PretService;
+import com.nectux.mizan.hyban.personnel.specifque.entity.Employee;
+import com.nectux.mizan.hyban.personnel.specifque.entity.SpecialContract;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
-import com.nectux.mizan.hyban.paie.entity.ImprimBulletinPaie;
 import com.nectux.mizan.hyban.paie.service.BulletinPaieService;
 import com.nectux.mizan.hyban.paie.service.JasperReportService;
 import com.nectux.mizan.hyban.parametrages.entity.*;
 import com.nectux.mizan.hyban.parametrages.repository.PlanningCongeRepository;
 import com.nectux.mizan.hyban.parametrages.service.PeriodePaieService;
 import com.nectux.mizan.hyban.utils.*;
-import com.nectux.mizan.hyban.paie.dto.BulletinPaieDTO;
-import com.nectux.mizan.hyban.paie.dto.LivreDePaieDTO;
-import com.nectux.mizan.hyban.paie.entity.BulletinPaie;
-import com.nectux.mizan.hyban.paie.entity.LivreDePaie;
-import com.nectux.mizan.hyban.paie.entity.PrimePersonnel;
-import com.nectux.mizan.hyban.paie.entity.TempEffectif;
 import com.nectux.mizan.hyban.paie.repository.BulletinPaieRepository;
 import com.nectux.mizan.hyban.paie.repository.PrimePersonnelRepository;
 import com.nectux.mizan.hyban.paie.repository.TempEffectifRepository;
@@ -97,6 +94,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 	@Autowired private SocieteService societeService;
 	@Autowired private RubriqueService rubriqueService;
 	@Autowired private ContratPersonnelRepository contratPersonnelRepository;
+	@Autowired private BulletinSpecialeRepository bulletinSpecialeRepository;
 	@Autowired private BanqueService banqueService;
 	@Autowired private CpteVirmtBanqueService cpteVirmtBanqueService;
 	@Autowired private TempEffectifRepository tempeffectifRepository;
@@ -107,7 +105,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 	//	@Autowired private  ICarboneServices carboneServices;
 	@Autowired private ResourceLoader resourceLoader;
 	@Autowired private CarboneService carboneService;
-
+    @Autowired private PretService pretService;
 	@Autowired	private ObjectMapper objectMapper;
 
 
@@ -116,6 +114,7 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 	MethodsShared methodsShared = new MethodsShared();
 	List<LivreDePaie> livredepaieList=null;
+	List<LivreDePaieSpeciale> livreDePaieSpeciales=null;
 	List<LivreDePaieV2> livredepaieListV2=null;
 	private PeriodePaie maperiode;
 	private String promotion;
@@ -206,7 +205,19 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
         { mysociete=malist.get(0);
             modelMap.addAttribute("urllogo",mysociete.getUrlLogo());
         }
+
+        List<PeriodePaie> listPeriodepaie;
+        List<Pret> listPrets;
+        try {
+            listPrets = pretService.listdesPret();
+            listPeriodepaie = periodePaieService.listperiodesupAuPret();
+        } catch (Exception e) {
+            listPrets = new ArrayList<Pret>();
+            listPeriodepaie = new ArrayList<PeriodePaie>();
+        }
         modelMap.addAttribute("bigTitle", "Livre de paie speciale");
+        modelMap.addAttribute("listPrets", listPrets);
+        modelMap.addAttribute("listPeriodepaie", listPeriodepaie);
 //        modelMap.addAttribute("listePrimes", rubriqueService.getRubriquesActives());
 //        modelMap.addAttribute("listePrimesImp", rubriqueService.getRubriquesActivesType(1));
 //        modelMap.addAttribute("listePrimesNonImpos", rubriqueService.getRubriquesActivesType(2));
@@ -280,6 +291,30 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		
 		return bulletinDTO;
 	}
+
+
+    //afficher toutes les periodes
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/bulletinSpecialeperiodeactifjson", method = RequestMethod.GET)
+    public @ResponseBody BulletinSpecialeDTO getbulletinSpecialee(@RequestParam(value="id", required=true) Long idperiod,@RequestParam(value="limit", required=false) Integer limit,
+                                                      @RequestParam(value="offset", required=false) Integer offset,
+                                                      @RequestParam(value="search", required=false) String search) {
+
+        if(offset == null) offset = 0;
+        if(limit == null) limit = 50;
+
+        //final PageRequest page = new PageRequest(offset/10, limit, Direction.DESC, "id");
+        PageRequest page = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
+        PeriodePaie	 maperiode=periodePaieService.findPeriodePaie(idperiod);
+        BulletinSpecialeDTO bulletinDTO = new BulletinSpecialeDTO();
+        if(search == null || search == "" )
+            bulletinDTO = bulletinPaieService.loadBulletinSpeciale(page,maperiode);
+        else
+            bulletinDTO = bulletinPaieService.loadBulletinSpeciale(page,maperiode ,search);
+
+        return bulletinDTO;
+    }
+
 
 
 	@SuppressWarnings("unused")
@@ -357,6 +392,35 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		LivredePaieDTO.setResult("success");
 		 return LivredePaieDTO;
 	}
+
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/savebullEmployee", method = RequestMethod.GET)
+    public @ResponseBody LivreDePaieSpecialeDTO saveBullemployee(@RequestParam(value="id", required=true) Long id,@RequestParam(value="limit", required=false) Integer limit,
+                                                          @RequestParam(value="offset", required=false) Integer offset,
+                                                          Principal principal,ModelMap modelMap) {
+        LivreDePaieSpecialeDTO LivredePaieDTO = new LivreDePaieSpecialeDTO();
+        if(id==null ){
+            PeriodePaie maperiode=periodePaieService.findPeriodeactive();
+            id=maperiode.getId();
+        }
+        if(offset == null) offset = 0;
+        if(limit == null) limit = 100;
+        PageRequest page = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
+        // final PageRequest page = new PageRequest(offset/10, limit, Direction.ASC, "id");
+        // List<LivreDePaie> bulletinList = new ArrayList<LivreDePaie>();
+        // Pageable pageable;
+        LivredePaieDTO = bulletinPaieService.genererOptimiseEmployeeMois1(page,id);
+
+        livreDePaieSpeciales = new ArrayList<LivreDePaieSpeciale>();
+        livreDePaieSpeciales=LivredePaieDTO.getRows();
+        System.out.println("ppppppppppppppppppppppppppppppppppppppppppppp"+rubriqueService.getRubriquesActives().toString());
+        modelMap.addAttribute("rubrique",rubriqueService.getRubriquesActives());
+        LivredePaieDTO.setResult("success");
+        return LivredePaieDTO;
+    }
+
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/savelivrePersonnel", method = RequestMethod.GET)
     public @ResponseBody LivreDePaieDTOV2 genererLivrepaiepersonnel(@RequestParam(value="id", required=true) Long id,@RequestParam(value="limit", required=false) Integer limit,
@@ -650,19 +714,35 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
         if(limit == null) limit = 10;
 
         //final PageRequest page = new PageRequest(offset/10, limit, Direction.DESC, "id");
-		PageRequest page = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
+		PageRequest page = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
 		return bulletinPaieService.generateLivreDePaie(page);
 	}
-	
-	
-	@ResponseStatus(HttpStatus.OK)
+
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/saveBulletinEmplivrepaie", method = RequestMethod.POST)
+    public @ResponseBody BulletinSpecialeDTO enregistrerEmployeLivredePaie(@RequestParam(value="limit", required=false) Integer limit,
+                                                                @RequestParam(value="offset", required=false) Integer offset) {
+        if(offset == null) offset = 0;
+        if(limit == null) limit = 10;
+
+        //final PageRequest page = new PageRequest(offset/10, limit, Direction.DESC, "id");
+        PageRequest page = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
+        return bulletinPaieService.generateEmployeLivreDePaie(page);
+    }
+
+
+
+
+    @ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/listbulletinMoisActif", method = RequestMethod.GET)
 	public @ResponseBody BulletinPaieDTO listbulletinMoisActif(@RequestParam(value="limit", required=false) Integer limit, 
 			@RequestParam(value="offset", required=false) Integer offset, 
 			@RequestParam(value="search", required=false) String search) { 
 		if(offset == null) offset = 0;
 		if(limit == null) limit = 10;
-		PageRequest page = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
+		PageRequest page = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
 		//final PageRequest page = new PageRequest(offset/10, limit, Direction.DESC, "id");
 		
 		
@@ -670,6 +750,23 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 		
 		
 	}
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/listbulletinSpecialMoisActif", method = RequestMethod.GET)
+    public @ResponseBody BulletinSpecialeDTO listbulletinSpecialMoisActif(@RequestParam(value="limit", required=false) Integer limit,
+                                                               @RequestParam(value="offset", required=false) Integer offset,
+                                                               @RequestParam(value="search", required=false) String search) {
+        if(offset == null) offset = 0;
+        if(limit == null) limit = 10;
+        PageRequest page = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
+        //final PageRequest page = new PageRequest(offset/10, limit, Direction.DESC, "id");
+
+
+        return bulletinPaieService.BulletinMoisSpecialeCalculer(page, maperiode);
+
+
+    }
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/personneldePeriodactif", method = RequestMethod.GET)
@@ -1115,7 +1212,87 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 	}
 
 
-	// Méthode utilitaire pour créer un objet ImprimBulletinPaie et l'ajouter à la liste
+    @GetMapping("/exportSeciale")
+    public ResponseEntity<byte[]> exportSpecialeBulletinsJulaya(HttpServletResponse response) throws IOException {
+
+        // Chargement du fichier modèle
+        ClassPathResource templateFile = new ClassPathResource("templates/FICHIERTYPEJULAYA.xlsm");
+        PeriodePaie maperiode = periodePaieService.findPeriodeactive();
+
+        try (InputStream inputStream = templateFile.getInputStream();
+             Workbook workbook = WorkbookFactory.create(inputStream);
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            Sheet sheet = workbook.getSheetAt(0); // première feuille
+
+            List<BulletinSpeciale> bulletins = bulletinSpecialeRepository.findByPeriodePaieIdAndCalculerTrue(maperiode.getId());
+            bulletins.sort(Comparator.comparing(b -> {
+                String mode = b.getSpecialContract()
+                        .getModepaiement()
+                        .toLowerCase();
+
+                switch (mode) {
+                    case "virement-bancaire":
+                        return 1;
+                    case "transfert-mobile-money":
+                        return 2;
+                    case "transfert-wave":
+                        return 3;
+                    default:
+                        return 4; // autres modes à la fin
+                }
+            }));
+            int rowNum = 1; // ligne 2
+
+            for (BulletinSpeciale bulletin : bulletins) {
+                SpecialContract contrat = bulletin.getSpecialContract();
+                Employee personnel = contrat.getEmployee();
+                String modePaiement = contrat.getModepaiement(); // Assure-toi que ce champ existe
+
+                String reference;
+
+                if ("virement-bancaire".equalsIgnoreCase(modePaiement)) {
+                    reference = (contrat.getPaiementNumber() != null ? contrat.getPaiementNumber() : "");
+                } else {
+                    reference = (contrat.getPaiementNumber() != null ? contrat.getPaiementNumber() : "");
+                }
+
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(reference);
+                row.createCell(1).setCellValue(bulletin.getNetPayer().doubleValue());
+                row.createCell(2).setCellValue(personnel.getNom() + " " + personnel.getPrenom());
+                row.createCell(3).setCellValue(contrat.getFonction().getLibelle().replaceAll("[^a-zA-Z0-9 ]", ""));;
+                row.createCell(4).setCellValue(modePaiement); // Ex : "virement-bancaire", "transfert-wave"
+            }
+
+
+            // Génération du nom de fichier
+            String fileName = "julaya_export_" +
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".xlsm";
+
+            // Enregistrement local
+            Path exportDir = Paths.get("exports");
+            Files.createDirectories(exportDir);
+            Path filePath = exportDir.resolve(fileName);
+            try (OutputStream fileOut = Files.newOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+
+            // Écriture dans le flux pour téléchargement
+            workbook.write(out);
+            byte[] fileContent = out.toByteArray();
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                    .contentType(MediaType.parseMediaType("application/vnd.ms-excel.sheet.macroEnabled.12"))
+                    .contentLength(fileContent.length)
+                    .body(fileContent);
+        }
+    }
+
+
+
+    // Méthode utilitaire pour créer un objet ImprimBulletinPaie et l'ajouter à la liste
 	private ImprimBulletinPaie ajouterImprimBulletinPaie(String libelle,
 														 double taux, double base, Double gain,Double retenue,Double tauxPatron,Double retenuePatron) {
 		ImprimBulletinPaie imprimBulletinPaie = new ImprimBulletinPaie();

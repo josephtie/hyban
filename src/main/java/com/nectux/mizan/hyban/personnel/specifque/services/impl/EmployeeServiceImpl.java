@@ -71,7 +71,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             String dateFin,
             String modePaiement,
             String paiementNumber,
-            BigDecimal netAPayer
+            Double netAPayer
     ) {
 
         SpecialContractDTO dto = new SpecialContractDTO();

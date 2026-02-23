@@ -58,7 +58,7 @@ public class SpecialContract extends Auditable {
     private String dFin;
 
     @Column(precision = 15, scale = 2)
-    private BigDecimal remunerationForfaitaire;
+    private Double remunerationForfaitaire;
 
     private Boolean actif = true;
 
@@ -137,11 +137,11 @@ public class SpecialContract extends Auditable {
         this.dFin = dFin;
     }
 
-    public BigDecimal getRemunerationForfaitaire() {
+    public Double getRemunerationForfaitaire() {
         return remunerationForfaitaire;
     }
 
-    public void setRemunerationForfaitaire(BigDecimal remunerationForfaitaire) {
+    public void setRemunerationForfaitaire(Double remunerationForfaitaire) {
         this.remunerationForfaitaire = remunerationForfaitaire;
     }
 

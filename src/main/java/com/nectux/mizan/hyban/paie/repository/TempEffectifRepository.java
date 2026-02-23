@@ -4,6 +4,7 @@ import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.paie.entity.TempEffectif;
 
+import com.nectux.mizan.hyban.personnel.specifque.entity.Employee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
@@ -32,4 +33,13 @@ public interface TempEffectifRepository extends CrudRepository<TempEffectif, Lon
 
 
     Optional<TempEffectif> findFirstByPersonnelIdAndPeriodePaieId(Long idPers, Long idPeriodDep);
+
+    TempEffectif findByEmployeeAndPeriodePaie(Employee employee, PeriodePaie periodpaie);
+
+//    Optional<TempEffectif> findFirstByPersonnelIdAndPeriodePaieId(Long personnelId, Long periodeId);
+
+    Optional<TempEffectif> findFirstByEmployeeIdAndPeriodePaieId(Long employeeId, Long periodeId);
+
+
+
 }

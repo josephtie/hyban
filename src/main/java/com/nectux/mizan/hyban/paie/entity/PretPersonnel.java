@@ -13,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
 import com.nectux.mizan.hyban.parametrages.entity.Auditable;
+import com.nectux.mizan.hyban.personnel.specifque.entity.Employee;
 import com.nectux.mizan.hyban.utils.CustomDateDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.context.annotation.Scope;
@@ -48,8 +49,13 @@ public class PretPersonnel extends Auditable {
 	private Pret pret;
 	
 	@ManyToOne
-	@JoinColumn(nullable=false)
+	@JoinColumn(nullable=true)
 	private Personnel personnel;
+
+
+    @ManyToOne
+    @JoinColumn(nullable=true)
+    private Employee employee;
 	
 	@JsonSerialize(using = CustomDateDeserializer.class)
 	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -141,12 +147,27 @@ public class PretPersonnel extends Auditable {
 		this.periode = periode;
 	}
 
-	@Override
-	public String toString() {
-		return "PretPersonnel [id=" + id + ", montant=" + montant
-				+ ", echelonage=" + echelonage + ", montantPret=" + montantPret
-				+ ", pret=" + pret + ", personnel=" + personnel
-				+ ", dateEmprunt=" + dateEmprunt + ", periode=" + periode
-				+ ", dEmprunt=" + dEmprunt + "]";
-	}	
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    @Override
+    public String toString() {
+        return "PretPersonnel{" +
+                "id=" + id +
+                ", montant=" + montant +
+                ", echelonage=" + echelonage +
+                ", montantPret='" + montantPret + '\'' +
+                ", pret=" + pret +
+                ", personnel=" + personnel +
+                ", employee=" + employee +
+                ", dateEmprunt=" + dateEmprunt +
+                ", periode=" + periode +
+                ", dEmprunt='" + dEmprunt + '\'' +
+                '}';
+    }
 }

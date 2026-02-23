@@ -136,7 +136,7 @@ public class EchelonnementServiceImpl implements EchelonnementService {
 				
 				if(!periodePaieVerif.equals(null)){
 					if(periodePaieVerif.getMois().getId() != null && periodePaieOuverte.getMois().getId() != null){
-						if(periodePaieVerif.getId() > periodePaieOuverte.getId()){
+						if(periodePaieVerif.getId() >= periodePaieOuverte.getId()){
 							continu = true;
 							
 						}else{

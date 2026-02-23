@@ -175,8 +175,8 @@ jQuery(document).ready(function($) {
 });
 
 function optionFormatter(id, row, index) {
-	var option = '<a onclick="edit('+row.id+')" data-toggle="modal" data-target="#rhpModal" href="#" title="Ajouter pr�t [LIBELLE : '+row.pretPersonnel.personnel.nom+' ]">  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';
-	option += '&nbsp;<a data-toggle="modal" href="#" title="Suprimer bulletin [LIBELLE : '+row.pretPersonnel.personnel.nom+' ]"> <span class="glyphicon glyphicon-trash"></span></a>';
+	var option = '<a onclick="edit('+row.id+')" data-toggle="modal" data-target="#rhpModal" href="#" >  <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;';
+	option += '&nbsp;<a data-toggle="modal" href="#" > <span class="glyphicon glyphicon-trash"></span></a>';
 	
     return option;
 }
@@ -187,12 +187,20 @@ function pretiFormatter(id, row, index) {
 	var option='';
     return option;
 }
-function matriFormatter(pretPersonnel, row, index) {
-	if(row.pretPersonnel.personnel.matricule == ''){
-		return "";
-	}
-	return row.pretPersonnel.personnel.matricule;
+
+function matriFormatter(value, row, index) {
+
+    if (row.pretPersonnel.personnel != null) {
+        return row.pretPersonnel.personnel.matricule;
+    }
+
+    if (row.pretPersonnel.employee != null) {
+        return row.pretPersonnel.employee.matricule;
+    }
+
+    return "";
 }
+
 /* function matrisFormatter(personnel, row, index) {
 	if(row.personnel.matricule == ''){
 		return "";
@@ -212,10 +220,15 @@ function pretFormatter(pretPersonnel, row, index) {
 	return row.pretPersonnel.pret.libelle;
 }
 function nomFormatter(pretPersonnel, row, index) {
-	if(row.pretPersonnel.personnel.nom == ''){
-		return "";
-	}
-	return row.pretPersonnel.personnel.nom+" "+row.pretPersonnel.personnel.prenom;
+	if (row.pretPersonnel.personnel != null) {
+            return row.pretPersonnel.personnel.nomComplet;
+        }
+
+        if (row.pretPersonnel.employee != null) {
+            return row.pretPersonnel.employee.nomComplet;
+        }
+
+        return "";
 }
 function nomsFormatter(personnel, row, index) {
 	if(row.personnel.nom == ''){

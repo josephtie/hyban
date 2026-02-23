@@ -32,7 +32,7 @@ public interface EmployeeService {
             String dateFin,
             String modePaiement,
             String paiementNumber,
-            BigDecimal netAPayer
+            Double netAPayer
     );
     Employee update(Long id, Employee employee);
 

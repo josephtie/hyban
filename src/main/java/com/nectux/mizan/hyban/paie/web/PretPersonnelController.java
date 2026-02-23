@@ -330,6 +330,22 @@ private static final Logger logger = LogManager.getLogger(PretPersonnelControlle
 		
 		return pretPersonnelService.saver(montant,echelonage,idPret, idPers, dEmprunt,idPeriodDep);
 	}
+
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/savepretEmployee", method = RequestMethod.POST)
+    public @ResponseBody PretPersonnelDTO savepretEmployee(@RequestParam(value="montant1", required=true) Double montant,
+                                                            @RequestParam(value="echelonage1", required=true) Long echelonage,
+                                                            @RequestParam(value="pret1", required=true) Long idPret,
+                                                            @RequestParam(value="idpers1", required=true) Long idPers,
+                                                            @RequestParam(value="dEmprunt1", required=true) String dEmprunt,
+                                                            @RequestParam(value="periodepaie1", required=true) Long idPeriodDep,
+                                                            Principal principal) {
+
+
+        return pretPersonnelService.saverEmp(montant,echelonage,idPret, idPers.toString(), dEmprunt,idPeriodDep);
+    }
 	
 	
 	@ResponseStatus(HttpStatus.OK)
@@ -346,6 +362,24 @@ private static final Logger logger = LogManager.getLogger(PretPersonnelControlle
 		
 		return pretPersonnelService.update(idpret,montant,echelonage,idPret, idPers, dEmprunt,idPeriodDep);
 	}
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/updatepretEmployee", method = RequestMethod.GET)
+    public @ResponseBody PretPersonnelDTO updatePretEmployee(@RequestParam(value="idpret", required=true) Long idpret,
+                                                             @RequestParam(value="montant1", required=true) Double montant,
+                                                              @RequestParam(value="echelonage1", required=true) Long echelonage,
+                                                              @RequestParam(value="pret1", required=true) Long idPret,
+                                                              @RequestParam(value="idpers1", required=true) String idPers,
+                                                              @RequestParam(value="dEmprunt1", required=true) String dEmprunt,
+                                                              @RequestParam(value="periodepaie1", required=true) Long idPeriodDep,
+                                                              Principal principal) {
+
+        //Utilisateur currentUser = userService.findByEmail(principal.getName());
+
+        return pretPersonnelService.updateEmployee(idpret,montant,echelonage,idPret, idPers, dEmprunt,idPeriodDep);
+    }
+
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/listperiodesupAuPret", method = RequestMethod.GET)
@@ -399,4 +433,12 @@ private static final Logger logger = LogManager.getLogger(PretPersonnelControlle
     PretPersonnel searchptretUserc(@RequestParam(value="id", required=true) Long idp, Principal principal) {
 		return pretPersonnelService.findpret(idp);
 	}
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/searchpretIndividuelEmpl", method = RequestMethod.POST)
+    public @ResponseBody
+    PretPersonnel searchpretIndividuelEmpl(@RequestParam(value="id", required=true) String idp, Principal principal) {
+        return pretPersonnelService.findpretEmp(idp);
+    }
 }

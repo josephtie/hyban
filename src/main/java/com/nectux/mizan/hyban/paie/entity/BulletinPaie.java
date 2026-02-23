@@ -182,7 +182,7 @@ public class BulletinPaie extends Auditable {
 	private String nbcongedu;
 	
 	
-   private Double totalbrut;
+    private Double totalbrut;
 	
 	@Transient
 	private String montanttotalbrut;
@@ -222,7 +222,7 @@ public class BulletinPaie extends Auditable {
 	private String montantCnps;
 	
 	
-private Double basecnps;
+   private Double basecnps;
 	
 	@Transient
 	private String montantbaseCnps;

@@ -37,4 +37,6 @@ WHERE sc.actif = true
     Page<Employee> findByActifTrue(Pageable pageable);
 
     Page<Employee> findByActifTrueAndNomCompletIgnoreCaseContainingOrMatriculeIgnoreCaseContaining(Pageable pageable, String search,String search1);
+
+    List<Employee> findByActifOrderByNomCompletAsc(boolean b);
 }

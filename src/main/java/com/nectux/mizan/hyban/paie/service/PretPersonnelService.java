@@ -10,6 +10,7 @@ public interface PretPersonnelService {
 	public PretPersonnel save(PretPersonnel pretPersonnel);
 	
 	public PretPersonnel findpret(Long idPret);
+	public PretPersonnel findpretEmp(String idPret);
 	public PretPersonnelDTO saver(Double montant,Long echelonage,Long idPret,Long idPers,String dEmprunt,Long idPeriodDep);
 	
 	
@@ -22,4 +23,7 @@ public interface PretPersonnelService {
 	public PretPersonnelDTO loadPretPersonnel(Pageable pageable);
 	public PretPersonnelDTO loadPretPersonnel(Pageable pageable, String search);
 
+    PretPersonnelDTO saverEmp(Double montant, Long echelonage, Long idPret, String idPers, String dEmprunt, Long idPeriodDep);
+
+    PretPersonnelDTO updateEmployee(Long idpret, Double montant, Long echelonage, Long idPret, String idPers, String dEmprunt, Long idPeriodDep);
 }

@@ -29,4 +29,5 @@ public interface TempEffectifService {
 	
 	public TempEffectifDTO loadTempEffectif(Pageable pageable, String search);
 
+    TempEffectifDTO saverEmp(Double temptravail, Double jourtravail, String idPers, Long idPeriodDep);
 }
