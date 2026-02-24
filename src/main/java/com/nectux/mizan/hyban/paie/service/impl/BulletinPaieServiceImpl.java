@@ -740,8 +740,14 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 
 		// 5️⃣ Précharger les echelonnements
 		List<Echelonnement> echelonnements = echelonnementRepository.findByPeriodePaieId(idPeriode);
-		Map<Long, List<Echelonnement>> echelParPersonnel = echelonnements.stream()
-				.collect(Collectors.groupingBy(e -> e.getPretPersonnel().getPersonnel().getId()));
+        Map<Long, List<Echelonnement>> echelParPersonnel = echelonnements.stream()
+                .filter(e -> e.getPretPersonnel() != null
+                        && e.getPretPersonnel().getPersonnel() != null)
+                .collect(Collectors.groupingBy(
+                        e -> e.getPretPersonnel().getPersonnel().getId()
+                ));
+//		Map<Long, List<Echelonnement>> echelParPersonnel = echelonnements.stream()
+//				.collect(Collectors.groupingBy(e -> e.getPretPersonnel().getPersonnel().getId()));
 
 		// 6️⃣ Précharger les bulletins existants pour cumul
 		List<BulletinPaie> bulletinsExistants = bulletinPaieRepository
@@ -751,8 +757,14 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 
 		// 7️⃣ Précharger les temps effectifs
 		List<TempEffectif> allTempEffectif = tempeffectifRepository.findByPeriodePaieId(idPeriode);
-		Map<Long, TempEffectif> tempEffectifParPersonnel = allTempEffectif.stream()
-				.collect(Collectors.toMap(t -> t.getPersonnel().getId(), t -> t));
+        Map<Long, TempEffectif> tempEffectifParPersonnel = allTempEffectif.stream()
+                .filter(t -> t.getPersonnel() != null)
+                .collect(Collectors.toMap(
+                        t -> t.getPersonnel().getId(),
+                        t -> t
+                ));
+//		Map<Long, TempEffectif> tempEffectifParPersonnel = allTempEffectif.stream()
+//				.collect(Collectors.toMap(t -> t.getPersonnel().getId(), t -> t));
 
 
             // Récupérer tous les plannings actifs pour les contrats
@@ -1047,13 +1059,28 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
         // 5️⃣ Précharger les echelonnements
         List<Echelonnement> echelonnements = echelonnementRepository.findByPeriodePaieId(idPeriode);
         Map<Long, List<Echelonnement>> echelParPersonnel = echelonnements.stream()
-                .collect(Collectors.groupingBy(e -> e.getPretPersonnel().getEmployee().getId()));
+                .filter(e -> e.getPretPersonnel() != null
+                        && e.getPretPersonnel().getEmployee() != null)
+                .collect(Collectors.groupingBy(
+                        e -> e.getPretPersonnel().getEmployee().getId()
+                ));
+//        Map<Long, List<Echelonnement>> echelParPersonnel = echelonnements.stream()
+//                .collect(Collectors.groupingBy(e -> e.getPretPersonnel().getEmployee().getId()));
+
+
+
 
 
         // 7️⃣ Précharger les temps effectifs
         List<TempEffectif> allTempEffectif = tempeffectifRepository.findByPeriodePaieId(idPeriode);
         Map<Long, TempEffectif> tempEffectifParPersonnel = allTempEffectif.stream()
-                .collect(Collectors.toMap(t -> t.getEmployee().getId(), t -> t));
+                .filter(t -> t.getEmployee() != null)
+                .collect(Collectors.toMap(
+                        t -> t.getEmployee().getId(),
+                        t -> t
+                ));
+//        Map<Long, TempEffectif> tempEffectifParPersonnel = allTempEffectif.stream()
+//                .collect(Collectors.toMap(t -> t.getEmployee().getId(), t -> t));
 
 
 

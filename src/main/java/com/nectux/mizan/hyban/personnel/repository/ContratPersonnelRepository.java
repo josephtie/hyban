@@ -107,5 +107,27 @@ public interface ContratPersonnelRepository extends CrudRepository<ContratPerson
     Page<ContratPersonnel> searchContrat(@Param("search") String search, Pageable pageable);
 
 
+   // List<Long> findPersonnelIdsByTypeContratLibelle(String filter);
+
+//    @Query(value = """
+//    SELECT DISTINCT c.personnel_id
+//    FROM cgeci_rhpaie_contrat_personnel c
+//    JOIN cgeci_rhpaie_type_contrat t
+//         ON c.type_contrat_id = t.id
+//    WHERE c.statut = true
+//      AND UPPER(t.libelle) = UPPER(:type)
+//""", nativeQuery = true)
+//
+//    List<Long> findPersonnelIdsByTypeContratLibelle(@Param("type") String type);
+
+    @Query("""
+    SELECT c.personnel.id
+    FROM ContratPersonnel c
+    WHERE c.statut = true
+      AND UPPER(c.typeContrat.libelle) = UPPER(:type)
+""")
+    List<Long> findPersonnelIdsByTypeContratLibelle(@Param("type") String type);
+
+    List<ContratPersonnel> findByPersonnelIdInAndStatutTrueOrderByPersonnelIdAscDateDebutDesc(List<Long> personnelIds);
 }
 

@@ -1,6 +1,7 @@
 package com.nectux.mizan.hyban.personnel.service.impl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.nectux.mizan.hyban.paie.entity.BulletinPaie;
 import com.nectux.mizan.hyban.paie.entity.PrimePersonnel;
@@ -567,49 +568,191 @@ public class PersonnelServiceImpl implements PersonnelService {
         logger.info(">>>>> PERSONNELS CHARGES AVEC SUCCES");
         return personnelDTO;
     }
+
+
     @Override
     public PersonnelDTO loadPersonnelopfilter(Pageable pageable, String filter) {
 
         PersonnelDTO personnelDTO = new PersonnelDTO();
-
-        Boolean carecFilter = null;
-
-
-        if (filter != null && !filter.isBlank()) {
-            if ("CONSULTANT".equalsIgnoreCase(filter)) {
-                carecFilter = false;
-            } else {
-                carecFilter = true;
-            }
-        }
-
-
         Page<Personnel> page;
 
-        if (carecFilter != null) {
-            page = personnelRepository.findByCarec(carecFilter, pageable);
+        // 1️⃣ Chargement normal des personnels
+        if (filter != null && !filter.isBlank()) {
+
+            if ("CONSULTANT".equalsIgnoreCase(filter)) {
+                page = personnelRepository.findByCarec(false, pageable);
+
+            } else {
+                page = personnelRepository.chearchOrdreAsc(pageable);
+            }
+
         } else {
             page = personnelRepository.chearchOrdreAsc(pageable);
         }
 
-        List<Personnel> personnelsWithContract = page.getContent().stream().map(p -> {
-            ContratPersonnel contrat = contratPersonnelRepository
-                    .findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(p.getId());
+        List<Personnel> personnels = page.getContent();
 
-            if (contrat != null) {
-                p.setNetapayer(contrat.getNetAPayer());
-                p.setFonction(contrat.getFonction().getLibelle());
-            }
-            return p;
-        }).toList();
+        if (personnels.isEmpty()) {
+            personnelDTO.setRows(Collections.emptyList());
+            personnelDTO.setTotal(0);
+            return personnelDTO;
+        }
 
-        personnelDTO.setRows(personnelsWithContract);
-        personnelDTO.setTotal(page.getTotalElements());
+        // 2️⃣ Batch : récupérer tous les contrats actifs des personnels de la page
+        List<Long> personnelIds = personnels.stream()
+                .map(Personnel::getId)
+                .toList();
 
-        logger.info(">>>>> PERSONNELS CHARGES AVEC SUCCES");
+        List<ContratPersonnel> contrats =
+                contratPersonnelRepository
+                        .findByPersonnelIdInAndStatutTrueOrderByPersonnelIdAscDateDebutDesc(personnelIds);
+
+        // 3️⃣ Garder le PLUS RÉCENT par personnel
+        Map<Long, ContratPersonnel> dernierContratMap = contrats.stream()
+                .collect(Collectors.toMap(
+                        c -> c.getPersonnel().getId(),
+                        c -> c,
+                        (c1, c2) ->
+                                c1.getDateDebut().after(c2.getDateDebut()) ? c1 : c2
+                ));
+
+        // 4️⃣ Enrichissement + filtre CDI/CDD si nécessaire
+        List<Personnel> resultat = personnels.stream()
+                .filter(p -> {
+
+                    if (!"CDI".equalsIgnoreCase(filter)
+                            && !"CDD".equalsIgnoreCase(filter)) {
+                        return true;
+                    }
+
+                    ContratPersonnel contrat =
+                            dernierContratMap.get(p.getId());
+
+                    if (contrat == null) return false;
+
+                    return contrat.getTypeContrat()
+                            .getLibelle()
+                            .equalsIgnoreCase(filter);
+                })
+                .map(p -> {
+
+                    ContratPersonnel contrat =
+                            dernierContratMap.get(p.getId());
+
+                    if (contrat != null) {
+                        p.setNetapayer(contrat.getNetAPayer());
+                        p.setFonction(contrat.getFonction().getLibelle());
+                        p.setTypeSalarie(contrat.getTypeContrat().getLibelle());
+                    }
+
+                    return p;
+                })
+                .toList();
+
+        personnelDTO.setRows(resultat);
+        personnelDTO.setTotal(resultat.size()); // ⚠ important ici
 
         return personnelDTO;
     }
+
+//    public PersonnelDTO loadPersonnelopfilter(Pageable pageable, String filter) {
+//
+//        PersonnelDTO personnelDTO = new PersonnelDTO();
+//        Page<Personnel> page;
+//
+//        if (filter != null && !filter.isBlank()) {
+//
+//            if ("CONSULTANT".equalsIgnoreCase(filter)) {
+//                page = personnelRepository.findByCarec(false, pageable);
+//
+//            } else if ("CDI".equalsIgnoreCase(filter) || "CDD".equalsIgnoreCase(filter)) {
+//                // 🔹 Optimisé : récupération directe des personnels avec contrat du type demandé
+//                List<Long> personnelIdsAvecContrat = contratPersonnelRepository
+//                        .findPersonnelIdsByTypeContratLibelle(filter);
+//
+//                page = personnelRepository.findByIdInAndCarecTrueAndRetraitEffectFalse(personnelIdsAvecContrat, pageable);
+//
+//            } else {
+//                page = personnelRepository.chearchOrdreAsc(pageable);
+//            }
+//
+//        } else {
+//            page = personnelRepository.chearchOrdreAsc(pageable);
+//        }
+//
+//        List<Personnel> personnels = page.getContent();
+//
+//        // 🔹 Récupération des derniers contrats batch
+//        List<Long> personnelIds = personnels.stream().map(Personnel::getId).toList();
+//        List<ContratPersonnel> contrats = contratPersonnelRepository
+//                .findByPersonnelIdInAndStatutTrueOrderByPersonnelIdAscDateDebutDesc(personnelIds);
+//
+//        Map<Long, ContratPersonnel> dernierContratMap = new HashMap<>();
+//        for (ContratPersonnel c : contrats) {
+//            dernierContratMap.putIfAbsent(c.getPersonnel().getId(), c);
+//        }
+//
+//        // 🔹 Enrichissement des personnels
+//        List<Personnel> personnelsWithContract = personnels.stream()
+//                .map(p -> {
+//                    ContratPersonnel contrat = dernierContratMap.get(p.getId());
+//                    if (contrat != null) {
+//                        p.setNetapayer(contrat.getNetAPayer());
+//                        p.setFonction(contrat.getFonction().getLibelle());
+//                       // p.setTypeContrat(contrat.getTypeContrat().getLibelle());
+//                    }
+//                    return p;
+//                })
+//                .toList();
+//
+//        personnelDTO.setRows(personnelsWithContract);
+//        personnelDTO.setTotal(page.getTotalElements());
+//
+//        return personnelDTO;
+//    }
+//    @Override
+//    public PersonnelDTO loadPersonnelopfilter(Pageable pageable, String filter) {
+//
+//        PersonnelDTO personnelDTO = new PersonnelDTO();
+//
+//        Boolean carecFilter = null;
+//
+//
+//        if (filter != null && !filter.isBlank()) {
+//            if ("CONSULTANT".equalsIgnoreCase(filter)) {
+//                carecFilter = false;
+//            } else {
+//                carecFilter = true;
+//            }
+//        }
+//
+//
+//        Page<Personnel> page;
+//
+//        if (carecFilter != null) {
+//            page = personnelRepository.findByCarec(carecFilter, pageable);
+//        } else {
+//            page = personnelRepository.chearchOrdreAsc(pageable);
+//        }
+//
+//        List<Personnel> personnelsWithContract = page.getContent().stream().map(p -> {
+//            ContratPersonnel contrat = contratPersonnelRepository
+//                    .findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(p.getId());
+//
+//            if (contrat != null) {
+//                p.setNetapayer(contrat.getNetAPayer());
+//                p.setFonction(contrat.getFonction().getLibelle());
+//            }
+//            return p;
+//        }).toList();
+//
+//        personnelDTO.setRows(personnelsWithContract);
+//        personnelDTO.setTotal(page.getTotalElements());
+//
+//        logger.info(">>>>> PERSONNELS CHARGES AVEC SUCCES");
+//
+//        return personnelDTO;
+//    }
 
 
 
@@ -667,55 +810,68 @@ public class PersonnelServiceImpl implements PersonnelService {
     }
 
     @Override
-    public PersonnelDTO loadPersonnelopfilter(
-            Pageable pageable,
-            String cherch1,
-            String filter) {
+    public PersonnelDTO loadPersonnelopfilter(Pageable pageable, String cherch1, String filter) {
 
         PersonnelDTO personnelDTO = new PersonnelDTO();
 
-        Boolean carecFilter = null;
-
-        if (filter != null && !filter.isBlank()) {
-            if ("CONSULTANT".equalsIgnoreCase(filter)) {
-                carecFilter = false;
-            } else {
-                carecFilter = true;
-            }
-        }
-
-        // Nettoyer la recherche vide
         if (cherch1 != null && cherch1.isBlank()) {
             cherch1 = null;
         }
 
-        Page<Personnel> page = personnelRepository
-                .searchWithCarec(carecFilter, cherch1, pageable);
+        Page<Personnel> page;
 
-        List<Personnel> personnelsWithContract = page.getContent()
-                .stream()
+        if (filter != null && !filter.isBlank()) {
+
+            if ("CONSULTANT".equalsIgnoreCase(filter)) {
+                page = personnelRepository.searchWithCarec(false, cherch1, pageable);
+
+            } else if ("CDI".equalsIgnoreCase(filter) || "CDD".equalsIgnoreCase(filter)) {
+                // 🔹 Récupérer d'abord les IDs des personnels ayant un contrat CDI/CDD actif
+                List<Long> personnelIdsAvecContrat = contratPersonnelRepository
+                        .findPersonnelIdsByTypeContratLibelle(filter);
+
+                // 🔹 Récupérer les personnels correspondants + recherche texte
+                page = personnelRepository.findFilteredByIds(
+                        personnelIdsAvecContrat, cherch1, pageable);
+
+            } else {
+                page = personnelRepository.searchWithCarec(null, cherch1, pageable);
+            }
+
+        } else {
+            page = personnelRepository.searchWithCarec(null, cherch1, pageable);
+        }
+
+        List<Personnel> personnels = page.getContent();
+
+        // 🔹 Récupération des derniers contrats batch
+        List<Long> personnelIds = personnels.stream().map(Personnel::getId).toList();
+        List<ContratPersonnel> contrats = contratPersonnelRepository
+                .findByPersonnelIdInAndStatutTrueOrderByPersonnelIdAscDateDebutDesc(personnelIds);
+
+        Map<Long, ContratPersonnel> dernierContratMap = new HashMap<>();
+        for (ContratPersonnel c : contrats) {
+            dernierContratMap.putIfAbsent(c.getPersonnel().getId(), c);
+        }
+
+        // 🔹 Enrichissement des personnels
+        List<Personnel> personnelsWithContract = personnels.stream()
                 .map(p -> {
-
-                    ContratPersonnel contrat =
-                            contratPersonnelRepository
-                                    .findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(p.getId());
-
+                    ContratPersonnel contrat = dernierContratMap.get(p.getId());
                     if (contrat != null) {
                         p.setNetapayer(contrat.getNetAPayer());
                         p.setFonction(contrat.getFonction().getLibelle());
+                       // p.setTypeContrat(contrat.getTypeContrat().getLibelle());
                     }
-
                     return p;
-                }).toList();
+                })
+                .toList();
 
         personnelDTO.setRows(personnelsWithContract);
         personnelDTO.setTotal(page.getTotalElements());
 
-        logger.info(">>>>> PERSONNELS CHARGES AVEC SUCCES");
-
         return personnelDTO;
     }
-
 
     @Override
 	public PrintLsDTO RechercherListPersonnelParAnnee(Long id) {

@@ -105,4 +105,154 @@ ORDER BY p.nom ASC
             Pageable pageable);
 
 
+
+    @Query(
+            value = """
+        SELECT DISTINCT p.*
+        FROM Personnel p
+        JOIN ContratPersonnel c ON c.personnel_id = p.id
+        JOIN typeContrat t ON t.id = c.typeContrat_id
+        WHERE c.statut = true AND p.carec= true and p.retraitEffect= false
+        AND UPPER(t.libelle) = UPPER(:type)
+        ORDER BY p.id DESC
+    """,
+            countQuery = """
+        SELECT COUNT(*)
+        FROM Personnel p
+        JOIN typeContrat c ON c.personnel_id = p.id
+        JOIN typeContrat t ON t.id = c.typeContrat_id
+        WHERE c.statut = true
+        AND UPPER(t.libelle) = UPPER(:type)
+    """,
+            nativeQuery = true
+    )
+    Page<Personnel> findByTypeContrat(@Param("type") String type, Pageable pageable);
+
+
+    @Query(
+            value = """
+        SELECT p.*
+        FROM public.cgeci_rhpaie_personnel p
+        WHERE p.carec = true
+          AND p.retrait_effect = false
+          AND EXISTS (
+                SELECT 1
+                FROM public.cgeci_rhpaie_contrat_personnel c
+                JOIN public.cgeci_rhpaie_type_contrat tc
+                     ON c.type_contrat_id = tc.id
+                WHERE c.personnel_id = p.id
+                  AND c.statut = true
+                AND UPPER(tc.libelle) = UPPER(:type)
+          )
+        """,
+            countQuery = """
+        SELECT COUNT(*)
+        FROM public.cgeci_rhpaie_personnel p
+        WHERE p.carec = true
+          AND p.retrait_effect = false
+          AND EXISTS (
+                SELECT 1
+                FROM public.cgeci_rhpaie_contrat_personnel c
+                JOIN public.cgeci_rhpaie_type_contrat tc
+                     ON c.type_contrat_id = tc.id
+                WHERE c.personnel_id = p.id
+                  AND c.statut = true
+                  AND UPPER(tc.libelle) = UPPER(:type)
+          )
+        """,
+            nativeQuery = true
+    )
+    Page<Personnel> findByTypeContratNative(
+            @Param("type") String type,
+            Pageable pageable);
+
+
+
+
+
+
+    @Query(
+            value = """
+        SELECT p.*
+        FROM public.cgeci_rhpaie_personnel p
+        WHERE p.carec = true
+          AND p.retrait_effect = false
+          AND EXISTS (
+                SELECT 1
+                FROM public.cgeci_rhpaie_contrat_personnel c
+                JOIN public.cgeci_rhpaie_type_contrat tc
+                     ON c.type_contrat_id = tc.id
+                WHERE c.personnel_id = p.id
+                  AND c.statut = true
+                  AND UPPER(tc.libelle) = UPPER(:type)
+          )
+          AND (
+                :search1 IS NULL
+                OR UPPER(p.nom) LIKE UPPER(CONCAT('%', :search1, '%'))
+                OR UPPER(p.prenom) LIKE UPPER(CONCAT('%', :search1, '%'))
+                OR UPPER(p.matricule) LIKE UPPER(CONCAT('%', :search1, '%'))
+          )
+        """,
+            countQuery = """
+        SELECT COUNT(*)
+        FROM public.cgeci_rhpaie_personnel p
+        WHERE p.carec = true
+          AND p.retrait_effect = false
+          AND EXISTS (
+                SELECT 1
+                FROM public.cgeci_rhpaie_contrat_personnel c
+                JOIN public.cgeci_rhpaie_type_contrat tc
+                     ON c.type_contrat_id = tc.id
+                WHERE c.personnel_id = p.id
+                  AND c.statut = true
+                  AND UPPER(tc.libelle) = UPPER(:type)
+          )
+          AND (
+                :search1 IS NULL
+                OR UPPER(p.nom) LIKE UPPER(CONCAT('%', :search1, '%'))
+                OR UPPER(p.prenom) LIKE UPPER(CONCAT('%', :search1, '%'))
+                OR UPPER(p.matricule) LIKE UPPER(CONCAT('%', :search1, '%'))
+          )
+        """,
+            nativeQuery = true
+    )
+    Page<Personnel> searchWithTypeContrat(
+            @Param("type") String type,
+            @Param("search1") String search1,
+            Pageable pageable);
+
+
+
+    @Query("SELECT DISTINCT c.personnel.id " +
+            "FROM ContratPersonnel c " +
+            "WHERE c.statut = true AND UPPER(c.typeContrat.libelle) = UPPER(:type)")
+    List<Long> findPersonnelIdsByTypeContrat(@Param("type") String type);
+
+    Page<Personnel> findByIdInAndCarecTrueAndRetraitEffectFalse(List<Long> personnelIdsAvecContrat, Pageable pageable);
+
+    //Page<Personnel> findByIdInAndCarecTrueAndRetraitEffectFalseAndNomIgnoreCaseContainingOrMatriculeIgnoreCaseContaining(List<Long> personnelIdsAvecContrat, String cherch1, Pageable pageable);
+
+
+
+    @Query("""
+    SELECT p
+    FROM Personnel p
+    WHERE p.id IN :ids
+      AND p.carec = true
+      AND p.retraitEffect = false
+      AND (
+            :search IS NULL
+            OR LOWER(p.nom) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(p.matricule) LIKE LOWER(CONCAT('%', :search, '%'))
+          )
+""")
+    Page<Personnel> findFilteredByIds(
+            @Param("ids") List<Long> ids,
+            @Param("search") String search,
+            Pageable pageable);
+
+
+
 }
+
+
