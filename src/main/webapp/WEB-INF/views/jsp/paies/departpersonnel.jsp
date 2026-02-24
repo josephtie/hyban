@@ -654,24 +654,30 @@ function edit(idFonction) {
 
    function delPerso(idFonction){
 
-       // Récupère le scope de l'élément formDelete
-       var $scope = angular.element(document.getElementById("formDelete")).scope();
+      //	var $scope = angular.element(document.getElementById("formDelete")).scope();
+          //jQuery("#rhpModalPret").modal('hide');
+      	var idp=idFonction;
+      	//alert(idp);
+      	jQuery.ajax({
+              type: "POST",
+              url: baseUrl+"/personnels/departdefinitifpersonnel",
+              cache: false,
+              data: {id:idp},
+              success: function (response) {
+               if (response.result == "success") {
 
-       var rows = $table.bootstrapTable('getData');
-       var contrat = _.findWhere(rows, {id: idFonction});
-       var personnel = contrat.personnel;
-       personnel.info = contrat.personnel.nomComplet + " " + contrat.personnel.matricule;
+            	//Rechargement de la liste (le tableau)
+                  $table.bootstrapTable('refresh');
+                       $(".deleteModal").modal('hide');
+      			} else {
+      				alert('Failure! An error has occurred!');
+      			}
+              },
+              error: function () {
 
-       // Met à jour le scope
-          $scope.$apply(function () {
-              // On crée directement l'objet personnel dans le scope
-              $scope.personnel = personnel;
-                 $("#idperso").val(personnel.id);
-          });
-
-          // Affiche le modal
-          //$('#rhpModalPretDel').modal('show');
-   }
+              }
+           });
+    }
 
 	function del(id){
               //	var $scope = angular.element(document.getElementById("formDelete")).scope();

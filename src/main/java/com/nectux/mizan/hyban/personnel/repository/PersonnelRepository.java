@@ -51,6 +51,18 @@ public interface PersonnelRepository extends CrudRepository<Personnel, Long>, Jp
 	@Query("SELECT c FROM Personnel c where c.retraitEffect=false GROUP BY c ORDER BY  c.nom ASC,c.prenom ASC ")
 	Page<Personnel> chearchOrdreAsc(Pageable pageable);
 
+
+    @Query("SELECT c FROM Personnel c where c.retraitEffect=false AND c.statut=true GROUP BY c ORDER BY  c.nom ASC,c.prenom ASC ")
+    List<Personnel> chearchOrdreAsc();
+
+
+    @Query("SELECT c FROM Personnel c where c.retraitEffect=false AND c.carec=true GROUP BY c ORDER BY  c.nom ASC,c.prenom ASC ")
+    Page<Personnel> chearchContratuelOrdreAsc(Pageable pageable);
+
+
+    @Query("SELECT c FROM Personnel c where c.retraitEffect=false AND c.statut =true AND c.carec=true GROUP BY c ORDER BY  c.nom ASC,c.prenom ASC ")
+    List<Personnel> chearchContratuelOrdreAsc();
+
 	List<Personnel> findByStatutAndRetraitEffect(boolean b, boolean b1);
 
 	public final static String nb_Personnel_Par_Anee = "select u from Personnel u" +
@@ -62,6 +74,8 @@ public interface PersonnelRepository extends CrudRepository<Personnel, Long>, Jp
 
 
     Page<Personnel> findByCarec(Boolean carec, Pageable pageable);
+    Page<Personnel> findByCarecAndRetraitEffectFalse(Boolean carec, Pageable pageable);
+    List<Personnel> findByCarecAndRetraitEffectFalse(Boolean carec);
 
 
 
@@ -252,7 +266,7 @@ ORDER BY p.nom ASC
             Pageable pageable);
 
 
-
+    List<Personnel> findByCarecAndRetraitEffectFalseAndStatutTrue(boolean b);
 }
 
 

@@ -423,7 +423,7 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 		contrat.getPersonnel().setRetraitEffect(true);
 		contrat.setDateFin(Utils.stringToDate(dateFinEffective,"dd/MM/yyyy"));
 		personnelRepository.save(contrat.getPersonnel());
-			contrat=contratPersonnelRepository.save(contrat);
+		contrat=contratPersonnelRepository.save(contrat);
 		contratPersonnelDTO.setRow(contrat);
 		contratPersonnelDTO.setResult(true);
 		contratPersonnelDTO.setResult("success");

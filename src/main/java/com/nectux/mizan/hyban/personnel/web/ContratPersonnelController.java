@@ -2,6 +2,8 @@ package com.nectux.mizan.hyban.personnel.web;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import com.nectux.mizan.hyban.parametrages.entity.Utilisateur;
@@ -176,7 +178,7 @@ public class ContratPersonnelController {
 		if(limit == null) limit = 10;
 
 		//final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "id");
-		PageRequest pageRequest = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
+		PageRequest pageRequest = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
 		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
 		if(search == null)
 			contratPersonnelDTO = contratPersonnelService.loadContratDepart(pageRequest);
@@ -240,8 +242,20 @@ public class ContratPersonnelController {
 		contratPersonnelDTO.setResult(contratPersonnelService.delete(id));
 		return contratPersonnelDTO;
 	}
-	
 
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/departdefinitifpersonnel", method = RequestMethod.POST)
+    public @ResponseBody ContratPersonnelDTO departdefinitifpersonnel(@RequestParam(value="id", required=true) Long id) throws Exception {
+
+        ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String dateString = sdf.format(new Date());
+        return  contratPersonnelService.departDefinitif(id,dateString);
+
+    }
 
 	
 	@ResponseStatus(HttpStatus.OK)

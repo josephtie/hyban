@@ -129,5 +129,18 @@ public interface ContratPersonnelRepository extends CrudRepository<ContratPerson
     List<Long> findPersonnelIdsByTypeContratLibelle(@Param("type") String type);
 
     List<ContratPersonnel> findByPersonnelIdInAndStatutTrueOrderByPersonnelIdAscDateDebutDesc(List<Long> personnelIds);
+
+    List<ContratPersonnel> findByTypeContratLibelleAndStatutTrue(String filter);
+
+
+    List<ContratPersonnel> findByTypeContratLibelleAndStatutTrueAndPersonnelCarecFalse(String filter);
+
+    List<ContratPersonnel> findByTypeContratLibelleAndStatutTrueAndPersonnelCarecTrue(String filter);
+
+    List<ContratPersonnel> findByStatutTrueAndPersonnelCarecFalse();
+
+
+    @Query("SELECT c FROM ContratPersonnel c WHERE UPPER(TRIM(c.typeContrat.libelle)) = UPPER(TRIM(:type)) AND c.statut=true AND  c.personnel.retraitEffect=false AND c.personnel.carec=true  ORDER BY  c.personnel.nom ASC,c.personnel.prenom ASC ")
+    List<ContratPersonnel> chearchContratuelpartypecontratOrdreAsc(@Param("type") String type);
 }
 
