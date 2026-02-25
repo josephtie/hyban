@@ -829,6 +829,8 @@ public class PersonnelServiceImpl implements PersonnelService {
                     .filter(p ->
                             (p.getNom() != null && p.getNom().toLowerCase().contains(searchLower)) ||
                                     (p.getPrenom() != null && p.getPrenom().toLowerCase().contains(searchLower))
+                                    ||
+                                    (p.getMatricule() != null && p.getMatricule().toLowerCase().contains(searchLower))
                     )
                     .collect(Collectors.toList());
         }

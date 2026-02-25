@@ -95,12 +95,19 @@ public interface PersonnelRepository extends CrudRepository<Personnel, Long>, Jp
 
     @Query("SELECT p FROM Personnel p " +
             "WHERE p.retraitEffect = false " +
+            "AND p.statut = true " +
             "AND (LOWER(p.nom) LIKE LOWER(CONCAT('%', :search, '%')) " +
             "     OR LOWER(p.prenom) LIKE LOWER(CONCAT('%', :search, '%')) " +
             "     OR LOWER(p.matricule) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Personnel> searchPersonnel(@Param("search") String search, Pageable pageable);
 
-
+    @Query("SELECT p FROM Personnel p " +
+            "WHERE p.retraitEffect = false " +
+            "AND p.statut = true " +
+            "AND (LOWER(p.nom) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "     OR LOWER(p.prenom) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "     OR LOWER(p.matricule) LIKE LOWER(CONCAT('%', :search, '%')))")
+    List<Personnel> searchPersonnel(@Param("search") String search);
 
     @Query("""
 SELECT p FROM Personnel p
