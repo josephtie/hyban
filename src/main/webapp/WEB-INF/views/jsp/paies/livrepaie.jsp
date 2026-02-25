@@ -71,6 +71,7 @@
 							<th data-field="personnel" data-formatter="nomFormatter" data-align="left" data-sortable="true">Nom</th>
 							<th data-field="personnel" data-formatter="nomfstatutFormatterL" data-align="left" data-sortable="true">Statut</th>
 							<th data-field="personnel" data-formatter="sexeFormatter" data-align="left">Sexe</th>
+							<th data-field="personnel" data-formatter="modepaiementFormatter" data-align="center">Mode paiement</th>
 							<th data-field="personnel" data-formatter="compteFormatter" data-align="center">Numero Compte/tel</th>
 							<th data-field="fonction"  data-formatter="fonctionFormatter" data-align="left">Fonction/EMPLOI</th>
 							<!-- <th data-field="personnel" data-formatter="telephoneFormatter" data-align="center">T&eacute;l&eacute;phone</th> -->
@@ -1613,6 +1614,11 @@ function nomfstatutFormatterL(personnel, row, index) {
     return statfonct;
     //return row.contratPersonnel.personnel.statfonct;
 }
+
+function modepaiementFormatter(personnel){
+				return personnel.modePaiement;
+}
+
 function nomfstatutFormatter(contratPersonnel, row, index) {
     if(row.contratPersonnel== ''){
         return "";

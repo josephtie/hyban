@@ -752,7 +752,7 @@ public class PersonnelServiceImpl implements PersonnelService {
         // pour chaque personnel, récupérer le contrat actif et remplir netapayer + fonction
         List<Personnel> personnelsWithContract = page.getContent().stream().map(p -> {
             ContratPersonnel contrat = contratPersonnelRepository
-                    .findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(p.getId());
+                    .findFirstByPersonnelIdAndOrderByDateDebutDesc(p.getId());
 
             if (contrat != null) {
                 p.setNetapayer(contrat.getNetAPayer());

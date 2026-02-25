@@ -59,12 +59,12 @@
 				<tr>
 					<th data-field="personnel" data-formatter="matriculeFormatter" data-align="left" data-sortable="true">Matricule</th>
 					<th data-field="personnel" data-formatter="nomCompletFormatter" data-align="left" data-sortable="true">Nom</th>
-					<th data-field="personnel" data-formatter="sexeFormatter" data-align="left">Sexe</th>
-					<th data-field="personnel" data-formatter="cnpsFormatter">Num CNPS</th>
 					<th data-field="personnel" data-formatter="situationMatrimonialeFormatter">Sit. Matri</th>
-					<th data-field="personnel" data-formatter="nombreEnfantFormatter" data-align="right">Nbre d'enfants</th>
 					<th data-field="typeContrat" data-formatter="typeContratFormatter">Type de contrat</th>
-					<th data-field="fonction" data-formatter="fonctionFormatter">Fonction</th>
+                    <th data-field="fonction" data-formatter="fonctionFormatter">Fonction</th>
+					<th data-field="personnel" data-formatter="modepaiementFormatter" data-align="center">Mode paiement</th>
+                    <th data-field="personnel" data-formatter="numeroCompteFormatter"  data-align="center">Comptebanq/telephone</th>
+
 					<th data-field="dDebut">Date d&eacute;but</th>
 					<th data-field="dFin">Date fin</th>
 					<th data-field="categorie" data-formatter="categorieFormatter" data-align="right">Salaire cat&eacute;goriel</th>
@@ -415,6 +415,19 @@
 
 			function matriculeFormatter(personnel){
 				return personnel.matricule;
+			}
+			function modepaiementFormatter(personnel){
+				return personnel.modePaiement;
+			}
+			function modepaiementFormatter(personnel){
+				return personnel.modePaiement;
+			}
+
+			function numeroCompteFormatter(personnel){
+				if(personnel.numeroCompte == ''){
+                		return personnel.telephone;
+                	}
+                	return personnel.numeroCompte;
 			}
 
 			function nomCompletFormatter(personnel){
