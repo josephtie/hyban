@@ -182,11 +182,14 @@ public class PersonnelController {
 		//final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "nom");
 		PageRequest pageRequest = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
 		PersonnelDTO personnelDTO = new PersonnelDTO();
-		if(search == null )
-			personnelDTO = personnelService.loadPersonnelopfilter(pageRequest,filterCarec);
-		else
-			personnelDTO = personnelService.loadPersonnelopfilter(pageRequest,search,filterCarec);
-		
+        if( search == null && filterCarec == null)
+            personnelDTO = personnelService.loadPersonnelopfilter(pageRequest);
+        else if  ( search != null && filterCarec == null)
+			personnelDTO = personnelService.loadPersonnelopfiltersearch(pageRequest,search);
+        else if  (  search == null && filterCarec != null)
+			personnelDTO = personnelService.loadPersonnelopfiltercarec(pageRequest,filterCarec);
+        else
+        personnelDTO = personnelService.loadPersonnelopfilter(pageRequest,search,filterCarec);
 		return personnelDTO;
 		//System.out.println(" hello "+hfhfh);
 		//System.out.println("****************jour  MOIS annnee)))))))))))))))))))))"+offset+"MOIS"+limit);

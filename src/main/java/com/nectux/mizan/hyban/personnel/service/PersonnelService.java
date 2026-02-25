@@ -63,11 +63,13 @@ public interface PersonnelService {
 
 
 	List<Personnel> RechercherListPersonnelParDirection(Service direction);
-
+    public PersonnelDTO loadPersonnelop(Pageable pageable, String search,  String search1, String search2);
 
     public PersonnelDTO loadPersonnelop(Pageable pageable);
-    public PersonnelDTO loadPersonnelopfilter(Pageable pageable, String filter);
+    public PersonnelDTO loadPersonnelopfiltercarec(Pageable pageable, String filter);
 
-    public PersonnelDTO loadPersonnelop(Pageable pageable, String search,  String search1, String search2);
+
     public PersonnelDTO loadPersonnelopfilter(Pageable pageable, String search,   String filter);
+    public PersonnelDTO loadPersonnelopfilter(Pageable pageable);
+    public PersonnelDTO loadPersonnelopfiltersearch(Pageable pageable, String search);
 }

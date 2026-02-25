@@ -101,6 +101,12 @@ public interface PersonnelRepository extends CrudRepository<Personnel, Long>, Jp
             "     OR LOWER(p.matricule) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Personnel> searchPersonnel(@Param("search") String search, Pageable pageable);
 
+
+    @Query("SELECT p FROM Personnel p " +
+            "WHERE p.retraitEffect = false " +
+            "AND p.statut = true " )
+    Page<Personnel> searchPersonnelwithout(Pageable pageable);
+
     @Query("SELECT p FROM Personnel p " +
             "WHERE p.retraitEffect = false " +
             "AND p.statut = true " +
