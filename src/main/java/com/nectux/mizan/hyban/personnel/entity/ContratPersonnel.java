@@ -224,9 +224,9 @@ public class ContratPersonnel extends Auditable {
 		this.dMod = dMod;
 	}
 
-	public double getNetAPayer() {
-		return netAPayer;
-	}
+    public double getNetAPayer() {
+        return netAPayer != null ? netAPayer : 0.0;
+    }
 
 	public void setNetAPayer(double netAPayer) {
 		this.netAPayer = netAPayer;
