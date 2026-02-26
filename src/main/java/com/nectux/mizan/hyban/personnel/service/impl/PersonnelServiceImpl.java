@@ -608,13 +608,14 @@ public class PersonnelServiceImpl implements PersonnelService {
             if ("CONSULTANT".equalsIgnoreCase(filter)) {
                 // pagelist = personnelRepository.findByCarecAndRetraitEffectFalse(false);
                 // 3️⃣ Charger tous les contrats actifs avec le type demandé (CDD/CDI)
-                contrats = contratPersonnelRepository.findByStatutTrueAndPersonnelCarecFalse();
+                contrats = contratPersonnelRepository.findLastContratForConsultants();
+
             } else {
                 contrats = contratPersonnelRepository.chearchContratuelpartypecontratOrdreAsc(filter);
             }
 
         } else {
-            contrats = contratPersonnelRepository.findByStatutTrue();
+          //  contrats = contratPersonnelRepository.findByStatutTrue();
         }
 
 
@@ -690,19 +691,19 @@ public class PersonnelServiceImpl implements PersonnelService {
         Map<Long, Personnel> personnelMap = pagelist.stream()
                 .collect(Collectors.toMap(Personnel::getId, p -> p));
 
-        List<ContratPersonnel> contrats;
+        List<ContratPersonnel> contrats = List.of();
 
         if (filterCarec != null && !filterCarec.isBlank()) {
 
             if ("CONSULTANT".equalsIgnoreCase(filterCarec)) {
-                contrats = contratPersonnelRepository.findByStatutTrueAndPersonnelCarecFalse();
+                contrats = contratPersonnelRepository.findLastContratForConsultants();
             } else {
                 contrats = contratPersonnelRepository
                         .chearchContratuelpartypecontratOrdreAsc(filterCarec.trim());
             }
 
         } else {
-            contrats = contratPersonnelRepository.findByStatutTrue();
+           // contrats = contratPersonnelRepository.findByStatutTrue();
         }
 
         // 4️⃣ Associer contrats aux personnels
@@ -781,7 +782,7 @@ public class PersonnelServiceImpl implements PersonnelService {
         // pour chaque personnel, récupérer le contrat actif et remplir netapayer + fonction
         List<Personnel> personnelsWithContract = page.getContent().stream().map(p -> {
             ContratPersonnel contrat = contratPersonnelRepository
-                    .findFirstByPersonnelIdAndStatutTrueOrderByDateDebutDesc(p.getId());
+                    .findFirstByPersonnelIdOrderByDateDebutDesc(p.getId());
 
             if (contrat != null) {
                 p.setNetapayer(contrat.getNetAPayer());
@@ -834,14 +835,15 @@ public class PersonnelServiceImpl implements PersonnelService {
             if ("CONSULTANT".equalsIgnoreCase(filter)) {
                // pagelist = personnelRepository.findByCarecAndRetraitEffectFalse(false);
                 // 3️⃣ Charger tous les contrats actifs avec le type demandé (CDD/CDI)
-                contrats = contratPersonnelRepository.findByStatutTrueAndPersonnelCarecFalse();
+                contrats = contratPersonnelRepository.findLastContratForConsultants();
             } else {
                 contrats = contratPersonnelRepository.chearchContratuelpartypecontratOrdreAsc(filter);
             }
 
-        } else {
-             contrats = contratPersonnelRepository.findByStatutTrue();
         }
+//        else {
+//             //contrats = contratPersonnelRepository.findByStatutTrue();
+//        }
 
 
 

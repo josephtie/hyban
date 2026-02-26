@@ -140,9 +140,22 @@ public interface ContratPersonnelRepository extends CrudRepository<ContratPerson
     List<ContratPersonnel> findByStatutTrueAndPersonnelCarecFalse();
 
 
-    @Query("SELECT c FROM ContratPersonnel c WHERE UPPER(TRIM(c.typeContrat.libelle)) = UPPER(TRIM(:type)) AND c.statut=true AND  c.personnel.retraitEffect=false AND c.personnel.carec=true  ORDER BY  c.personnel.nom ASC,c.personnel.prenom ASC ")
+    @Query("SELECT c FROM ContratPersonnel c WHERE UPPER(TRIM(c.typeContrat.libelle)) = UPPER(TRIM(:type)) AND  c.personnel.retraitEffect=false AND c.personnel.carec=true  ORDER BY  c.personnel.nom ASC,c.personnel.prenom ASC ")
     List<ContratPersonnel> chearchContratuelpartypecontratOrdreAsc(@Param("type") String type);
 
     ContratPersonnel findFirstByPersonnelIdOrderByDateDebutDesc(Long id);
+
+
+    @Query("""
+SELECT c FROM ContratPersonnel c
+WHERE c.personnel.carec = false
+AND c.personnel.retraitEffect=false 
+AND c.id = (
+    SELECT MAX(c2.id)
+    FROM ContratPersonnel c2
+    WHERE c2.personnel.id = c.personnel.id
+)
+""")
+    List<ContratPersonnel> findLastContratForConsultants();
 }
 

@@ -309,7 +309,7 @@
 
 
 
-							<th data-field="id" data-formatter="optionFormatter2" data-align="center">Options</th>
+						<!--	<th data-field="id" data-formatter="optionFormatter2" data-align="center">Options</th>-->
 
 						</tr>
 					</thead>

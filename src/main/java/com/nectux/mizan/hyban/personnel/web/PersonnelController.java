@@ -178,19 +178,38 @@ public class PersonnelController {
 		
 		if(offset == null) offset = 0;
 		if(limit == null) limit = 10;
-		
-		//final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "nom");
-		PageRequest pageRequest = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
-		PersonnelDTO personnelDTO = new PersonnelDTO();
-        if( search == null && filterCarec == null)
+        PageRequest pageRequest = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
+        PersonnelDTO personnelDTO;
+
+        boolean hasSearch = (search != null && !search.isBlank());
+        boolean hasFilter = (filterCarec != null && !filterCarec.isBlank());
+
+        if (!hasSearch && !hasFilter) {
             personnelDTO = personnelService.loadPersonnelopfilter(pageRequest);
-        else if  ( search != null && filterCarec == null)
-			personnelDTO = personnelService.loadPersonnelopfiltersearch(pageRequest,search);
-        else if  (  search == null && filterCarec != null)
-			personnelDTO = personnelService.loadPersonnelopfiltercarec(pageRequest,filterCarec);
-        else
-        personnelDTO = personnelService.loadPersonnelopfilter(pageRequest,search,filterCarec);
-		return personnelDTO;
+
+        } else if (hasSearch && !hasFilter) {
+            personnelDTO = personnelService.loadPersonnelopfiltersearch(pageRequest, search);
+
+        } else if (!hasSearch && hasFilter) {
+            personnelDTO = personnelService.loadPersonnelopfiltercarec(pageRequest, filterCarec);
+
+        } else {
+            personnelDTO = personnelService.loadPersonnelopfilter(pageRequest, search, filterCarec);
+        }
+
+        return personnelDTO;
+//		//final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "nom");
+//		PageRequest pageRequest = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
+//		PersonnelDTO personnelDTO = new PersonnelDTO();
+//        if( search == null && filterCarec == "")
+//            personnelDTO = personnelService.loadPersonnelopfilter(pageRequest);
+//        else if  ( search != null && filterCarec == "")
+//			personnelDTO = personnelService.loadPersonnelopfiltersearch(pageRequest,search);
+//        else if  (  search == null && filterCarec != "")
+//			personnelDTO = personnelService.loadPersonnelopfiltercarec(pageRequest,filterCarec);
+//        else
+//        personnelDTO = personnelService.loadPersonnelopfilter(pageRequest,search,filterCarec);
+//		return personnelDTO;
 		//System.out.println(" hello "+hfhfh);
 		//System.out.println("****************jour  MOIS annnee)))))))))))))))))))))"+offset+"MOIS"+limit);
 	}
