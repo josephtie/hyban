@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,10 +34,25 @@ WHERE sc.actif = true
 
 
 
-
+    Page<Employee> findByActifTrueOrderByNomCompletAsc(Pageable pageable);
     Page<Employee> findByActifTrue(Pageable pageable);
 
     Page<Employee> findByActifTrueAndNomCompletIgnoreCaseContainingOrMatriculeIgnoreCaseContaining(Pageable pageable, String search,String search1);
 
     List<Employee> findByActifOrderByNomCompletAsc(boolean b);
+
+
+    @Query("""
+       SELECT e
+       FROM Employee e
+       WHERE e.actif = true
+       AND (
+            LOWER(e.nomComplet) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(e.matricule) LIKE LOWER(CONCAT('%', :search, '%'))
+       )
+       """)
+    Page<Employee> searchActiveEmployees(
+            @Param("search") String search,
+            Pageable pageable
+    );
 }

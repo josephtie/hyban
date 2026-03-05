@@ -84,9 +84,39 @@ public class ContratPersonnelController {
 
 		return "contrat";
 	}
-	
-	
 
+
+    @RequestMapping("/lescontrats")
+    public String viewServicecontrats(ModelMap modelMap, Principal principal) throws IOException {
+        logger.info(">>>>> Utilisateurs");
+
+        modelMap.addAttribute("activeEmployers", "active");
+        modelMap.addAttribute("blockEmployer", "block");
+        modelMap.addAttribute("activeContract", "active");
+        modelMap.addAttribute("user", userService.findByUsername(principal.getName()));
+        Utilisateur utilisateur=userService.findByUsername(principal.getName());
+        System.out.println("utilisateur    " +utilisateur.toString());
+
+        modelMap.addAttribute("profil", utilisateur.getUtilisateurRoles().stream()
+                .map(utilisateurRole -> utilisateurRole.getRole().getName().name())
+                .findFirst().orElse(""));
+        modelMap.addAttribute("icon", "iconfa-group");
+        modelMap.addAttribute("littleTitle", "Personnel");
+        modelMap.addAttribute("bigTitle", "Contrat");
+        PeriodePaie periodePaie = periodePaieService.findPeriodeactive();
+        if(periodePaie != null){
+            modelMap.addAttribute("activeMois", periodePaie.getMois().getMois()+" "+ periodePaie.getAnnee().getAnnee());
+            modelMap.addAttribute("activeMoisId", periodePaie.getId());
+            modelMap.addAttribute("periode",  periodePaie.getMois().getMois()+" "+ periodePaie.getAnnee().getAnnee());
+        }
+        Societe mysociete=null;
+        List<Societe> malist=societeService.findtsmois();
+        if(malist.size()>0)
+        {	mysociete=malist.get(0);
+            modelMap.addAttribute("urllogo",mysociete.getUrlLogo());}
+
+        return "lescontrats";
+    }
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/listcontratparpersonneljson", method = RequestMethod.GET)
@@ -223,13 +253,13 @@ public class ContratPersonnelController {
 //		String date=part[2]+"/"+part[1]+"/"+part[0];
 //		String datemod1=part1[2]+"/"+part1[1]+"/"+part1[0];
 //		System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh   "+date);
-        LocalDate dateParsed = LocalDate.parse(dateFin);
-        String date = dateParsed.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+//        LocalDate dateParsed = LocalDate.parse(dateFin);
+//        String date = dateParsed.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+//
+//        LocalDate dateModParsed = LocalDate.parse(dateMod);
+//        String datemod1 = dateModParsed.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-        LocalDate dateModParsed = LocalDate.parse(dateMod);
-        String datemod1 = dateModParsed.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-
-		return contratPersonnelService.endContract(id, date,datemod1,depart,ObservCtrat);
+		return contratPersonnelService.endContract(id, dateFin,dateMod,depart,ObservCtrat);
 	}
 	
 	
@@ -318,8 +348,8 @@ public class ContratPersonnelController {
 		//final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "id");
 		PageRequest pageRequest = PageRequest.of(offset / 10, limit, Direction.DESC, "id");
 		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
-		//	if(search == null)
-		contratPersonnelDTO = contratPersonnelService.loadContratExpieredumois(pageRequest, 2L,convertirDate(dateDeb) ,convertirDate(dateFin));
+		//	if(search == null) convertirDate(
+		contratPersonnelDTO = contratPersonnelService.loadContratExpieredumois(pageRequest, 2L,dateDeb ,dateFin);
 		//else
 		//	contratPersonnelDTO = contratPersonnelService.loadContratActif(pageRequest, search);
 

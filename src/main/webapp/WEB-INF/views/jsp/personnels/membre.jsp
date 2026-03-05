@@ -492,7 +492,8 @@ app.controller('formAjoutCtrl', function ($scope) {
     $scope.pupulateForm = function (employee) {
         $scope.employee = employee;
     };
-     $scope.pupulateContrat = function (speccontrat) {
+
+    $scope.pupulateContrat = function (speccontrat) {
           $scope.speccontrat = speccontrat;
      };
     $scope.initForm = function () {
@@ -690,6 +691,17 @@ function edit(idCategorie){
 	$scope.$apply(function () {
         $scope.pupulateForm(employee);
     });
+
+      // Charger le SpecialContract depuis le serveur
+        loadSpecialContract(employee.id, function(lastcontrat){
+            if(lastcontrat){
+                $scope.$apply(function(){
+                   // $scope.speccontrat(speccontrat);  remplir le formulaire SpecialContract
+                   $scope.speccontrat=lastcontrat;
+                });
+            }
+        });
+
       //  jQuery(".sectionContrat input, .sectionContrat select").attr("disabled", "disabled");
        jQuery("#paiementNumber").removeAttr("disabled");
         jQuery("#modepaiement").removeAttr("disabled");
@@ -698,7 +710,31 @@ function edit(idCategorie){
         loadContratActifEmploye(employee);
 }
 
+function loadSpecialContract(employeeId, callback) {
+    jQuery.ajax({
+        type: "GET",
+        url: baseUrl + "/personnels/specifique/special-contracts/employee/" + employeeId,
+        cache: false,
+        success: function (response) {
+            console.log("Contrat reçu:", response);
 
+            if (response != null) {
+                var $scope = angular.element(document.getElementById("formAjout")).scope();
+                $scope.$apply(function () {
+                    // Injection directe dans le scope
+                    $scope.speccontrat = response.row;
+                });
+
+                // Si tu veux faire quelque chose après le chargement
+                if(callback) callback(response.row);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Erreur lors du chargement du SpecialContract:", error);
+            if(callback) callback(null);
+        }
+    });
+}
 // Chargement du contrat spécial de l'employé
 function loadContratActifEmploye(employee) {
     jQuery.ajax({
@@ -720,8 +756,16 @@ function loadContratActifEmploye(employee) {
                 jQuery("#site").val(response.row.site).trigger("change");
                 jQuery("#modepaiement").val(response.row.modepaiement).trigger("change");
                 jQuery("#netpayer").val(response.row.remunerationForfaitaire).trigger("change");
-                jQuery("#Ddeb").val(response.row.Ddeb).trigger("change");
-                jQuery("#Dfin").val(response.row.Dfin).trigger("change");
+                jQuery("#Ddeb").val(response.row.dateDebut).trigger("change");
+                jQuery("#Dfin").val(response.row.dateDebut).trigger("change");
+                var dateParts = response.row.dateDebut.split(" ")[0];
+                // Séparer jour, mois, année
+                var parts = dateParts.split("-");
+                var jsDate = new Date(parts[2], parts[1]-1, parts[0]); // année, moisIndex, jour
+
+                $("#Ddeb").datepicker("setDate", jsDate);
+
+               $("#Dfin").datepicker("setDate", response.row.dateFin);
 
             } else {
                 alert('Aucun contrat trouvé pour cet employé.');
@@ -740,7 +784,7 @@ function updateComboAndRadioEmployee(employee) {
     jQuery("#nationalite").val(employee.nationnalite.id).trigger("change");
 
     jQuery("#situationMatrimoniale").val(employee.situationMatrimoniale.toString().trim().toUpperCase()).trigger("change");
-    jQuery("#nombreenfant").val(employee.nombrEnfant).trigger("change");
+    jQuery("#nbreEnft").val(employee.nombrEnfant).trigger("change");
     jQuery("#situationEmploie").val(employee.situationEmploie).trigger("change");
     //Initialisation
      // Reset radios

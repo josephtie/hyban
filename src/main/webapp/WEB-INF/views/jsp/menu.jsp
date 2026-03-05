@@ -48,7 +48,8 @@
                 <ul>
                     <li class="${activeEmployer}"><a href="${contextPath}personnels/personnel">Personnel</a></li>
                     <li class="${activeEmployer}"><a href="${contextPath}personnels/membre">Non Standard</a></li>
-                    <li class="${activeContract}"><a href="${contextPath}personnels/contrat">Contrat</a></li>
+                   <!--   <li class="${activeContract}"><a href="${contextPath}personnels/contrat">Contrat</a></li>-->
+                    <li class="${activeCategory}"><a href="${contextPath}personnels/lescontrats">Les contrats</a></li>
                     <li class="${activeCategory}"><a href="${contextPath}personnels/categorie">Categorie</a></li>
                     <li class="${activeFunction}"><a href="${contextPath}personnels/fonction">Emploi&Fonction</a></li>
                    <li class="${activeAbsence}"><a href="${contextPath}absence/absences"><span class="fa fa-file-text-o"></span> Absences</a><div class="informer informer-danger">New!</div></li>
@@ -130,7 +131,8 @@
                 <a href="#"><span class="fa fa-users"></span> <span class="xn-text">Gestion RH</span></a>
                 <ul>
                     <li class="${activeEmployer}"><a href="${contextPath}personnels/personnel">Personnel</a></li>
-                    <li class="${activeContract}"><a href="${contextPath}personnels/contrat">Contrat</a></li>
+                  <!--   <li class="${activeContract}"><a href="${contextPath}personnels/contrat">Contrat</a></li>-->
+                     <li class="${activeCategory}"><a href="${contextPath}personnels/lescontrats">Les contrats</a></li>
                     <li class="${activeCategory}"><a href="${contextPath}personnels/categorie">Categorie</a></li>
                     <li class="${activeFunction}"><a href="${contextPath}personnels/fonction">Emploi&Fonction</a></li>
                     <li class="${activeAbsence}"><a href="${contextPath}absence/absences"><span class="fa fa-file-text-o"></span> Absences</a><div class="informer informer-danger">New!</div></li>

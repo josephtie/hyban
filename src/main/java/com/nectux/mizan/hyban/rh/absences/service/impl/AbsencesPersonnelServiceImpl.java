@@ -133,26 +133,47 @@ public class AbsencesPersonnelServiceImpl implements AbsencesPersonnelService {
 				absencesPersonnelDTO.setMessage(sb.toString());
 				absencesPersonnelDTO.setTotal(0);
 				absencesPersonnelDTO.setErrors(listErreur);
-				if(absencesPersonnel.getSanctionsalaire()==4){
-				         TempEffectif tpeff=new TempEffectif();
-				         tpeff=tempEffectifRepository.findByPersonnelAndPeriodePaie(absencesPersonnel.getPersonnel(), myperiodePaie);
-				         if(tpeff==null){
-				        	 TempEffectif tpeffacc=new TempEffectif();
-				        	 tpeffacc.setDatedesaisie(new Date());
-				        	 tpeffacc.setHeurspresence(Math.rint(173.33-absencesPersonnel.getHeursabsence()));
-				        	 tpeffacc.setJourspresence(Math.rint(30-absencesPersonnel.getJoursabsence()));
-				        	 tpeffacc.setPeriodePaie(myperiodePaie);
-				        	 tpeffacc.setPersonnel(absencesPersonnel.getPersonnel());
-				        	 tpeffacc=tempEffectifRepository.save(tpeffacc);				        	 
-				         }else{
-				        	 tpeff.setDatedesaisie(new Date());
-				        	 tpeff.setHeurspresence(tpeff.getHeurspresence()-absencesPersonnel.getHeursabsence());
-				        	 tpeff.setJourspresence(tpeff.getJourspresence()-absencesPersonnel.getJoursabsence());
-				        	 tpeff.setPeriodePaie(myperiodePaie);
-				        	 tpeff.setPersonnel(absencesPersonnel.getPersonnel());
-				        	 tpeff=tempEffectifRepository.save(tpeff);				        	 
-				         }
-			   }
+                if(absencesPersonnel.getSanctionsalaire() == 4){
+
+                    Personnel personnel = absencesPersonnel.getPersonnel();
+
+                    TempEffectif tpeff = tempEffectifRepository
+                            .findByPersonnelAndPeriodePaie(personnel, myperiodePaie);
+
+                    Double heuresBase = 173.33;
+                    Double joursBase = 30.0;
+
+                    if(tpeff == null){
+                        tpeff = new TempEffectif();
+                        tpeff.setPersonnel(personnel);
+                        tpeff.setPeriodePaie(myperiodePaie);
+                    } else {
+                        if(tpeff.getHeurspresence() != null)
+                            heuresBase = tpeff.getHeurspresence();
+
+                        if(tpeff.getJourspresence() != null)
+                            joursBase = tpeff.getJourspresence();
+                    }
+
+                    // 🔹 total des absences non justifiées pour la période
+                    Double totalAbsHeures = absencesPersonnelRepository
+                            .sumHeuresNonJustifiees(personnel.getId(), myperiodePaie.getId());
+
+                    Double totalAbsJours = absencesPersonnelRepository
+                            .sumJoursNonJustifiees(personnel.getId(), myperiodePaie.getId());
+
+                    if(totalAbsHeures == null) totalAbsHeures = 0.0;
+                    if(totalAbsJours == null) totalAbsJours = 0.0;
+
+                    double heuresFinales = Math.max(0, heuresBase - totalAbsHeures);
+                    double joursFinaux = Math.max(0, joursBase - totalAbsJours);
+
+                    tpeff.setHeurspresence(heuresFinales);
+                    tpeff.setJourspresence(joursFinaux);
+                    tpeff.setDatedesaisie(new Date());
+
+                    tempEffectifRepository.save(tpeff);
+                }
 				if(absencesPersonnel.getSanctionsalaire()==2){
 					 ContratPersonnel ctratpersonnellz = new ContratPersonnel();	   
 				    	ctratpersonnellz=contratPersonnelRepository.findByPersonnelIdAndStatut(absencesPersonnel.getPersonnel().getId(),true);

@@ -80,18 +80,18 @@ public class ContratPersonnel extends Auditable {
 	@Transient
 	private String dMod;
 	
-	private Double netAPayer;
+	private Double netAPayer= 0.0;
 	
 	@Transient
 	private String netPayer;
 	
-	private Double indemniteLogement;
+	private Double indemniteLogement= 0.0;;
 	
 	@Transient
 	private String indemniteLogmt;
 	
-    private Double indemniteRepresent;    
-	
+    private Double indemniteRepresent= 0.0;
+
 	@Transient
 	private String indemniteReprt;
 	
@@ -102,13 +102,13 @@ public class ContratPersonnel extends Auditable {
 	
 	
 	private String ObservCtrat;
-    private Double indemniteTransport;
+    private Double indemniteTransport= 0.0;
 	
 	@Transient
 	private String indemniteTranspt;
 	
 	
-	private Double sursalaire;
+	private Double sursalaire= 0.0;
 	
 	@Transient
 	private String sursal;
@@ -139,7 +139,7 @@ public class ContratPersonnel extends Auditable {
 	}
 
 	public void setNetAPayer(Double netAPayer) {
-		this.netAPayer = netAPayer;
+        this.netAPayer = netAPayer != null ? netAPayer : 0.0;
 	}
 
 	public Categorie getCategorie() {
@@ -242,11 +242,12 @@ public class ContratPersonnel extends Auditable {
 	}
 
 	public Double getSursalaire() {
-		return sursalaire;
+		return  sursalaire != null ? sursalaire : 0.0;
 	}
 
 	public void setSursalaire(Double sursalaire) {
-		this.sursalaire = sursalaire;
+
+        this.sursalaire = sursalaire != null ? sursalaire : 0.0;
 	}
 
 	public String getSursal() {
@@ -258,11 +259,12 @@ public class ContratPersonnel extends Auditable {
 	}
 
 	public Double getIndemniteLogement() {
-		return indemniteLogement;
+		return indemniteLogement!= null ? indemniteLogement : 0.0;
 	}
 
 	public void setIndemniteLogement(Double indemniteLogement) {
-		this.indemniteLogement = indemniteLogement;
+
+        this.indemniteLogement = indemniteLogement != null ? indemniteLogement : 0.0;
 	}
 
 	public String getIndemniteLogmt() {
@@ -283,11 +285,12 @@ public class ContratPersonnel extends Auditable {
 	}
 
 public Double getIndemniteRepresent() {
-		return indemniteRepresent;
-	}
+        return indemniteRepresent != null ? indemniteRepresent: 0.0;
+
+}
 
 	public void setIndemniteRepresent(Double indemniteRepresent) {
-		this.indemniteRepresent = indemniteRepresent;
+        this.indemniteRepresent = indemniteRepresent != null ? indemniteRepresent : 0.0;
 	}
 
 	public String getIndemniteReprt() {
@@ -299,11 +302,11 @@ public Double getIndemniteRepresent() {
 	}
 
 	public Double getIndemniteTransport() {
-		return indemniteTransport;
+		return indemniteTransport != null ? indemniteTransport: 0.0;
 	}
 
 	public void setIndemniteTransport(Double indemniteTransport) {
-		this.indemniteTransport = indemniteTransport;
+        this.indemniteTransport = indemniteTransport != null ? indemniteTransport : 0.0;
 	}
 
 	public String getIndemniteTranspt() {
@@ -311,7 +314,8 @@ public Double getIndemniteRepresent() {
 	}
 
 	public void setIndemniteTranspt(String indemniteTranspt) {
-		this.indemniteTranspt = indemniteTranspt;
+
+        this.indemniteTranspt = indemniteTranspt;
 	}
 
 	public Boolean getSoldeCalcule() {

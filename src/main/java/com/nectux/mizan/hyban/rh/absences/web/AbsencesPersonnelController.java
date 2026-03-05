@@ -77,53 +77,32 @@ public class AbsencesPersonnelController {
 		logger.info(">>> ENREGISTRER SANCTION PERSONNEL");
 		AbsencesPersonnelDTO absencesPersonnelDTO=new AbsencesPersonnelDTO();
 		absencesPersonnelDTO= absencesPersonnelService.save(id, idPersonnel, idAbsence, dateDebut, dateFin,heursabsence,jourabsence, observation, justifier, sanctSal);
-		PeriodePaie myperiodePaie=periodePaieService.findPeriodeactive();
-		  if(absencesPersonnelDTO.getRow().getSanctionsalaire()==4){
-			  System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-			     TempEffectif tpeffop= new TempEffectif();
-				tpeffop=tempEffectifRepository.findByPersonnelAndPeriodePaie(absencesPersonnelDTO.getRow().getPersonnel(), myperiodePaie);
-				   if(tpeffop==null){
-					 //  tpeff.setDatedesaisie(DateManager.stringToDate(dateDebut, "dd/MM/yyyy"));
-					   tpeffop.setHeurspresence(173.33-heursabsence);
-					   tpeffop.setJourspresence(30-jourabsence);
-					   tpeffop.setPersonnel(absencesPersonnelDTO.getRow().getPersonnel());
-					   tpeffop.setPeriodePaie(myperiodePaie);
-					   tpeffop=tempEffectifService.save(tpeffop);
-					   System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+tpeffop.toString());
-				   }else{
-					   tpeffop.setDatedesaisie(DateManager.stringToDate(dateDebut, "dd/MM/yyyy"));
-					   tpeffop.setHeurspresence(tpeffop.getHeurspresence()-heursabsence);
-					   tpeffop.setJourspresence(tpeffop.getJourspresence()-jourabsence);
-					   tpeffop.setPersonnel(absencesPersonnelDTO.getRow().getPersonnel());
-					   tpeffop.setPeriodePaie(myperiodePaie);
-					   tpeffop=tempEffectifService.save(tpeffop);
-					   
-				   }
-					   
-					
-		  }
-		  
-		 /* if(absencesPersonnelDTO.getRow().getSanctionsalaire()==2){
-			     Personnel personn;
-			     personn=personnelRepository.findOne(absencesPersonnelDTO.getRow().getPersonnel().getId());
-				   if(personn==null){
-					   tpeff.setDatedesaisie(DateManager.stringToDate(dateDebut, "dd/MM/yyyy"));
-					   tpeff.setHeurspresence(173.33-tempabsence);
-					   tpeff.setJourspresence(30-jourabsence);
-					   tpeff.setPersonnel(absencesPersonnel.getPersonnel());
-					   tpeff.setPeriodePaie(myperiodePaie);
-					   tempEffectifRepository.save(tpeff);
-				   }else{
-					   
-					  
-					   personn.setNombreJourdu((int)(30-jourabsence));
-					
-					   personnelRepository.save(personn);
-					   
-				   }
-					   
-					
-		  }*/
+//		PeriodePaie myperiodePaie=periodePaieService.findPeriodeactive();
+//		  if(absencesPersonnelDTO.getRow().getSanctionsalaire()==4){
+//			  System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+//			     TempEffectif tpeffop= new TempEffectif();
+//				tpeffop=tempEffectifRepository.findByPersonnelAndPeriodePaie(absencesPersonnelDTO.getRow().getPersonnel(), myperiodePaie);
+//				   if(tpeffop==null){
+//					 //  tpeff.setDatedesaisie(DateManager.stringToDate(dateDebut, "dd/MM/yyyy"));
+//					   tpeffop.setHeurspresence(173.33-heursabsence);
+//					   tpeffop.setJourspresence(30-jourabsence);
+//					   tpeffop.setPersonnel(absencesPersonnelDTO.getRow().getPersonnel());
+//					   tpeffop.setPeriodePaie(myperiodePaie);
+//					   tpeffop=tempEffectifService.save(tpeffop);
+//					   System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+tpeffop.toString());
+//				   }else{
+//					   tpeffop.setDatedesaisie(DateManager.stringToDate(dateDebut, "dd/MM/yyyy"));
+//					   tpeffop.setHeurspresence(tpeffop.getHeurspresence()-heursabsence);
+//					   tpeffop.setJourspresence(tpeffop.getJourspresence()-jourabsence);
+//					   tpeffop.setPersonnel(absencesPersonnelDTO.getRow().getPersonnel());
+//					   tpeffop.setPeriodePaie(myperiodePaie);
+//					   tpeffop=tempEffectifService.save(tpeffop);
+//
+//				   }
+//
+//
+//		  }
+
 		  return  absencesPersonnelDTO;
 	}
 	

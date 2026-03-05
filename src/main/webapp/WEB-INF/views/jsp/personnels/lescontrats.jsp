@@ -121,11 +121,11 @@
 		            <div class="row">
                     <div class="form-group">
 						<div class="col-md-3">
-								<input type="text" id="dateDebw" name="dateDebw"  data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker"  placeholder="Date de debut de contrat" required="required" />
+								<input type="text" id="dateDebw" name="dateDebw"  data-date-format='dd/mm/yyyy' maxlength="10" class="form-control nput-default"  placeholder="Date de debut de contrat" required="required" />
 						<br/>
 						</div>
 						<div class="col-md-3">
-							<input type="text" id="dateFinw" name="dateFinw"  data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker" placeholder="Date de fin de contrat" required="required" />
+							<input type="text" id="dateFinw" name="dateFinw"  data-date-format='dd/mm/yyyy' maxlength="10" class="form-control nput-default" placeholder="Date de fin de contrat" required="required" />
 						<br/>
 						</div>
 						<div class="col-md-3">
@@ -174,165 +174,226 @@
 	</div>
 </div>
 <div class="modal fade" id="rhpModal" role="dialog" tabindex="-1" aria-labelledby="rhpModalLabel" data-backdrop="static">
-	<div class="modal-dialog" role="document">
+	<div class="modal-dialog" role="document"  >
 		<div class="modal-content">
-			<form id="formAjout" class="form-horizontal" role="form" novalidate="novalidate" ng-controller="formAjoutCtrl">
-				<div class="modal-header">
-					<!--                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
-					<h4 class="modal-title" id="myModalLabel">Mettre fin au contrat</h4>
-				</div>
+	            <form id="formAjout" class="form-horizontal" role="form" novalidate="novalidate" ng-controller="formAjoutCtrl">
+                        <div class="modal-header">
+                            <!--                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+                            <h4 class="modal-title" id="myModalLabel">Mettre fin au contrat</h4>
+                        </div>
 				<div class="modal-body">
-					<div class="form-group">
-						<div class="col-md-12">
-							<label ng-bind="contrat.info"></label>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="libelle" class="col-md-2 control-label">Date debut</label>
-						<div class="col-md-10">
-							<input type="text" ng-model="contrat.dDebut" class="form-control" disabled="disabled" required="required" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="libelle" class="col-md-2 control-label">Date de modification</label>
-						<div class="col-md-10">
-							<input type="text" id="dateMod" name="dateMod" ng-model="contrat.dMod" data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker" placeholder="Date de modification" required="required" />
-						</div>
-					</div>
-						<div class="form-group">
-                    		<label for="libelle" class="col-md-2 control-label">Date de Fin/ dArret'</label>
-                    		<div class="col-md-10">
-                    		<input type="text" id="dateFin" name="dateFin" ng-model="contrat.dFin" data-date-format='dd/mm/yyyy' maxlength="10" class="form-control datepicker"   placeholder="Date de fin / Arret" required="required" />
-                    			</div>
-                    		</div>
-					<div class="form-group">
-						<label for="faute" class="col-md-2 control-label">Depart</label>
-						<div class="col-md-10">
+                    	<div class="form-group">
+                    	<div class="col-md-12">
+                    		<label ng-bind="contrat.info"></label>
+                    	</div>
+                    	</div>
 
-							<div>
+                    <!-- Date début -->
+                    <div class="form-group">
+                       <label for="libelle" class="col-md-2 control-label">Date debut du contrat</label>
+                       <div class="col-md-10">
+                        <input type="text"
+                               class="form-control"
+                               maxlength="10"
+                               disabled="disabled"
+                               ng-model="contrat.dDebut"></div>
+                    </div>
 
-								<label id="permanentNon" class="radio-inline">
-									<input name="permanent" type="radio" value="false"> Non
-								</label>
-								<label id="permanentOui" class="radio-inline">
-									<input name="permanent" type="radio" value="true"> Oui
-								</label>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="matricule" class="col-md-2 control-label">Observation<span class="required">*</span></label>
-						<div>
-							<select id=ObservCtrat name="ObservCtrat" class="form-control select2">
-								<option>-- Choix --</option>
-								<option value="Aucun"  selected="selected"> Aucun </option>
-								<option value="Demission" > Demission </option>
-								<option value="Deces" > Deces </option>
-								<option value="Fin de contrat" > Fin de contrat </option>
-								<option value="Renvoi" > Renvoi </option>
-								<option value="Modification" > Modification </option>
-							</select>
-						</div>
-                     </div>
-				</div>
-				<div class="modal-footer">
-					<input type="text" class="hidden" ng-hide="true" value="" id="id" name="id" ng-model="contrat.id">
-					<span></span>&nbsp;
-					<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-					<button type="submit" class="btn btn-success">Valider</button>
-				</div>
-			</form>
+                    <!-- Date modification -->
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Date de modification</label>
+                        <div class="col-md-10">
+                        <input type="text"
+                               class="form-control"
+                               id="dateMod"
+                               name="dateMod"
+                               maxlength="10"
+                               ng-model="contrat.dMod"></div>
+                    </div>
+
+                    <!-- Date fin -->
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Date fin du contrat</label>
+                        <div class="col-md-10">
+                        <input type="text"
+                               class="form-control"
+                               id="dateFin"
+                               name="dateFin"
+
+                               maxlength="10"
+                               ng-model="contrat.dFin"></div>
+                    </div>
+
+                    <!-- Depart -->
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Depart <span class="required">*</span></label>
+                        <div class="col-md-10">
+                        <div>
+                            <label class="radio-inline">
+                                <input name="permanent" type="radio" value="false"> Non
+                            </label>
+                            <label class="radio-inline">
+                                <input name="permanent" type="radio" value="true"> Oui
+                            </label>
+                        </div></div>
+                    </div>
+
+                    <!-- Observation -->
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Observation</label>
+                        <div class="col-md-10">
+                        <select id="ObservCtrat"
+                                name="ObservCtrat"
+                                class="form-control select2">
+                            <option value="Aucun" selected="selected">Aucun choix</option>
+                            <option value="Demission">Demission</option>
+                            <option value="Deces">Deces</option>
+                            <option value="Fin de contrat">Fin de contrat</option>
+                            <option value="Renvoi">Renvoi</option>
+                            <option value="Modification">Modification</option>
+                        </select>
+                        </div>
+                    </div>
+
+                </div>
+                    	<div class="modal-footer">
+                    					<input type="text" class="hidden" ng-hide="true" value="" id="id" name="id" ng-model="contrat.id">
+                    					<span></span>&nbsp;
+                    					<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                    					<button type="submit" class="btn btn-success">Valider</button>
+                    	</div>
+                </form>
+
 		</div>
 	</div>
 </div>
 
+
 <script type="text/javascript">
+	//AngularJS
+	app.controller('formAjoutCtrl', ['$scope', function($scope) {
+	    $scope.pupulateForm = function (contrat) {
+	        $scope.contrat = contrat;
+	    };
+	    $scope.initForm = function () {
+	    	$scope.contrat = {};
+	    };
+	}]).controller('formDeleteCtrl', ['$scope', function($scope) {
+	    $scope.pupulateForm = function (contrat) {
+	    	$scope.contrat = contrat;
+	    };
+	
+	}]);
+	//End AngularJs
 
-    //AngularJS
-		app.controller('formAjoutCtrl', function ($scope) {
-			$scope.pupulateForm = function (contrat) {
-				$scope.contrat = contrat;
-			};
-			$scope.initForm = function () {
-				$scope.contrat = {};
-			};
 
-		});
-    //End AngularJs
-
-
-			var actionUrl = "/personnels/endcontratpersonnel";
-			var action = "ajout";
-			var $table;
+		var actionUrl = "/personnels/endcontratpersonnel";
+    	var action = "ajout";
+    	var $table;
 
 	jQuery(document).ready(function($){
-				$table = $('#table');
-				$tableImprimer = $('#tablepm');
-				jQuery('#tableWidgethisto').hide();
-				jQuery('#tableWidgetDate').hide();
-				jQuery('#tableWidget').show();
-				$(".select2").select2();
+		    $table = $('#table');
+	        chargerPeriodePaie();
+        	$tableImprimer = $('#tablepm');
+        	jQuery('#tableWidgethisto').hide();
+        	jQuery('#tableWidgetDate').hide();
+        	jQuery('#tableWidget').show();
+		 $(".select2").select2();
+		     $("#datenaissance, .datePicker,#dateMod, #dateFinw,#dateDebw,#datedebut, #datefin").datepicker({
+                 format: 'dd/mm/yyyy',
+                 showOtherMonths: true
+             });
+		//Fermeture du modal
+		$('#rhpModal').on('hidden.bs.modal', function () {
+			var $scope = angular.element(document.getElementById("formAjout")).scope();
+			$scope.$apply(function () {
+	            $scope.initForm();
+	        });
+			//$("#id").val(""); //Initialisation de l'id
+		});
+		
+		//Envoi des donnees
+		//Envoi des donnees
+        				$("#formAjout").submit(function(e){
+        					e.preventDefault();
 
-              $('.datepicker').datepicker({
-                  format: 'dd/mm/yyyy',
-                  autoclose: true,
-                  todayHighlight: true,
-                  clearBtn: true
-              });
-
-              // Important pour les modals Bootstrap
-              $('#rhpModal').on('shown.bs.modal', function () {
-                  $('.datepicker').datepicker('update');
-              });
-
-				chargerPeriodePaie();
-				//Fermeture du modal
-				$('#rhpModal').on('hidden.bs.modal', function () {
-					var $scope = angular.element(document.getElementById("formAjout")).scope();
-					$scope.$apply(function () {
-						$scope.initForm();
-					});
-					//$("#id").val(""); //Initialisation de l'id
-				});
-
-				//Envoi des donnees
-				$("#formAjout").submit(function(e){
-					e.preventDefault();
-
-					var formData = $(this).serialize();
-					$.ajax({
-						type: "POST",
-						url: baseUrl + actionUrl,
-						cache: false,
-						data: formData,
-						success: function (reponse) {
-							if (reponse.result == "success") {
-								$table.bootstrapTable('refresh');
-								$("#rhpModal").modal('hide');
-							}
-							else if(reponse.result == "erreur_champ_obligatoire" || reponse.result == "failed"){
-								alert("Date invalide");
-							}
-						},
-						error: function () {
-							$("#rhpModal .modal-body div.alert").alert();
-							$("#rhpModal .modal-body .alert h4").html("Erreur survenue");
-							$("#rhpModal .modal-body .alert p").html("Verifier que vous etes connectes au serveur.");
-							$("#rhpModal .modal-footer span").removeClass('loader');
-						},
-						beforeSend: function () {
-							$("#formAjout").attr("disabled", true);
-							$("#rhpModal .modal-footer span").addClass('loader');
-						},
-						complete: function () {
-							$("#formAjout").removeAttr("disabled");
-							$("#rhpModal .modal-footer span").removeClass('loader');
-						}
-					});
-				});
+        					var formData = $(this).serialize();
+        					$.ajax({
+        						type: "POST",
+        						url: baseUrl + actionUrl,
+        						cache: false,
+        						data: formData,
+        						success: function (reponse) {
+        							if (reponse.result == "success") {
+        								$table.bootstrapTable('refresh');
+        								$("#rhpModal").modal('hide');
+        							}
+        							else if(reponse.result == "erreur_champ_obligatoire" || reponse.result == "failed"){
+        								alert("Date invalide");
+        							}
+        						},
+        						error: function () {
+        							$("#rhpModal .modal-body div.alert").alert();
+        							$("#rhpModal .modal-body .alert h4").html("Erreur survenue");
+        							$("#rhpModal .modal-body .alert p").html("Verifier que vous etes connectes au serveur.");
+        							$("#rhpModal .modal-footer span").removeClass('loader');
+        						},
+        						beforeSend: function () {
+        							$("#formAjout").attr("disabled", true);
+        							$("#rhpModal .modal-footer span").addClass('loader');
+        						},
+        						complete: function () {
+        							$("#formAjout").removeAttr("disabled");
+        							$("#rhpModal .modal-footer span").removeClass('loader');
+        						}
+        					});
+        				});
+		
+		$("#formDelete").submit(function(e){
+			e.preventDefault();
+	        var formData = $(this).serialize();
+	        var idSup = [];
+	      	//Le formulaire formDelete doit avoir un seul champ input:text
+	        idSup.push(parseInt($("#formDelete :text").val()));
+	        
+	        $.ajax({
+	            type: "POST",
+	            url: baseUrl + actionDeleteUrl,
+	            cache: false,
+	            data: formData,
+	            success: function (reponse) {
+	                if (reponse.result == true) {
+                        $table.bootstrapTable('remove', {
+                            field: 'id',
+                            values: idSup
+                        });
+                        $(".deleteModal").modal('hide');
+	                }
+	                else if(reponse.result == "erreur_champ_obligatoire"){
+	                	alert("Saisie invalide");
+	                }
+	            },
+	            error: function (err) {
+	            	$(".deleteModal .modal-body div.alert").alert();
+	            	$(".deleteModal .modal-body .alert h4").html("Erreur survenue");
+	            	$(".deleteModal .modal-body .alert p").html("Verifier que vous �tes connect�s au serveur.");
+	            	$(".deleteModal .modal-footer span").removeClass('loader');
+	            },
+	            beforeSend: function () {
+	                $("#formDelete").attr("disabled", true);
+	                $(".deleteModal .modal-footer span").addClass('loader');
+	            },
+	            complete: function () {
+	                $("#formDelete").removeAttr("disabled");
+	                $(".deleteModal .modal-footer span").removeClass('loader');
+	            }
+	        });
+		});
 	});
 
-			//Functions
+	//Functions
+	
+	//Functions
 			function optionFormatter(id, row, index) {
 				var option = '<a onclick="finish('+row.id+')" data-toggle="modal" data-target="#rhpModal" href="#" title="Mettre fin">  <span class="glyphicon glyphicon-pencil"></span></a>';
 				return option;
@@ -504,6 +565,4 @@
 				jQuery('#tableWidgethisto').hide('slow');
 				jQuery('#tableWidget').hide('slow');
 			}
-
-
 </script>

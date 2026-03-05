@@ -120,6 +120,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             if (oldContractOpt.isPresent()) {
                 SpecialContract oldContract = oldContractOpt.get();
+                if (dateDebut != null && !dateDebut.trim().isEmpty()) {
+                    oldContract.setDateDebut(Utils.stringToDate(dateDebut, "dd/MM/yyyy"));
+                }
+
+                if (dateFin != null && !dateFin.trim().isEmpty()) {
+                    oldContract.setDateFin(Utils.stringToDate(dateFin, "dd/MM/yyyy"));
+                }
 
                 // Vérifier si modification du net à payer
                 if (oldContract.getRemunerationForfaitaire().compareTo(netAPayer) != 0) {
@@ -255,6 +262,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     // ==========================
     // DESACTIVER
     // ==========================
+    @Transactional
     @Override
     public  Boolean deactivate(Long id) {
 
@@ -263,11 +271,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         employee.setActif(false);
 
-        // Désactiver aussi les contrats spécifiques
-       contractRepository
-                .findByEmployeeAndActifTrue(employee)
-                .forEach(contract -> contract.setActif(false));
+        // Désactiver aussi les contrats spécifiques*
+       List<SpecialContract> specialContractList= contractRepository
+                .findByEmployeeAndActifTrue(employee);
+        for(SpecialContract c:specialContractList){
+            c.setActif(false);
+            contractRepository.save(c);
 
+         }
        repository.save(employee);
        return true;
     }
@@ -278,7 +289,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDTO loadPersonnel(Pageable pageable) {
         // TODO Auto-generated method stub
         EmployeeDTO personnelDTO = new EmployeeDTO();
-        Page<Employee> page = repository.findByActifTrue(pageable);
+        Page<Employee> page = repository.findByActifTrueOrderByNomCompletAsc(pageable);
         List<Employee> personnelsWithContract = page.getContent().stream().map(p -> {
             SpecialContract contrat = contractRepository
                     .findFirstByEmployeeIdAndActifTrue(p.getId());
@@ -299,7 +310,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDTO loadPersonnel(Pageable pageable, String search,String search1) {
         // TODO Auto-generated method stub
         EmployeeDTO personnelDTO = new EmployeeDTO();
-        Page<Employee> page = repository.findByActifTrueAndNomCompletIgnoreCaseContainingOrMatriculeIgnoreCaseContaining(pageable, search,search1);
+        Page<Employee> page = repository.searchActiveEmployees(search, pageable);
         List<Employee> personnelsWithContract = page.getContent().stream().map(p -> {
             SpecialContract contrat = contractRepository
                     .findFirstByEmployeeIdAndActifTrue(p.getId());

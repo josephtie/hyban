@@ -137,6 +137,11 @@
 		<put-attribute name="title" value=" HYBAN -Contrat" />
 		<put-attribute name="content" value="/WEB-INF/views/jsp/personnels/contrat.jsp" />
 	</definition>
+
+    <definition name="lescontrats" extends="fetemplate">
+        <put-attribute name="title" value=" HYBAN -Contrat" />
+        <put-attribute name="content" value="/WEB-INF/views/jsp/personnels/lescontrats.jsp" />
+    </definition>
 	
 	<definition name="categories" extends="fetemplate">
 		<put-attribute name="title" value=" HYBAN -Categorie" />

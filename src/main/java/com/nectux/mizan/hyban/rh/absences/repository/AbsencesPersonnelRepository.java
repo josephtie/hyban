@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.nectux.mizan.hyban.rh.absences.entity.AbsencesPersonnel;
@@ -24,7 +25,18 @@ public interface AbsencesPersonnelRepository extends CrudRepository<AbsencesPers
 	public Page<AbsencesPersonnel> findAll(Pageable pageable);
 	
 	public Page<AbsencesPersonnel> findByPersonnelNomContainingOrPersonnelPrenomContainingOrAbsencesFauteContaining(Pageable pageable, String nom, String prenom, String faute, String typeSanction);
-	
-	
+
+    @Query("SELECT SUM(a.heursabsence) FROM AbsencesPersonnel a " +
+            "WHERE a.personnel.id = :idPersonnel " +
+            "AND a.sanctionsalaire = 4 " +
+            "AND a.periodePaie.id = :idPeriode")
+    Double sumHeuresNonJustifiees(Long idPersonnel, Long idPeriode);
+
+
+    @Query("SELECT SUM(a.joursabsence) FROM AbsencesPersonnel a " +
+            "WHERE a.personnel.id = :idPersonnel " +
+            "AND a.sanctionsalaire = 4 " +
+            "AND a.periodePaie.id = :idPeriode")
+    Double sumJoursNonJustifiees(Long idPersonnel, Long idPeriode);
 
 }
