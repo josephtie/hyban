@@ -119,7 +119,7 @@ public class AbsencesPersonnelServiceImpl implements AbsencesPersonnelService {
 				absencesPersonnel.setObservation(observation);
 	
 				absencesPersonnel.setStatut(justifier);
-			
+			     absencesPersonnel.setPeriodePaie(myperiodePaie);
 			
 				absencesPersonnel.setSanctionsalaire(sanctSall);			
 			if(listErreur.isEmpty()){

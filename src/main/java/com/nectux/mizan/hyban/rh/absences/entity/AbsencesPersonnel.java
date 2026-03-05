@@ -13,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
 import com.nectux.mizan.hyban.parametrages.entity.Auditable;
+import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.utils.CustomDateDeserializer;
 import com.nectux.mizan.hyban.utils.DateManager;
@@ -89,6 +90,11 @@ public class AbsencesPersonnel extends Auditable {
 	@JoinColumn(nullable=false)
 	private Personnel personnel;
 
+
+    @ManyToOne
+    @JoinColumn(nullable=false)
+    private PeriodePaie periodePaie;
+
 	public AbsencesPersonnel() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -142,7 +148,15 @@ public class AbsencesPersonnel extends Auditable {
 		this.urlReponse = urlReponse;
 	}*/
 
-	public java.util.Date getDateDebut() {
+    public PeriodePaie getPeriodePaie() {
+        return periodePaie;
+    }
+
+    public void setPeriodePaie(PeriodePaie periodePaie) {
+        this.periodePaie = periodePaie;
+    }
+
+    public java.util.Date getDateDebut() {
 		return dateDebut;
 	}
 
@@ -275,19 +289,30 @@ public class AbsencesPersonnel extends Auditable {
 		this.personnel = personnel;
 	}
 
-	
 
-	@Override
-	public String toString() {
-		return "AbsencesPersonnel [id=" + id + ", observation=" + observation
-				+ ", dateDebut=" + dateDebut + ", dDebut=" + dDebut
-				+ ", dateRet=" + dateRet + ", dRet=" + dRet + ", dateCreation="
-				+ dateCreation + ", dCreation=" + dCreation
-				+ ", dateModification=" + dateModification + ", dModification="
-				+ dModification + ", absences=" + absences + ", personnel="
-				+ personnel + "]";
-	}
+    @Override
+    public String toString() {
+        return "AbsencesPersonnel{" +
+                "id=" + id +
+                ", observation='" + observation + '\'' +
+                ", statut=" + statut +
+                ", sanctionsalaire=" + sanctionsalaire +
+                ", joursabsence=" + joursabsence +
+                ", heursabsence=" + heursabsence +
+                ", dateDebut=" + dateDebut +
+                ", dDebut='" + dDebut + '\'' +
+                ", dateRet=" + dateRet +
+                ", dRet='" + dRet + '\'' +
+                ", dateCreation=" + dateCreation +
+                ", dCreation='" + dCreation + '\'' +
+                ", dateModification=" + dateModification +
+                ", dModification='" + dModification + '\'' +
+                ", impact='" + impact + '\'' +
+                ", absences=" + absences +
+                ", personnel=" + personnel +
+                ", periodePaie=" + periodePaie +
+                '}';
+    }
 
-	
 
 }
