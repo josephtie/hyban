@@ -185,6 +185,10 @@ public class LivreDePaie {
 	@Transient
 	private String mtindemniteResponsabilte;
 
+    private Double netRegulPayer;
+    @Transient
+    private String mtRegulnetPayer;
+
 
 	private Double netPayer;
 	@Transient
@@ -283,15 +287,15 @@ public class LivreDePaie {
 		this.matricule = mat;
 		this.nomPrenom = nomPre;
         final int JOURS_OUVRABLES_MOIS = 30;
-
+        double netCible=0D;
 		this.listIndemniteBrut=listIndemnite;
 		//this.listRubrique=rubriqueRepository.findByActiveTrue();
 		this.listIndemniteNonImp=listIndemniteNonImp1;
 		this.listRetenueSociale =listRetenueSociale;
 		this.listRetenueMutuellt=listMutuelle;
 		this.listGainsNet=listGains;
-
-
+        if(tempeffect!=null)
+         netCible=ctratperso.getNetAPayer() * tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
 
 
 		if(ctratperso.getPersonnel().getCarec()==true){
@@ -306,10 +310,10 @@ public class LivreDePaie {
 							else
 							 this.sursalaire = Math.ceil(sursal);
 
-							if(ancien>= 2)
-								this.primeAnciennete = Math.ceil((salaireBase) * ancien / 100);
-							else
-							 this.primeAnciennete = Math.ceil(0);
+						//	if(ancien>= 2)
+						//		this.primeAnciennete = Math.ceil((salaireBase) * ancien / 100);
+						//	else
+						//	 this.primeAnciennete = Math.ceil(0);
 
 							if(indemLog==null)
 								this.indemniteLogement = Math.ceil(0);
@@ -356,6 +360,7 @@ public class LivreDePaie {
 						}
 					   else
 					   {
+
                                 this.anciennete = ancien;
 
                                 this.nombrePart = nbrePart != null ? nbrePart : 0F;
@@ -365,10 +370,10 @@ public class LivreDePaie {
 								   else
 								 this.sursalaire = Math.ceil(sursal*tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
 
-								if(ancien>= 2)
-								  this.primeAnciennete = Math.ceil((salaireBase) * ancien / 100);
-								else
-									this.primeAnciennete = Math.ceil(0);
+								//if(ancien>= 2)
+								//  this.primeAnciennete = Math.ceil((salaireBase) * ancien / 100);
+								//else
+								//	this.primeAnciennete = Math.ceil(0);
 
 								if(indemLog==null)
 								   this.indemniteLogement = Math.ceil(0);
@@ -417,7 +422,8 @@ public class LivreDePaie {
 							   this.temptravail=tempeffect.getHeurspresence();
 					   }
 
-                this.brutImposable = Math.ceil(salaireBase + sursalaire + primeAnciennete + indemniteLogement+indemniteTransportImp+autreIndemImposable+autreImposable);
+               // this.brutImposable = Math.ceil(salaireBase + sursalaire + primeAnciennete + indemniteLogement+indemniteTransportImp+autreIndemImposable+autreImposable);
+                this.brutImposable = Math.ceil(salaireBase + sursalaire  + indemniteLogement+indemniteTransportImp+autreIndemImposable+autreImposable);
                 Double ricf = getRICF(nombrePart);
                 double itsbrut =Math.ceil(calculerITS(brutImposable,true));
                 this.its = Math.max(0, itsbrut - ricf / 12);
@@ -503,7 +509,11 @@ public class LivreDePaie {
                     }
                 }
 				this.netPayer = Math.ceil((brutImposable + indemniteRepresentation + indemniteTransport+autreNonImposable)+ regularisation -autreIndemImposable- totalRetenue);
-				this.is = its;
+               if(tempeffect!=null){
+                this.netRegulPayer=netCible - netPayer;
+                netPayer=netCible;
+               }
+                this.is = its;
 				this.ta = Math.ceil(brutImposable * 0.4 / 100);
 				this.fpc =Math.ceil(brutImposable * 0.6 / 100);
 				this.fpcregul =Math.ceil(brutImposable * 0.6 / 100);
@@ -595,6 +605,10 @@ public class LivreDePaie {
 					}
 				this.totalRetenue = Math.ceil(totalRetenueFiscale + cnps + avceAcpte + pretAlios +autrePrelevment);
 				this.netPayer = Math.ceil(brutImposable +regularisation+ brutNonImposable-totalRetenue)+ctratperso.getNetAPayer();
+                 if(tempeffect!=null){
+                   this.netRegulPayer=netCible - netPayer;
+                  netPayer=netCible;
+                }
 				//this.is = Math.ceil(brutImposable * 1.2 / 100);
 				//this.ta = Math.ceil(brutImposable * 0.4 / 100);
 				//this.fpc = Math.ceil(brutImposable * 1.2 / 100);
@@ -878,7 +892,23 @@ public class LivreDePaie {
 		this.netPayer = netPayer;
 	}
 
-	public Double getTotalBrut() {
+    public Double getNetRegulPayer() {
+        return netRegulPayer;
+    }
+
+    public void setNetRegulPayer(Double netRegulPayer) {
+        this.netRegulPayer = netRegulPayer;
+    }
+
+    public String getMtRegulnetPayer() {
+        return mtRegulnetPayer= Utils.formattingAmount(netRegulPayer);
+    }
+
+    public void setMtRegulnetPayer(String mtRegulnetPayer) {
+        this.mtRegulnetPayer = mtRegulnetPayer;
+    }
+
+    public Double getTotalBrut() {
 		return totalBrut;
 	}
 

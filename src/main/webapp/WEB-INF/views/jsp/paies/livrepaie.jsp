@@ -360,6 +360,7 @@
 									<th  data-field="primeG${rubrique.id}" data-rubrique="${rubrique.id}" data-formatter="primeGFormatter" data-align="right">${rubrique.libelle}</th>
 								</c:forEach>
 							<%--<th data-field="mtregularisation"  data-align="center">Regularisation</th>--%>
+							<th data-field="mtRegulnetPayer"  data-align="center">Net a reguler</th>
 							<th data-field="mtnetPayer"  data-align="center">Net a payer</th>
 							<th data-field="mttotalBrut"   data-align="left">Total brut</th>
 							<th data-field="mtis"  data-align="center">IS</th>
@@ -630,6 +631,8 @@
 								</c:forEach>
 							<%--<th data-field="mtregularisation"  data-align="center">Regularisation</th>--%>
 							
+
+							<th data-field="netRegulPayer"  data-align="center">Net a regul</th>
 							<th data-field="netapayer"  data-align="center">Net a payer</th>
 							<th data-field="totalbrut"   data-align="left">Total brut</th>
 							<th data-field="its"  data-align="center">IS</th>

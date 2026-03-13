@@ -135,18 +135,18 @@ public class TempEffectifServiceImpl implements TempEffectifService {
             if (jourtravail != null) {
                 jours = jourtravail;
                 heures = (jours * HEURES_LEGALES) / JOURS_LEGAUX;
-            }
-            else if (temptravail != null) {
-                heures = temptravail;
-                jours = (heures * JOURS_LEGAUX) / HEURES_LEGALES;
-            }
-            else {
+
+//            else if (temptravail != null) {
+//                heures = temptravail;
+//                jours = (heures * JOURS_LEGAUX) / HEURES_LEGALES;
+//            }
+           } else {
                 jours = JOURS_LEGAUX;
                 heures = HEURES_LEGALES;
             }
 
             // Arrondis métier
-            jours = Math.ceil(jours);
+            jours = jours;
             heures = Math.ceil(heures * 100) / 100;
 
             tempeffectif.setJourspresence(jours);
@@ -220,18 +220,18 @@ public class TempEffectifServiceImpl implements TempEffectifService {
             if (jourtravail != null) {
                 jours = jourtravail;
                 heures = (jours * HEURES_LEGALES) / JOURS_LEGAUX;
-            }
-            else if (temptravail != null) {
-                heures = temptravail;
-                jours = (heures * JOURS_LEGAUX) / HEURES_LEGALES;
-            }
-            else {
+
+//            else if (temptravail != null) {
+//                heures = temptravail;
+//                jours = (heures * JOURS_LEGAUX) / HEURES_LEGALES;
+//            }
+            }else {
                 jours = JOURS_LEGAUX;
                 heures = HEURES_LEGALES;
             }
 
             // Arrondis
-            jours = Math.ceil(jours);
+            jours = jours;
             heures = Math.ceil(heures * 100) / 100;
 
             tempeffectif.setJourspresence(jours);

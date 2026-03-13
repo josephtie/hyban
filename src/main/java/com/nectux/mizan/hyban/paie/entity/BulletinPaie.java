@@ -268,7 +268,12 @@ public class BulletinPaie extends Auditable {
 	
 	@Transient
 	private String montantNetapayer;
-	
+
+    private Double netRegulPayer;
+
+    @Transient
+    private String montantNetRegulpayer;
+
 	private Double impotSalaire;
 	
 	@Transient
@@ -1361,4 +1366,20 @@ public class BulletinPaie extends Auditable {
 	public void setMtCMUSalarial(String mtCMUSalarial) {
 		this.mtCMUSalarial = mtCMUSalarial;
 	}
+
+    public Double getNetRegulPayer() {
+        return netRegulPayer;
+    }
+
+    public void setNetRegulPayer(Double netRegulPayer) {
+        this.netRegulPayer = netRegulPayer;
+    }
+
+    public String getMontantNetRegulpayer() {
+        return montantNetRegulpayer=Utils.formattingAmount(netRegulPayer);
+    }
+
+    public void setMontantNetRegulpayer(String montantNetRegulpayer) {
+        this.montantNetRegulpayer = montantNetRegulpayer;
+    }
 }

@@ -897,7 +897,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 
 				}
 			}
-
+            livrePaiecalR.setNetRegulPayer(livrePaiecalR.getNetRegulPayer());
 			livrePaiecalR.setPeriodePaie(periodePaieActif);
 			livrePaiecalR.setCMUPatronal(livrePaiecalR.getCMUPatronal());
 			livrePaiecalR.setCMUSalarial(livrePaiecalR.getCMUPatronal());
@@ -953,9 +953,9 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 			}
 			detailsBull.setNombrePart(nbPart);
 			detailsBull.setAnciennete(op);
-			detailsBull.setSalairbase(contrat.getCategorie().getSalaireDeBase());
-			detailsBull.setSursalaire(contrat.getSursalaire());
-			detailsBull.setIndemnitelogement(contrat.getIndemniteLogement());
+			detailsBull.setSalairbase(livrePaiecalR.getSalaireBase());
+			detailsBull.setSursalaire(livrePaiecalR.getSursalaire());
+			detailsBull.setIndemnitelogement(livrePaiecalR.getIndemniteLogement());
 			detailsBull.setAvanceetacompte(somAvance);
 			detailsBull.setPretaloes(somPretAlios);
 
@@ -1001,6 +1001,7 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 			detailsBull.setRegularisation(livrePaiecalR.getRegularisation());
 			detailsBull.setAutrePrelevement(livrePaiecalR.getAutrePrelevment());
 			detailsBull.setNetapayer(livrePaiecalR.getNetPayer());
+			detailsBull.setNetRegulPayer(livrePaiecalR.getNetRegulPayer());
 			detailsBull.setTotalbrut(livrePaiecalR.getTotalBrut());
 			detailsBull.setImpotSalaire(livrePaiecalR.getIs());
 			detailsBull.setTa(livrePaiecalR.getTa());
