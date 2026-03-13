@@ -1,16 +1,6 @@
 package com.nectux.mizan.hyban.personnel.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import com.nectux.mizan.hyban.parametrages.entity.TypeContrat;
@@ -43,7 +33,8 @@ public class ContratPersonnel extends Auditable {
 	@JoinColumn(nullable=false)
 	private Categorie categorie;
 	
-	@ManyToOne
+
+    @ManyToOne
 	@JoinColumn(nullable=false)
 	private Personnel personnel;
 	

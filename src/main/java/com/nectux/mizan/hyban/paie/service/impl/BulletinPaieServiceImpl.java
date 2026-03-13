@@ -729,9 +729,20 @@ public class BulletinPaieServiceImpl implements BulletinPaieService {
 		List<Personnel> personnelList = personnelRepository.findByStatutAndRetraitEffectOrderByNomAsc(true, false);
 
 		// 3️⃣ Précharger tous les contrats actifs
-		List<ContratPersonnel> contrats = contratPersonnelRepository.findByStatutTrue();
-		Map<Long, ContratPersonnel> contratParPersonnel = contrats.stream()
-				.collect(Collectors.toMap(c -> c.getPersonnel().getId(), c -> c));
+		List<ContratPersonnel> contrats = contratPersonnelRepository.findLastByStatutTrue();
+// 4️⃣ Créer une Map des contrats uniquement pour le personnel actif
+        Map<Long, ContratPersonnel> contratParPersonnel = contrats.stream()
+                .filter(c -> personnelList.contains(c.getPersonnel()))
+                .collect(Collectors.toMap(c -> c.getPersonnel().getId(), c -> c));
+//        Map<Long, ContratPersonnel> contratParPersonnel = contrats.stream()
+//                .filter(c -> c.getPersonnel().getStatut() && !c.getPersonnel().getRetraitEffect())
+//                .collect(Collectors.toMap(c -> c.getPersonnel().getId(), c -> c));
+//		Map<Long, ContratPersonnel> contratParPersonnel = contrats.stream()
+//				.collect(Collectors.toMap(c -> c.getPersonnel().getId(), c -> c));
+
+
+
+
 
 		// 4️⃣ Précharger les primes
 		List<PrimePersonnel> primes = primePersonnelRepository.findByPeriodePaieId(idPeriode);
@@ -2150,7 +2161,7 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 		BulletinPaieDTO bulletinDTO = new BulletinPaieDTO();
 		List<BulletinPaie> bullList = new ArrayList<BulletinPaie>();
 //		for(LivreDePaieV2 livre : livredepaieListV2)
-
+        bulletinPaieRepository.deleteAll(bulletinPaieRepository.findByPeriodePaie(periodePaieRepository.recherchperiodeCloture()));
             for(LivreDePaie livre : livredepaieList){
                 BulletinPaie bull=  bulletinPaieRepository.findByBulletinAndPersonnelCalcultrue(livre.getContratPersonnel().getPersonnel().getId(),livre.getPeriodePaie().getId());
                 if(bull==null){

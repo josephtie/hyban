@@ -201,6 +201,7 @@ public class AbsencesPersonnelServiceImpl implements AbsencesPersonnelService {
 			absencesPersonnelDTO.setResult(false);
 			absencesPersonnelDTO.setStatus(false);
 			absencesPersonnelDTO.setRow(null);
+
 			absencesPersonnelDTO.setRows(null);
 			absencesPersonnelDTO.setMessage(ex.getMessage());
 			absencesPersonnelDTO.setTotal(0);

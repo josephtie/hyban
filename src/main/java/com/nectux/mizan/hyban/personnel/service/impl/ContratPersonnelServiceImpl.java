@@ -66,6 +66,7 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 	}
 
 	@Override
+    @Transactional
 	public ContratPersonnelDTO save(Long id, Long idPersonnel, Long idCategorie, Long idFonction, Long idTypeContrat,
 									String dateDebut, String dateFin, Double netAPayer, Double indemniteLogement, int ancienete, boolean statut,Double sursalaire,Double indemnitetransport,Double indemniterespons,Double indemniterepresent) {
 		// TODO Auto-generated method stub
@@ -371,6 +372,7 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 	}
 
 	@Override
+    @Transactional
 	public ContratPersonnelDTO endContract(Long id, String dateFin,String dateMod,Boolean depart,String ObservCtrat) {
 		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
 		try{
@@ -382,18 +384,24 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 			contratPersonnel.setDateFin(DateManager.stringToDate(dateFin, "dd/MM/yyyy"));
 
             contratPersonnel.setObservCtrat(ObservCtrat);
-			contratPersonnel.setDepart(false);
-			contratPersonnel.setStatut(false);
-			contratPersonnel.setSoldeCalcule(false);
+            Personnel pers = contratPersonnel.getPersonnel();
 			if(Boolean.TRUE.equals(depart)){
 				contratPersonnel.setDepart(true);
                 contratPersonnel.setStatut(true);
-				contratPersonnel.getPersonnel().setRetraitEffect(false);
-				contratPersonnel.getPersonnel().setStatut(true);
-				contratPersonnel.setSoldeCalcule(false);
-				personnelRepository.save(contratPersonnel.getPersonnel());
-			}
+                contratPersonnel.setSoldeCalcule(false);
+
+                pers.setRetraitEffect(false);
+                pers.setStatut(true);
+
+
+			}else{
+                contratPersonnel.setDepart(false);
+                contratPersonnel.setStatut(false);
+                contratPersonnel.setSoldeCalcule(false);
+            }
+
 			contratPersonnel = contratPersonnelRepository.save(contratPersonnel);
+            personnelRepository.save(pers);
 
 			contratPersonnelDTO.setRow(contratPersonnel);
 			contratPersonnelDTO.setResult("success");
@@ -407,39 +415,45 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 		return contratPersonnelDTO;
 	}
 
+    @Transactional
+    public ContratPersonnelDTO departDefinitif(Long contratId, String dateFinEffective) throws Exception {
+
+        ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
+        try {
+            ContratPersonnel contrat = contratPersonnelRepository.findById(contratId)
+                    .orElseThrow(() -> new RuntimeException("Contrat non trouvé"));
+
+            contrat.setStatut(false);
+            contrat.setDepart(true);
+            contrat.setSoldeCalcule(true);
+            contrat.setDateFin(Utils.stringToDate(dateFinEffective,"dd/MM/yyyy"));
+
+
+
+
+            contrat= contratPersonnelRepository.save(contrat); // persiste les modifications
+
+            Personnel personnel = contrat.getPersonnel();
+            personnel.setStatut(false);
+            personnel.setRetraitEffect(true);
+            personnelRepository.save(personnel);
+
+            contratPersonnelDTO.setRow(contrat);
+            contratPersonnelDTO.setResult("success");
+            contratPersonnelDTO.setMessage("success");
+
+        } catch(Exception ex){
+            contratPersonnelDTO.setResult(false);
+            contratPersonnelDTO.setMessage("failed");
+            logger.error(">>>>>  ERREUR SUR FIN CONTRAT PERSONNEL", ex);
+        }
+        return contratPersonnelDTO;
+    }
+
+
+
 	@Override
-	public ContratPersonnelDTO departDefinitif(Long contratId, String dateFinEffective) throws Exception {
-
-		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
-		try{
-		ContratPersonnel contrat = contratPersonnelRepository.findById(contratId)
-				.orElseThrow(() -> new RuntimeException("Contrat non trouvé"));
-
-
-		contrat.setStatut(false);
-		contrat.setDepart(true);
-		contrat.setSoldeCalcule(true);
-		contrat.getPersonnel().setStatut(false);
-		contrat.getPersonnel().setRetraitEffect(true);
-		contrat.setDateFin(Utils.stringToDate(dateFinEffective,"dd/MM/yyyy"));
-		personnelRepository.save(contrat.getPersonnel());
-		contrat=contratPersonnelRepository.save(contrat);
-		contratPersonnelDTO.setRow(contrat);
-		contratPersonnelDTO.setResult(true);
-		contratPersonnelDTO.setResult("success");
-		} catch(Exception ex){
-			contratPersonnelDTO.setResult("failed");
-			logger.error(ex.getMessage());
-			logger.error(new StringBuilder().append(">>>>>  ERREUR SUR FIN CONTRAT PERSONNEL").toString());
-			ex.getStackTrace();
-		}
-		return contratPersonnelDTO;
-
-	}
-
-
-
-	@Override
+    @Transactional
 	public ContratPersonnelDTO updateContractSursalaire(Long id,Double sursalaire) {
 		// TODO Auto-generated method stub
 		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();

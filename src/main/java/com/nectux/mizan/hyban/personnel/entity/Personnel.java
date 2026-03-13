@@ -1,16 +1,6 @@
 package com.nectux.mizan.hyban.personnel.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import com.nectux.mizan.hyban.parametrages.entity.Auditable;
 import com.nectux.mizan.hyban.utils.CustomDateDeserializer;
@@ -23,6 +13,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Component("personnelnt")
 @Scope("prototype")
@@ -99,7 +93,6 @@ public class Personnel   extends Auditable {
 
     @Transient
     private String fonction;
-
 
 
 	
@@ -702,7 +695,9 @@ public class Personnel   extends Auditable {
 		this.retraitEffect = retraitEffect;
 	}
 
-	@Override
+
+
+    @Override
 	public String toString() {
 		return "Personnel [id=" + id + ", nom=" + nom + ", prenom=" + prenom
 				+ ", nomComplet=" + nomComplet + ", matricule=" + matricule

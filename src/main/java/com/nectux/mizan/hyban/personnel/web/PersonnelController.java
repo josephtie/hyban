@@ -198,56 +198,9 @@ public class PersonnelController {
         }
 
         return personnelDTO;
-//		//final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "nom");
-//		PageRequest pageRequest = PageRequest.of(offset / limit, limit, Direction.DESC, "id");
-//		PersonnelDTO personnelDTO = new PersonnelDTO();
-//        if( search == null && filterCarec == "")
-//            personnelDTO = personnelService.loadPersonnelopfilter(pageRequest);
-//        else if  ( search != null && filterCarec == "")
-//			personnelDTO = personnelService.loadPersonnelopfiltersearch(pageRequest,search);
-//        else if  (  search == null && filterCarec != "")
-//			personnelDTO = personnelService.loadPersonnelopfiltercarec(pageRequest,filterCarec);
-//        else
-//        personnelDTO = personnelService.loadPersonnelopfilter(pageRequest,search,filterCarec);
-//		return personnelDTO;
-		//System.out.println(" hello "+hfhfh);
-		//System.out.println("****************jour  MOIS annnee)))))))))))))))))))))"+offset+"MOIS"+limit);
 	}
 	
-	/*@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/listpersctratjson", method = RequestMethod.GET)
-	public @ResponseBody PersonnelDTO getPersonnelctratListJSON(@RequestParam(value="limit", required=false) Integer limit, 
-															@RequestParam(value="offset", required=false) Integer offset, 
-															@RequestParam(value="search", required=false) String search, Principal principal) {
-		
-		if(offset == null) offset = 0;
-		if(limit == null) limit = 10;
-		
-		final PageRequest pageRequest = new PageRequest(offset/10, limit, Direction.DESC, "nom");
-		
-		PersonnelDTO personnelDTO = new PersonnelDTO();
-		
-			 List<Personnel> personnelList = new ArrayList<Personnel>();
-		  List<Personnel> personnelListTrt = new ArrayList<Personnel>();
-		  ContratPersonnel ctratpersonnel = new ContratPersonnel();
-		//  PeriodePaie  periodePaieActif=periodePaieRepository.findOne(idPeriode);
-		//  personnel=personnelRepository.findOne(idPers);	
-		// verif contrat actif
-		  personnelList=personnelRepository.findAll();
-		  for(int i = 0; i < personnelList.size(); i++){
-		  ctratpersonnel=contratPersonnelRepository.findByPersonnelId(personnelList.get(i).getId());
-		  	if(ctratpersonnel!=null){	
-		  		if(ctratpersonnel.getStatut()==true)
-		         personnelListTrt.add(ctratpersonnel.getPersonnel());
-		  	}
-		  }
-			
-			personnelDTO.setRows(personnelListTrt);
-		else
-			personnelDTO = personnelService.loadPersonnel(pageRequest, search);
-		
-		return personnelDTO;
-	}*/
+
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/choisirpersonnel", method = RequestMethod.POST)

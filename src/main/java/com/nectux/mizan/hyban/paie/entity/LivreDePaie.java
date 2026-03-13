@@ -105,7 +105,7 @@ public class LivreDePaie {
 	private Double brutNonImposable;
 	@Transient
 	private String mtbrutNonImposable;
-	
+
 	private Double its;
 
 
@@ -123,39 +123,39 @@ public class LivreDePaie {
 	private Double CMUPatronal;
 	@Transient
 	private String mtCMUPatronal ;
-	
+
 	private Double cn;
 	@Transient
 	private String mtcn;
-	
+
 	private Double igr;
 	@Transient
 	private String mtigr;
-	
+
 	private Double totalRetenueFiscale;
 	@Transient
 	private String mttotalRetenueFiscale;
-	
+
 	private Double cnps;
 	@Transient
 	private String mtcnps;
-	
+
 	private Double basecnps;
 	@Transient
 	private String mtbasecnps;
-	
+
 	private Double avceAcpte;
 	@Transient
 	private String mtavceAcpte;
-	
+
 	private Double pretAlios;
 	@Transient
 	private String mtpretAlios;
-	
+
 	private Double carec;
 	@Transient
 	private String mtcarec;
-	
+
 	private Double totalRetenue;
 	@Transient
 	private String mttotalRetenue;
@@ -167,41 +167,41 @@ public class LivreDePaie {
 	private Double totalRetenueSociale;
 	@Transient
 	private String mttotalRetenueSocial;
-	
+
 	private Double indemniteRepresentation;
 	@Transient
 	private String mtindemniteRepresentation;
-	
+
 	private Double indemniteTransport;
 	@Transient
 	private String mtindemniteTransport;
-	
-	
+
+
 	private Double indemniteTransportImp;
 	@Transient
 	private String mtindemniteTransportImp;
-	
+
 	private Double indemniteResponsabilte;
 	@Transient
 	private String mtindemniteResponsabilte;
-	
-	
+
+
 	private Double netPayer;
 	@Transient
 	private String mtnetPayer;
-	
+
 	private Double totalBrut;
 	@Transient
 	private String mttotalBrut;
-	
+
 	private Double is;
 	@Transient
 	private String mtis;
-	
+
 	private Double ta;
 	@Transient
 	private String mtta;
-	
+
 	private Double fpc;
 	@Transient
 	private String mtfpc;
@@ -209,23 +209,23 @@ public class LivreDePaie {
 	private Double fpcregul;
 	@Transient
 	private String mtfpcregul;
-	
+
 	private Double prestationFamiliale;
 	@Transient
 	private String mtprestationFamiliale;
-	
+
 	private Double accidentTravail;
 	@Transient
 	private String mtaccidentTravail;
-	
+
 	private Double retraite;
 	@Transient
 	private String mtretraite;
-	
+
 	private Double totalPatronal;
 	@Transient
 	private String mttotalPatronal;
-	
+
 	private Double totalMasseSalariale;
 	@Transient
 	private String mttotalMasseSalariale;
@@ -233,16 +233,16 @@ public class LivreDePaie {
 	private Double retenueSociiale;
 	@Transient
 	private String mtretenueSociiale;
-	
+
 	private BulletinPaie bullpaie;
-	
+
 	private Double jourTravail;
-	
+
 	private Double temptravail;
-	
+
 	@Transient
 	List<PrimePersonnel> listIndemniteBrut = new ArrayList<PrimePersonnel>();
-	
+
 	@Transient
 	List<PrimePersonnel> listIndemniteNonImp = new ArrayList<PrimePersonnel>();
 
@@ -267,11 +267,11 @@ public class LivreDePaie {
 	@ManyToOne
 	@JoinColumn(nullable=false)
 	private ContratPersonnel contratPersonnel;
-	
+
 	@ManyToOne
 	@JoinColumn(nullable=false)
 	private PeriodePaie periodePaie;
-	
+
 
 	public LivreDePaie() {
 		super();
@@ -398,6 +398,7 @@ public class LivreDePaie {
 			//					   autreIndemImposable=Math.ceil((indemniteTransport+ctratperso.getIndemniteRepresent()-((salaireBase+primeAnciennete+indemniteLogement+sursalaire+ctratperso.getIndemniteRepresent()+indemniteTransport)*10/100)));
 			//		           //*tempeffect.getJourspresence()/30
 								autreImposable=0d;
+
                                if (listIndemniteBrut != null && !listIndemniteBrut.isEmpty()) {
                                        for(PrimePersonnel primeImpos : listIndemniteBrut){
                                            if(primeImpos.getPrime().getTaux()!=null && primeImpos.getValeur()>0)
@@ -415,12 +416,12 @@ public class LivreDePaie {
 							   this.jourTravail=tempeffect.getJourspresence();
 							   this.temptravail=tempeffect.getHeurspresence();
 					   }
-		
+
                 this.brutImposable = Math.ceil(salaireBase + sursalaire + primeAnciennete + indemniteLogement+indemniteTransportImp+autreIndemImposable+autreImposable);
                 Double ricf = getRICF(nombrePart);
                 double itsbrut =Math.ceil(calculerITS(brutImposable,true));
                 this.its = Math.max(0, itsbrut - ricf / 12);
-               this.cn = 0d;
+                this.cn = 0d;
                 this.igr = 0d;
                 this.totalRetenueFiscale = Math.ceil(its );//+ cn + igr);
                 if(ctratperso.getIndemniteRepresent()==null)
@@ -496,7 +497,7 @@ public class LivreDePaie {
 
 				this.totalRetenue = Math.ceil(totalRetenueFiscale + avceAcpte + pretAlios+autrePrelevmentMutuelle +retenueSociiale);
 				regularisation=0d;
-                if(listGains != null && listGains.isEmpty()){
+                if(listGains != null && !listGains.isEmpty()){
                     for(PrimePersonnel primeGains : listGains){
                         regularisation=regularisation+primeGains.getMontant();
                     }
@@ -520,7 +521,7 @@ public class LivreDePaie {
                     nombrePart = 0F;
                     anciennete = 0;
 			       autreImposable=0d;
-			    if(listIndemniteBrut.size()>0 || listIndemniteBrut!=null){
+			    if(listIndemniteBrut != null && !listIndemniteBrut.isEmpty()){
 				  for(PrimePersonnel primeImpos : listIndemniteBrut){
 					if(primeImpos.getPrime().getTaux()!=null && primeImpos.getValeur()>0)
 					{
@@ -534,7 +535,7 @@ public class LivreDePaie {
 				}
 
 				autreNonImposable=0d;
-				if(listIndemniteNonImp.size()>0 || listIndemniteNonImp!=null){
+				if(listIndemniteNonImp!= null && !listIndemniteNonImp.isEmpty()){
 					for(PrimePersonnel primeImpos : listIndemniteNonImp){
   				/*if(primeImpos.getPrime().getTaux()!=null && primeImpos.getValeur()>0)
   				{
@@ -556,7 +557,7 @@ public class LivreDePaie {
 					}
 				}
 					regularisation=0d;
-					if(listGains.size()>0 || listGains!=null){
+					if(listGains!= null && !listGains.isEmpty()){
 						for(PrimePersonnel primeGains : listGains){
 
 							regularisation=regularisation+primeGains.getMontant();
@@ -584,7 +585,7 @@ public class LivreDePaie {
 
 				avceAcpte=Math.ceil(avanceEtAccompte); pretAlios=Math.ceil(pretALIOS);
 					autrePrelevment=0d;
-					if(listMutuelle.size()>0 || listMutuelle!=null){
+					if(listMutuelle!= null && !listMutuelle.isEmpty()){
 						for(PrimePersonnel mutuell : listMutuelle){
 
 							autrePrelevment=autrePrelevment+mutuell.getMontant();
@@ -609,29 +610,29 @@ public class LivreDePaie {
 		}
 		}
 	}
-	
+
 	public Double calculerAccidentTravail(){
 		Double pf = brutImposable + autreNonImposable;
 		if(pf == 70000)
 			pf = 70000 * 4.0 / 100;
 		else if(pf > 70000)
 			pf = brutImposable * 4 / 100;
-		else 
+		else
 			pf = 0.0;
 		return pf;
 	}
-	
+
 	public Double calcalerPrestationFamilial(){
 		Double pf = brutImposable + autreNonImposable;
 		if(pf == 70000)
 			pf = 70000 * 5.75 / 100;
 		else if(pf > 70000)
 			pf = brutImposable * 5.75 / 100;
-		else 
+		else
 			pf = 0.0;
 		return pf;
 	}
-	
+
 	public Double calculerIndemniteTransport(){
 		Double it = brutImposable * 10 / 100 - 25000.0;
 		if(it > 0)
@@ -640,16 +641,16 @@ public class LivreDePaie {
 			it = 0.0;
 		return it;
 	}
-	
+
 	public Double calculerIndemniterRepresentation(){
 		Double ir = brutImposable * 10 / 100 - 25000.0;
 		if(ir > 0)
 			ir = brutImposable * 10 / 100 - 25000.0;
-		else 
+		else
 			ir = 0.0;
 		return ir;
 	}
-	
+
 //	public Double calculerCN(){
 //		Double cn;
 //		if(brutImposable > 250000.0)
@@ -662,7 +663,7 @@ public class LivreDePaie {
 //			cn = 0.0;
 //		return cn;
 //	}
-	
+
 //	public Double calculerIGR(){
 //		Double igr = ((brutImposable * 80 / 100 - its - cn) / nombrePart) * 85 / 100;
 //		if(igr > 842167.0)
@@ -683,7 +684,7 @@ public class LivreDePaie {
 //			igr = 0.0;
 //		return igr;
 //	}
-	
+
 	public Double calculCNPS(Double basecnps){
 		Double cnps = (basecnps ); //3000000
 		if(cnps < 3375000.0)
@@ -949,8 +950,8 @@ public class LivreDePaie {
 		this.totalMasseSalariale = totalMasseSalariale;
 	}
 
-	
-	
+
+
 	public ContratPersonnel getContratPersonnel() {
 		return contratPersonnel;
 	}
@@ -967,7 +968,7 @@ public class LivreDePaie {
 		this.periodePaie = periodePaie;
 	}
 
-	
+
 	public Double getJourTravail() {
 		return jourTravail;
 	}
@@ -992,10 +993,10 @@ public class LivreDePaie {
 		this.bullpaie = bullpaie;
 	}
 
-	
-	
+
+
 	public String getMtsalaireBase() {
-	
+
 		return mtsalaireBase= Utils.formattingAmount(salaireBase);
 	}
 
@@ -1004,7 +1005,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtsursalaire() {
-		
+
 		return mtsursalaire= Utils.formattingAmount(sursalaire);
 	}
 
@@ -1013,7 +1014,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtprimeAnciennete() {
-		
+
 		return mtprimeAnciennete= Utils.formattingAmount(primeAnciennete);
 	}
 
@@ -1022,7 +1023,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtindemniteLogement() {
-	
+
 		return mtindemniteLogement= Utils.formattingAmount(indemniteLogement);
 	}
 
@@ -1031,7 +1032,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtbrutImposable() {
-	
+
 		return mtbrutImposable= Utils.formattingAmount(brutImposable);
 	}
 
@@ -1040,7 +1041,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtits() {
-		
+
 		return mtits= Utils.formattingAmount(its);
 	}
 
@@ -1049,7 +1050,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtcn() {
-		
+
 		return mtcn= Utils.formattingAmount(cn);
 	}
 
@@ -1058,7 +1059,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtigr() {
-	
+
 		return mtigr= Utils.formattingAmount(igr);
 	}
 
@@ -1067,7 +1068,7 @@ public class LivreDePaie {
 	}
 
 	public String getMttotalRetenueFiscale() {
-		
+
 		return mttotalRetenueFiscale= Utils.formattingAmount(totalRetenueFiscale);
 	}
 
@@ -1076,7 +1077,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtcnps() {
-		
+
 		return mtcnps= Utils.formattingAmount(cnps);
 	}
 
@@ -1085,7 +1086,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtavceAcpte() {
-		
+
 		return mtavceAcpte= Utils.formattingAmount(avceAcpte);
 	}
 
@@ -1094,7 +1095,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtpretAlios() {
-		
+
 		return mtpretAlios= Utils.formattingAmount(pretAlios);
 	}
 
@@ -1103,7 +1104,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtcarec() {
-		
+
 		return mtcarec= Utils.formattingAmount(carec);
 	}
 
@@ -1112,7 +1113,7 @@ public class LivreDePaie {
 	}
 
 	public String getMttotalRetenue() {
-	
+
 		return mttotalRetenue= Utils.formattingAmount(totalRetenue);
 	}
 
@@ -1121,7 +1122,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtindemniteRepresentation() {
-		
+
 		return mtindemniteRepresentation= Utils.formattingAmount(indemniteRepresentation);
 	}
 
@@ -1130,17 +1131,17 @@ public class LivreDePaie {
 	}
 
 	public String getMtindemniteTransport() {
-		
+
 		return mtindemniteTransport= Utils.formattingAmount(indemniteTransport);
 	}
 
 	public void setMtindemniteTransport(String mtindemniteTransport) {
 		this.mtindemniteTransport = mtindemniteTransport;
-		
+
 	}
 
 	public String getMtnetPayer() {
-		
+
 		return mtnetPayer= Utils.formattingAmount(netPayer);
 	}
 
@@ -1149,7 +1150,7 @@ public class LivreDePaie {
 	}
 
 	public String getMttotalBrut() {
-		
+
 		return mttotalBrut= Utils.formattingAmount(totalBrut);
 	}
 
@@ -1158,7 +1159,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtis() {
-		
+
 		return mtis= Utils.formattingAmount(is);
 	}
 
@@ -1167,7 +1168,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtta() {
-		
+
 		return mtta= Utils.formattingAmount(ta);
 	}
 
@@ -1176,7 +1177,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtfpc() {
-	
+
 		return mtfpc= Utils.formattingAmount(fpc);
 	}
 
@@ -1186,7 +1187,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtprestationFamiliale() {
-		
+
 		return mtprestationFamiliale= Utils.formattingAmount(prestationFamiliale);
 	}
 
@@ -1195,7 +1196,7 @@ public class LivreDePaie {
 	}
 
 	public String getMtaccidentTravail() {
-		
+
 		return mtaccidentTravail= Utils.formattingAmount(accidentTravail);
 	}
 
@@ -1212,7 +1213,7 @@ public class LivreDePaie {
 	}
 
 	public String getMttotalPatronal() {
-	
+
 		return mttotalPatronal= Utils.formattingAmount(totalPatronal);
 	}
 
@@ -1700,7 +1701,7 @@ public class LivreDePaie {
 
 	public int countnbreJrdu(Date dateRetourDernierConge, Date dateDepartConge, ContratPersonnel Contratp) {
 		// TODO Auto-generated method stub
-		
+
 		int tps=ProvisionConge.calculerTempsPresence(dateRetourDernierConge,dateDepartConge);
 		int rf=(int) (tps*2.2*1.25);
 		 Double[]ancienete= calculAnciennete(Contratp.getCategorie().getSalaireDeBase(),Contratp.getPersonnel().getDateArrivee());
@@ -1711,22 +1712,22 @@ public class LivreDePaie {
 	    		newancienete=ancienete[1];
 	    	}
 	    	double anc=(int)newancienete ;
-	    	
+
 	     int jourSuppAnc=0; int jourSuppDam = 0;int jourSuppMed = 0;
-	     
+
 		 if(anc>5 && anc<=10)  jourSuppAnc=1;
 		 if(anc>10 && anc<=15) jourSuppAnc=2;
 		 if(anc>15 && anc<=20) jourSuppAnc=3;
 		 if(anc>20 && anc<=25) jourSuppAnc=5;
 		 if(anc>25 && anc<=30) jourSuppAnc=7;
 		 if(anc>30) jourSuppAnc=8;
-		 
+
 		 Double age= DifferenceDate.valAge(new Date(), Contratp.getPersonnel().getDateNaissance());
 		 if(Contratp.getPersonnel().getSexe().equals("Feminin") && age<=21 && Contratp.getPersonnel().getNombrEnfant()>0){
 			 jourSuppDam=2*Contratp.getPersonnel().getNombrEnfant();
 		 }
 		 if(Contratp.getPersonnel().getSexe().equals("Feminin") && age>21 && Contratp.getPersonnel().getNombrEnfant()>0){
-			 
+
 			 if(Contratp.getPersonnel().getNombrEnfant()>=4)jourSuppDam=2*1;
 			 if(Contratp.getPersonnel().getNombrEnfant()>=5)jourSuppDam=2*2;
 			 if(Contratp.getPersonnel().getNombrEnfant()>=6)jourSuppDam=2*3;
@@ -1734,36 +1735,36 @@ public class LivreDePaie {
 			 if(Contratp.getPersonnel().getNombrEnfant()>=8)jourSuppDam=2*5;
 			 if(Contratp.getPersonnel().getNombrEnfant()>=9)jourSuppDam=2*6;
 		 }
-		 
+
 		 if(Contratp.getPersonnel().getSituationMedaille()==1 ){
 			 jourSuppMed=1;
-		 } 
+		 }
 		 int rfp=(int) (jourSuppAnc+jourSuppDam+jourSuppMed);
 		return (int) rfp+rf;
 	}
 
 
-	
-	
+
+
 public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
-		
+
 		Double[] tab = new Double[5];
-		
+
 		Double anciennete = (double) 0;
-		
-		
+
+
 		double age = DifferenceDate.valAge(new Date(), dateEntree);
-		
-		int partieEntiere = (int) age; 
-		int partieApresVirg = (int)((age - partieEntiere) * 12); 
-		
-		
+
+		int partieEntiere = (int) age;
+		int partieApresVirg = (int)((age - partieEntiere) * 12);
+
+
 		if(age>=2)
 			anciennete = (double) (salaireCategoriel*partieEntiere/100);
-		
+
 		tab[0] = anciennete;
-		
-		
+
+
 		tab[1] = (double) partieEntiere;
 		tab[2] = (double) (partieApresVirg);
 		

@@ -157,5 +157,7 @@ AND c.id = (
 )
 """)
     List<ContratPersonnel> findLastContratForConsultants();
+
+    List<ContratPersonnel> findLastByStatutTrue();
 }
 
