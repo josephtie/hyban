@@ -511,7 +511,7 @@ public class LivreDePaie {
 				this.netPayer = Math.ceil((brutImposable + indemniteRepresentation + indemniteTransport+autreNonImposable)+ regularisation -autreIndemImposable- totalRetenue);
                if(tempeffect!=null){
                 this.netRegulPayer=netCible - netPayer;
-                netPayer=netCible;
+                netPayer=netCible -pretAlios-avceAcpte;
                }
                 this.is = its;
 				this.ta = Math.ceil(brutImposable * 0.4 / 100);
