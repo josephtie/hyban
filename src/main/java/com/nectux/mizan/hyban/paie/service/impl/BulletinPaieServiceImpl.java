@@ -2544,11 +2544,19 @@ public  Double[] calculAnciennete(Double salaireCategoriel, Date dateEntree){
 	public Double MasseSalarialMois(PeriodePaie maperiode) {
 		Double Massesalariale = 0d;
 		List<BulletinPaie> bulletinPaieList = bulletinPaieRepository.findByPeriodePaieIdAndCalculer(maperiode.getId()-1L,true);
-		for(BulletinPaie bulletinPaie : bulletinPaieList){
-			Massesalariale = bulletinPaie.getTotalmassesalarial() + Massesalariale;
+//		for(BulletinPaie bulletinPaie : bulletinPaieList){
+//			Massesalariale = bulletinPaie.getTotalmassesalarial() + Massesalariale;
+//
+//		}
+//		return Massesalariale;
+//
+//
+//        Double Massesalariale = 0d;
 
-		}
-		return Massesalariale;
+        for (BulletinPaie b : bulletinPaieList) {
+            Massesalariale += (b.getTotalmassesalarial() != null ? b.getTotalmassesalarial() : 0d);
+        }
+        return Massesalariale;
 	}
 
 	@Override

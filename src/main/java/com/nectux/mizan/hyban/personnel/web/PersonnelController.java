@@ -262,45 +262,7 @@ public class PersonnelController {
 													@RequestParam(value="indemniteResp", required=false) Double indemniteRespons,													
 													@RequestParam(value="indemniteRepresent", required=false) Double  indemniteRepresent) { 
 		
-	/*	String uploadPath =  request.getSession().getServletContext().getRealPath("") + File.separator + "resources\\personnel\\photo";
-		System.out.println(">>> CHEMIN UPLOAD >>>" + uploadPath);
-		//////////////////////////////////////////////////////////////////////////////////////////////////////
-		// GESTION PHOTO
-		// creates the directory if it does not exist
-		File uploadDir = new File(uploadPath);
-		if (!uploadDir.exists())
-			uploadDir.mkdir();
-		 String fileName ="";
-		if(((MultipartRequest) uploadfile).getFileNames()!=null){
-			
-			
-		
-		Iterator<String> itr =  ((MultipartRequest) uploadfile).getFileNames();
-		 
-	     MultipartFile mpf = ((MultipartRequest) uploadfile).getFile(itr.next());
-	     //System.out.println(mpf.getOriginalFilename() +" uploaded!");
-	     
-	     fileName= mpf.getOriginalFilename();
-	     String directory = uploadPath;
-	     String filepath = Paths.get(directory, fileName).toString();
-  
-	     // Save the file locally
-	     BufferedOutputStream stream;
-		try {
-			stream = new BufferedOutputStream(new FileOutputStream(new File(filepath)));
-	
-				stream.write(mpf.getBytes());
-				stream.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
-			
-			
-			
-		
-		}*/
+
 		return personnelService.save(id, nom,prenom, nationalite, service, categorie, fonction, typeContrat, matricule, 
 				 sexe, dateNaissance, lieuNaissance, email, residence, situationMatrimoniale, nombreEnfant, 
 				 dateArrivee, numeroCNPS, adresse, dateDebut, dateFin, salaireNet,indemnitelogement,
