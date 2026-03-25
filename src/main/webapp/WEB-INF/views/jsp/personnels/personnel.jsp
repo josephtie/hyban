@@ -634,7 +634,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <label for="fonctionPop">Emploi</label> 
-                                <select id="fonctionPop" name="idFonction" class="form-control select2" ng-model="personnel.fonction.id">
+                                <select id="fonctionPop" name="idFonction" class="form-control select2" ng-model="contrat.fonction.id">
 
                                 </select>
                             </div>
