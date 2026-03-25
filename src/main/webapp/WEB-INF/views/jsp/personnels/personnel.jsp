@@ -3362,7 +3362,8 @@ function loadFonction() {
                 }
                 //tabledata += "";
                 jQuery('#fonction').html(tabledata);
-               jQuery('#categoriePop').html(tabledata);
+                jQuery('#fonctionPop').html(tabledata);
+               //jQuery('#categoriePop').html(tabledata);
             } else {
                 alert('Failure! An error has occurred!');
             }
