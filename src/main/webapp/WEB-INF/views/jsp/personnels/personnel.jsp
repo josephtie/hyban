@@ -3356,12 +3356,13 @@ function loadFonction() {
         success: function (response) {
             console.log(response);
             if (response != null) {
-                tabledata = '';
+                tabledata = '<option value="">-- Sélectionner une fonction --</option>';
                 for (i = 0; i < response.length; i++) {
                     tabledata += '<option value="' + response[i].id + '" >' + response[i].libelle + '</option>';
                 }
                 //tabledata += "";
-                jQuery('#fonction, #fonctionPop').html(tabledata);
+                jQuery('#fonction').html(tabledata);
+               jQuery('#categoriePop').html(tabledata);
             } else {
                 alert('Failure! An error has occurred!');
             }
