@@ -1180,7 +1180,8 @@ private static final Logger logger = LoggerFactory.getLogger(BulletinPaieControl
 
 				Row row = sheet.createRow(rowNum++);
 				row.createCell(0).setCellValue(reference);
-				row.createCell(1).setCellValue(bulletin.getNetapayer().doubleValue());
+				   Double net = Optional.ofNullable(bulletin.getNetapayer()).orElse(0.0);
+                row.createCell(1).setCellValue(Math.ceil(net));			
 				row.createCell(2).setCellValue(personnel.getNom() + " " + personnel.getPrenom());
 				row.createCell(3).setCellValue(contrat.getFonction().getLibelle().replaceAll("[^a-zA-Z0-9 ]", ""));;
 				row.createCell(4).setCellValue(modePaiement); // Ex : "virement-bancaire", "transfert-wave"
