@@ -295,7 +295,7 @@ public class LivreDePaie {
 		this.listRetenueMutuellt=listMutuelle;
 		this.listGainsNet=listGains;
         if(tempeffect!=null)
-         netCible=ctratperso.getNetAPayer() * tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS;
+         netCible=Math.ceil(ctratperso.getNetAPayer() * tempeffect.getJourspresence()/JOURS_OUVRABLES_MOIS);
 
 
         if (Boolean.TRUE.equals(ctratperso.getPersonnel().getCarec())){
@@ -606,10 +606,10 @@ public class LivreDePaie {
                             }
                             this.totalRetenue = Math.ceil(totalRetenueFiscale + cnps + avceAcpte + pretAlios +autrePrelevment);
                              this.netPayer = Math.ceil(-totalRetenue+ctratperso.getNetAPayer());
-        //                 if(tempeffect!=null){
-        //                   this.netRegulPayer=netCible - netPayer;
-        //                  netPayer=netCible;
-        //                }
+                         if(tempeffect!=null){
+                           this.netRegulPayer=netCible - netPayer;
+                          netPayer=netCible;
+                         }
                         //this.is = Math.ceil(brutImposable * 1.2 / 100);
                         //this.ta = Math.ceil(brutImposable * 0.4 / 100);
                         //this.fpc = Math.ceil(brutImposable * 1.2 / 100);
