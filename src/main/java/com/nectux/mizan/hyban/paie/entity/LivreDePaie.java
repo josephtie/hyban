@@ -605,10 +605,10 @@ public class LivreDePaie {
 					}
 				this.totalRetenue = Math.ceil(totalRetenueFiscale + cnps + avceAcpte + pretAlios +autrePrelevment);
 				this.netPayer = Math.ceil(brutImposable +regularisation+ brutNonImposable-totalRetenue)+ctratperso.getNetAPayer();
-                 if(tempeffect!=null){
-                   this.netRegulPayer=netCible - netPayer;
-                  netPayer=netCible;
-                }
+               //  if(tempeffect!=null){
+                //   this.netRegulPayer=netCible - netPayer;
+               //   netPayer=netCible;
+                //}
 				//this.is = Math.ceil(brutImposable * 1.2 / 100);
 				//this.ta = Math.ceil(brutImposable * 0.4 / 100);
 				//this.fpc = Math.ceil(brutImposable * 1.2 / 100);
