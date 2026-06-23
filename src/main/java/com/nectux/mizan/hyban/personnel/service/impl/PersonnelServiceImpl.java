@@ -325,7 +325,7 @@ public class PersonnelServiceImpl implements PersonnelService {
 			personnel.setService(serviceRepository.findById(service).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + service)));
 			personnel.setNationnalite(nationnaliteRepository.findById(nationalite).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + nationalite)));
 			personnel.setStatut(statut);
-			personnel.setCarec(carec);
+			personnel.setCarec(carec == null ? true : carec);
 			personnel.setTypeSalarie(typemp);
 			personnel.setTelephone(telephone);
 			personnel.setModePaiement(modePaiement);
