@@ -102,10 +102,10 @@ public class PersonnelServiceImpl implements PersonnelService {
 			personnel.setMatricule(matricule);
 			personnel.setNom(nom);
 			personnel.setPrenom(prenom);
-				if(sexe == "")
-					personnel.setSexe("Masculin");
-				else
-				personnel.setSexe(sexe);	
+			
+		    String sexeFinal = (sexe == null || sexe.isBlank())  ? "Masculin" : sexe.trim();           
+             
+            personnel.setSexe(sexeFinal);
 			personnel.setDateNaissance(Utils.stringToDate(dateNaissance, "dd/MM/yyyy"));
 			personnel.setLieuNaissance(lieuNaissance);
 			personnel.setEmail(email);
@@ -126,11 +126,19 @@ public class PersonnelServiceImpl implements PersonnelService {
 			personnel.setAdresse(adresse);
 			personnel.setModePaiement(modePaiement);
 			Banque banqued=banqueRepository.findById(idbanque).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id));
-			if(banqued==null)
-			personnel.setBanquek(null);
-			else
-			personnel.setBanquek(banqueRepository.findById(idbanque).orElseThrow(() -> new EntityNotFoundException("Pret not found for id " + id)));
-			personnel.setCarec(carec);
+				
+			if (idbanque != null) {
+             Banque banque = banqueRepository.findById(idbanque)
+            .orElseThrow(() -> new EntityNotFoundException(
+                    "Banque introuvable pour l'id : " + idbanque
+            ));
+
+            personnel.setBanquek(banque);
+            } else {
+            personnel.setBanquek(null);
+           }
+				
+			personnel.setCarec(carec == null ? true : carec);
 			personnel.setTypeSalarie(typemp);
 			personnel.setNumeroCompte(numeroCompte);
 			personnel.setNumeroGuichet(numeroGuichet);
