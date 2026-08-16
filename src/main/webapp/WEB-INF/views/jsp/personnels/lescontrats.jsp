@@ -269,6 +269,51 @@
 </div>
 
 
+<div class="modal fade" id="rhpModalDateFin" role="dialog" tabindex="-1" aria-labelledby="rhpModalDateFinLabel" data-backdrop="static">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form id="formModifDateFin" class="form-horizontal" role="form" novalidate="novalidate">
+				<div class="modal-header">
+					<h4 class="modal-title" id="rhpModalDateFinLabel">Modifier la date de fin du contrat</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<div class="col-md-12">
+							<label id="modifDateFinInfo"></label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-md-4 control-label">Ancienne date de fin</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" id="ancienneDateFin" disabled="disabled">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-md-4 control-label">Nouvelle date de fin <span class="required">*</span></label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" id="nouvelleDateFin" name="nouvelleDateFin" maxlength="10" placeholder="dd/mm/yyyy" required="required">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-md-4 control-label">Motif</label>
+						<div class="col-md-8">
+							<textarea class="form-control" id="motifModifDateFin" name="motif" rows="2" placeholder="Motif de la modification (optionnel)"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<input type="hidden" id="modifDateFinId" name="id">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+					<button type="submit" class="btn btn-success">Enregistrer</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
 <script type="text/javascript">
 	//AngularJS
 	app.controller('formAjoutCtrl', ['$scope', function($scope) {
@@ -299,7 +344,7 @@
         	jQuery('#tableWidgetDate').hide();
         	jQuery('#tableWidget').show();
 		 $(".select2").select2();
-		     $("#datenaissance, .datePicker,#dateMod, #dateFinw,#dateDebw,#datedebut, #datefin").datepicker({
+		     $("#datenaissance, .datePicker,#dateMod, #dateFinw,#dateDebw,#datedebut, #datefin, #nouvelleDateFin").datepicker({
                  format: 'dd/mm/yyyy',
                  showOtherMonths: true
              });
@@ -310,6 +355,14 @@
 	            $scope.initForm();
 	        });
 			//$("#id").val(""); //Initialisation de l'id
+		});
+
+		$('#rhpModalDateFin').on('hidden.bs.modal', function () {
+			$('#modifDateFinId').val('');
+			$('#ancienneDateFin').val('');
+			$('#nouvelleDateFin').val('');
+			$('#motifModifDateFin').val('');
+			$('#modifDateFinInfo').html('');
 		});
 		
 		//Envoi des donnees
@@ -348,6 +401,34 @@
         						}
         					});
         				});
+
+		$("#formModifDateFin").submit(function(e){
+			e.preventDefault();
+			var formData = $(this).serialize();
+			$.ajax({
+				type: "POST",
+				url: baseUrl + "/personnels/modifierdatefincontrat",
+				cache: false,
+				data: formData,
+				success: function (reponse) {
+					if (reponse.result == "success") {
+						$table.bootstrapTable('refresh');
+						$("#rhpModalDateFin").modal('hide');
+					} else if (reponse.result == "failed") {
+						alert(reponse.message || "Erreur lors de la modification de la date de fin");
+					}
+				},
+				error: function () {
+					alert("Erreur survenue. Verifiez que vous etes connectes au serveur.");
+				},
+				beforeSend: function () {
+					$("#formModifDateFin").attr("disabled", true);
+				},
+				complete: function () {
+					$("#formModifDateFin").removeAttr("disabled");
+				}
+			});
+		});
 		
 		$("#formDelete").submit(function(e){
 			e.preventDefault();
@@ -396,6 +477,7 @@
 	//Functions
 			function optionFormatter(id, row, index) {
 				var option = '<a onclick="finish('+row.id+')" data-toggle="modal" data-target="#rhpModal" href="#" title="Mettre fin">  <span class="glyphicon glyphicon-pencil"></span></a>';
+				option += '<a onclick="modifierDateFin('+row.id+')" data-toggle="modal" data-target="#rhpModalDateFin" href="#" title="Modifier date de fin" style="margin-left:5px;">  <span class="glyphicon glyphicon-calendar"></span></a>';
 				return option;
 			}
 
@@ -459,6 +541,16 @@
 				$scope.$apply(function () {
 					$scope.pupulateForm(contrat);
 				});
+			}
+
+			function modifierDateFin(idContrat){
+				var rows = $table.bootstrapTable('getData');
+				var contrat = _.findWhere(rows, {id: idContrat});
+				$('#modifDateFinId').val(idContrat);
+				$('#modifDateFinInfo').html(contrat.personnel.matricule + " | " + contrat.personnel.nomComplet + " | " + contrat.fonction.libelle);
+				$('#ancienneDateFin').val(contrat.dateFin || '');
+				$('#nouvelleDateFin').val('');
+				$('#motifModifDateFin').val('');
 			}
 
 			function del(idFonction){

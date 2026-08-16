@@ -75,4 +75,6 @@ public interface ContratPersonnelService {
 
 
     List<ContratPersonnel> rechercherBytypeContrat(TypeContrat annee);
+
+    public ContratPersonnelDTO modifierDateFinContrat(Long id, String nouvelleDateFin, String motif, String username);
 }

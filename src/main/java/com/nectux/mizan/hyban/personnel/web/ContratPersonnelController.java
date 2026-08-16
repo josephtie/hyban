@@ -410,4 +410,14 @@ public class ContratPersonnelController {
 		return jour + "/" + mois + "/" + annee;
 	}
 
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/modifierdatefincontrat", method = RequestMethod.POST)
+	public @ResponseBody ContratPersonnelDTO modifierDateFinContrat(@RequestParam(value="id", required=true) Long id,
+																	@RequestParam(value="nouvelleDateFin", required=true) String nouvelleDateFin,
+																	@RequestParam(value="motif", required=false) String motif,
+																	Principal principal) {
+		String username = principal != null ? principal.getName() : "system";
+		return contratPersonnelService.modifierDateFinContrat(id, nouvelleDateFin, motif, username);
+	}
+
 }

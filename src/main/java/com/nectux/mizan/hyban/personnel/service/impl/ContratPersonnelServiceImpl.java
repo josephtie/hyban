@@ -1,6 +1,8 @@
 package com.nectux.mizan.hyban.personnel.service.impl;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,10 +31,12 @@ import com.nectux.mizan.hyban.paie.repository.BulletinPaieRepository;
 import com.nectux.mizan.hyban.parametrages.entity.PeriodePaie;
 import com.nectux.mizan.hyban.parametrages.repository.PeriodePaieRepository;
 import com.nectux.mizan.hyban.personnel.dto.ContratPersonnelDTO;
+import com.nectux.mizan.hyban.personnel.entity.ContratDateFinHistorique;
 import com.nectux.mizan.hyban.personnel.entity.ContratPersonnel;
 import com.nectux.mizan.hyban.personnel.entity.Fonction;
 import com.nectux.mizan.hyban.personnel.entity.Personnel;
 import com.nectux.mizan.hyban.personnel.repository.CategorieRepository;
+import com.nectux.mizan.hyban.personnel.repository.ContratDateFinHistoriqueRepository;
 import com.nectux.mizan.hyban.personnel.repository.ContratPersonnelRepository;
 import com.nectux.mizan.hyban.personnel.repository.FonctionRepository;
 import com.nectux.mizan.hyban.personnel.repository.PersonnelRepository;
@@ -54,6 +58,7 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 	@Autowired
     TypeContratRepository typeContratRepository;
 	@Autowired ContratPersonnelRepository contratPersonnelRepository;
+	@Autowired ContratDateFinHistoriqueRepository contratDateFinHistoriqueRepository;
 	@Autowired private PeriodePaieRepository periodePaieRepository;
 	@Autowired private PrimePersonnelRepository primePersonnelRepository;
 	@Autowired private BulletinPaieRepository bulletinPaieRepository;
@@ -626,9 +631,118 @@ public class ContratPersonnelServiceImpl implements ContratPersonnelService {
 		contratPersonnelDTO.setTotal(page.getTotalElements());
 		logger.info(new StringBuilder().append(">>>>> CONTRATS PERSONNELS CHARGES AVEC SUCCES").toString());
 		return contratPersonnelDTO;
-		
+
 	}
 
+	@Override
+	@Transactional
+	public ContratPersonnelDTO modifierDateFinContrat(
+			Long id,
+			String nouvelleDateFin,
+			String motif,
+			String username) {
+
+		ContratPersonnelDTO contratPersonnelDTO = new ContratPersonnelDTO();
+
+		try {
+
+			// 1. Vérification de la nouvelle date
+			if (nouvelleDateFin == null || nouvelleDateFin.trim().isEmpty()) {
+				throw new Exception("La nouvelle date de fin est obligatoire.");
+			}
+
+			// 2. Recherche du contrat
+			ContratPersonnel contratPersonnel = contratPersonnelRepository.findById(id)
+					.orElseThrow(() ->
+							new EntityNotFoundException(
+									"Contrat non trouvé pour l'id " + id));
+
+			// 3. Vérification de la date de début
+			if (contratPersonnel.getDateDebut() == null) {
+				throw new Exception(
+						"La date de début du contrat est obligatoire.");
+			}
+
+			// 4. Conversion des dates
+			LocalDate dateDebut = contratPersonnel.getDateDebut()
+					.toInstant()
+					.atZone(ZoneId.systemDefault())
+					.toLocalDate();
+
+			LocalDate nouvelleDateFintrt = LocalDate.parse(
+					nouvelleDateFin,
+					DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+			// 5. La date de fin ne peut pas être avant la date de début
+			if (nouvelleDateFintrt.isBefore(dateDebut)) {
+				throw new Exception(
+						"La date de fin ne peut pas être antérieure à la date de début du contrat.");
+			}
+
+			// 6. Date maximale = date début + 2 ans
+			LocalDate dateFinMax = dateDebut.plusYears(2);
+
+			// 7. Contrôle de la durée maximale
+			if (nouvelleDateFintrt.isAfter(dateFinMax)) {
+				throw new Exception(
+						"La durée du contrat ne peut pas dépasser 2 ans. "
+								+ "La date de fin maximale autorisée est le "
+								+ dateFinMax.format(
+								DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ".");
+			}
+
+			// 8. Ancienne date de fin
+			java.util.Date ancienneDateFin = contratPersonnel.getDateFin();
+
+			// 9. Conversion LocalDate -> Date
+			java.util.Date nouvelleDateFinDate =
+					java.util.Date.from(
+							nouvelleDateFintrt
+									.atStartOfDay(ZoneId.systemDefault())
+									.toInstant());
+
+			// 10. Historisation
+			ContratDateFinHistorique historique =
+					new ContratDateFinHistorique();
+
+			historique.setContratPersonnel(contratPersonnel);
+			historique.setAncienneDateFin(ancienneDateFin);
+			historique.setNouvelleDateFin(nouvelleDateFinDate);
+			historique.setMotif(motif);
+			historique.setCreatedBy(username);
+
+			contratDateFinHistoriqueRepository.save(historique);
+
+			// 11. Modification du contrat
+			contratPersonnel.setDateFin(nouvelleDateFinDate);
+
+			contratPersonnel =
+					contratPersonnelRepository.save(contratPersonnel);
+
+			// 12. Réponse
+			contratPersonnelDTO.setRow(contratPersonnel);
+			contratPersonnelDTO.setResult("success");
+
+			logger.info(
+					">>>>> Date de fin du contrat {} modifiée par {} — "
+							+ "ancienne: {} nouvelle: {}",
+					contratPersonnel.getId(),
+					username,
+					ancienneDateFin,
+					nouvelleDateFin);
+
+		} catch (Exception ex) {
+
+			contratPersonnelDTO.setResult("failed");
+			contratPersonnelDTO.setMessage(ex.getMessage());
+
+			logger.error(
+					">>>>> ERREUR SUR MODIFICATION DATE DE FIN CONTRAT",
+					ex);
+		}
+
+		return contratPersonnelDTO;
+	}
 
 
 
