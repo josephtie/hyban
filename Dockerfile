@@ -23,7 +23,7 @@ WORKDIR /usr/local/tomcat/webapps/
 COPY --from=builder /app/target/*.war hyban.war
 
 # 9️⃣ Exposer le port 8080
-EXPOSE 8050
+EXPOSE 8058
 
 
 # 🔟 Démarrer Tomcat
